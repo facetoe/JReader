@@ -52,7 +52,16 @@ class JavaClass extends JavaObject {
 
 class JavaInterface extends JavaObject {
     private String[] subInterfaces;
+    private String[] superInterfaces;
     private String[] implementingClasses;
+
+    String[] getSuperInterfaces() {
+        return superInterfaces;
+    }
+
+    void setSuperInterfaces(String[] superInterfaces) {
+        this.superInterfaces = superInterfaces;
+    }
 
     String[] getSubInterfaces() {
         return subInterfaces;
@@ -76,19 +85,18 @@ public class Parser {
 
     Document doc;
 
-    JavaObject parse(File classFile) {
+    public JavaObject parse(File classFile) {
         parseJsoup(classFile);
 
-        JavaObject jObject = new JavaObject();
         Elements name = doc.getElementsByClass("title");
         String[] nameParts = name.text().split(" ");
         if ( nameParts[0].equalsIgnoreCase("interface") ) {
-            return setInterface(doc);
+            return parseInterface();
         }
-        return jObject;
+        return null;
     }
 
-    JavaInterface setInterface(Document doc) {
+    private JavaInterface parseInterface() {
         JavaInterface jInterface = new JavaInterface();
         Elements name = doc.getElementsByClass("title");
         String[] nameParts = name.text().split(" ");
@@ -96,7 +104,9 @@ public class Parser {
         jInterface.setType(nameParts[0]);
         jInterface.setName(nameParts[1]);
         jInterface.setDescription(getDescription());
-        jInterface.setSubInterfaces(getSubInterfaces());
+
+        getImplementationDetails(jInterface);
+
         return jInterface;
     }
 
@@ -113,15 +123,28 @@ public class Parser {
         return description.getElementsByClass("block").text();
     }
 
-    public String[] getSubInterfaces() {
+    private String[] getSubInterfaces() {
         Element element = doc.getElementsByClass("description").first();
         Element els = element.select(":contains(All Known Subinterfaces").first();
         System.out.println(els);
         return els.text().split(", ");
     }
 
-    public String[] getImplementingClasses() {
-        return new String[2];
+    private void getImplementationDetails(JavaInterface jInterface) {
+        Element element = doc.getElementsByClass("blocklist").first();
+        Elements elements = element.getElementsByTag("dl");
+
+        for ( Element anElement : elements ) {
+            if ( anElement.select(":contains(All Known Subinterfaces)").size() > 0 ) {
+                jInterface.setSubInterfaces(anElement.select("dd").text().split(", "));
+
+            } else if ( anElement.select(":contains(All Known Implementing Classes)").size() > 0 ) {
+                jInterface.setImplementingClasses(anElement.select("dd").text().split(", "));
+
+            } else if (anElement.select(":contains(All Superinterfaces)").size() > 0  ) {
+                jInterface.setSuperInterfaces(anElement.select("dd").text().split(", "));
+            }
+        }
     }
 
     private void print(JavaClass jClass) {
@@ -129,22 +152,29 @@ public class Parser {
 
         System.out.println(jClass.getDescription());
     }
-    
+
 
     private void print(JavaInterface jInterface) {
         System.out.println(jInterface.getType() + " " + jInterface.getName());
         System.out.println(jInterface.getDescription());
 
-        if(jInterface.getSubInterfaces() != null) {
-            System.out.println("SubInterfaces:");
+        if ( jInterface.getSubInterfaces() != null ) {
+            System.out.println("Sub Interfaces:");
             for ( String s : jInterface.getSubInterfaces() ) {
                 System.out.println(s);
             }
         }
 
-        if(jInterface.getImplementingClasses() != null) {
+        if ( jInterface.getImplementingClasses() != null ) {
             System.out.println("Implementing Classes:");
             for ( String s : jInterface.getImplementingClasses() ) {
+                System.out.println(s);
+            }
+        }
+
+        if( jInterface.getSuperInterfaces() != null) {
+            System.out.println("Super Interfaces:");
+            for ( String s : jInterface.getSuperInterfaces() ) {
                 System.out.println(s);
             }
         }
@@ -152,17 +182,18 @@ public class Parser {
 
     public void print(JavaObject jObject) {
         if ( jObject.getType().equalsIgnoreCase("Interface") ) {
-            print((JavaInterface)jObject);
-        } else if (jObject.getType().equalsIgnoreCase("Class")) {
-            print((JavaClass)jObject);
+            print(( JavaInterface ) jObject);
+        } else if ( jObject.getType().equalsIgnoreCase("Class") ) {
+            print(( JavaClass ) jObject);
         } else {
             System.out.println("Not an interface or class");
         }
     }
 
     public static void main(String[] args) {
+
         File input = new File("/home/facetoe/tmp/docs/api/javax/accessibility/AccessibleText.html");
-//
+
 //        Parser parser = new Parser();
 //        JavaObject obj = parser.parse(input);
 //        parser.print(obj);
@@ -172,19 +203,39 @@ public class Parser {
         try {
             Document doc = Jsoup.parse(input, "UTF-8");
 
-            Element element = doc.getElementsByClass("blocklist").first();
-            Elements elements = element.getElementsByTag("dl");
+            Elements summaries = doc.select("table.overviewSummary");
 
-            for ( Element anElement : elements ) {
-                if(anElement.select(":contains(All Known Subinterfaces)").size() > 0) {
-                    System.out.println(anElement.select("dd").text());
+            String[] fieldTypes = null;
+            String[] field;
+            String[] fieldDescription;
+
+            for ( Element summary : summaries ) {
+                if(summary.select(":contains(Field)").size() > 0) {
+                    Elements fieldTypeData = summary.select("td.colFirst");
+                    Elements fieldsData = summary.select("td.colLast");
+
+                    int size = fieldTypeData.size();
+                    fieldTypes = new String[size];
+                    field = new String[size];
+                    fieldDescription = new String[size];
+
+                    for ( int i = 0; i < size; i++ ) {
+                        fieldTypes[i] = fieldTypeData.get(i).text();
+                        fieldDescription[i] = fieldsData.get(i).select("div.block").text();
+                        field[i] = fieldsData.get(i).select("a").text();
+                    }
+
+                    for ( int i = 0; i < size; i++ ) {
+                        System.out.println(String.format("%s %s\n%s", fieldTypes[i], field[i], fieldDescription[i]));
+                    }
+
                 }
 
-                if (anElement.select(":contains(All Known Implementing Classes)").size() > 0) {
-                    System.out.println(anElement.select("dd").text());
-                }
+
+//                else if (summary.select(":contains(Field").size() > 0) {
+//                    System.out.println(summary.text());
+//                }
             }
-
 
         } catch ( IOException ex ) {
             ex.printStackTrace();
