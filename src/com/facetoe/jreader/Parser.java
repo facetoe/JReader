@@ -120,7 +120,7 @@ public class Parser {
 
     public String getDescription() {
         Element description = doc.getElementsByClass("description").first();
-        return description.getElementsByClass("block").text();
+        return description.getElementsByClass("block").html();
     }
 
     private String[] getSubInterfaces() {
@@ -190,55 +190,4 @@ public class Parser {
         }
     }
 
-    public static void main(String[] args) {
-
-        File input = new File("/home/facetoe/tmp/docs/api/javax/accessibility/AccessibleText.html");
-
-//        Parser parser = new Parser();
-//        JavaObject obj = parser.parse(input);
-//        parser.print(obj);
-//
-//        System.exit(1);
-
-        try {
-            Document doc = Jsoup.parse(input, "UTF-8");
-
-            Elements summaries = doc.select("table.overviewSummary");
-
-            String[] fieldTypes = null;
-            String[] field;
-            String[] fieldDescription;
-
-            for ( Element summary : summaries ) {
-                if(summary.select(":contains(Field)").size() > 0) {
-                    Elements fieldTypeData = summary.select("td.colFirst");
-                    Elements fieldsData = summary.select("td.colLast");
-
-                    int size = fieldTypeData.size();
-                    fieldTypes = new String[size];
-                    field = new String[size];
-                    fieldDescription = new String[size];
-
-                    for ( int i = 0; i < size; i++ ) {
-                        fieldTypes[i] = fieldTypeData.get(i).text();
-                        fieldDescription[i] = fieldsData.get(i).select("div.block").text();
-                        field[i] = fieldsData.get(i).select("a").text();
-                    }
-
-                    for ( int i = 0; i < size; i++ ) {
-                        System.out.println(String.format("%s %s\n%s", fieldTypes[i], field[i], fieldDescription[i]));
-                    }
-
-                }
-
-
-//                else if (summary.select(":contains(Field").size() > 0) {
-//                    System.out.println(summary.text());
-//                }
-            }
-
-        } catch ( IOException ex ) {
-            ex.printStackTrace();
-        }
-    }
 }
