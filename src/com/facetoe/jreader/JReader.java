@@ -12,8 +12,7 @@ import javafx.scene.web.WebView;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -23,26 +22,33 @@ import java.util.Stack;
 
 import static javafx.concurrent.Worker.State.FAILED;
 
-public class SimpleSwingBrowser implements Runnable {
+public class JReader extends JFrame implements Runnable {
     private JFXPanel jfxPanel;
     private WebEngine engine;
 
-    private JFrame frame = new JFrame();
     private JPanel panel = new JPanel(new BorderLayout());
     private JLabel lblStatus = new JLabel();
 
     private JButton btnSearch = new JButton("Search");
     private JButton btnBack = new JButton("Back");
     private JButton btnNext = new JButton("Next");
+    private JButton btnHome = new JButton("Home");
 
     private AutoCompleteTextField txtURL = new AutoCompleteTextField();
     private JProgressBar progressBar = new JProgressBar();
 
     private HashMap<String, String> classes;
 
-    private Stack<String> next = new Stack<String>();
-    private Stack<String> back = new Stack<String>();
-    String currentPage;
+    private Stack<String> nextStack = new Stack<String>();
+    private Stack<String> backStack = new Stack<String>();
+
+    private String currentPage;
+    private String initialURL;
+
+    public JReader(String url) {
+        initialURL = url;
+    }
+
 
     private void initComponents() {
         jfxPanel = new JFXPanel();
@@ -53,12 +59,13 @@ public class SimpleSwingBrowser implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-
                     String path = classes.get(txtURL.getText());
                     if(path != null) {
                         String url = this.getClass().getResource("/com/facetoe/jreader/docs/api/" + path)
                                 .toURI().toURL().toString();
-                        System.out.println(url);
+
+                        nextStack.clear();
+
                         loadURL(url);
                     }
 
@@ -73,16 +80,15 @@ public class SimpleSwingBrowser implements Runnable {
         ActionListener listenerNext = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Next Stack: " + next);
-                if ( !next.empty() ) {
-                    String page = next.pop();
+                if ( !nextStack.empty() ) {
+                    String page = nextStack.pop();
 
-                    if ( page.equalsIgnoreCase(currentPage) && !next.empty() ) {
-                        page = next.pop();
+                    if ( page.equalsIgnoreCase(currentPage) && !nextStack.empty() ) {
+                        page = nextStack.pop();
                     }
 
                     loadURL(page);
-                    back.push(currentPage);
+                    backStack.push(currentPage);
                     currentPage = page;
                 }
             }
@@ -91,16 +97,32 @@ public class SimpleSwingBrowser implements Runnable {
         ActionListener listenerPrev = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if ( !back.empty() ) {
-                    String page = back.pop();
+                if ( !backStack.empty() ) {
+                    String page = backStack.pop();
 
-                    if ( page.equalsIgnoreCase(currentPage) && !back.empty() ) {
-                        page = back.pop();
+                    if ( page.equalsIgnoreCase(currentPage) && !backStack.empty() ) {
+                        page = backStack.pop();
                     }
 
                     loadURL(page);
-                    next.push(currentPage);
+                    nextStack.push(currentPage);
                     currentPage = page;
+
+                }
+            }
+        };
+
+        ActionListener listenerHome = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    loadURL(this.getClass().getResource("/com/facetoe/jreader/docs/index.html").toURI().toURL().toString());
+                    nextStack.clear();
+
+                } catch ( MalformedURLException ex ) {
+                    ex.printStackTrace();
+                } catch ( URISyntaxException ex ) {
+                    ex.printStackTrace();
                 }
             }
         };
@@ -108,6 +130,7 @@ public class SimpleSwingBrowser implements Runnable {
         btnSearch.addActionListener(al);
         btnBack.addActionListener(listenerPrev);
         btnNext.addActionListener(listenerNext);
+        btnHome.addActionListener(listenerHome);
 
         txtURL.addActionListener(al);
 
@@ -135,6 +158,7 @@ public class SimpleSwingBrowser implements Runnable {
         leftBar.add(btnSearch, BorderLayout.EAST);
         rightBar.add(btnBack);
         rightBar.add(btnNext);
+        rightBar.add(btnHome);
 
         topBar.add(leftBar, BorderLayout.WEST);
         topBar.add(rightBar, BorderLayout.EAST);
@@ -151,7 +175,8 @@ public class SimpleSwingBrowser implements Runnable {
         panel.add(jfxPanel, BorderLayout.CENTER);
         panel.add(statusBar, BorderLayout.SOUTH);
 
-        frame.getContentPane().add(panel);
+        this.setTitle("JReader");
+        this.getContentPane().add(panel);
     }
 
     private void createScene() {
@@ -162,18 +187,6 @@ public class SimpleSwingBrowser implements Runnable {
 
                 WebView view = new WebView();
                 engine = view.getEngine();
-
-                engine.titleProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue<? extends String> observable, String oldValue, final String newValue) {
-                        SwingUtilities.invokeLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                frame.setTitle(newValue);
-                            }
-                        });
-                    }
-                });
 
                 engine.setOnStatusChanged(new EventHandler<WebEvent<String>>() {
                     @Override
@@ -194,7 +207,7 @@ public class SimpleSwingBrowser implements Runnable {
                             @Override
                             public void run() {
                                 currentPage = newValue;
-                                back.push(newValue);
+                                backStack.push(newValue);
                             }
                         });
                     }
@@ -265,24 +278,27 @@ public class SimpleSwingBrowser implements Runnable {
     @Override
     public void run() {
 
-        frame.setPreferredSize(new Dimension(1024, 600));
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setPreferredSize(new Dimension(1024, 600));
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         initComponents();
 
         try {
-            loadURL(this.getClass().getResource("/com/facetoe/jreader/docs/api/allclasses-noframe.html").toURI().toURL().toString());
+            loadURL(this.getClass().getResource(initialURL).toURI().toURL().toString());
         } catch ( MalformedURLException ex ) {
             ex.printStackTrace();
         } catch ( URISyntaxException ex ) {
             ex.printStackTrace();
         }
 
-        frame.pack();
-        frame.setVisible(true);
+        this.pack();
+        this.setVisible(true);
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(new SimpleSwingBrowser());
+        //SwingUtilities.invokeLater(new JReader());
+        JReader test = new JReader("/com/facetoe/jreader/docs/index.html");
+        test.run();
     }
 }
+

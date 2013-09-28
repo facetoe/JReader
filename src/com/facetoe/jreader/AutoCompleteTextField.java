@@ -97,11 +97,11 @@ class AutoCompleteTextFieldDocumentFilter extends DocumentFilter {
     /* When a character is removed, remove it from the wordBuffer also */
     public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
         super.remove(fb, offset, length);
-
-        /* If we are still in the wordBuffer then just remove the char */
         if ( offset < wordBuffer.length() && offset >= 0 ) {
-            wordBuffer.deleteCharAt(offset);
-
+            if(length == 1)
+                wordBuffer.deleteCharAt(offset);
+            else
+                wordBuffer.delete(offset, length);
         }
     }
 
@@ -163,7 +163,7 @@ class AutoCompleteTextFieldDocumentFilter extends DocumentFilter {
         if ( !foundWords.isEmpty() ) {
             try {
                 /* Update inputBox with the next word */
-                super.replace(lastFB, 0, lastFB.getDocument().getLength(), nextWord() + " ", lastATTR);
+                super.replace(lastFB, 0, lastFB.getDocument().getLength(), nextWord(), lastATTR);
                 highlightPredictedText();
 
             } catch ( BadLocationException ex ) {
