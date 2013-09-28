@@ -22,11 +22,10 @@ import java.util.Stack;
 
 import static javafx.concurrent.Worker.State.FAILED;
 
-public class JReader extends JFrame implements Runnable {
+public class JReader extends JPanel implements Runnable {
     private JFXPanel jfxPanel;
     private WebEngine engine;
 
-    private JPanel panel = new JPanel(new BorderLayout());
     private JLabel lblStatus = new JLabel();
 
     private JButton btnSearch = new JButton("Search");
@@ -47,6 +46,7 @@ public class JReader extends JFrame implements Runnable {
 
     public JReader(String url) {
         initialURL = url;
+        run();
     }
 
 
@@ -171,12 +171,11 @@ public class JReader extends JFrame implements Runnable {
         statusBar.add(lblStatus, BorderLayout.CENTER);
         statusBar.add(progressBar, BorderLayout.EAST);
 
-        panel.add(topBar, BorderLayout.NORTH);
-        panel.add(jfxPanel, BorderLayout.CENTER);
-        panel.add(statusBar, BorderLayout.SOUTH);
+        this.add(topBar, BorderLayout.NORTH);
+        this.add(jfxPanel, BorderLayout.CENTER);
+        this.add(statusBar, BorderLayout.SOUTH);
 
-        this.setTitle("JReader");
-        this.getContentPane().add(panel);
+        //this.setTitle("JReader");
     }
 
     private void createScene() {
@@ -235,7 +234,7 @@ public class JReader extends JFrame implements Runnable {
                                         @Override
                                         public void run() {
                                             JOptionPane.showMessageDialog(
-                                                    panel,
+                                                    null,
                                                     (value != null) ?
                                                             engine.getLocation() + "\n" + value.getMessage() :
                                                             engine.getLocation() + "\nUnexpected error.",
@@ -278,8 +277,8 @@ public class JReader extends JFrame implements Runnable {
     @Override
     public void run() {
 
-        this.setPreferredSize(new Dimension(1024, 600));
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //this.setPreferredSize(new Dimension(1024, 600));
+        //this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         initComponents();
 
@@ -291,14 +290,39 @@ public class JReader extends JFrame implements Runnable {
             ex.printStackTrace();
         }
 
-        this.pack();
-        this.setVisible(true);
+        //this.pack();
+        //this.setVisible(true);
+    }
+
+//    public static void main(String[] args) {
+//        //SwingUtilities.invokeLater(new JReader());
+//        JReader test = new JReader("/com/facetoe/jreader/docs/index.html");
+//        test.run();
+//    }
+}
+
+class Main {
+    JFrame frame = new JFrame();
+    JTabbedPane tabbedPane = new JTabbedPane();
+    JReader fp = new JReader("/com/facetoe/jreader/docs/index.html");
+
+    public Main() {
+        tabbedPane.add(fp, BorderLayout.CENTER);
+        frame.getContentPane().add(tabbedPane);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setSize(640, 480);
+        frame.pack();
+        //frame.setLocationByPlatform(true);
+        frame.setVisible(true);
     }
 
     public static void main(String[] args) {
-        //SwingUtilities.invokeLater(new JReader());
-        JReader test = new JReader("/com/facetoe/jreader/docs/index.html");
-        test.run();
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new Main();
+            }
+        });
     }
+
 }
 
