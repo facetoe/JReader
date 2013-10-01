@@ -9,6 +9,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.MalformedURLException;
@@ -190,7 +191,11 @@ class JReader extends JFrame {
 
     private AutoCompleteTextField searchBar = new AutoCompleteTextField();
     private JProgressBar progressBar = new JProgressBar();
+    private JTabbedPane tabbedPane = new JTabbedPane();
     private JReaderPanel jPanel;
+    private JReaderPanel jPanel2;
+
+    private JReaderPanel currentTab;
 
     public JReader() {
 
@@ -225,25 +230,26 @@ class JReader extends JFrame {
         statusBar.add(progressBar, BorderLayout.EAST);
 
         jPanel = new JReaderPanel("/com/facetoe/jreader/docs/index.html");
+        jPanel2 = new JReaderPanel("/com/facetoe/jreader/docs/index.html");
 
         btnBack.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                jPanel.back();
+                currentTab.back();
             }
         });
 
         btnNext.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                jPanel.next();
+                currentTab.next();
             }
         });
 
         btnHome.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                jPanel.home();
+                currentTab.home();
             }
         });
 
@@ -261,10 +267,19 @@ class JReader extends JFrame {
             }
         });
 
+        tabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                currentTab = (JReaderPanel)tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
+            }
+        });
 
+
+        tabbedPane.addTab("Test", jPanel);
+        tabbedPane.add("Pane2", jPanel2);
 
         add(topBar, BorderLayout.NORTH);
-        add(jPanel, BorderLayout.CENTER);
+        add(tabbedPane, BorderLayout.CENTER);
         add(statusBar, BorderLayout.SOUTH);
 
         setPreferredSize(new Dimension(1024, 600));
@@ -272,8 +287,8 @@ class JReader extends JFrame {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        setVisible(true);
         initAutocompleteTextField();
+        setVisible(true);
     }
 
     private void loadClass(String className) {
@@ -283,7 +298,7 @@ class JReader extends JFrame {
                 System.out.println(path);
                 String url = this.getClass().getResource("/com/facetoe/jreader/docs/api/" + path)
                         .toURI().toURL().toString();
-                jPanel.loadURL(url);
+                currentTab.loadURL(url);
             }
 
         } catch ( URISyntaxException ex ) {
