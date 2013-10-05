@@ -7,7 +7,6 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -98,7 +97,7 @@ class AutoCompleteTextFieldDocumentFilter extends DocumentFilter {
     public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
         super.remove(fb, offset, length);
         if ( offset < wordBuffer.length() && offset >= 0 ) {
-            if(length == 1)
+            if ( length == 1 )
                 wordBuffer.deleteCharAt(offset);
             else
                 wordBuffer.delete(offset, length);

@@ -3,15 +3,13 @@ package com.facetoe.jreader;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
+import org.fife.ui.rtextarea.SearchContext;
+import org.fife.ui.rtextarea.SearchEngine;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 /**
  * Created with IntelliJ IDEA.
@@ -23,6 +21,7 @@ import java.nio.file.Paths;
 public class JSourcePane extends JPanel {
     RSyntaxTextArea textArea;
     RTextScrollPane scrollPane;
+    SearchContext context = new SearchContext();
 
     public JSourcePane(String filePath) {
         textArea = new RSyntaxTextArea();
@@ -38,15 +37,15 @@ public class JSourcePane extends JPanel {
         add(scrollPane);
 
         try {
-            String code = readFile(filePath, StandardCharsets.UTF_8);
+            String code = Utilities.readFile(filePath, StandardCharsets.UTF_8);
             textArea.setText(code);
         } catch ( IOException e ) {
             e.printStackTrace();
         }
     }
 
-    private static String readFile(String path, Charset encoding) throws IOException {
-        byte[] encoded = Files.readAllBytes(Paths.get(path));
-        return encoding.decode(ByteBuffer.wrap(encoded)).toString();
+    public void findString(String text) {
+        context.setSearchFor(text);
+        SearchEngine.find(textArea, context);
     }
 }

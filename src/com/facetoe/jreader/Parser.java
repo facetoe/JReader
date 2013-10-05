@@ -17,16 +17,14 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
 
 
 public class Parser extends SwingWorker<JavaClassData, String> {
 
     public HashMap<String, String> classes = new HashMap<String, String>();
     public HashMap<String, HashMap<String, String>> allClassData = new HashMap<String, HashMap<String, String>>();
-    private String basePath = Config.getEntry("basePath");
-    private String classFile = Config.getEntry("classFile");
+    private String basePath = Config.getEntry("docDir") + File.separator + "api" + File.separator;
+    private String classFile = "allclasses-noframe.html";
     private JLabel classLabel;
     private JLabel statusLabel;
     private JFrame jFrame;
@@ -190,7 +188,7 @@ class ParserWindow extends JFrame {
 
         getContentPane().add(panel, BorderLayout.NORTH);
         setPreferredSize(new Dimension(550, 72));
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         pack();
         setVisible(true);
         parser = new Parser(lblProgress, lblTitle, this);
@@ -211,7 +209,7 @@ class ParserWindow extends JFrame {
 //        } catch ( ExecutionException e ) {
 //            e.printStackTrace();
 //        } catch ( CancellationException e ) {
-//            System.out.println("Handle Cancel Here!"); //          //
+//            System.out.println("Handle Cancel Here!");
 //        }
 //    }
 

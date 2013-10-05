@@ -4,36 +4,26 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.JFXPanel;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import jsyntaxpane.DefaultSyntaxKit;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.text.BadLocationException;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Scanner;
 import java.util.Stack;
 
 import static javafx.concurrent.Worker.State.FAILED;
 
-public class JReaderPanel extends JFXPanel implements Runnable {
+public class JReaderPanel extends JPanel implements Runnable {
     private WebEngine engine;
+    private JFXPanel jfxPanel;
     private JProgressBar progressBar;
     private Stack<String> nextStack = new Stack<String>();
     private Stack<String> backStack = new Stack<String>();
@@ -42,14 +32,17 @@ public class JReaderPanel extends JFXPanel implements Runnable {
 
 
     public JReaderPanel(String url, JProgressBar jProgressBar) {
-        initialURL = url;
-        progressBar = jProgressBar;
-        run();
+        init(url, jProgressBar);
     }
 
     public JReaderPanel(JProgressBar jProgressBar) {
+        init(Config.getEntry("docDir") + File.separator + "index.html", jProgressBar);
+    }
+
+    private void init(String url, JProgressBar jProgressBar) {
+        initialURL = url;
         progressBar = jProgressBar;
-        initialURL = Config.getEntry("basePath") + Config.getEntry("classFile");
+        jfxPanel = new JFXPanel();
         run();
     }
 
@@ -74,6 +67,31 @@ public class JReaderPanel extends JFXPanel implements Runnable {
 
                 final WebView view = new WebView();
                 view.setContextMenuEnabled(false);
+
+                final ContextMenu menu = new ContextMenu();
+                javafx.scene.control.MenuItem item = new javafx.scene.control.MenuItem("New Tab");
+                item.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+                    @Override
+                    public void handle(javafx.event.ActionEvent actionEvent) {
+                        System.out.println("You clicked me bitch");
+                    }
+                });
+
+                menu.getItems().add(item);
+                view.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+                    @Override
+                    public void handle(MouseEvent mouse) {
+                        if ( mouse.getButton() == MouseButton.SECONDARY ) {
+                            //add some menu items here
+                            menu.show(view, mouse.getScreenX(), mouse.getScreenY());
+                        } else {
+                            if ( menu != null ) {
+                                menu.hide();
+                            }
+                        }
+                    }
+                });
 
                 engine = view.getEngine();
 
@@ -120,7 +138,8 @@ public class JReaderPanel extends JFXPanel implements Runnable {
                             }
                         });
 
-                setScene(new Scene(view));
+                jfxPanel.setScene(new Scene(view));
+                add(jfxPanel);
             }
         });
     }
@@ -155,7 +174,7 @@ public class JReaderPanel extends JFXPanel implements Runnable {
     }
 
     public void home() {
-        loadURL(Config.getEntry("basePath") + Config.getEntry("classFile"));
+        loadURL(Config.getEntry("docDir") + File.separator + "index.html");
         nextStack.clear();
     }
 
@@ -180,216 +199,3 @@ public class JReaderPanel extends JFXPanel implements Runnable {
     }
 }
 
-class JReader extends JFrame {
-
-    private JLabel lblStatus = new JLabel();
-    private JButton btnSearch = new JButton("Search");
-    private JButton btnBack = new JButton("Back");
-    private JButton btnNext = new JButton("Next");
-    private JButton btnHome = new JButton("Home");
-    private JButton btnTest = new JButton("Test");
-    private HashMap<String, String> classes;
-    private AutoCompleteTextField searchBar = new AutoCompleteTextField();
-    private JProgressBar progressBar = new JProgressBar();
-    private JTabbedPane tabbedPane = new JTabbedPane();
-    private JReaderPanel jPanel;
-    private JSourcePane jPanel2;
-    private JReaderPanel currentTab;
-
-    public JReader() {
-
-        progressBar.setPreferredSize(new Dimension(150, 18));
-        progressBar.setStringPainted(true);
-
-
-        /* You create 3 panels, left, right and top. The components go into the left and
-           right panels with their own layout manager and they both go in the top panel.
-         */
-        JPanel topBar = new JPanel(new BorderLayout(5, 0));
-        JPanel leftBar = new JPanel(new BorderLayout());
-        JPanel rightBar = new JPanel(new FlowLayout());
-
-        searchBar.setPreferredSize(new Dimension(500, 15));
-
-        leftBar.add(searchBar, BorderLayout.WEST);
-        leftBar.add(btnSearch, BorderLayout.EAST);
-        rightBar.add(btnBack);
-        rightBar.add(btnNext);
-        rightBar.add(btnHome);
-        rightBar.add(btnTest);
-
-        topBar.add(leftBar, BorderLayout.WEST);
-        topBar.add(rightBar, BorderLayout.EAST);
-        topBar.setBorder(BorderFactory.createEmptyBorder(3, 5, 3, 5));
-
-
-        JPanel statusBar = new JPanel(new BorderLayout(5, 0));
-        statusBar.setBorder(BorderFactory.createEmptyBorder(3, 5, 3, 5));
-        statusBar.add(lblStatus, BorderLayout.CENTER);
-        statusBar.add(progressBar, BorderLayout.EAST);
-
-        jPanel = new JReaderPanel(progressBar);
-        jPanel2 = new JSourcePane("/home/facetoe/tmp/src-jdk/java/io/FileOutputStream.java");
-
-        btnBack.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                currentTab.back();
-            }
-        });
-
-        btnNext.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                currentTab.next();
-            }
-        });
-
-        btnHome.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                currentTab.home();
-            }
-        });
-
-        btnSearch.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                loadClass(searchBar.getText());
-            }
-        });
-
-        btnTest.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-//                JViewport viewport = jPanel2.getViewport();
-//                JEditorPane editorPane = ( JEditorPane ) viewport.getView();
-//
-//                Scanner scanner = new Scanner(editorPane.getText());
-//                int line;
-//
-//                for ( line = 0; scanner.hasNextLine() && !scanner.nextLine().contains("public class Main"); line++ ) {
-//
-//                }
-//
-//                try {
-//                    editorPane.scrollRectToVisible(editorPane.modelToView((
-//                            editorPane.getDocument()).getDefaultRootElement().getElement(line).getStartOffset()));
-//                } catch ( BadLocationException ex ) {
-//                    ex.printStackTrace();
-//                }
-
-            }
-        });
-
-        searchBar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                loadClass(searchBar.getText());
-            }
-        });
-
-        tabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                if ( tabbedPane.getComponentAt(tabbedPane.getSelectedIndex()) instanceof JReaderPanel ) {
-                    currentTab = ( JReaderPanel ) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
-                }
-            }
-        });
-
-        tabbedPane.addTab("Test", jPanel);
-        tabbedPane.add(jPanel2, BorderLayout.CENTER);
-
-        add(topBar, BorderLayout.NORTH);
-        add(tabbedPane, BorderLayout.CENTER);
-        add(statusBar, BorderLayout.SOUTH);
-
-        setPreferredSize(new Dimension(1024, 600));
-        setSize(1024, 600);
-
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        //initAutocompleteTextField();
-        setTitle("Jreader");
-        setVisible(true);
-    }
-
-    private void loadClass(String className) {
-        try {
-            String path = classes.get(className);
-            if ( path != null ) {
-                System.out.println(path);
-                String url = this.getClass().getResource(Config.getEntry("basePath") + path)
-                        .toURI().toURL().toString();
-                currentTab.loadURL(url);
-            }
-
-        } catch ( URISyntaxException ex ) {
-            ex.printStackTrace();
-        } catch ( MalformedURLException ex ) {
-            ex.printStackTrace();
-        }
-    }
-
-    private void initAutocompleteTextField() {
-        //Parser p = new Parser(null);
-        //TODO Fix this
-        String html = getFileAsString("/com/facetoe/jreader/docs/api/allclasses-noframe.html");
-        //classes = Parser.parse(html);
-
-        ArrayList<String> test = new ArrayList<String>(classes.keySet());
-        searchBar.addWordsToTrie(test);
-    }
-
-    public String getFileAsString(String path) {
-
-        InputStream f = this.getClass().getResourceAsStream(path);
-
-        int ch;
-        StringBuilder builder = new StringBuilder();
-
-        try {
-            while ( (ch = f.read()) != -1 ) {
-                builder.append(( char ) ch);
-            }
-
-            return builder.toString();
-
-        } catch ( IOException ex ) {
-            ex.printStackTrace();
-        }
-        return "";
-    }
-
-    private JScrollPane getSourcePane(String filePath) {
-        final JEditorPane codePane = new JEditorPane();
-        JScrollPane scrollPane = new JScrollPane(codePane);
-        DefaultSyntaxKit.initKit();
-
-        codePane.setFont(new Font("Segoe Script", Font.PLAIN, 30));
-        codePane.setLayout(new BorderLayout());
-        codePane.setContentType("text/java");
-
-        String code = null;
-        try {
-            code = readFile("/home/facetoe/tmp/src-jdk/java/io/FileReader.java", StandardCharsets.UTF_8);
-        } catch ( IOException e ) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        codePane.setText(code);
-        return scrollPane;
-    }
-
-    static String readFile(String path, Charset encoding)
-            throws IOException
-    {
-        byte[] encoded = Files.readAllBytes(Paths.get(path));
-        return encoding.decode(ByteBuffer.wrap(encoded)).toString();
-    }
-
-    public static void main(String[] args) {
-        new JReader();
-
-    }
-}
