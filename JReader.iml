@@ -9,6 +9,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="jsoup-1.7.2" level="project" />
     <orderEntry type="library" name="jsyntaxpane-0.9.5-b29" level="project" />
+    <orderEntry type="library" name="rsyntaxtextarea" level="project" />
   </component>
 </module>
 

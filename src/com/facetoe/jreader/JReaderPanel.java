@@ -47,6 +47,12 @@ public class JReaderPanel extends JFXPanel implements Runnable {
         run();
     }
 
+    public JReaderPanel(JProgressBar jProgressBar) {
+        progressBar = jProgressBar;
+        initialURL = Config.getEntry("basePath") + Config.getEntry("classFile");
+        run();
+    }
+
     private static String toURL(String str) {
         try {
             return new URL(str).toExternalForm();
@@ -149,15 +155,8 @@ public class JReaderPanel extends JFXPanel implements Runnable {
     }
 
     public void home() {
-        try {
-            loadURL(this.getClass().getResource("/com/facetoe/jreader/docs/index.html").toURI().toURL().toString());
-            nextStack.clear();
-
-        } catch ( MalformedURLException ex ) {
-            ex.printStackTrace();
-        } catch ( URISyntaxException ex ) {
-            ex.printStackTrace();
-        }
+        loadURL(Config.getEntry("basePath") + Config.getEntry("classFile"));
+        nextStack.clear();
     }
 
     public void loadURL(final String url) {
@@ -169,7 +168,6 @@ public class JReaderPanel extends JFXPanel implements Runnable {
                 if ( tmp == null ) {
                     tmp = toURL("file://" + url);
                 }
-
                 engine.load(tmp);
             }
         });
@@ -178,14 +176,7 @@ public class JReaderPanel extends JFXPanel implements Runnable {
     @Override
     public void run() {
         initComponents();
-
-        try {
-            loadURL(this.getClass().getResource(initialURL).toURI().toURL().toString());
-        } catch ( MalformedURLException ex ) {
-            ex.printStackTrace();
-        } catch ( URISyntaxException ex ) {
-            ex.printStackTrace();
-        }
+        loadURL(initialURL);
     }
 }
 
@@ -202,7 +193,7 @@ class JReader extends JFrame {
     private JProgressBar progressBar = new JProgressBar();
     private JTabbedPane tabbedPane = new JTabbedPane();
     private JReaderPanel jPanel;
-    private JScrollPane jPanel2;
+    private JSourcePane jPanel2;
     private JReaderPanel currentTab;
 
     public JReader() {
@@ -229,7 +220,6 @@ class JReader extends JFrame {
 
         topBar.add(leftBar, BorderLayout.WEST);
         topBar.add(rightBar, BorderLayout.EAST);
-
         topBar.setBorder(BorderFactory.createEmptyBorder(3, 5, 3, 5));
 
 
@@ -238,8 +228,8 @@ class JReader extends JFrame {
         statusBar.add(lblStatus, BorderLayout.CENTER);
         statusBar.add(progressBar, BorderLayout.EAST);
 
-        jPanel = new JReaderPanel("/com/facetoe/jreader/docs/index.html", progressBar);
-        jPanel2 = getSourcePane("/home/facetoe/tmp/oldParse.java");
+        jPanel = new JReaderPanel(progressBar);
+        jPanel2 = new JSourcePane("/home/facetoe/tmp/src-jdk/java/io/FileOutputStream.java");
 
         btnBack.addActionListener(new ActionListener() {
             @Override
@@ -272,22 +262,22 @@ class JReader extends JFrame {
         btnTest.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JViewport viewport = jPanel2.getViewport();
-                JEditorPane editorPane = ( JEditorPane ) viewport.getView();
-
-                Scanner scanner = new Scanner(editorPane.getText());
-                int line;
-
-                for ( line = 0; scanner.hasNextLine() && !scanner.nextLine().contains("public class Main"); line++ ) {
-
-                }
-
-                try {
-                    editorPane.scrollRectToVisible(editorPane.modelToView((
-                            editorPane.getDocument()).getDefaultRootElement().getElement(line).getStartOffset()));
-                } catch ( BadLocationException ex ) {
-                    ex.printStackTrace();
-                }
+//                JViewport viewport = jPanel2.getViewport();
+//                JEditorPane editorPane = ( JEditorPane ) viewport.getView();
+//
+//                Scanner scanner = new Scanner(editorPane.getText());
+//                int line;
+//
+//                for ( line = 0; scanner.hasNextLine() && !scanner.nextLine().contains("public class Main"); line++ ) {
+//
+//                }
+//
+//                try {
+//                    editorPane.scrollRectToVisible(editorPane.modelToView((
+//                            editorPane.getDocument()).getDefaultRootElement().getElement(line).getStartOffset()));
+//                } catch ( BadLocationException ex ) {
+//                    ex.printStackTrace();
+//                }
 
             }
         });
@@ -309,7 +299,7 @@ class JReader extends JFrame {
         });
 
         tabbedPane.addTab("Test", jPanel);
-        tabbedPane.add("Pane2", jPanel2);
+        tabbedPane.add(jPanel2, BorderLayout.CENTER);
 
         add(topBar, BorderLayout.NORTH);
         add(tabbedPane, BorderLayout.CENTER);
@@ -330,7 +320,7 @@ class JReader extends JFrame {
             String path = classes.get(className);
             if ( path != null ) {
                 System.out.println(path);
-                String url = this.getClass().getResource("/com/facetoe/jreader/docs/api/" + path)
+                String url = this.getClass().getResource(Config.getEntry("basePath") + path)
                         .toURI().toURL().toString();
                 currentTab.loadURL(url);
             }
@@ -344,6 +334,7 @@ class JReader extends JFrame {
 
     private void initAutocompleteTextField() {
         //Parser p = new Parser(null);
+        //TODO Fix this
         String html = getFileAsString("/com/facetoe/jreader/docs/api/allclasses-noframe.html");
         //classes = Parser.parse(html);
 
@@ -380,22 +371,25 @@ class JReader extends JFrame {
         codePane.setLayout(new BorderLayout());
         codePane.setContentType("text/java");
 
-        codePane.setText(readFile(filePath, StandardCharsets.UTF_8));
+        String code = null;
+        try {
+            code = readFile("/home/facetoe/tmp/src-jdk/java/io/FileReader.java", StandardCharsets.UTF_8);
+        } catch ( IOException e ) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        codePane.setText(code);
         return scrollPane;
     }
 
-    public String readFile(String path, Charset encoding) {
-        try {
-            byte[] encoded = Files.readAllBytes(Paths.get(path));
-            return encoding.decode(ByteBuffer.wrap(encoded)).toString();
-        } catch ( IOException ex ) {
-            ex.printStackTrace();
-        }
-        return null;
+    static String readFile(String path, Charset encoding)
+            throws IOException
+    {
+        byte[] encoded = Files.readAllBytes(Paths.get(path));
+        return encoding.decode(ByteBuffer.wrap(encoded)).toString();
     }
-//
-//    public static void main(String[] args) {
-//        new JReader();
-//
-//    }
+
+    public static void main(String[] args) {
+        new JReader();
+
+    }
 }

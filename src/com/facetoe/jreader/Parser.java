@@ -8,6 +8,8 @@ import org.jsoup.select.Elements;
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -15,6 +17,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
 
@@ -25,10 +28,12 @@ public class Parser extends SwingWorker<JavaClassData, String> {
     private String basePath = Config.getEntry("basePath");
     private String classFile = Config.getEntry("classFile");
     private JLabel classLabel;
+    private JLabel statusLabel;
     private JFrame jFrame;
 
-    public Parser(JLabel label, JFrame frame) {
-        classLabel = label;
+    public Parser(JLabel cLabel, JLabel sLabel, JFrame frame) {
+        classLabel = cLabel;
+        statusLabel = sLabel;
         jFrame = frame;
     }
 
@@ -85,6 +90,7 @@ public class Parser extends SwingWorker<JavaClassData, String> {
     @Override
     protected void process(List<String> chunks) {
         classLabel.setText(chunks.get(chunks.size() - 1));
+        statusLabel.setText("Parsing Class: ");
     }
 
     @Override
@@ -146,20 +152,32 @@ class JavaClassData implements Serializable {
 class ParserWindow extends JFrame {
     JPanel panel = new JPanel();
     JLabel lblProgress = new JLabel();
-    JLabel lblTitle = new JLabel("Parsing Class: ");
+    JButton btnStart = new JButton("Cancel");
+    JLabel lblTitle = new JLabel("Loading...");
     JProgressBar progressBar = new JProgressBar();
     public Parser parser;
 
     public ParserWindow() {
+
+        btnStart.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                parser.cancel(true);
+            }
+        });
+
         panel.setLayout(new BorderLayout(10, 10));
         panel.add(lblTitle, BorderLayout.WEST);
         panel.add(lblProgress, BorderLayout.CENTER);
         panel.add(progressBar, BorderLayout.NORTH);
-        panel.setBorder(new CompoundBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10), BorderFactory.createLineBorder(Color.BLACK)));
+        panel.add(btnStart, BorderLayout.EAST);
+        panel.setBorder(new CompoundBorder(BorderFactory.createEtchedBorder(), BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+
         setTitle("JReader");
+        setResizable(false);
 
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         } catch ( ClassNotFoundException e ) {
             e.printStackTrace();
         } catch ( InstantiationException e ) {
@@ -171,26 +189,31 @@ class ParserWindow extends JFrame {
         }
 
         getContentPane().add(panel, BorderLayout.NORTH);
-        setPreferredSize(new Dimension(450, 100));
+        setPreferredSize(new Dimension(550, 72));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();
         setVisible(true);
-        parser = new Parser(lblProgress, this);
+        parser = new Parser(lblProgress, lblTitle, this);
         parser.addPropertyChangeListener(new MyProgressListener(progressBar, this));
         parser.execute();
     }
 
-    public static void main(String[] args) {
-        final ParserWindow parserWindow = new ParserWindow();
-        try {
-            JavaClassData data = parserWindow.parser.get();
-
-        } catch ( InterruptedException e ) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch ( ExecutionException e ) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-    }
+//    public static void main(String[] args) {
+//        final ParserWindow parserWindow = new ParserWindow();
+//        try {
+//            long startTime = System.nanoTime();
+//            JavaClassData data = parserWindow.parser.get();
+//            long estimatedTime = System.nanoTime() - startTime;
+//
+//            System.out.println(String.format("Parsed %d classes in %f seconds", data.getAllClassData().size(), estimatedTime/1000000000.0));
+//        } catch ( InterruptedException e ) {
+//            e.printStackTrace();
+//        } catch ( ExecutionException e ) {
+//            e.printStackTrace();
+//        } catch ( CancellationException e ) {
+//            System.out.println("Handle Cancel Here!"); //          //
+//        }
+//    }
 
 
 }
