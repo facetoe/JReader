@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -17,6 +18,8 @@ class JReader extends JFrame implements Runnable {
     private JButton btnNext = new JButton("Next");
     private JButton btnHome = new JButton("Home");
     private JButton btnTest = new JButton("Test");
+
+    private JavaClassData allClassData;
 
     private HashMap<String, String> classes;
     private AutoCompleteTextField searchBar = new AutoCompleteTextField();
@@ -44,6 +47,24 @@ class JReader extends JFrame implements Runnable {
 
         if ( !JReaderSetup.isSetup() )
             JReaderSetup.setup();
+
+
+        try {
+            allClassData = Utilities.readClassData(new File(Config.getEntry("classDataFile")));
+        } catch ( IOException e ) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Failed to load class data at" + Config.getEntry("classDataFile"),
+                    "Fatal Error",
+                    JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+
+        } catch ( ClassNotFoundException e ) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Failed to load class data at" + Config.getEntry("classDataFile"),
+                    "Fatal Error",
+                    JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        }
 
         progressBar.setPreferredSize(new Dimension(150, 18));
         progressBar.setStringPainted(true);
@@ -169,11 +190,7 @@ class JReader extends JFrame implements Runnable {
     }
 
     private void initAutocompleteTextField() {
-        //Parser p = new Parser(null);
-        //TODO Fix this
-        //String html = getFileAsString("/com/facetoe/jreader/docs/api/allclasses-noframe.html");
-        //classes = Parser.parse(html);
-
+        classes = allClassData.getClasses();
         ArrayList<String> test = new ArrayList<String>(classes.keySet());
         searchBar.addWordsToTrie(test);
     }
@@ -184,7 +201,7 @@ class JReader extends JFrame implements Runnable {
         setSize(1024, 600);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        //initAutocompleteTextField();
+        initAutocompleteTextField();
         setTitle("Jreader");
         setVisible(true);
     }
