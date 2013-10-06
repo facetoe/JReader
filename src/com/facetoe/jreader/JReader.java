@@ -1,5 +1,8 @@
 package com.facetoe.jreader;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import java.awt.*;
@@ -24,7 +27,7 @@ class JReader extends JFrame implements Runnable {
     private HashMap<String, String> classes;
     private AutoCompleteTextField searchBar = new AutoCompleteTextField();
     private JProgressBar progressBar = new JProgressBar();
-    private JTabbedPane tabbedPane = new JTabbedPane();
+    private final JTabbedPane tabbedPane = new JTabbedPane();
 
     private JPanel currentTab;
     private int currentTabIndex = 0;
@@ -32,18 +35,6 @@ class JReader extends JFrame implements Runnable {
     private ArrayList<JPanel> tabs = new ArrayList<JPanel>();
 
     public JReader() {
-
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch ( ClassNotFoundException e ) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch ( InstantiationException e ) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch ( IllegalAccessException e ) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch ( UnsupportedLookAndFeelException e ) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
 
         if ( !JReaderSetup.isSetup() )
             JReaderSetup.setup();
@@ -99,34 +90,24 @@ class JReader extends JFrame implements Runnable {
         btnBack.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                try {
-                    JReaderPanel jReaderPanel = ( JReaderPanel ) currentTab;
-                    jReaderPanel.back();
-                } catch ( ClassCastException ex ) {
-                }
+                JReaderPanel jReaderPanel = ( JReaderPanel ) currentTab;
+                jReaderPanel.back();
             }
         });
 
         btnNext.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    JReaderPanel jReaderPanel = ( JReaderPanel ) currentTab;
-                    jReaderPanel.next();
-                } catch ( ClassCastException ex ) {
-                }
+                JReaderPanel jReaderPanel = ( JReaderPanel ) currentTab;
+                jReaderPanel.next();
             }
         });
 
         btnHome.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    JReaderPanel jReaderPanel = ( JReaderPanel ) currentTab;
-                    jReaderPanel.home();
-                } catch ( ClassCastException ex ) {
-                }
+                JReaderPanel jReaderPanel = ( JReaderPanel ) currentTab;
+                jReaderPanel.home();
             }
         });
 
@@ -140,12 +121,8 @@ class JReader extends JFrame implements Runnable {
         btnTest.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    JSourcePane jSourcePane = ( JSourcePane ) currentTab;
-                    jSourcePane.findString("a");
-                } catch ( ClassCastException ex ) {
-                }
-
+                JSourcePanel jSourcePane = ( JSourcePanel ) currentTab;
+                jSourcePane.findString("a");
             }
         });
 
@@ -159,12 +136,31 @@ class JReader extends JFrame implements Runnable {
         tabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
+                if ( tabbedPane.getComponentAt(tabbedPane.getSelectedIndex()) instanceof JSourcePanel ) {
+                    disableButtons();
+                } else {
+                    enableButtons();
+                }
                 currentTab = ( JPanel ) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
             }
         });
 
         JReaderPanel readerPanel = new JReaderPanel(progressBar);
-        JSourcePane sourcePane = new JSourcePane("/home/facetoe/tmp/src-jdk/java/io/FileOutputStream.java");
+        JSourcePanel sourcePane = new JSourcePanel("/home/facetoe/tmp/src-jdk/java/io/FileOutputStream.java");
+
+        readerPanel.getEngine().locationProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, final String oldVal, final String newVal) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        if ( newVal.endsWith(".java") ) {
+                           newSourceTab(newVal.replaceAll("file:\\/\\/", ""));
+                        }
+                    }
+                });
+            }
+        });
 
         tabs.add(readerPanel);
         tabs.add(sourcePane);
@@ -189,6 +185,27 @@ class JReader extends JFrame implements Runnable {
         }
     }
 
+    private void newSourceTab(String filePath) {
+        String[] parts = filePath.split("\\/");
+        String title = parts[parts.length - 1];
+        JSourcePanel newTab = new JSourcePanel(filePath);
+        tabbedPane.add(title, newTab);
+        tabbedPane.setSelectedComponent(newTab);
+        disableButtons();
+    }
+
+    private void disableButtons() {
+        btnBack.setEnabled(false);
+        btnNext.setEnabled(false);
+        btnHome.setEnabled(false);
+    }
+
+    private void enableButtons() {
+        btnBack.setEnabled(true);
+        btnNext.setEnabled(true);
+        btnHome.setEnabled(true);
+    }
+
     private void initAutocompleteTextField() {
         classes = allClassData.getClasses();
         ArrayList<String> test = new ArrayList<String>(classes.keySet());
@@ -207,6 +224,18 @@ class JReader extends JFrame implements Runnable {
     }
 
     public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch ( ClassNotFoundException e ) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch ( InstantiationException e ) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch ( IllegalAccessException e ) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch ( UnsupportedLookAndFeelException e ) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
         new JReader().run();
     }
 }

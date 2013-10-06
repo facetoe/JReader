@@ -3,6 +3,7 @@ package com.facetoe.jreader;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Worker;
 import javafx.embed.swing.JFXPanel;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -11,9 +12,14 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import org.w3c.dom.Element;
+import org.w3c.dom.events.*;
 
 import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import java.awt.*;
+import java.awt.Event;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -21,7 +27,7 @@ import java.util.Stack;
 
 import static javafx.concurrent.Worker.State.FAILED;
 
-public class JReaderPanel extends JPanel implements Runnable {
+public class JReaderPanel extends JPanel implements Runnable, HyperlinkListener {
     private WebEngine engine;
     private JFXPanel jfxPanel;
     private JProgressBar progressBar;
@@ -179,6 +185,7 @@ public class JReaderPanel extends JPanel implements Runnable {
     }
 
     public void loadURL(final String url) {
+        System.out.println("Loading: " + url);
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -190,6 +197,15 @@ public class JReaderPanel extends JPanel implements Runnable {
                 engine.load(tmp);
             }
         });
+    }
+
+    public WebEngine getEngine() {
+        return engine;
+    }
+
+    @Override
+    public void hyperlinkUpdate(HyperlinkEvent e) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
