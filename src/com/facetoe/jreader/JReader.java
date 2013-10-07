@@ -307,50 +307,19 @@ class JReader extends JFrame implements Runnable {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch ( ClassNotFoundException e ) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         } catch ( InstantiationException e ) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         } catch ( IllegalAccessException e ) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         } catch ( UnsupportedLookAndFeelException e ) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
 
         new JReader().run();
     }
 }
 
-class MyCloseActionHandler implements ActionListener {
-
-    JTabbedPane tabPane;
-    private String tabName;
-
-
-    public MyCloseActionHandler(String tabName, JTabbedPane tabbedPane) {
-        this.tabPane = tabbedPane;
-        this.tabName = tabName;
-    }
-
-    public String getTabName() {
-        return tabName;
-    }
-
-    public void actionPerformed(ActionEvent evt) {
-
-        int index = tabPane.indexOfTab(getTabName());
-        System.out.println(index);
-
-        if ( index >= 0 ) {
-            System.out.println("called with: " + tabName);
-            tabPane.removeTabAt(index);
-
-            // It would probably be worthwhile getting the source
-            // casting it back to a JButton and removing
-            // the action handler reference ;)
-
-        }
-    }
-}
 
 
 
