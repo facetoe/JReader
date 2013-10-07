@@ -27,7 +27,7 @@ import java.util.Stack;
 
 import static javafx.concurrent.Worker.State.FAILED;
 
-public class JReaderPanel extends JPanel implements Runnable, HyperlinkListener {
+public class JReaderPanel extends JPanel implements Runnable {
     private WebEngine engine;
     private JFXPanel jfxPanel;
     private JProgressBar progressBar;
@@ -73,31 +73,6 @@ public class JReaderPanel extends JPanel implements Runnable, HyperlinkListener 
 
                 final WebView view = new WebView();
                 view.setContextMenuEnabled(false);
-
-                final ContextMenu menu = new ContextMenu();
-                javafx.scene.control.MenuItem item = new javafx.scene.control.MenuItem("New Tab");
-                item.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-                    @Override
-                    public void handle(javafx.event.ActionEvent actionEvent) {
-                        System.out.println("You clicked me bitch");
-                    }
-                });
-
-                menu.getItems().add(item);
-                view.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-                    @Override
-                    public void handle(MouseEvent mouse) {
-                        if ( mouse.getButton() == MouseButton.SECONDARY ) {
-                            //add some menu items here
-                            menu.show(view, mouse.getScreenX(), mouse.getScreenY());
-                        } else {
-                            if ( menu != null ) {
-                                menu.hide();
-                            }
-                        }
-                    }
-                });
 
                 engine = view.getEngine();
 
@@ -203,9 +178,8 @@ public class JReaderPanel extends JPanel implements Runnable, HyperlinkListener 
         return engine;
     }
 
-    @Override
-    public void hyperlinkUpdate(HyperlinkEvent e) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public JFXPanel getJFXPanel() {
+        return jfxPanel;
     }
 
     @Override

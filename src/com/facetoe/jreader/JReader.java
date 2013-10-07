@@ -1,5 +1,6 @@
 package com.facetoe.jreader;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
@@ -8,12 +9,14 @@ import javax.swing.event.ChangeEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-class JReader extends JFrame implements Runnable {
+class JReader extends JFrame {
 
     private JLabel lblStatus = new JLabel();
     private JButton btnSearch = new JButton("Search");
@@ -36,30 +39,6 @@ class JReader extends JFrame implements Runnable {
 
     public JReader() {
 
-        if ( !JReaderSetup.isSetup() )
-            JReaderSetup.setup();
-
-
-        try {
-            allClassData = Utilities.readClassData(new File(Config.getEntry("classDataFile")));
-        } catch ( IOException e ) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Failed to load class data at" + Config.getEntry("classDataFile"),
-                    "Fatal Error",
-                    JOptionPane.ERROR_MESSAGE);
-            System.exit(1);
-
-        } catch ( ClassNotFoundException e ) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Failed to load class data at" + Config.getEntry("classDataFile"),
-                    "Fatal Error",
-                    JOptionPane.ERROR_MESSAGE);
-            System.exit(1);
-        }
-
-        progressBar.setPreferredSize(new Dimension(150, 18));
-        progressBar.setStringPainted(true);
-
 
         /* You create 3 panels, left, right and top. The components go into the left and
            right panels with their own layout manager and they both go in the top panel.
@@ -69,6 +48,8 @@ class JReader extends JFrame implements Runnable {
         JPanel rightBar = new JPanel(new FlowLayout());
 
         searchBar.setPreferredSize(new Dimension(500, 15));
+        progressBar.setPreferredSize(new Dimension(150, 18));
+        progressBar.setStringPainted(true);
 
         leftBar.add(searchBar, BorderLayout.WEST);
         leftBar.add(btnSearch, BorderLayout.EAST);
@@ -145,33 +126,39 @@ class JReader extends JFrame implements Runnable {
             }
         });
 
-        JReaderPanel readerPanel = new JReaderPanel(progressBar);
-        JSourcePanel sourcePane = new JSourcePanel("/home/facetoe/tmp/src-jdk/java/io/FileOutputStream.java");
-
-        readerPanel.getEngine().locationProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observableValue, final String oldVal, final String newVal) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if ( newVal.endsWith(".java") ) {
-                           newSourceTab(newVal.replaceAll("file:\\/\\/", ""));
-                        }
-                    }
-                });
-            }
-        });
-
-        tabs.add(readerPanel);
-        tabs.add(sourcePane);
-
-        tabbedPane.addTab("Test", readerPanel);
-        tabbedPane.add(sourcePane, BorderLayout.CENTER);
-
+        newJReaderTab();
         add(topBar, BorderLayout.NORTH);
         add(tabbedPane, BorderLayout.CENTER);
         add(statusBar, BorderLayout.SOUTH);
         pack();
+
+        setPreferredSize(new Dimension(1024, 600));
+        setSize(1024, 600);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+        loadClassData();
+        initAutocompleteTextField();
+        setTitle("JReader");
+        setVisible(true);
+    }
+
+    private void loadClassData() {
+        try {
+            allClassData = Utilities.readClassData(new File(Config.getEntry("classDataFile")));
+        } catch ( IOException e ) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Failed to load class data at" + Config.getEntry("classDataFile"),
+                    "Fatal Error",
+                    JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+
+        } catch ( ClassNotFoundException e ) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Failed to load class data at" + Config.getEntry("classDataFile"),
+                    "Fatal Error",
+                    JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        }
     }
 
     private void loadClass(String className) {
@@ -194,6 +181,63 @@ class JReader extends JFrame implements Runnable {
         disableButtons();
     }
 
+    private void newJReaderTab() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                final JReaderPanel readerPanel = new JReaderPanel(progressBar);
+                tabs.add(readerPanel);
+                tabbedPane.addTab("JReader", readerPanel);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        readerPanel.getEngine().locationProperty().addListener(new ChangeListener<String>() {
+                            @Override
+                            public void changed(ObservableValue<? extends String> observableValue, final String oldVal, final String newVal) {
+                                SwingUtilities.invokeLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if ( newVal.endsWith(".java") ) {
+                                            newSourceTab(newVal.replaceAll("file:\\/\\/", ""));
+                                        }
+                                    }
+                                });
+                            }
+                        });
+
+                        readerPanel.getJFXPanel().addMouseListener(new MouseListener() {
+                            @Override
+                            public void mouseClicked(MouseEvent e) {
+                                System.out.println("Clicked");
+                            }
+
+                            @Override
+                            public void mousePressed(MouseEvent e) {
+                                //To change body of implemented methods use File | Settings | File Templates.
+                            }
+
+                            @Override
+                            public void mouseReleased(MouseEvent e) {
+                                //To change body of implemented methods use File | Settings | File Templates.
+                            }
+
+                            @Override
+                            public void mouseEntered(MouseEvent e) {
+                                //To change body of implemented methods use File | Settings | File Templates.
+                            }
+
+                            @Override
+                            public void mouseExited(MouseEvent e) {
+                                //To change body of implemented methods use File | Settings | File Templates.
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
     private void disableButtons() {
         btnBack.setEnabled(false);
         btnNext.setEnabled(false);
@@ -212,17 +256,6 @@ class JReader extends JFrame implements Runnable {
         searchBar.addWordsToTrie(test);
     }
 
-    @Override
-    public void run() {
-        setPreferredSize(new Dimension(1024, 600));
-        setSize(1024, 600);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-        initAutocompleteTextField();
-        setTitle("Jreader");
-        setVisible(true);
-    }
-
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -236,6 +269,14 @@ class JReader extends JFrame implements Runnable {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
-        new JReader().run();
+        if ( !JReaderSetup.isSetup() )
+            JReaderSetup.setup();
+
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new JReader();
+            }
+        });
     }
 }
