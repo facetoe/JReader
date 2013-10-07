@@ -31,7 +31,6 @@ package com.facetoe.jreader;
  */
 
 import javax.swing.*;
-import javax.swing.*;
 import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
 import java.awt.event.*;
@@ -50,7 +49,7 @@ public class ButtonTabComponent extends JPanel {
     public ButtonTabComponent(String title, final JTabbedPane pane) {
         //unset default FlowLayout' gaps
         super(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        if (pane == null) {
+        if ( pane == null ) {
             throw new NullPointerException("TabbedPane is null");
         }
         this.pane = pane;
@@ -81,6 +80,7 @@ public class ButtonTabComponent extends JPanel {
 
     private class TabButton extends JButton implements ActionListener {
         UUID id;
+
         public TabButton(UUID tabID) {
             id = tabID;
             int size = 17;
@@ -108,9 +108,9 @@ public class ButtonTabComponent extends JPanel {
             int index = 0;
 
             for ( int i = 0; i < numTabs; i++ ) {
-                ButtonTabComponent component = (ButtonTabComponent)pane.getTabComponentAt(i);
-                if(component != null && component.getId().equals(this.id)) {
-                   index = i;
+                ButtonTabComponent component = ( ButtonTabComponent ) pane.getTabComponentAt(i);
+                if ( component != null && component.getId().equals(this.id) ) {
+                    index = i;
                 }
             }
             System.out.println("Removing tab at index: " + index);
@@ -124,14 +124,14 @@ public class ButtonTabComponent extends JPanel {
         //paint the cross
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
-            Graphics2D g2 = (Graphics2D) g.create();
+            Graphics2D g2 = ( Graphics2D ) g.create();
             //shift the image for pressed buttons
-            if (getModel().isPressed()) {
+            if ( getModel().isPressed() ) {
                 g2.translate(1, 1);
             }
             g2.setStroke(new BasicStroke(2));
             g2.setColor(Color.BLACK);
-            if (getModel().isRollover()) {
+            if ( getModel().isRollover() ) {
                 g2.setColor(Color.MAGENTA);
             }
             int delta = 6;
@@ -144,16 +144,16 @@ public class ButtonTabComponent extends JPanel {
     private final static MouseListener buttonMouseListener = new MouseAdapter() {
         public void mouseEntered(MouseEvent e) {
             Component component = e.getComponent();
-            if (component instanceof AbstractButton) {
-                AbstractButton button = (AbstractButton) component;
+            if ( component instanceof AbstractButton ) {
+                AbstractButton button = ( AbstractButton ) component;
                 button.setBorderPainted(true);
             }
         }
 
         public void mouseExited(MouseEvent e) {
             Component component = e.getComponent();
-            if (component instanceof AbstractButton) {
-                AbstractButton button = (AbstractButton) component;
+            if ( component instanceof AbstractButton ) {
+                AbstractButton button = ( AbstractButton ) component;
                 button.setBorderPainted(false);
             }
         }

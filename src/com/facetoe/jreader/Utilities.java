@@ -19,6 +19,30 @@ public class Utilities {
         return encoding.decode(ByteBuffer.wrap(encoded)).toString();
     }
 
+    public static String urlToFileName(String url) {
+        String[] parts = url.split("\\/");
+        return parts[parts.length - 1];
+    }
+
+    //TODO Don't hardcode source path
+    public static String docPathToSourcePath(String docPath) {
+        String sourcePath = docPath.replaceAll("file\\:\\/\\/", "");
+        sourcePath = sourcePath.replaceAll("(\\/)\\1+", "$1");
+        sourcePath = sourcePath.replaceAll("index\\.html\\?", "");
+        sourcePath = sourcePath.replaceAll(Config.getEntry("apiDir"), Config.getEntry("srcDir"));
+        sourcePath = sourcePath.replaceAll("\\.html", ".java");
+        System.out.println("SourcePath: " + sourcePath);
+        return sourcePath;
+    }
+
+    public static String humanReadableByteCount(long bytes, boolean si) {
+        int unit = si ? 1000 : 1024;
+        if ( bytes < unit ) return bytes + " B";
+        int exp = ( int ) (Math.log(bytes) / Math.log(unit));
+        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
+        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+    }
+
     public static void writeCLassData(String fileName, JavaClassData data) throws IOException {
         FileOutputStream fileOut = new FileOutputStream(fileName);
         ObjectOutputStream outStream = new ObjectOutputStream(fileOut);

@@ -20,7 +20,7 @@ class JReader extends JFrame implements Runnable {
     private JButton btnBack = new JButton("Back");
     private JButton btnNext = new JButton("Next");
     private JButton btnHome = new JButton("Home");
-    private JButton btnTest = new JButton("Test");
+    private JButton btnSource = new JButton("View Source");
 
     private JavaClassData allClassData;
 
@@ -56,7 +56,7 @@ class JReader extends JFrame implements Runnable {
         rightBar.add(btnBack);
         rightBar.add(btnNext);
         rightBar.add(btnHome);
-        rightBar.add(btnTest);
+        rightBar.add(btnSource);
 
         topBar.add(leftBar, BorderLayout.WEST);
         topBar.add(rightBar, BorderLayout.EAST);
@@ -95,34 +95,40 @@ class JReader extends JFrame implements Runnable {
         btnSearch.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(currentTab instanceof JReaderPanel) {
+                if ( currentTab instanceof JReaderPanel ) {
                     loadClass(searchBar.getText());
                 } else {
-                    JSourcePanel sourcePanel = (JSourcePanel)currentTab;
+                    JSourcePanel sourcePanel = ( JSourcePanel ) currentTab;
                     sourcePanel.findString(searchBar.getText());
                 }
             }
         });
 
-        btnTest.addActionListener(new ActionListener() {
+        btnSource.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-               if(currentTab instanceof JReaderPanel) {
-                   JReaderPanel panel = (JReaderPanel)currentTab;
-                   String path = panel.getCurrentPage().replaceAll( "file\\:\\/\\/" + Config.getEntry("docDir") + "api", "/home/facetoe/tmp/src-jdk").replaceAll("html", "java");
-                   System.out.println(path);
-                   newSourceTab(path, null);
-               }
+                if ( currentTab instanceof JReaderPanel ) {
+                    JReaderPanel panel = ( JReaderPanel ) currentTab;
+                    String path = Utilities.docPathToSourcePath(panel.getCurrentPage());
+                    System.out.println("OldPath: " + panel.getCurrentPage());
+                    System.out.println("NewPath: " + path);
+
+                    if ( !new File(path).exists() ) {
+                        JOptionPane.showMessageDialog(null, "Unable to locate source for: " + path, "Load Error", JOptionPane.WARNING_MESSAGE);
+                    } else {
+                        newSourceTab(path, null);
+                    }
+                }
             }
         });
 
         searchBar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(currentTab instanceof JReaderPanel) {
+                if ( currentTab instanceof JReaderPanel ) {
                     loadClass(searchBar.getText());
                 } else {
-                    JSourcePanel sourcePanel = (JSourcePanel)currentTab;
+                    JSourcePanel sourcePanel = ( JSourcePanel ) currentTab;
                     sourcePanel.findString(searchBar.getText());
 
                 }
@@ -153,7 +159,7 @@ class JReader extends JFrame implements Runnable {
 
     private void loadClass(String className) {
         String path = classes.get(className);
-        if ( path != null && currentTab instanceof JReaderPanel) {
+        if ( path != null && currentTab instanceof JReaderPanel ) {
             System.out.println(path);
             String url = Config.getEntry("docDir") + "api" + File.separator + path;
 
@@ -170,8 +176,7 @@ class JReader extends JFrame implements Runnable {
     }
 
     private void newSourceTab(String filePath, String methodToFind) {
-        String[] parts = filePath.split("\\/");
-        String title = parts[parts.length - 1];
+        String title = Utilities.urlToFileName(filePath);
         JSourcePanel newTab = new JSourcePanel(filePath);
 
         addCloseButtonToTab(newTab, title);
@@ -192,7 +197,7 @@ class JReader extends JFrame implements Runnable {
             public void run() {
                 final JReaderPanel readerPanel = new JReaderPanel(progressBar);
 
-                if(hasButton) {
+                if ( hasButton ) {
                     addCloseButtonToTab(readerPanel, title);
                 } else {
                     tabbedPane.add(title, readerPanel);
@@ -218,13 +223,13 @@ class JReader extends JFrame implements Runnable {
                         readerPanel.getJFXPanel().addMouseListener(new MouseListener() {
                             @Override
                             public void mouseClicked(MouseEvent e) {
-                                if (e.isPopupTrigger())
+                                if ( e.isPopupTrigger() )
                                     doPop(e);
                             }
 
                             @Override
                             public void mousePressed(MouseEvent e) {
-                                if (e.isPopupTrigger())
+                                if ( e.isPopupTrigger() )
                                     doPop(e);
                             }
 
@@ -240,7 +245,7 @@ class JReader extends JFrame implements Runnable {
                             public void mouseExited(MouseEvent e) {
                             }
 
-                            private void doPop(MouseEvent e){
+                            private void doPop(MouseEvent e) {
                                 JPopupMenu menu = new JPopupMenu();
                                 JMenuItem newTab = new JMenuItem("New Tab");
                                 newTab.addActionListener(new ActionListener() {
@@ -258,7 +263,7 @@ class JReader extends JFrame implements Runnable {
                         readerPanel.getJFXPanel().addKeyListener(new KeyAdapter() {
                             @Override
                             public void keyPressed(KeyEvent e) {
-                                if (e.isControlDown() && e.getKeyChar() != 's' && e.getKeyCode() == KeyEvent.VK_S) {
+                                if ( e.isControlDown() && e.getKeyChar() != 's' && e.getKeyCode() == KeyEvent.VK_S ) {
                                     System.out.println("Select All");
                                 }
                             }
@@ -317,21 +322,21 @@ class JReader extends JFrame implements Runnable {
         setVisible(true);
     }
 
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch ( ClassNotFoundException e ) {
-            e.printStackTrace();
-        } catch ( InstantiationException e ) {
-            e.printStackTrace();
-        } catch ( IllegalAccessException e ) {
-            e.printStackTrace();
-        } catch ( UnsupportedLookAndFeelException e ) {
-            e.printStackTrace();
-        }
-
-        new JReader().run();
-    }
+//    public static void main(String[] args) {
+//        try {
+//            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//        } catch ( ClassNotFoundException e ) {
+//            e.printStackTrace();
+//        } catch ( InstantiationException e ) {
+//            e.printStackTrace();
+//        } catch ( IllegalAccessException e ) {
+//            e.printStackTrace();
+//        } catch ( UnsupportedLookAndFeelException e ) {
+//            e.printStackTrace();
+//        }
+//
+//        new JReader().run();
+//    }
 }
 
 

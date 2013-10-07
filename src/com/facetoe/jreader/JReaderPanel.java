@@ -3,24 +3,13 @@ package com.facetoe.jreader;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Worker;
 import javafx.embed.swing.JFXPanel;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import org.w3c.dom.Element;
-import org.w3c.dom.events.*;
 
 import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import java.awt.*;
-import java.awt.Event;
-import java.awt.event.MouseListener;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -93,7 +82,7 @@ public class JReaderPanel extends JPanel implements Runnable {
                     @Override
                     public void changed(ObservableValue<? extends String> ov, String oldValue, final String newValue) {
                         System.out.println("New val: " + newValue);
-                        if(!newValue.endsWith(".java")) {
+                        if ( !newValue.endsWith(".java") ) {
                             currentPage = newValue;
                             backStack.push(newValue);
                         }
@@ -179,10 +168,6 @@ public class JReaderPanel extends JPanel implements Runnable {
 
     public WebEngine getEngine() {
         return engine;
-    }
-
-    public WebView getView() {
-        return view;
     }
 
     public JFXPanel getJFXPanel() {

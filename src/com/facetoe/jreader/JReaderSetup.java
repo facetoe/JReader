@@ -56,6 +56,8 @@ public class JReaderSetup {
                 Config.setEntry("configFile", fileName);
                 Config.setEntry("hasDocs", "false");
                 Config.setEntry("dataIsParsed", "false");
+                Config.setEntry("hasSrc", "false");
+                Config.setEntry("srcDir", dataDir + "src-jdk" + File.separator);
             } else {
                 throw new IOException("Unable to create config file at: " + dataDir);
             }
@@ -123,7 +125,7 @@ public class JReaderSetup {
     }
 
     public static void parseDocumentation() {
-        int result = JOptionPane.showConfirmDialog(null, "JReader needs to parse the Java docs.\nThis will only happen once.", "", JOptionPane.OK_CANCEL_OPTION);
+        int result = JOptionPane.showConfirmDialog(null, "JReader now needs to parse the Java docs.\nThis will only happen once.", "", JOptionPane.OK_CANCEL_OPTION);
         if ( result == JOptionPane.OK_OPTION ) {
             try {
                 ParserWindow parserWindow = new ParserWindow();
