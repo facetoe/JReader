@@ -1,5 +1,8 @@
 package com.facetoe.jreader;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
 import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,6 +19,11 @@ import java.util.concurrent.ExecutionException;
  * To change this template use File | Settings | File Templates.
  */
 public class JReaderSetup {
+
+    public static void main(String[] args) {
+        downloadJavaSource();
+        Utilities.unzip("/home/facetoe/tmp/test/javaSource.zip", "/home/facetoe/tmp/test/finish.zip");
+    }
 
     public static void setup() {
         String userHome = System.getProperty("user.home");
@@ -153,6 +161,22 @@ public class JReaderSetup {
             JOptionPane.showMessageDialog(null, "The program cannot function until the docs have been parsed.");
             System.exit(0);
         }
+    }
+
+    private static String getSourceDownloadLink() {
+        try {
+            Document doc = Jsoup.connect("http://sourceforge.net/projects/jdk7src/files/latest/download").followRedirects(false).get();
+            return doc.select("a").get(0).attr("href");
+        } catch ( IOException e ) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        return null;
+    }
+
+
+    public static void downloadJavaSource() {
+        FileDownloader downloader = new FileDownloader();
+        downloader.download("/home/facetoe/tmp/test/javaSource.zip", getSourceDownloadLink());
     }
 
     public static boolean isJava7DocsDir(File docDir) {

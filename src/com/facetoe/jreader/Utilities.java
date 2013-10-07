@@ -1,5 +1,9 @@
 package com.facetoe.jreader;
 
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
+
+import javax.swing.*;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -41,6 +45,16 @@ public class Utilities {
         int exp = ( int ) (Math.log(bytes) / Math.log(unit));
         String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
         return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+    }
+
+    public static void unzip(String sourcePath, String destPath){
+        try {
+            ZipFile zipFile = new ZipFile(sourcePath);
+            zipFile.extractAll(destPath);
+        } catch (ZipException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, e.getMessage(), e.getClass().toString(), JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public static void writeCLassData(String fileName, JavaClassData data) throws IOException {

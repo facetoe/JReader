@@ -17,11 +17,6 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
 public class FileDownloader {
-    public static void main(String[] args) {
-        Downloader downloader = new Downloader("/home/facetoe/tmp/test/img.jpg", "http://static.giantbomb.com/uploads/original/0/4997/408212-rise_of_the_silver_surfer_the_thing.jpg");
-        downloader.download();
-    }
-
     private interface RBCWrapperDelegate {
         // The RBCWrapperDelegate receives rbcProgressCallback() messages
         // from the read loop.  It is passed the progress as a percentage
@@ -38,14 +33,19 @@ public class FileDownloader {
         public void rbcProgressCallback(RBCWrapper rbc, double progress);
     }
 
+    public void download(String localPath, String remoteURL) {
+        new Downloader(localPath, remoteURL).download();
+    }
+
     private static final class Downloader extends JFrame implements RBCWrapperDelegate {
 
         JPanel panel = new JPanel();
         JButton btnCancel = new JButton("Cancel");
-        JLabel lblProgress = new JLabel();
+        JLabel lblProgress = new JLabel("Locating...");
         JProgressBar progressBar = new JProgressBar();
         String localPath;
         String remoteURL;
+        ReadableByteChannel rbc;
 
         public Downloader(String localPath, String remoteURL) {
 
@@ -55,8 +55,14 @@ public class FileDownloader {
             btnCancel.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    Config.setEntry("hasSrc", "false");
                     setVisible(false);
                     dispose();
+                    try {
+                        rbc.close();
+                    } catch ( IOException e1 ) {
+                        e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    }
                 }
             });
 
@@ -65,6 +71,7 @@ public class FileDownloader {
             panel.add(progressBar, BorderLayout.NORTH);
             panel.add(btnCancel, BorderLayout.EAST);
             panel.setBorder(new CompoundBorder(BorderFactory.createEtchedBorder(), BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+
 
             setTitle("JReader");
             setResizable(false);
@@ -90,7 +97,6 @@ public class FileDownloader {
 
         public void download() {
             FileOutputStream fos;
-            ReadableByteChannel rbc;
             URL url;
 
             try {
@@ -107,14 +113,19 @@ public class FileDownloader {
                 }
 
             } catch ( MalformedURLException ex ) {
+                Config.setEntry("hasSrc", "false");
                 JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), ex.getClass().toString(), JOptionPane.ERROR_MESSAGE);
+
             } catch ( FileNotFoundException ex ) {
+                Config.setEntry("hasSrc", "false");
                 JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), ex.getClass().toString(), JOptionPane.ERROR_MESSAGE);
 
             } catch ( IOException ex ) {
+                Config.setEntry("hasSrc", "false");
                 JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), ex.getClass().toString(), JOptionPane.ERROR_MESSAGE);
 
             } catch ( Exception ex ) {
+                Config.setEntry("hasSrc", "false");
                 JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), ex.getClass().toString(), JOptionPane.ERROR_MESSAGE);
 
             } finally {
@@ -125,12 +136,12 @@ public class FileDownloader {
 
         public void rbcProgressCallback(RBCWrapper rbc, double progress) {
             progressBar.setValue(( int ) progress);
-            lblProgress.setText(String.format("%.02f%% Complete of %s", progress, Utilities.humanReadableByteCount(rbc.expectedSize, true)));
+            lblProgress.setText(String.format("Downloaded %.02f%% of %s", progress, Utilities.humanReadableByteCount(rbc.expectedSize, true)));
         }
 
-        private int contentLength(URL url) {
+        private long contentLength(URL url) {
             HttpURLConnection connection;
-            int contentLength = -1;
+            long contentLength = -1;
 
             try {
                 HttpURLConnection.setFollowRedirects(false);
@@ -138,7 +149,18 @@ public class FileDownloader {
                 connection = ( HttpURLConnection ) url.openConnection();
                 connection.setRequestMethod("HEAD");
 
-                contentLength = connection.getContentLength();
+                contentLength = connection.getContentLengthLong();
+
+
+                /**
+                 * For some reason the content length isn't being returned correctly.
+                 * I'm hardcoding the java source zipfile size so the progress bar works.
+                 */
+                if(contentLength == -1) {
+                    contentLength = 36689314;
+                }
+
+
             } catch ( ProtocolException ex ) {
                 JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), ex.getClass().toString(), JOptionPane.ERROR_MESSAGE);
             } catch ( IOException ex ) {
@@ -184,7 +206,6 @@ public class FileDownloader {
                 progress = expectedSize > 0 ? ( double ) readSoFar / ( double ) expectedSize * 100.0 : -1.0;
                 delegate.rbcProgressCallback(this, progress);
             }
-
             return n;
         }
     }
