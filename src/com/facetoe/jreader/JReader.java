@@ -107,8 +107,12 @@ class JReader extends JFrame implements Runnable {
         btnTest.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JSourcePanel jSourcePane = ( JSourcePanel ) currentTab;
-                jSourcePane.findString("a");
+               if(currentTab instanceof JReaderPanel) {
+                   JReaderPanel panel = (JReaderPanel)currentTab;
+                   String path = panel.getCurrentPage().replaceAll( "file\\:\\/\\/" + Config.getEntry("docDir") + "api", "/home/facetoe/tmp/src-jdk").replaceAll("html", "java");
+                   System.out.println(path);
+                   newSourceTab(path, null);
+               }
             }
         });
 
@@ -120,6 +124,7 @@ class JReader extends JFrame implements Runnable {
                 } else {
                     JSourcePanel sourcePanel = (JSourcePanel)currentTab;
                     sourcePanel.findString(searchBar.getText());
+
                 }
             }
         });
@@ -247,6 +252,15 @@ class JReader extends JFrame implements Runnable {
 
                                 menu.add(newTab);
                                 menu.show(e.getComponent(), e.getX(), e.getY());
+                            }
+                        });
+
+                        readerPanel.getJFXPanel().addKeyListener(new KeyAdapter() {
+                            @Override
+                            public void keyPressed(KeyEvent e) {
+                                if (e.isControlDown() && e.getKeyChar() != 's' && e.getKeyCode() == KeyEvent.VK_S) {
+                                    System.out.println("Select All");
+                                }
                             }
                         });
                     }

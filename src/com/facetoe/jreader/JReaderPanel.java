@@ -75,31 +75,6 @@ public class JReaderPanel extends JPanel implements Runnable {
                 view = new WebView();
                 view.setContextMenuEnabled(false);
 
-//                final ContextMenu menu = new ContextMenu();
-//                javafx.scene.control.MenuItem item = new javafx.scene.control.MenuItem("New Tab");
-//                item.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-//                    @Override
-//                    public void handle(javafx.event.ActionEvent actionEvent) {
-//                        System.out.println("You clicked me bitch");
-//                    }
-//                });
-//
-//                menu.getItems().add(item);
-//                view.setOnMouseClicked(new EventHandler<MouseEvent>() {
-//
-//                    @Override
-//                    public void handle(MouseEvent mouse) {
-//                        if ( mouse.getButton() == MouseButton.SECONDARY ) {
-//                            //add some menu items here
-//                            menu.show(view, mouse.getScreenX(), mouse.getScreenY());
-//                        } else {
-//                            if ( menu != null ) {
-//                                menu.hide();
-//                            }
-//                        }
-//                    }
-//                });
-
                 engine = view.getEngine();
 
                 engine.getLoadWorker().workDoneProperty().addListener(new ChangeListener<Number>() {
@@ -212,6 +187,10 @@ public class JReaderPanel extends JPanel implements Runnable {
 
     public JFXPanel getJFXPanel() {
         return jfxPanel;
+    }
+
+    public String getCurrentPage() {
+        return currentPage;
     }
 
     @Override
