@@ -20,6 +20,7 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import java.awt.*;
 import java.awt.Event;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -29,6 +30,7 @@ import static javafx.concurrent.Worker.State.FAILED;
 
 public class JReaderPanel extends JPanel implements Runnable {
     private WebEngine engine;
+    private WebView view;
     private JFXPanel jfxPanel;
     private JProgressBar progressBar;
     private Stack<String> nextStack = new Stack<String>();
@@ -70,9 +72,33 @@ public class JReaderPanel extends JPanel implements Runnable {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-
-                final WebView view = new WebView();
+                view = new WebView();
                 view.setContextMenuEnabled(false);
+
+//                final ContextMenu menu = new ContextMenu();
+//                javafx.scene.control.MenuItem item = new javafx.scene.control.MenuItem("New Tab");
+//                item.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+//                    @Override
+//                    public void handle(javafx.event.ActionEvent actionEvent) {
+//                        System.out.println("You clicked me bitch");
+//                    }
+//                });
+//
+//                menu.getItems().add(item);
+//                view.setOnMouseClicked(new EventHandler<MouseEvent>() {
+//
+//                    @Override
+//                    public void handle(MouseEvent mouse) {
+//                        if ( mouse.getButton() == MouseButton.SECONDARY ) {
+//                            //add some menu items here
+//                            menu.show(view, mouse.getScreenX(), mouse.getScreenY());
+//                        } else {
+//                            if ( menu != null ) {
+//                                menu.hide();
+//                            }
+//                        }
+//                    }
+//                });
 
                 engine = view.getEngine();
 
@@ -92,8 +118,10 @@ public class JReaderPanel extends JPanel implements Runnable {
                     @Override
                     public void changed(ObservableValue<? extends String> ov, String oldValue, final String newValue) {
                         System.out.println("New val: " + newValue);
-                        currentPage = newValue;
-                        backStack.push(newValue);
+                        if(!newValue.endsWith(".java")) {
+                            currentPage = newValue;
+                            backStack.push(newValue);
+                        }
                     }
                 });
 
@@ -176,6 +204,10 @@ public class JReaderPanel extends JPanel implements Runnable {
 
     public WebEngine getEngine() {
         return engine;
+    }
+
+    public WebView getView() {
+        return view;
     }
 
     public JFXPanel getJFXPanel() {

@@ -42,6 +42,12 @@ public class JSourcePanel extends JPanel {
         } catch ( IOException e ) {
             e.printStackTrace();
         }
+
+        /**
+         * Set the caret position to the top of the page, otherwise the page scrolls to the bottom and search
+         * doesn't work as expected.
+         */
+        textArea.setCaretPosition(0);
     }
 
     public void findString(String text) {

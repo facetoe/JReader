@@ -126,7 +126,6 @@ public class JReaderSetup {
         int result = JOptionPane.showConfirmDialog(null, "JReader needs to parse the Java docs.\nThis will only happen once.", "", JOptionPane.OK_CANCEL_OPTION);
         if ( result == JOptionPane.OK_OPTION ) {
             try {
-
                 ParserWindow parserWindow = new ParserWindow();
                 JavaClassData data = parserWindow.parser.get();
                 Utilities.writeCLassData(Config.getEntry("classDataFile"), data);
