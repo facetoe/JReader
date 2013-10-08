@@ -18,7 +18,7 @@ import java.util.Stack;
 import static javafx.concurrent.Worker.State.FAILED;
 
 /**
- * Displays the java documentation.
+ * Displays the Java documentation.
  */
 public class JReaderPanel extends JPanel {
     private WebEngine engine;
@@ -29,7 +29,6 @@ public class JReaderPanel extends JPanel {
     private Stack<String> backStack = new Stack<String>();
     private String currentPage;
     private String initialURL;
-
 
     /**
      * Create a new JReaderPanel instance with the specified URL.

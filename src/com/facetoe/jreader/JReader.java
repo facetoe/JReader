@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-class JReader extends JFrame implements Runnable {
+class JReader extends JFrame {
 
     private JLabel lblStatus = new JLabel();
     private JButton btnSearch = new JButton("Search");
@@ -162,6 +162,12 @@ class JReader extends JFrame implements Runnable {
         add(tabbedPane, BorderLayout.CENTER);
         add(statusBar, BorderLayout.SOUTH);
         pack();
+
+        setPreferredSize(new Dimension(1024, 600));
+        setSize(1024, 600);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setTitle("JReader");
+        setVisible(true);
     }
 
     private void loadClass(String className) {
@@ -356,15 +362,6 @@ class JReader extends JFrame implements Runnable {
         searchBar.addWordsToTrie(test);
     }
 
-    @Override
-    public void run() {
-        setPreferredSize(new Dimension(1024, 600));
-        setSize(1024, 600);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setTitle("JReader");
-        setVisible(true);
-    }
-
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -381,7 +378,12 @@ class JReader extends JFrame implements Runnable {
         if ( !JReaderSetup.isSetup() )
             JReaderSetup.setup();
 
-        new JReader().run();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new JReader();
+            }
+        });
     }
 }
 
