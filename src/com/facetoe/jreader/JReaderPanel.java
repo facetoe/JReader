@@ -60,7 +60,8 @@ public class JReaderPanel extends JPanel {
         initialURL = url;
         progressBar = jProgressBar;
         jfxPanel = new JFXPanel();
-        initComponents();
+        setLayout(new BorderLayout());
+        createScene();
         loadURL(initialURL);
     }
 
@@ -78,13 +79,14 @@ public class JReaderPanel extends JPanel {
         }
     }
 
-    private void initComponents() {
-        createScene();
-        setLayout(new BorderLayout());
-    }
-
+    /**
+     * Set up the javafx panel and add listeners.
+     */
     private void createScene() {
 
+        /**
+         * Always modify javafx data in a javafx thread.
+         */
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -96,6 +98,11 @@ public class JReaderPanel extends JPanel {
                 engine.getLoadWorker().workDoneProperty().addListener(new ChangeListener<Number>() {
                     @Override
                     public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, final Number newValue) {
+
+                        /**
+                         * Anytime you want to modify a swing component from a javafx component you need to
+                         * do it in the swing thread.
+                         */
                         SwingUtilities.invokeLater(new Runnable() {
                             @Override
                             public void run() {
@@ -144,6 +151,9 @@ public class JReaderPanel extends JPanel {
         });
     }
 
+    /**
+     * Navigate to the next page.
+     */
     public void next() {
         if ( !nextStack.empty() ) {
             String page = nextStack.pop();
@@ -158,6 +168,9 @@ public class JReaderPanel extends JPanel {
         }
     }
 
+    /**
+     * Navigate to the previous page.
+     */
     public void back() {
         if ( !backStack.empty() ) {
             String page = backStack.pop();
@@ -173,11 +186,20 @@ public class JReaderPanel extends JPanel {
         }
     }
 
+    /**
+     * Navigate to the home page
+     */
+    //TODO Make it possible for the user to set their homepage.
     public void home() {
         loadURL(Config.getEntry("docDir") + File.separator + "index.html");
         nextStack.clear();
     }
 
+    /**
+     * Load a url. Note that because we are modifying javafx data from swing we need to
+     * do it in the javafx thread.
+     * @param url to load.
+     */
     public void loadURL(final String url) {
         System.out.println("Loading: " + url);
         Platform.runLater(new Runnable() {
@@ -193,14 +215,26 @@ public class JReaderPanel extends JPanel {
         });
     }
 
+    /**
+     * Return the WebEngine associated with this instance.
+     * @return the WebEngine
+     */
     public WebEngine getEngine() {
         return engine;
     }
 
+    /**
+     * Return the JFXpanel associated with this instance.
+     * @return the JFXpanel
+     */
     public JFXPanel getJFXPanel() {
         return jfxPanel;
     }
 
+    /**
+     * Return the current page.
+     * @return the current page.
+     */
     public String getCurrentPage() {
         return currentPage;
     }
