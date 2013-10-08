@@ -28,7 +28,6 @@ public class Utilities {
         return parts[parts.length - 1];
     }
 
-    //TODO Don't hardcode source path
     public static String docPathToSourcePath(String docPath) {
         String sourcePath = docPath.replaceAll("file\\:\\/\\/", "");
         sourcePath = sourcePath.replaceAll("(\\/)\\1+", "$1");
@@ -47,7 +46,7 @@ public class Utilities {
         return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 
-    public static void unzip(String sourcePath, String destPath){
+    public static void unzip(String sourcePath, String destPath) throws ZipException{
         try {
             ZipFile zipFile = new ZipFile(sourcePath);
             zipFile.extractAll(destPath);
@@ -55,6 +54,7 @@ public class Utilities {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, e.getMessage(), e.getClass().toString(), JOptionPane.ERROR_MESSAGE);
         }
+        Config.setEntry("hasSrc", "true");
     }
 
     public static void writeCLassData(String fileName, JavaClassData data) throws IOException {

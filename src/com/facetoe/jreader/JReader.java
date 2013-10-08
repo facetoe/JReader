@@ -33,9 +33,6 @@ class JReader extends JFrame implements Runnable {
 
     public JReader() {
 
-        if ( !JReaderSetup.isSetup() )
-            JReaderSetup.setup();
-
         loadJavaDocData();
         initAutocompleteTextField();
 
@@ -135,7 +132,7 @@ class JReader extends JFrame implements Runnable {
             }
         });
 
-        newJReaderTab("First", false);
+        newJReaderTab("JReader", false);
 
         tabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
             @Override
@@ -318,25 +315,28 @@ class JReader extends JFrame implements Runnable {
         setPreferredSize(new Dimension(1024, 600));
         setSize(1024, 600);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Jreader");
+        setTitle("JReader");
         setVisible(true);
     }
 
-//    public static void main(String[] args) {
-//        try {
-//            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-//        } catch ( ClassNotFoundException e ) {
-//            e.printStackTrace();
-//        } catch ( InstantiationException e ) {
-//            e.printStackTrace();
-//        } catch ( IllegalAccessException e ) {
-//            e.printStackTrace();
-//        } catch ( UnsupportedLookAndFeelException e ) {
-//            e.printStackTrace();
-//        }
-//
-//        new JReader().run();
-//    }
+    public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch ( ClassNotFoundException e ) {
+            e.printStackTrace();
+        } catch ( InstantiationException e ) {
+            e.printStackTrace();
+        } catch ( IllegalAccessException e ) {
+            e.printStackTrace();
+        } catch ( UnsupportedLookAndFeelException e ) {
+            e.printStackTrace();
+        }
+
+        if ( !JReaderSetup.isSetup() )
+            JReaderSetup.setup();
+
+        new JReader().run();
+    }
 }
 
 

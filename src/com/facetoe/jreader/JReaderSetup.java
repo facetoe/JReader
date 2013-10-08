@@ -1,5 +1,6 @@
 package com.facetoe.jreader;
 
+import net.lingala.zip4j.exception.ZipException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -20,14 +21,15 @@ import java.util.concurrent.ExecutionException;
  */
 public class JReaderSetup {
 
-    public static void main(String[] args) {
-        downloadJavaSource();
-        Utilities.unzip("/home/facetoe/tmp/test/javaSource.zip", "/home/facetoe/tmp/test/finish.zip");
-    }
+//    public static void main(String[] args) {
+//            setup();
+//    }
 
     public static void setup() {
         String userHome = System.getProperty("user.home");
         String dataFolderPath = userHome + File.separator + ".jreader" + File.separator;
+        String srcDirPath = dataFolderPath + File.separator + "src-jdk.zip";
+
         File dataDir = new File(dataFolderPath);
 
         if ( !dataDir.exists() ) {
@@ -49,9 +51,25 @@ public class JReaderSetup {
                 parseDocumentation();
             }
 
+            if(!Config.getEntry("hasSrc").equals("true")) {
+                getJavaSource(srcDirPath);
+            }
+
+            if(!Config.getEntry("srcIsExtracted").equals("true") && Config.getEntry("hasSrc").equals("true")) {
+                extractSource(srcDirPath);
+            }
+
         } catch ( IOException e ) {
             JOptionPane.showMessageDialog(null, e.getMessage(), "Fatal Error", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
+        }
+
+
+        if(!isSetup()) {
+            JOptionPane.showMessageDialog(null, "Setup was not successful. Please try again.", "Setup Failed", JOptionPane.WARNING_MESSAGE);
+            System.exit(0);
+        } else {
+            JOptionPane.showMessageDialog(null, "Setup complete.", "Setup Successful", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -65,6 +83,7 @@ public class JReaderSetup {
                 Config.setEntry("hasDocs", "false");
                 Config.setEntry("dataIsParsed", "false");
                 Config.setEntry("hasSrc", "false");
+                Config.setEntry("srcIsExtracted", "false");
                 Config.setEntry("srcDir", dataDir + "src-jdk" + File.separator);
             } else {
                 throw new IOException("Unable to create config file at: " + dataDir);
@@ -163,20 +182,47 @@ public class JReaderSetup {
         }
     }
 
-    private static String getSourceDownloadLink() {
-        try {
-            Document doc = Jsoup.connect("http://sourceforge.net/projects/jdk7src/files/latest/download").followRedirects(false).get();
-            return doc.select("a").get(0).attr("href");
-        } catch ( IOException e ) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+    public static void getJavaSource(String srcDirPath) {
+        int result = JOptionPane.showConfirmDialog(null, "JReader needs to download the Java source code.", "", JOptionPane.OK_CANCEL_OPTION);
+        if(result == JOptionPane.OK_OPTION) {
+            try {
+                downloadJavaSource(srcDirPath, "http://sourceforge.net/projects/jdk7src/files/latest/download");
+                Config.setEntry("hasSrc", "true");
+
+            } catch ( IOException e ) {
+                Config.setEntry("hasSrc", "false");
+                JOptionPane.showMessageDialog(null, e.getMessage(), e.getClass().toString(), JOptionPane.ERROR_MESSAGE);
+
+            } catch ( CancellationException e ) {
+                Config.setEntry("hasSrc", "false");
+                JOptionPane.showMessageDialog(null, e.getMessage(), e.getClass().toString(), JOptionPane.WARNING_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "JReader cannot function without the source code. Please try again later");
+            System.exit(0);
         }
-        return null;
+    }
+
+    public static void extractSource(String srcDirPath) {
+        int result = JOptionPane.showConfirmDialog(null, "JReader will now extract the source code", "", JOptionPane.OK_OPTION);
+        if(result == JOptionPane.OK_OPTION) {
+            try {
+                Utilities.unzip(srcDirPath, srcDirPath.replaceAll("\\.zip", ""));
+                Config.setEntry("srcIsExtracted", "true");
+            } catch ( ZipException e ) {
+                Config.setEntry("srcIsExtracted", "false");
+                JOptionPane.showMessageDialog(null, e.getMessage(), e.getClass().toString(), JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "JReader cannot function without the source code. Please try again later.");
+            System.exit(0);
+        }
     }
 
 
-    public static void downloadJavaSource() {
+    public static void downloadJavaSource(String localDestination, String remoteURL) throws IOException, CancellationException {
         FileDownloader downloader = new FileDownloader();
-        downloader.download("/home/facetoe/tmp/test/javaSource.zip", getSourceDownloadLink());
+        downloader.download(localDestination, remoteURL);
     }
 
     public static boolean isJava7DocsDir(File docDir) {
@@ -208,7 +254,10 @@ public class JReaderSetup {
 
         File dataDir = new File(dataDirPath);
         if ( dataDir.exists() ) {
-            if ( Config.getEntry("hasDocs").equals("true") && Config.getEntry("dataIsParsed").equals("true") ) {
+            if ( Config.getEntry("hasDocs").equals("true")
+                    && Config.getEntry("dataIsParsed").equals("true")
+                    && Config.getEntry("hasSrc").equals("true")
+                    && Config.getEntry("srcIsExtracted").equals("true")) {
                 return true;
             }
         }
