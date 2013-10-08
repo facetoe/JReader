@@ -17,7 +17,10 @@ import java.util.Stack;
 
 import static javafx.concurrent.Worker.State.FAILED;
 
-public class JReaderPanel extends JPanel implements Runnable {
+/**
+ * Displays the java documentation.
+ */
+public class JReaderPanel extends JPanel {
     private WebEngine engine;
     private WebView view;
     private JFXPanel jfxPanel;
@@ -28,21 +31,45 @@ public class JReaderPanel extends JPanel implements Runnable {
     private String initialURL;
 
 
+    /**
+     * Create a new JReaderPanel instance with the specified URL.
+     *
+     * @param url to display when the panel is loaded.
+     * @param jProgressBar reference to the main JReader progress bar so we can display progress.
+     */
     public JReaderPanel(String url, JProgressBar jProgressBar) {
         init(url, jProgressBar);
     }
 
+    /**
+     * Create a new JReaderPanel instance. Sets the initial URL to the index of the Java documentation.
+     *
+     * @param jProgressBar reference to of the main JReader progress bar so we can display progress.
+     */
     public JReaderPanel(JProgressBar jProgressBar) {
         init(Config.getEntry("docDir") + File.separator + "index.html", jProgressBar);
     }
 
+    /**
+     * Initialize everything and load the url
+     *
+     * @param url to display when the panel is loaded
+     * @param jProgressBar reference to of the main JReader progress bar so we can display progress.
+     */
     private void init(String url, JProgressBar jProgressBar) {
         initialURL = url;
         progressBar = jProgressBar;
         jfxPanel = new JFXPanel();
-        run();
+        initComponents();
+        loadURL(initialURL);
     }
 
+    /**
+     * Attempts to convert string to URL.
+     *
+     * @param str to be converted to URL.
+     * @return the URL or null if it failed.
+     */
     private static String toURL(String str) {
         try {
             return new URL(str).toExternalForm();
@@ -176,12 +203,6 @@ public class JReaderPanel extends JPanel implements Runnable {
 
     public String getCurrentPage() {
         return currentPage;
-    }
-
-    @Override
-    public void run() {
-        initComponents();
-        loadURL(initialURL);
     }
 }
 

@@ -2,27 +2,33 @@ package com.facetoe.jreader;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rsyntaxtextarea.Theme;
+import org.fife.ui.rsyntaxtextarea.folding.FoldCollapser;
+import org.fife.ui.rsyntaxtextarea.folding.FoldManager;
+import org.fife.ui.rsyntaxtextarea.folding.FoldType;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+
 /**
- * Created with IntelliJ IDEA.
- * User: facetoe
- * Date: 5/10/13
- * Time: 12:27 PM
- * To change this template use File | Settings | File Templates.
+ * Displays source code with syntax highlighting and cold folding.
  */
 public class JSourcePanel extends JPanel {
     RSyntaxTextArea textArea;
     RTextScrollPane scrollPane;
-    SearchContext context = new SearchContext();
 
+    /**
+     * Creates a new instance of JSourcePanel and displays the contents of filePath.
+     *
+     * @param filePath of the file containing the code to be displayed.
+     */
     public JSourcePanel(String filePath) {
         textArea = new RSyntaxTextArea();
         textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
@@ -30,9 +36,16 @@ public class JSourcePanel extends JPanel {
         textArea.setAntiAliasingEnabled(true);
         textArea.setEditable(false);
 
+        //TODO Figure out a way for the user to set themes.
+        try {
+            Theme theme = Theme.load(new FileInputStream("/home/facetoe/IdeaProjects/JReader/resources/themes/ideaTheme.xml"));
+            theme.apply(textArea);
+        } catch ( IOException e ) {
+            e.printStackTrace();
+        }
+
         scrollPane = new RTextScrollPane(textArea);
         scrollPane.setFoldIndicatorEnabled(true);
-
         setLayout(new BorderLayout());
         add(scrollPane);
 
@@ -50,8 +63,24 @@ public class JSourcePanel extends JPanel {
         textArea.setCaretPosition(0);
     }
 
-    public void findString(String text) {
+    /**
+     * Collapses all the comments.
+     */
+    public void collapseAllComments() {
+        FoldManager foldManager = textArea.getFoldManager();
+        FoldCollapser foldCollapser = new FoldCollapser(FoldType.COMMENT);
+        foldCollapser.collapseFolds(foldManager);
+    }
+
+    //TODO Figure out how to set the SearchContext in a half decent way.
+
+    /**
+     * @param text to search for
+     * @param context The search context for this search.
+     * @return whether or not anything was found.
+     */
+    public boolean findString(String text, SearchContext context) {
         context.setSearchFor(text);
-        SearchEngine.find(textArea, context);
+        return SearchEngine.find(textArea, context);
     }
 }

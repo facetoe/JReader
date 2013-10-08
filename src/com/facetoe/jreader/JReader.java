@@ -3,6 +3,7 @@ package com.facetoe.jreader;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import org.fife.ui.rtextarea.SearchContext;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -21,6 +22,7 @@ class JReader extends JFrame implements Runnable {
     private JButton btnNext = new JButton("Next");
     private JButton btnHome = new JButton("Home");
     private JButton btnSource = new JButton("View Source");
+    private JButton btnCollapse = new JButton("Collapse");
 
     private JavaClassData allClassData;
 
@@ -54,6 +56,7 @@ class JReader extends JFrame implements Runnable {
         rightBar.add(btnNext);
         rightBar.add(btnHome);
         rightBar.add(btnSource);
+        rightBar.add(btnCollapse);
 
         topBar.add(leftBar, BorderLayout.WEST);
         topBar.add(rightBar, BorderLayout.EAST);
@@ -96,7 +99,7 @@ class JReader extends JFrame implements Runnable {
                     loadClass(searchBar.getText());
                 } else {
                     JSourcePanel sourcePanel = ( JSourcePanel ) currentTab;
-                    sourcePanel.findString(searchBar.getText());
+                    sourcePanel.findString(searchBar.getText(), new SearchContext());
                 }
             }
         });
@@ -110,11 +113,17 @@ class JReader extends JFrame implements Runnable {
                     System.out.println("OldPath: " + panel.getCurrentPage());
                     System.out.println("NewPath: " + path);
 
-                    if ( !new File(path).exists() ) {
-                        JOptionPane.showMessageDialog(null, "Unable to locate source for: " + path, "Load Error", JOptionPane.WARNING_MESSAGE);
-                    } else {
-                        newSourceTab(path, null);
-                    }
+                    newSourceTab(path, null);
+                }
+            }
+        });
+
+        btnCollapse.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if ( currentTab instanceof JSourcePanel ) {
+                    JSourcePanel sourcePanel = ( JSourcePanel ) currentTab;
+                    sourcePanel.collapseAllComments();
                 }
             }
         });
@@ -126,7 +135,8 @@ class JReader extends JFrame implements Runnable {
                     loadClass(searchBar.getText());
                 } else {
                     JSourcePanel sourcePanel = ( JSourcePanel ) currentTab;
-                    sourcePanel.findString(searchBar.getText());
+                    //TODO Figure out a good way to deal with the search context. Maybe have preferences or something.
+                    sourcePanel.findString(searchBar.getText(), new SearchContext());
 
                 }
             }
@@ -174,14 +184,50 @@ class JReader extends JFrame implements Runnable {
 
     private void newSourceTab(String filePath, String methodToFind) {
         String title = Utilities.urlToFileName(filePath);
+        String method = null;
+
+        /**
+         * Some paths look like: src-jdk/javax/imageio/ImageReader.java#readAll(int, javax.imageio.ImageReadParam)
+         * Extract the method so we can scroll to it when the tab opens, and extract the actual path to avoid an error.
+         */
+        if ( filePath.contains("#") ) {
+            method = Utilities.extractMethodNameFromPath(filePath);
+
+            /* Get the actual path */
+            String[] parts = filePath.split("#");
+            filePath = parts[0];
+        }
+
+        //TODO write a method to look for common non-classes. Eg, index.html, package-summary.html
+        if ( !new File(filePath).exists() ) {
+            JOptionPane.showMessageDialog(this, "Unable to locate file: " + filePath, "Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         JSourcePanel newTab = new JSourcePanel(filePath);
 
         addCloseButtonToTab(newTab, title);
-
         tabbedPane.setSelectedComponent(newTab);
 
+        SearchContext context = new SearchContext();
+        context.setMatchCase(true);
+
         if ( methodToFind != null ) {
-            newTab.findString(methodToFind);
+            newTab.findString(methodToFind, context);
+        } else if ( method != null ) {
+            newTab.findString(method, context);
+        } else {
+            String objName = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.lastIndexOf("."));
+            String className = "public class " + objName;
+            String interfaceName = "public interface " + objName;
+
+            if ( newTab.findString(className, context) ) {
+
+            } else if ( newTab.findString(interfaceName, context) ) {
+
+            } else {
+                newTab.findString(objName, context);
+            }
         }
 
         disableButtons();

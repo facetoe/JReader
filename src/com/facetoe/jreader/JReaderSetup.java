@@ -1,8 +1,6 @@
 package com.facetoe.jreader;
 
 import net.lingala.zip4j.exception.ZipException;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 
 import javax.swing.*;
 import java.io.File;
@@ -51,11 +49,11 @@ public class JReaderSetup {
                 parseDocumentation();
             }
 
-            if(!Config.getEntry("hasSrc").equals("true")) {
+            if ( !Config.getEntry("hasSrc").equals("true") ) {
                 getJavaSource(srcDirPath);
             }
 
-            if(!Config.getEntry("srcIsExtracted").equals("true") && Config.getEntry("hasSrc").equals("true")) {
+            if ( !Config.getEntry("srcIsExtracted").equals("true") && Config.getEntry("hasSrc").equals("true") ) {
                 extractSource(srcDirPath);
             }
 
@@ -64,8 +62,7 @@ public class JReaderSetup {
             System.exit(1);
         }
 
-
-        if(!isSetup()) {
+        if ( !isSetup() ) {
             JOptionPane.showMessageDialog(null, "Setup was not successful. Please try again.", "Setup Failed", JOptionPane.WARNING_MESSAGE);
             System.exit(0);
         } else {
@@ -184,7 +181,7 @@ public class JReaderSetup {
 
     public static void getJavaSource(String srcDirPath) {
         int result = JOptionPane.showConfirmDialog(null, "JReader needs to download the Java source code.", "", JOptionPane.OK_CANCEL_OPTION);
-        if(result == JOptionPane.OK_OPTION) {
+        if ( result == JOptionPane.OK_OPTION ) {
             try {
                 downloadJavaSource(srcDirPath, "http://sourceforge.net/projects/jdk7src/files/latest/download");
                 Config.setEntry("hasSrc", "true");
@@ -204,8 +201,8 @@ public class JReaderSetup {
     }
 
     public static void extractSource(String srcDirPath) {
-        int result = JOptionPane.showConfirmDialog(null, "JReader will now extract the source code", "", JOptionPane.OK_OPTION);
-        if(result == JOptionPane.OK_OPTION) {
+        int result = JOptionPane.showConfirmDialog(null, "JReader will now extract the source code", "", JOptionPane.OK_CANCEL_OPTION);
+        if ( result == JOptionPane.OK_OPTION ) {
             try {
                 Utilities.unzip(srcDirPath, srcDirPath.replaceAll("\\.zip", ""));
                 Config.setEntry("srcIsExtracted", "true");
@@ -257,7 +254,7 @@ public class JReaderSetup {
             if ( Config.getEntry("hasDocs").equals("true")
                     && Config.getEntry("dataIsParsed").equals("true")
                     && Config.getEntry("hasSrc").equals("true")
-                    && Config.getEntry("srcIsExtracted").equals("true")) {
+                    && Config.getEntry("srcIsExtracted").equals("true") ) {
                 return true;
             }
         }
