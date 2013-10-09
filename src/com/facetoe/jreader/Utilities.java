@@ -9,8 +9,15 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.regex.Pattern;
 
 public class Utilities {
+
+//    public static void main(String[] args) {
+//        String orig = "file:///C:/Users/windowsBox/Desktop/docs/api/org/omg/PortableServer/SERVANT_RETENTION_POLICY_ID.html";
+//          System.out.println("Orig: " + orig);
+//          System.out.println("Modi: " + docPathToSourcePath(orig));
+//    }
 
     /**
      * Reads a file and returns a String.
@@ -34,18 +41,15 @@ public class Utilities {
     public static String urlToFileName(String url) {
         String fileName;
 
-        /**
-         * Some urls are in the form:  src-jdk/javax/imageio/ImageReader.java#readAll(int, javax.imageio.ImageReadParam)
-         * Extract the filename between the last '/' and the '#' character.
-         */
-        if ( url.contains("#") ) {
-            fileName = url.substring(url.lastIndexOf("/") + 1, url.indexOf("#"));
-        } else {
+        /*Split on Windows or Unix separators. If you don't wrap in Pattern.quote you get an exception from windows separators.  */
+        String separator = Pattern.quote(System.getProperty("file.separator"));
 
-            /**
-             * Otherwise just extract whatever is after '/'
-             */
-            String[] parts = url.split("\\/");
+        /* Sometimes the urls contain "path/filename.html#methodname" so extract the file name substring */
+        if ( url.contains("#") ) {
+            fileName = url.substring(url.lastIndexOf(separator) + 1, url.indexOf("#"));
+        } else {
+            /* Otherwise just grab the filename at the end */
+            String[] parts = url.split(separator);
             fileName = parts[parts.length - 1];
         }
         return fileName;
@@ -76,23 +80,9 @@ public class Utilities {
      * @return the converted path.
      */
     public static String docPathToSourcePath(String docPath) {
-        String sourcePath = docPath.replaceAll("file\\:\\/\\/", "");
-
-        /* Sometimes there are extra '/' characters, remove them. */
-        sourcePath = sourcePath.replaceAll("(\\/)\\1+", "$1");
-
-        /* If the user is browsing with frames this will be present, remove it.*/
-        sourcePath = sourcePath.replaceAll("index\\.html\\?", "");
-
-        String test = sourcePath.replace(Config.getEntry("apiDir"), "");
-        test =  Config.getEntry("srcDir") + test;
-
-        /* Replace the api dir with the source dir */
-        sourcePath = sourcePath.replace(Config.getEntry("apiDir"), Config.getEntry("srcDir"));
-
-        sourcePath = sourcePath.replaceAll("\\.html", ".java");
-        test = test.replaceAll("\\.html", ".java");
-        return test;
+        String path = docPath.substring(docPath.lastIndexOf("api")+3, docPath.length());
+        String srcPath = Paths.get(Config.getEntry("srcDir") + path).toString();
+        return srcPath.replaceAll("\\.html", ".java");
     }
 
     /**

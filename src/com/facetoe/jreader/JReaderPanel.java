@@ -14,6 +14,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.util.Stack;
 
@@ -64,20 +65,6 @@ public class JReaderPanel extends JPanel {
         setLayout(new BorderLayout());
         createScene();
         loadURL(initialURL);
-    }
-
-    /**
-     * Attempts to convert string to URL.
-     *
-     * @param str to be converted to URL.
-     * @return the URL or null if it failed.
-     */
-    private static String toURL(String str) {
-        try {
-            return new URL(str).toExternalForm();
-        } catch ( MalformedURLException exception ) {
-            return null;
-        }
     }
 
     /**
@@ -183,7 +170,6 @@ public class JReaderPanel extends JPanel {
             loadURL(page);
             nextStack.push(currentPage);
             currentPage = page;
-
         }
     }
 
@@ -206,8 +192,11 @@ public class JReaderPanel extends JPanel {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                String tmp = Paths.get(url).toUri().toString();
-                engine.load(tmp);
+                String path = url;
+                try {
+                    path = Paths.get(url).toUri().toString();
+                } catch (InvalidPathException ex) {}
+                engine.load(path);
             }
         });
     }

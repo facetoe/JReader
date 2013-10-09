@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -111,9 +112,6 @@ public class JReader extends JFrame {
                 if ( currentTab instanceof JReaderPanel ) {
                     JReaderPanel panel = ( JReaderPanel ) currentTab;
                     String path = Utilities.docPathToSourcePath(panel.getCurrentPage());
-                    System.out.println("OldPath: " + panel.getCurrentPage());
-                    System.out.println("NewPath: " + path);
-
                     newSourceTab(path, null);
                 }
             }
@@ -174,7 +172,6 @@ public class JReader extends JFrame {
     private void loadClass(String className) {
         String path = classes.get(className);
         if ( path != null && currentTab instanceof JReaderPanel ) {
-            System.out.println(path);
             String url = Config.getEntry("docDir") + "api" + File.separator + path;
 
             JReaderPanel jReaderPanel = ( JReaderPanel ) currentTab;
