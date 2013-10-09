@@ -84,10 +84,15 @@ public class Utilities {
         /* If the user is browsing with frames this will be present, remove it.*/
         sourcePath = sourcePath.replaceAll("index\\.html\\?", "");
 
+        String test = sourcePath.replace(Config.getEntry("apiDir"), "");
+        test =  Config.getEntry("srcDir") + test;
+
         /* Replace the api dir with the source dir */
-        sourcePath = sourcePath.replaceAll(Config.getEntry("apiDir"), Config.getEntry("srcDir"));
+        sourcePath = sourcePath.replace(Config.getEntry("apiDir"), Config.getEntry("srcDir"));
+
         sourcePath = sourcePath.replaceAll("\\.html", ".java");
-        return sourcePath;
+        test = test.replaceAll("\\.html", ".java");
+        return test;
     }
 
     /**

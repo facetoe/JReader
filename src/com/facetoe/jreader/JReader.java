@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-class JReader extends JFrame {
+public class JReader extends JFrame {
 
     private JLabel lblStatus = new JLabel();
     private JButton btnSearch = new JButton("Search");
@@ -57,6 +57,7 @@ class JReader extends JFrame {
         rightBar.add(btnHome);
         rightBar.add(btnSource);
         rightBar.add(btnCollapse);
+
 
         topBar.add(leftBar, BorderLayout.WEST);
         topBar.add(rightBar, BorderLayout.EAST);
@@ -224,8 +225,8 @@ class JReader extends JFrame {
             newTab.findString(method, context);
         } else {
             String objName = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.lastIndexOf("."));
-            String className = "public class " + objName;
-            String interfaceName = "public interface " + objName;
+            String className = "class " + objName;
+            String interfaceName = "interface " + objName;
 
             if ( newTab.findString(className, context) ) {
 
@@ -377,6 +378,8 @@ class JReader extends JFrame {
 
         if ( !JReaderSetup.isSetup() )
             JReaderSetup.setup();
+
+        System.out.println(System.getProperty("user.home"));
 
         SwingUtilities.invokeLater(new Runnable() {
             @Override

@@ -12,7 +12,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.Stack;
 
 import static javafx.concurrent.Worker.State.FAILED;
@@ -204,11 +206,7 @@ public class JReaderPanel extends JPanel {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                String tmp = toURL(url);
-
-                if ( tmp == null ) {
-                    tmp = toURL("file://" + url);
-                }
+                String tmp = Paths.get(url).toUri().toString();
                 engine.load(tmp);
             }
         });

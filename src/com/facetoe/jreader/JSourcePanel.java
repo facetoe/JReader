@@ -1,6 +1,7 @@
 package com.facetoe.jreader;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaEditorKit;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rsyntaxtextarea.folding.FoldCollapser;
@@ -12,9 +13,12 @@ import org.fife.ui.rtextarea.SearchEngine;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 
 
 /**
@@ -38,7 +42,8 @@ public class JSourcePanel extends JPanel {
 
         //TODO Figure out a way for the user to set themes.
         try {
-            Theme theme = Theme.load(new FileInputStream("/home/facetoe/IdeaProjects/JReader/resources/themes/ideaTheme.xml"));
+            InputStream in = getClass().getResourceAsStream("/com/facetoe/jreader/resources/themes/eclipseTheme.xml");
+            Theme theme = Theme.load(in);
             theme.apply(textArea);
         } catch ( IOException e ) {
             e.printStackTrace();
@@ -50,7 +55,7 @@ public class JSourcePanel extends JPanel {
         add(scrollPane);
 
         try {
-            String code = Utilities.readFile(filePath, StandardCharsets.UTF_8);
+            String code = Utilities.readFile(Paths.get(filePath).toString(), StandardCharsets.UTF_8);
             textArea.setText(code);
         } catch ( IOException e ) {
             e.printStackTrace();
@@ -73,7 +78,6 @@ public class JSourcePanel extends JPanel {
     }
 
     //TODO Figure out how to set the SearchContext in a half decent way.
-
     /**
      * @param text to search for
      * @param context The search context for this search.
