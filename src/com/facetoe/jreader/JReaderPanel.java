@@ -15,6 +15,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Stack;
 
@@ -105,6 +106,7 @@ public class JReaderPanel extends JPanel {
                     public void changed(ObservableValue<? extends String> ov, String oldValue, final String newValue) {
                         System.out.println("New val: " + newValue);
                         if ( !newValue.endsWith(".java") ) {
+                            System.out.println("Pushing back: " + newValue);
                             currentPage = newValue;
                             backStack.push(newValue);
                         }
@@ -188,15 +190,22 @@ public class JReaderPanel extends JPanel {
      * @param url to load.
      */
     public void loadURL(final String url) {
-        System.out.println("Loading: " + url);
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                String path = url;
-                try {
-                    path = Paths.get(url).toUri().toString();
-                } catch (InvalidPathException ex) {}
-                engine.load(path);
+
+                /* This check is necessary because passing a url that starts with file:// to Paths.get(url).toUri()
+                 * results in a mutated path on Linux - although it seemed to work fine on Windows.
+                 * */
+                if(url.startsWith("file://")) {
+                    engine.load(url);
+                } else {
+                    String path = url;
+                    try {
+                        path = Paths.get(url).toUri().toString();
+                    } catch (InvalidPathException ex) {}
+                    engine.load(path);
+                }
             }
         });
     }
