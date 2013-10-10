@@ -147,7 +147,7 @@ public class JReader extends JFrame {
                 if ( tabbedPane.getComponentAt(tabbedPane.getSelectedIndex()) instanceof JSourcePanel ) {
                     disableButtons();
                     searchBar.removeWordsFromTrie(new ArrayList<String>(classes.keySet()));
-                } else if (tabbedPane.getComponentAt(tabbedPane.getSelectedIndex()) instanceof JReaderPanel) {
+                } else if ( tabbedPane.getComponentAt(tabbedPane.getSelectedIndex()) instanceof JReaderPanel ) {
                     enableButtons();
                     searchBar.addWordsToTrie(new ArrayList<String>(classes.keySet()));
                 }
@@ -200,6 +200,7 @@ public class JReader extends JFrame {
 
         SearchContext context = new SearchContext();
         context.setMatchCase(true);
+        context.setWholeWord(true);
 
         String searchTerm = pathData.getSearchTerm();
 
@@ -208,9 +209,9 @@ public class JReader extends JFrame {
             String interfaceName = "interface " + pathData.getSearchTerm();
             String enumName = "enum " + pathData.getSearchTerm();
 
-            if(newTab.findString(className, context)) {
-            } else if(newTab.findString(interfaceName, context)) {
-            } else if(newTab.findString(enumName, context)) {
+            if ( newTab.findString(className, context) ) {
+            } else if ( newTab.findString(interfaceName, context) ) {
+            } else if ( newTab.findString(enumName, context) ) {
             } else {
                 newTab.findString(pathData.getSearchTerm(), context);
             }
@@ -220,9 +221,9 @@ public class JReader extends JFrame {
             String interfaceName = "interface " + pathData.getObjectName();
             String enumName = "enum " + pathData.getObjectName();
 
-            if(newTab.findString(className, context)) {
-            } else if(newTab.findString(interfaceName, context)) {
-            } else if(newTab.findString(enumName, context)) {
+            if ( newTab.findString(className, context) ) {
+            } else if ( newTab.findString(interfaceName, context) ) {
+            } else if ( newTab.findString(enumName, context) ) {
             } else {
                 newTab.findString(pathData.getObjectName(), context);
             }
