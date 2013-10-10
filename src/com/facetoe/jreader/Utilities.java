@@ -22,7 +22,7 @@ public class Utilities {
     /**
      * Reads a file and returns a String.
      *
-     * @param path to the file
+     * @param path     to the file
      * @param encoding of the file
      * @return the file as a string
      * @throws IOException
@@ -33,29 +33,6 @@ public class Utilities {
     }
 
     /**
-     * Takes a url and returns the file name it points to.
-     *
-     * @param url to extract file name from
-     * @return the file name
-     */
-    public static String urlToFileName(String url) {
-        String fileName;
-
-        /*Split on Windows or Unix separators. If you don't wrap in Pattern.quote you get an exception from windows separators.  */
-        String separator = Pattern.quote(System.getProperty("file.separator"));
-
-        /* Sometimes the urls contain "path/filename.html#methodname" so extract the file name substring */
-        if ( url.contains("#") ) {
-            fileName = url.substring(url.lastIndexOf(separator) + 1, url.indexOf("#"));
-        } else {
-            /* Otherwise just grab the filename at the end */
-            String[] parts = url.split(separator);
-            fileName = parts[parts.length - 1];
-        }
-        return fileName;
-    }
-
-    /**
      * Extracts the method name from path including the first bracket.
      * Without including the first bracket calling JSourcePane.findString(methodName) will usually
      * locate the string in the comments instead of at the declaration.
@@ -63,26 +40,15 @@ public class Utilities {
      * @param path to extract the method name from
      * @return the method name
      */
+    //TODO fix this method so it works for constants as well as method names
     public static String extractMethodNameFromPath(String path) {
-        String[] parts = path.split("#");
-        String methodName = parts[1];
-        methodName = methodName.substring(0, methodName.indexOf("(") + 1);
+        String methodName = null;
+        if ( path.contains("#") ) {
+            String[] parts = path.split("#");
+            methodName = parts[1];
+            methodName = methodName.substring(0, methodName.indexOf("(") + 1);
+        }
         return methodName;
-    }
-
-    /**
-     * Changes the path from the Java documentation to the relevant file of the Java source code.
-     * Eg,
-     * Takes a path like: file:///home/facetoe/tmp/docs//api/javax/imageio/ImageWriter.html
-     * and returns: /home/facetoe/.jreader/src-jdk/javax/imageio/ImageWriter.java
-     *
-     * @param docPath to be converted.
-     * @return the converted path.
-     */
-    public static String docPathToSourcePath(String docPath) {
-        String path = docPath.substring(docPath.lastIndexOf("api")+3, docPath.length());
-        String srcPath = Paths.get(Config.getEntry("srcDir") + path).toString();
-        return srcPath.replaceAll("\\.html", ".java");
     }
 
     /**
@@ -104,7 +70,7 @@ public class Utilities {
      * Takes zip file at sourcePath and extracts to destPath.
      *
      * @param sourcePath of zip file.
-     * @param destPath location to extract to.
+     * @param destPath   location to extract to.
      * @throws ZipException
      */
     public static void unzip(String sourcePath, String destPath) throws ZipException {
@@ -118,11 +84,43 @@ public class Utilities {
         Config.setEntry("hasSrc", "true");
     }
 
+    public static boolean isGoodSourcePath(String path) {
+
+        if ( path == null ) {
+            return false;
+        }
+
+        /**
+         * Some paths look like: src-jdk/javax/imageio/ImageReader.java#readAll(int, javax.imageio.ImageReadParam)
+         * Extract the actual path to avoid an error.
+         */
+        if ( path.contains("#") ) {
+            /* Get the actual path */
+            String[] parts = path.split("#");
+            path = parts[0];
+        }
+
+        File file = new File(path);
+
+        if ( !file.exists() || file.isDirectory() ) {
+            return false;
+        }
+
+        String[] badNames = {"index.html"};
+
+        for ( int i = 0; i < badNames.length; i++ ) {
+            if ( path.contains(badNames[i]) ) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * Takes a JavaClassData object and writes to file at filePath.
      *
      * @param filePath to write the data to. File must exist.
-     * @param data JavaClassData to write
+     * @param data     JavaClassData to write
      * @throws IOException
      */
     public static void writeCLassData(String filePath, JavaClassData data) throws IOException {
@@ -151,3 +149,120 @@ public class Utilities {
         return classData;
     }
 }
+
+/**
+ * Accepts a local path and extracts various information from it.
+ */
+class PathData {
+    private String docPath;
+
+    /**
+     * The name of the html file this path points to
+     */
+    private String fileName;
+
+    /**
+     * The docPath converted to point to the relevant Java source code
+     */
+    private String srcPath;
+
+    /**
+     * The name of this Java object
+     */
+    private String objectName;
+
+    /**
+     * Either a CONSTANT or method, or null
+     */
+    private String searchTerm;
+
+
+    public PathData(String docPath) {
+        this.docPath = docPath;
+
+        /* If path is already pointing to a java file just extract the name and we're done  */
+        if(docPath.endsWith(".java")) {
+            srcPath = docPath;
+            extractFileName();
+        } else {
+            parsePath();
+            extractFileName();
+        }
+    }
+
+    /**
+     * Extract all the information we can get out of the path
+     */
+    private void parsePath() {
+        /* Chop off the section of path that points to the Java docs */
+        String path = docPath.substring(docPath.lastIndexOf("api") + 3, docPath.length());
+
+        /* The path is in the form /dir/dir/objectName.html */
+        objectName = path.substring(path.lastIndexOf(File.separator)+1, path.indexOf("."));
+
+        String srcDir = Config.getEntry("srcDir");
+        srcPath = srcDir + path.replace(".html", ".java");
+
+        /* If there are more than 2 periods it's probably a nested class like: /dir/dir/SomeClass.SomeNestedClass.html */
+        if(path.split("\\.").length > 2) {
+            String[] parts = path.split("\\.");
+            String nestedClassName = parts[parts.length-2];
+            String newPath = path.substring(0, path.lastIndexOf(File.separator)+1) + objectName + ".java";
+            srcPath =  srcDir + newPath;
+            searchTerm = nestedClassName;
+        }
+
+        /* If there is a '#' character it's either a method or a constant like:
+         * /dir/dir/SomeClass.html#methodName(int foo, int bar)
+         * or
+         * /dir/dir/SomeClass.html#CONSTANT */
+        if ( docPath.contains("#") ) {
+            String[] parts = path.split("#");
+            String methodName = parts[1];
+            if(methodName.contains("(")) {
+                methodName = methodName.substring(0, methodName.indexOf("(") + 1);
+            } else {
+                methodName = " " + methodName + " ";
+            }
+
+            searchTerm = methodName;
+
+            /* Finally, convert the .html to .java so we can load it up */
+            srcPath = srcDir + parts[0].replace(".html", ".java");
+        }
+    }
+
+    /**
+     * Extracts the file name from the url.
+     */
+    private void extractFileName() {
+        /*Split on Windows or Unix separators. If you don't wrap in Pattern.quote you get an exception from windows separators.  */
+        String separator = Pattern.quote(System.getProperty("file.separator"));
+
+        /* Sometimes the urls contain "path/filename.html#methodname" so extract the file name substring */
+        if ( docPath.contains("#") ) {
+            fileName = docPath.substring(docPath.lastIndexOf(separator) + 1, docPath.indexOf("#"));
+        } else {
+            /* Otherwise just grab the filename at the end */
+            String[] parts = docPath.split(separator);
+            fileName = parts[parts.length - 1];
+        }
+    }
+
+    String getFileName() {
+        return fileName;
+    }
+
+    String getSrcPath() {
+        return srcPath;
+    }
+
+    String getObjectName() {
+        return objectName;
+    }
+
+    String getSearchTerm() {
+        return searchTerm;
+    }
+}
+

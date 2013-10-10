@@ -11,7 +11,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -111,8 +110,7 @@ public class JReader extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if ( currentTab instanceof JReaderPanel ) {
                     JReaderPanel panel = ( JReaderPanel ) currentTab;
-                    String path = Utilities.docPathToSourcePath(panel.getCurrentPage());
-                    newSourceTab(path, null);
+                    newSourceTab(new PathData(panel.getCurrentPage()));
                 }
             }
         });
@@ -149,7 +147,7 @@ public class JReader extends JFrame {
                 if ( tabbedPane.getComponentAt(tabbedPane.getSelectedIndex()) instanceof JSourcePanel ) {
                     disableButtons();
                     searchBar.removeWordsFromTrie(new ArrayList<String>(classes.keySet()));
-                } else {
+                } else if (tabbedPane.getComponentAt(tabbedPane.getSelectedIndex()) instanceof JReaderPanel) {
                     enableButtons();
                     searchBar.addWordsToTrie(new ArrayList<String>(classes.keySet()));
                 }
@@ -186,25 +184,12 @@ public class JReader extends JFrame {
         tabbedPane.setTabComponentAt(index, tabButton);
     }
 
-    private void newSourceTab(String filePath, String methodToFind) {
-        String title = Utilities.urlToFileName(filePath);
-        String method = null;
+    private void newSourceTab(PathData pathData) {
+        String title = pathData.getFileName();
+        String filePath = pathData.getSrcPath();
 
-        /**
-         * Some paths look like: src-jdk/javax/imageio/ImageReader.java#readAll(int, javax.imageio.ImageReadParam)
-         * Extract the method so we can scroll to it when the tab opens, and extract the actual path to avoid an error.
-         */
-        if ( filePath.contains("#") ) {
-            method = Utilities.extractMethodNameFromPath(filePath);
-
-            /* Get the actual path */
-            String[] parts = filePath.split("#");
-            filePath = parts[0];
-        }
-
-        //TODO write a method to look for common non-classes. Eg, index.html, package-summary.html
-        if ( !new File(filePath).exists() ) {
-            JOptionPane.showMessageDialog(this, "Unable to locate file: " + filePath, "Error", JOptionPane.WARNING_MESSAGE);
+        if ( !Utilities.isGoodSourcePath(filePath) ) {
+            JOptionPane.showMessageDialog(this, "Bad File: " + filePath, "Error", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -216,21 +201,30 @@ public class JReader extends JFrame {
         SearchContext context = new SearchContext();
         context.setMatchCase(true);
 
-        if ( methodToFind != null ) {
-            newTab.findString(methodToFind, context);
-        } else if ( method != null ) {
-            newTab.findString(method, context);
-        } else {
-            String objName = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.lastIndexOf("."));
-            String className = "class " + objName;
-            String interfaceName = "interface " + objName;
+        String searchTerm = pathData.getSearchTerm();
 
-            if ( newTab.findString(className, context) ) {
+        if ( searchTerm != null ) {
+            String className = "class " + pathData.getSearchTerm();
+            String interfaceName = "interface " + pathData.getSearchTerm();
+            String enumName = "enum " + pathData.getSearchTerm();
 
-            } else if ( newTab.findString(interfaceName, context) ) {
-
+            if(newTab.findString(className, context)) {
+            } else if(newTab.findString(interfaceName, context)) {
+            } else if(newTab.findString(enumName, context)) {
             } else {
-                newTab.findString(objName, context);
+                newTab.findString(pathData.getSearchTerm(), context);
+            }
+
+        } else {
+            String className = "class " + pathData.getObjectName();
+            String interfaceName = "interface " + pathData.getObjectName();
+            String enumName = "enum " + pathData.getObjectName();
+
+            if(newTab.findString(className, context)) {
+            } else if(newTab.findString(interfaceName, context)) {
+            } else if(newTab.findString(enumName, context)) {
+            } else {
+                newTab.findString(pathData.getObjectName(), context);
             }
         }
 
@@ -260,7 +254,16 @@ public class JReader extends JFrame {
                                     @Override
                                     public void run() {
                                         if ( newVal.endsWith(".java") ) {
-                                            newSourceTab(newVal.replaceAll("file:\\/\\/", ""), null);
+                                            newSourceTab(new PathData(newVal.replaceAll("file:\\/\\/", "")));
+                                        } else if ( currentTab instanceof JReaderPanel ) {
+                                            JReaderPanel jReaderPanel = ( JReaderPanel ) currentTab;
+                                            //TODO figure this out
+                                            //String path = Utilities.docPathToSourcePath(newVal);
+//                                            if(Utilities.isGoodSourcePath(path)) {
+//                                                btnSource.setEnabled(true);
+//                                            } else {
+//                                                btnSource.setEnabled(false);
+//                                            }
                                         }
                                     }
                                 });
