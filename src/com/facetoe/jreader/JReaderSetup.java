@@ -8,7 +8,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created with IntelliJ IDEA.
@@ -152,22 +151,17 @@ public class JReaderSetup {
         int result = JOptionPane.showConfirmDialog(null, "JReader now needs to parse the Java docs.\nThis will only happen once.", "", JOptionPane.OK_CANCEL_OPTION);
         if ( result == JOptionPane.OK_OPTION ) {
             try {
-                ParserWindow parserWindow = new ParserWindow();
-                JavaClassData data = parserWindow.parser.get();
+
+                ParserProgressWindow progressWindow = new ParserProgressWindow();
+                JavaClassData data = progressWindow.execute();
                 Utilities.writeCLassData(Config.getEntry("classDataFile"), data);
                 Config.setEntry("dataIsParsed", "true");
 
             } catch ( IOException e ) {
                 e.printStackTrace();
 
-            } catch ( InterruptedException ex ) {
-                ex.printStackTrace();
-
-            } catch ( ExecutionException ex ) {
-                ex.printStackTrace();
-                Config.setEntry("dataIsParsed", "false");
-
             } catch ( CancellationException ex ) {
+                Config.setEntry("dataIsParsed", "false");
                 JOptionPane.showMessageDialog(null, "Goodbye");
                 System.exit(0);
             }
