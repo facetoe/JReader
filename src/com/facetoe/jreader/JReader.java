@@ -27,6 +27,8 @@ public class JReader extends JFrame {
     private JavaClassData allClassData;
 
     private HashMap<String, String> classes;
+    private HashMap<String, String> methodsAndFields = new HashMap<String, String>();
+
     private AutoCompleteTextField searchBar = new AutoCompleteTextField();
     private JProgressBar progressBar = new JProgressBar();
     private final JTabbedPane tabbedPane = new JTabbedPane();
@@ -98,6 +100,7 @@ public class JReader extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if ( currentTab instanceof JReaderPanel ) {
                     loadClass(searchBar.getText());
+                    searchBar.setText("");
                 } else {
                     JSourcePanel sourcePanel = ( JSourcePanel ) currentTab;
                     sourcePanel.findString(searchBar.getText(), new SearchContext());
@@ -149,6 +152,7 @@ public class JReader extends JFrame {
                     searchBar.removeWordsFromTrie(new ArrayList<String>(classes.keySet()));
                 } else if ( tabbedPane.getComponentAt(tabbedPane.getSelectedIndex()) instanceof JReaderPanel ) {
                     enableBrowserButtons();
+                    searchBar.removeWordsFromTrie(new ArrayList<String>(methodsAndFields.keySet()));
                     searchBar.addWordsToTrie(new ArrayList<String>(classes.keySet()));
                 }
                 currentTab = ( JPanel ) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
@@ -187,6 +191,13 @@ public class JReader extends JFrame {
     private void newSourceTab(PathData pathData) {
         String title = pathData.getFileName();
         String filePath = pathData.getSrcPath();
+
+        HashMap<String, String> tmpMethodsAndFields = allClassData.getAllClassData().get(pathData.getObjectName());
+
+        if ( tmpMethodsAndFields != null ) {
+            methodsAndFields = tmpMethodsAndFields;
+            searchBar.addWordsToTrie(new ArrayList<String>(methodsAndFields.keySet()));
+        }
 
         if ( !Utilities.isGoodSourcePath(filePath) ) {
             JOptionPane.showMessageDialog(this, "Bad File: " + filePath, "Error", JOptionPane.WARNING_MESSAGE);

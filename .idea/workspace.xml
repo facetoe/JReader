@@ -6,18 +6,20 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0f725b18-1f9a-4ce0-8608-872f2385b0ad" name="Default" comment="">
+    <list default="true" id="0f725b18-1f9a-4ce0-8608-872f2385b0ad" name="Default" comment="Added check to prevent error when user is browsing with frames enabled.">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/JavaClassData.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/JReader.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/JReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/Parser.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/Parser.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/PathData.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/PathData.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="JReader.iws" />
     <ignored path=".idea/workspace.xml" />
     <file path="/Main.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1380211146514" ignored="false" />
-    <file path="/Parser.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1380982879743" ignored="false" />
-    <file path="/Dummy.txt" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381395714927" ignored="false" />
-    <file path="/fragment.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381322308378" ignored="false" />
-    <file path="/JReader.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381395191346" ignored="false" />
+    <file path="/Parser.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381404192998" ignored="false" />
+    <file path="/Dummy.txt" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381395764913" ignored="false" />
+    <file path="/fragment.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381400293452" ignored="false" />
+    <file path="/JReader.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381396877295" ignored="false" />
     <file path="/SimpleSwingBrowser.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1380348006669" ignored="false" />
     <file path="/AutoCompleteTextField.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381394809207" ignored="false" />
     <file path="/Trie.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1380283989308" ignored="false" />
@@ -39,6 +41,7 @@
     <file path="/jreader.xml" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381290714277" ignored="false" />
     <file path="/jreader.jar.xml" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381294298971" ignored="false" />
     <file path="/PathData.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381395592669" ignored="false" />
+    <file path="/JavaClassData.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381404654359" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,20 +105,50 @@
       <file leaf-file-name="JReader.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/JReader.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="324" column="38" selection-start="13177" selection-end="13177" vertical-scroll-proportion="0.0">
+            <state line="412" column="0" selection-start="15996" selection-end="15996" vertical-scroll-proportion="0.0">
               <folding>
-                <element signature="e#3772#4117#0" expanded="true" />
-                <element signature="e#4106#4107#0" expanded="true" />
-                <element signature="e#4159#4493#0" expanded="true" />
-                <element signature="e#4482#4483#0" expanded="true" />
-                <element signature="e#4533#5137#0" expanded="true" />
-                <element signature="e#5126#5127#0" expanded="true" />
-                <element signature="e#5220#5963#0" expanded="true" />
-                <element signature="e#5952#5953#0" expanded="true" />
-                <element signature="e#9460#10823#0" expanded="true" />
-                <element signature="e#9731#10765#0" expanded="true" />
-                <element signature="e#10730#10731#0" expanded="true" />
-                <element signature="e#10796#10797#0" expanded="true" />
+                <element signature="e#968#984#0" expanded="true" />
+                <element signature="e#3902#4247#0" expanded="true" />
+                <element signature="e#4236#4237#0" expanded="true" />
+                <element signature="e#4289#4623#0" expanded="true" />
+                <element signature="e#4612#4613#0" expanded="true" />
+                <element signature="e#4663#5267#0" expanded="true" />
+                <element signature="e#5256#5257#0" expanded="true" />
+                <element signature="e#5350#6194#0" expanded="true" />
+                <element signature="e#6183#6184#0" expanded="true" />
+                <element signature="e#10001#11367#0" expanded="true" />
+                <element signature="e#10272#11309#0" expanded="true" />
+                <element signature="e#11274#11275#0" expanded="true" />
+                <element signature="e#11340#11341#0" expanded="true" />
+                <element signature="e#15859#15984#0" expanded="true" />
+                <element signature="e#15973#15974#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Parser.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/Parser.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="165" column="5" selection-start="5255" selection-end="5255" vertical-scroll-proportion="5.30622">
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#643#659#0" expanded="true" />
+                <element signature="e#741#774#0" expanded="true" />
+                <element signature="e#2095#2111#0" expanded="true" />
+                <element signature="e#4259#4421#0" expanded="true" />
+                <element signature="e#4410#4411#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="JavaClassData.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/JavaClassData.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="16" column="42" selection-start="450" selection-end="450" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -139,10 +172,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PathData.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="PathData.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/PathData.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="51" column="51" selection-start="1361" selection-end="1361" vertical-scroll-proportion="0.26218098">
+            <state line="90" column="7" selection-start="2906" selection-end="2906" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -220,8 +253,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/JSourcePane.java" />
-        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/ButtonTabComponent.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/DownloadProgressExample.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/SourceDownloader.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/Unzipper.java" />
@@ -233,9 +264,11 @@
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/JSourcePanel.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/JReaderPanel.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/AutoCompleteTextField.java" />
-        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/JReader.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/Utilities.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/PathData.java" />
+        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/JReader.java" />
+        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/JavaClassData.java" />
+        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/Parser.java" />
       </list>
     </option>
   </component>
@@ -375,6 +408,28 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="jreader" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="JReader" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="JReader" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="jreader" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Parser.java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -613,7 +668,11 @@
       <created>1381395724717</created>
       <updated>1381395724718</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="Added check to prevent error when user is browsing with frames enabled.">
+      <created>1381395761578</created>
+      <updated>1381395761578</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TodoView" selected-index="3">
@@ -704,7 +763,7 @@
     <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="false" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Removed redundant code." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added check to prevent error when user is browsing with frames enabled." />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -742,6 +801,7 @@
     <MESSAGE value="Made it possible to clear the textField." />
     <MESSAGE value="Clear the searchBar after a search in JReaderPanel." />
     <MESSAGE value="Removed redundant code." />
+    <MESSAGE value="Added check to prevent error when user is browsing with frames enabled." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -751,16 +811,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/.idea/modules.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/jreader.jar.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/.idea/libraries/jsoup_1_7_2.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
@@ -784,13 +834,6 @@
     <entry file="file://$PROJECT_DIR$/src/META-INF/MANIFEST.MF">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/JSourcePanel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="57" column="0" selection-start="1957" selection-end="1957" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/JReaderSetup.java">
@@ -846,26 +889,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/JReader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="324" column="38" selection-start="13177" selection-end="13177" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="e#3772#4117#0" expanded="true" />
-            <element signature="e#4106#4107#0" expanded="true" />
-            <element signature="e#4159#4493#0" expanded="true" />
-            <element signature="e#4482#4483#0" expanded="true" />
-            <element signature="e#4533#5137#0" expanded="true" />
-            <element signature="e#5126#5127#0" expanded="true" />
-            <element signature="e#5220#5963#0" expanded="true" />
-            <element signature="e#5952#5953#0" expanded="true" />
-            <element signature="e#9460#10823#0" expanded="true" />
-            <element signature="e#9731#10765#0" expanded="true" />
-            <element signature="e#10730#10731#0" expanded="true" />
-            <element signature="e#10796#10797#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/Utilities.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="106" column="0" selection-start="3611" selection-end="3611" vertical-scroll-proportion="0.0">
@@ -873,10 +896,63 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/JSourcePanel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="57" column="0" selection-start="1957" selection-end="1957" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/PathData.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="51" column="51" selection-start="1361" selection-end="1361" vertical-scroll-proportion="0.26218098">
+        <state line="90" column="7" selection-start="2906" selection-end="2906" vertical-scroll-proportion="0.0">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/JavaClassData.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="42" selection-start="450" selection-end="450" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/JReader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="412" column="0" selection-start="15996" selection-end="15996" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="e#968#984#0" expanded="true" />
+            <element signature="e#3902#4247#0" expanded="true" />
+            <element signature="e#4236#4237#0" expanded="true" />
+            <element signature="e#4289#4623#0" expanded="true" />
+            <element signature="e#4612#4613#0" expanded="true" />
+            <element signature="e#4663#5267#0" expanded="true" />
+            <element signature="e#5256#5257#0" expanded="true" />
+            <element signature="e#5350#6194#0" expanded="true" />
+            <element signature="e#6183#6184#0" expanded="true" />
+            <element signature="e#10001#11367#0" expanded="true" />
+            <element signature="e#10272#11309#0" expanded="true" />
+            <element signature="e#11274#11275#0" expanded="true" />
+            <element signature="e#11340#11341#0" expanded="true" />
+            <element signature="e#15859#15984#0" expanded="true" />
+            <element signature="e#15973#15974#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/Parser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="165" column="5" selection-start="5255" selection-end="5255" vertical-scroll-proportion="5.30622">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#643#659#0" expanded="true" />
+            <element signature="e#741#774#0" expanded="true" />
+            <element signature="e#2095#2111#0" expanded="true" />
+            <element signature="e#4259#4421#0" expanded="true" />
+            <element signature="e#4410#4411#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

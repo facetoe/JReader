@@ -14,7 +14,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 
@@ -126,26 +125,6 @@ class MyProgressListener implements PropertyChangeListener {
     }
 }
 
-class JavaClassData implements Serializable {
-    private HashMap<String, String> classes;
-    private HashMap<String, HashMap<String, String>> allClassData;
-
-    HashMap<String, String> getClasses() {
-        return classes;
-    }
-
-    void setClasses(HashMap<String, String> classes) {
-        this.classes = classes;
-    }
-
-    HashMap<String, HashMap<String, String>> getAllClassData() {
-        return allClassData;
-    }
-
-    void setAllClassData(HashMap<String, HashMap<String, String>> allClassData) {
-        this.allClassData = allClassData;
-    }
-}
 
 class ParserWindow extends JFrame {
     JPanel panel = new JPanel();
@@ -173,18 +152,6 @@ class ParserWindow extends JFrame {
 
         setTitle("JReader");
         setResizable(false);
-
-        try {
-            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-        } catch ( ClassNotFoundException e ) {
-            e.printStackTrace();
-        } catch ( InstantiationException e ) {
-            e.printStackTrace();
-        } catch ( IllegalAccessException e ) {
-            e.printStackTrace();
-        } catch ( UnsupportedLookAndFeelException e ) {
-            e.printStackTrace();
-        }
 
         getContentPane().add(panel, BorderLayout.NORTH);
         setPreferredSize(new Dimension(550, 72));

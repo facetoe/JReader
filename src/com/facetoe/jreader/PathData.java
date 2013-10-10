@@ -77,7 +77,7 @@ class PathData {
             if ( methodName.contains("(") ) {
                 methodName = methodName.substring(0, methodName.indexOf("(") + 1);
             } else {
-                methodName = " " + methodName + " ";
+                methodName = " " + methodName;
             }
 
             searchTerm = methodName;
