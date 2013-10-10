@@ -114,6 +114,13 @@ class AutoCompleteTextFieldDocumentFilter extends DocumentFilter {
     @Override
     /* Whenever a character is entered, update the prefix tree and display predicted text in the editor */
     public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+
+        if ( text.isEmpty() ) {
+            super.replace(fb, offset, length, text, attrs);
+            clearWordBuffer();
+            return;
+        }
+
         /* Keep track of these so we can tab through words later */
         lastFB = fb;
         lastATTR = attrs;
