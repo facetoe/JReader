@@ -105,13 +105,6 @@ public class Utilities {
             return false;
         }
 
-        String[] badNames = {"index.html"};
-
-        for ( int i = 0; i < badNames.length; i++ ) {
-            if ( path.contains(badNames[i]) ) {
-                return false;
-            }
-        }
         return true;
     }
 
