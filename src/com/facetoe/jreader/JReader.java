@@ -145,10 +145,10 @@ public class JReader extends JFrame {
             @Override
             public void stateChanged(ChangeEvent e) {
                 if ( tabbedPane.getComponentAt(tabbedPane.getSelectedIndex()) instanceof JSourcePanel ) {
-                    disableButtons();
+                    disableBrowserButtons();
                     searchBar.removeWordsFromTrie(new ArrayList<String>(classes.keySet()));
                 } else if ( tabbedPane.getComponentAt(tabbedPane.getSelectedIndex()) instanceof JReaderPanel ) {
-                    enableButtons();
+                    enableBrowserButtons();
                     searchBar.addWordsToTrie(new ArrayList<String>(classes.keySet()));
                 }
                 currentTab = ( JPanel ) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
@@ -229,7 +229,7 @@ public class JReader extends JFrame {
             }
         }
 
-        disableButtons();
+        disableBrowserButtons();
     }
 
     private void newJReaderTab(final String title, final boolean hasButton) {
@@ -258,13 +258,12 @@ public class JReader extends JFrame {
                                             newSourceTab(new PathData(newVal.replaceAll("file:\\/\\/", "")));
                                         } else if ( currentTab instanceof JReaderPanel ) {
                                             JReaderPanel jReaderPanel = ( JReaderPanel ) currentTab;
-                                            //TODO figure this out
-                                            //String path = Utilities.docPathToSourcePath(newVal);
-//                                            if(Utilities.isGoodSourcePath(path)) {
-//                                                btnSource.setEnabled(true);
-//                                            } else {
-//                                                btnSource.setEnabled(false);
-//                                            }
+                                            PathData pathData = new PathData(newVal);
+                                            if ( Utilities.isGoodSourcePath(pathData.getSrcPath()) ) {
+                                                enableSourceButton();
+                                            } else {
+                                                disableSourceButton();
+                                            }
                                         }
                                     }
                                 });
@@ -323,20 +322,29 @@ public class JReader extends JFrame {
                 });
 
                 tabbedPane.setSelectedComponent(readerPanel);
+                disableSourceButton();
             }
         });
     }
 
-    private void disableButtons() {
+    private void disableBrowserButtons() {
         btnBack.setEnabled(false);
         btnNext.setEnabled(false);
         btnHome.setEnabled(false);
     }
 
-    private void enableButtons() {
+    private void enableBrowserButtons() {
         btnBack.setEnabled(true);
         btnNext.setEnabled(true);
         btnHome.setEnabled(true);
+    }
+
+    private void disableSourceButton() {
+        btnSource.setEnabled(false);
+    }
+
+    private void enableSourceButton() {
+        btnSource.setEnabled(true);
     }
 
     private void loadJavaDocData() {

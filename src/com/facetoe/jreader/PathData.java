@@ -47,6 +47,11 @@ class PathData {
         /* Chop off the section of path that points to the Java docs */
         String path = docPath.substring(docPath.lastIndexOf("api") + 3, docPath.length());
 
+        /* If the user is browsing with frames enabled then this will appear, remove it */
+        if ( path.contains("index.html?") ) {
+            path = path.replace("index.html?", "");
+        }
+
         /* The path is in the form /dir/dir/objectName.html */
         objectName = path.substring(path.lastIndexOf("/") + 1, path.indexOf("."));
 
