@@ -130,11 +130,11 @@ public class JReader extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if ( currentTab instanceof JReaderPanel ) {
                     loadClass(searchBar.getText());
+                    searchBar.setText("");
                 } else {
                     JSourcePanel sourcePanel = ( JSourcePanel ) currentTab;
                     //TODO Figure out a good way to deal with the search context. Maybe have preferences or something.
                     sourcePanel.findString(searchBar.getText(), new SearchContext());
-
                 }
             }
         });
