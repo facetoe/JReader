@@ -24,10 +24,8 @@ public class JReader extends JFrame {
     private JButton btnSource = new JButton("View Source");
     private JButton btnCollapse = new JButton("Collapse");
 
-    private JavaClassData allClassData;
-
-    private HashMap<String, String> classes;
-    private HashMap<String, String> methodsAndFields = new HashMap<String, String>();
+    private HashMap<String, JavaObject> classData;
+    private JavaObject currentObject;
 
     private AutoCompleteTextField searchBar = new AutoCompleteTextField();
     private JProgressBar progressBar = new JProgressBar();
@@ -98,13 +96,7 @@ public class JReader extends JFrame {
         btnSearch.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if ( currentTab instanceof JReaderPanel ) {
-                    loadClass(searchBar.getText());
-                    searchBar.setText("");
-                } else {
-                    JSourcePanel sourcePanel = ( JSourcePanel ) currentTab;
-                    sourcePanel.findString(searchBar.getText(), new SearchContext());
-                }
+                handleSearch();
             }
         });
 
@@ -131,14 +123,7 @@ public class JReader extends JFrame {
         searchBar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if ( currentTab instanceof JReaderPanel ) {
-                    loadClass(searchBar.getText());
-                    searchBar.setText("");
-                } else {
-                    JSourcePanel sourcePanel = ( JSourcePanel ) currentTab;
-                    //TODO Figure out a good way to deal with the search context. Maybe have preferences or something.
-                    sourcePanel.findString(searchBar.getText(), new SearchContext());
-                }
+                handleSearch();
             }
         });
 
@@ -149,11 +134,14 @@ public class JReader extends JFrame {
             public void stateChanged(ChangeEvent e) {
                 if ( tabbedPane.getComponentAt(tabbedPane.getSelectedIndex()) instanceof JSourcePanel ) {
                     disableBrowserButtons();
-                    searchBar.removeWordsFromTrie(new ArrayList<String>(classes.keySet()));
+                    searchBar.removeWordsFromTrie(new ArrayList<String>(classData.keySet()));
                 } else if ( tabbedPane.getComponentAt(tabbedPane.getSelectedIndex()) instanceof JReaderPanel ) {
                     enableBrowserButtons();
-                    searchBar.removeWordsFromTrie(new ArrayList<String>(methodsAndFields.keySet()));
-                    searchBar.addWordsToTrie(new ArrayList<String>(classes.keySet()));
+                    if ( currentObject != null ) {
+                        searchBar.removeWordsFromTrie(new ArrayList<String>(currentObject.getMethods().keySet()));
+                    }
+
+                    searchBar.addWordsToTrie(new ArrayList<String>(classData.keySet()));
                 }
                 currentTab = ( JPanel ) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
             }
@@ -171,8 +159,9 @@ public class JReader extends JFrame {
         setVisible(true);
     }
 
+    //TODO maybe set currentObject here
     private void loadClass(String className) {
-        String path = classes.get(className);
+        String path = classData.get(className).getPath();
         if ( path != null && currentTab instanceof JReaderPanel ) {
             String url = Config.getEntry("docDir") + "api" + File.separator + path;
 
@@ -192,11 +181,10 @@ public class JReader extends JFrame {
         String title = pathData.getFileName();
         String filePath = pathData.getSrcPath();
 
-        HashMap<String, String> tmpMethodsAndFields = allClassData.getAllClassData().get(pathData.getObjectName());
-
-        if ( tmpMethodsAndFields != null ) {
-            methodsAndFields = tmpMethodsAndFields;
-            searchBar.addWordsToTrie(new ArrayList<String>(methodsAndFields.keySet()));
+        JavaObject currentObj = classData.get(pathData.getObjectName());
+        if ( currentObj != null ) {
+            currentObject = currentObj;
+            searchBar.addWordsToTrie(new ArrayList<String>(currentObject.getMethods().keySet()));
         }
 
         if ( !Utilities.isGoodSourcePath(filePath) ) {
@@ -228,16 +216,9 @@ public class JReader extends JFrame {
             }
 
         } else {
-            String className = "class " + pathData.getObjectName();
-            String interfaceName = "interface " + pathData.getObjectName();
-            String enumName = "enum " + pathData.getObjectName();
 
-            if ( newTab.findString(className, context) ) {
-            } else if ( newTab.findString(interfaceName, context) ) {
-            } else if ( newTab.findString(enumName, context) ) {
-            } else {
-                newTab.findString(pathData.getObjectName(), context);
-            }
+            newTab.findString(currentObj.getFullObjName(), context);
+
         }
 
         disableBrowserButtons();
@@ -354,13 +335,30 @@ public class JReader extends JFrame {
         btnSource.setEnabled(false);
     }
 
+    private void handleSearch() {
+        if ( currentTab instanceof JReaderPanel ) {
+            loadClass(searchBar.getText());
+            searchBar.setText("");
+        } else {
+            JSourcePanel sourcePanel = ( JSourcePanel ) currentTab;
+            //TODO Figure out a good way to deal with the search context. Maybe have preferences or something.
+            String fullMethod = currentObject.getMethods().get(searchBar.getText());
+            System.out.println(fullMethod);
+            if ( fullMethod != null ) {
+                sourcePanel.findString(fullMethod, new SearchContext());
+            } else {
+                sourcePanel.findString(searchBar.getText(), new SearchContext());
+            }
+        }
+    }
+
     private void enableSourceButton() {
         btnSource.setEnabled(true);
     }
 
     private void loadJavaDocData() {
         try {
-            allClassData = Utilities.readClassData(new File(Config.getEntry("classDataFile")));
+            classData = Utilities.readClassData(new File(Config.getEntry("classDataFile")));
         } catch ( IOException e ) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Failed to load class data at" + Config.getEntry("classDataFile"),
@@ -378,8 +376,7 @@ public class JReader extends JFrame {
     }
 
     private void initAutocompleteTextField() {
-        classes = allClassData.getClasses();
-        ArrayList<String> test = new ArrayList<String>(classes.keySet());
+        ArrayList<String> test = new ArrayList<String>(classData.keySet());
         searchBar.addWordsToTrie(test);
     }
 

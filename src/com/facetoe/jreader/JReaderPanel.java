@@ -11,11 +11,7 @@ import javafx.scene.web.WebView;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
 import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Stack;
 
@@ -37,7 +33,7 @@ public class JReaderPanel extends JPanel {
     /**
      * Create a new JReaderPanel instance with the specified URL.
      *
-     * @param url to display when the panel is loaded.
+     * @param url          to display when the panel is loaded.
      * @param jProgressBar reference to the main JReader progress bar so we can display progress.
      */
     public JReaderPanel(String url, JProgressBar jProgressBar) {
@@ -56,7 +52,7 @@ public class JReaderPanel extends JPanel {
     /**
      * Initialize everything and load the url
      *
-     * @param url to display when the panel is loaded
+     * @param url          to display when the panel is loaded
      * @param jProgressBar reference to of the main JReader progress bar so we can display progress.
      */
     private void init(String url, JProgressBar jProgressBar) {
@@ -187,6 +183,7 @@ public class JReaderPanel extends JPanel {
     /**
      * Load a url. Note that because we are modifying javafx data from swing we need to
      * do it in the javafx thread.
+     *
      * @param url to load.
      */
     public void loadURL(final String url) {
@@ -197,13 +194,14 @@ public class JReaderPanel extends JPanel {
                 /* This check is necessary because passing a url that starts with file:// to Paths.get(url).toUri()
                  * results in a mutated path on Linux - although it seemed to work fine on Windows.
                  * */
-                if(url.startsWith("file://")) {
+                if ( url.startsWith("file://") ) {
                     engine.load(url);
                 } else {
                     String path = url;
                     try {
                         path = Paths.get(url).toUri().toString();
-                    } catch (InvalidPathException ex) {}
+                    } catch ( InvalidPathException ex ) {
+                    }
                     engine.load(path);
                 }
             }
@@ -212,6 +210,7 @@ public class JReaderPanel extends JPanel {
 
     /**
      * Return the WebEngine associated with this instance.
+     *
      * @return the WebEngine
      */
     public WebEngine getEngine() {
@@ -220,6 +219,7 @@ public class JReaderPanel extends JPanel {
 
     /**
      * Return the JFXpanel associated with this instance.
+     *
      * @return the JFXpanel
      */
     public JFXPanel getJFXPanel() {
@@ -228,6 +228,7 @@ public class JReaderPanel extends JPanel {
 
     /**
      * Return the current page.
+     *
      * @return the current page.
      */
     public String getCurrentPage() {

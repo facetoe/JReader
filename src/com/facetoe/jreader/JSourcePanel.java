@@ -1,7 +1,6 @@
 package com.facetoe.jreader;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextAreaEditorKit;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rsyntaxtextarea.folding.FoldCollapser;
@@ -13,8 +12,6 @@ import org.fife.ui.rtextarea.SearchEngine;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -78,13 +75,22 @@ public class JSourcePanel extends JPanel {
     }
 
     //TODO Figure out how to set the SearchContext in a half decent way.
+
     /**
-     * @param text to search for
+     * @param text    to search for
      * @param context The search context for this search.
      * @return whether or not anything was found.
      */
     public boolean findString(String text, SearchContext context) {
+        boolean found;
         context.setSearchFor(text);
-        return SearchEngine.find(textArea, context);
+        context.setSearchForward(true);
+
+        found = SearchEngine.find(textArea, context);
+        if ( !found ) {
+            textArea.setCaretPosition(0);
+            found = SearchEngine.find(textArea, context);
+        }
+        return found;
     }
 }

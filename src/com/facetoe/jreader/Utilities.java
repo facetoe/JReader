@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 
 public class Utilities {
 
@@ -109,13 +110,13 @@ public class Utilities {
     }
 
     /**
-     * Takes a JavaClassData object and writes to file at filePath.
+     * Takes a HashMap of JavaObjects and writes to file at filePath.
      *
      * @param filePath to write the data to. File must exist.
-     * @param data     JavaClassData to write
+     * @param data     HashMap to write
      * @throws IOException
      */
-    public static void writeCLassData(String filePath, JavaClassData data) throws IOException {
+    public static void writeCLassData(String filePath, HashMap<String, JavaObject> data) throws IOException {
         FileOutputStream fileOut = new FileOutputStream(filePath);
         ObjectOutputStream outStream = new ObjectOutputStream(fileOut);
         outStream.writeObject(data);
@@ -124,17 +125,17 @@ public class Utilities {
     }
 
     /**
-     * Reads a JavaClassData object from classDataFile and returns it.
+     * Reads a HashMap of JavaObjects from classDataFile and returns it.
      *
      * @param classDataFile The file to write to
-     * @return JavaClassData The data to write.
+     * @return HashMap The data to write.
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public static JavaClassData readClassData(File classDataFile) throws IOException, ClassNotFoundException {
+    public static HashMap<String, JavaObject> readClassData(File classDataFile) throws IOException, ClassNotFoundException {
         FileInputStream fileIn = new FileInputStream(classDataFile);
         ObjectInputStream in = new ObjectInputStream(fileIn);
-        JavaClassData classData = ( JavaClassData ) in.readObject();
+        HashMap<String, JavaObject> classData = ( HashMap<String, JavaObject> ) in.readObject();
         in.close();
         fileIn.close();
 

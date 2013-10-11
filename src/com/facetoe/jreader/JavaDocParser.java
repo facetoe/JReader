@@ -12,17 +12,70 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+class JavaObject implements Serializable {
+    private String fullObjName;
+    private String objName;
+    private String path;
+
+    private ArrayList<String> constructors = new ArrayList<String>();
+    private HashMap<String, String> methods = new HashMap<String, String>();
+
+    public JavaObject(String fullObjName, String objName, String path) {
+        this.fullObjName = fullObjName;
+        this.objName = objName;
+        this.path = path;
+    }
+
+    public void addMethod(String methodSig, String methodSigFull) {
+        methods.put(methodSig, methodSigFull);
+    }
+
+    public void addConstructor(String constructorSig) {
+        constructors.add(constructorSig);
+    }
+
+    String getFullObjName() {
+        return fullObjName;
+    }
+
+    String getObjName() {
+        return objName;
+    }
+
+    String getPath() {
+        return path;
+    }
+
+    ArrayList<String> getConstructors() {
+        return constructors;
+    }
+
+    HashMap<String, String> getMethods() {
+        return methods;
+    }
+
+    public ArrayList<String> getAllData() {
+        ArrayList<String> data = new ArrayList<String>(methods.keySet());
+        data.addAll(constructors);
+        return data;
+    }
+
+    @Override
+    public String toString() {
+        return fullObjName;
+    }
+}
+
 
 /**
- * Parses the Java documentation and packages it in a JavaClassData object.
+ * Parses the Java documentation and packages it in a HashMap with the class name as key and a JavaObject as the value.
  */
 public class JavaDocParser {
 
-    /* The class names and their associated URL */
-    private HashMap<String, String> classes = new HashMap<String, String>();
 
     /**
      * The class name as the key with another HashMap as the value.
@@ -33,8 +86,8 @@ public class JavaDocParser {
     /* The base path for the Java docs: /dir/dir/dir/docs/api/ */
     private String basePath;
 
-    /* JavaClassData object to store the results in */
-    private JavaClassData classData = new JavaClassData();
+    /* HashMap containing the class name as the key and a JavaObject object as the value */
+    private HashMap<String, JavaObject> objectData = new HashMap<String, JavaObject>();
 
     /* Action listeners for this parser */
     private ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
@@ -49,7 +102,7 @@ public class JavaDocParser {
      *
      * @param indexFile should be allclasses-noframe.html
      */
-    public void parse(String indexFile) {
+    public HashMap<String, JavaObject> parse(String indexFile) {
 
         File inFile = new File(basePath + indexFile);
         Document doc = null;
@@ -60,7 +113,12 @@ public class JavaDocParser {
         }
 
         /* The indexContainer contains links to all the Java classes */
-        Elements container = doc.select("div.indexContainer");
+        Elements container = null;
+        try {
+            container = doc.select("div.indexContainer");
+        } catch ( NullPointerException e ) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
 
         /* Extract all the links */
         Elements links = container.select("a");
@@ -71,10 +129,19 @@ public class JavaDocParser {
         for ( Element link : links ) {
             fireEvent(ActionEvent.ACTION_PERFORMED, link.text(), ( long ) ((count * 100.0f) / numLinks));
             count++;
-            classes.put(link.text(), link.attr("href"));
-            parseClassFile(basePath + link.attr("href"), link.text());
+            try {
+                String relativePath = link.attr("href");
+                parseClassFile(relativePath, basePath + relativePath, link.text());
+            } catch ( Exception ex ) {
+                System.out.println("Error at: " + link.text());
+                System.out.println(ex.getClass());
+                ex.printStackTrace();
+                System.exit(0);
+
+            }
         }
         fireEvent(ActionEvent.ACTION_LAST, "Complete", 100);
+        return objectData;
     }
 
     /**
@@ -83,36 +150,117 @@ public class JavaDocParser {
      * @param classPath path to the file to be parsed.
      * @param className the file to be parsed.
      */
-    public void parseClassFile(String classPath, String className) {
+    public void parseClassFile(String relativePath, String classPath, String className) {
         File inFile = new File(classPath);
         Document doc = null;
-        HashMap<String, String> data = new HashMap<String, String>();
 
         try {
             doc = Jsoup.parse(inFile, "UTF-8");
-        } catch ( IOException ex ) {
-            ex.printStackTrace();
+        } catch ( Exception e ) {
+            e.printStackTrace();
         }
 
-        /* Contains the constructor and method summaries */
-        Elements elements = doc.select("div.summary ul.blockList");
+        String[] nameParts = new String[0];
+        try {
+            nameParts = doc.select("html body div.contentContainer div.description ul.blockList li.blockList pre").get(0).text().split("\n");
+        } catch ( NullPointerException e ) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
 
-        /* Contains the links for constructor and method summaries */
-        Elements links = elements.select("a");
-
-        for ( Element link : links ) {
-            if ( !link.attr("href").isEmpty() && link.attr("href").contains("#") ) {
-                String[] parts = link.attr("href").split("#");
-                String name = parts[parts.length - 1];
-                String path = parts[0].replaceAll("\\.\\./", "");
-                data.put(name, path);
+        /**
+         * Sometimes before the object name there are annotations like @SomeImportantThing.
+         * Keep looping until we find the actual name.
+         */
+        String fullObjName = null;
+        if ( !nameParts[0].startsWith("@") ) {
+            fullObjName = nameParts[0];
+        } else {
+            for ( String namePart : nameParts ) {
+                if ( !namePart.startsWith("@") ) {
+                    fullObjName = namePart;
+                    break;
+                }
             }
         }
-        allClassData.put(className, data);
 
-        classData = new JavaClassData();
-        classData.setAllClassData(allClassData);
-        classData.setClasses(classes);
+        if ( fullObjName == null ) {
+            return;
+        }
+
+        JavaObject object = new JavaObject(fullObjName, className, relativePath);
+
+        Elements constructors = doc.select("html body div.contentContainer div.summary ul.blockList li.blockList ul.blockList li.blockList table.overviewSummary tbody tr.altColor td.colOne");
+
+        /* Add all the constructors */
+        for ( Element element : constructors ) {
+            String signature = element.select("td").text();
+            if ( signature.contains("(") ) {
+                signature = rearrangeBrackets(signature.substring(0, signature.lastIndexOf(")") + 1));
+                object.addConstructor(signature);
+            }
+        }
+
+        Elements methods = doc.select("html body div.contentContainer div.summary ul.blockList li.blockList ul.blockList li.blockList table.overviewSummary tbody tr.altColor");
+
+        /* Add all the methods */
+        for ( Element method : methods ) {
+            String methodSigFull = method.select("code").text();
+            if ( methodSigFull.contains(")") ) {
+                methodSigFull = rearrangeBrackets(methodSigFull);
+
+                /**
+                 * This regexp splits on, for example:
+                 * static String someMethodName()
+                 * or
+                 * String someMethodName()
+                 *
+                 * This is so we can have the full signature for searching the source, as well as
+                 * just the method name.
+                 */
+                String[] methodSigParts = methodSigFull.split("^\\w+ \\w+ |^\\w+ ");
+                String methodSig = methodSigParts[methodSigParts.length - 1];
+                object.addMethod(methodSig, methodSigFull);
+            }
+        }
+        objectData.put(className, object);
+    }
+
+    /**
+     * Rearrange the brackets to match the Java source code. In the docs they look like:
+     * String(byte[] ascii, int hibyte, int offset, int count)
+     * But in the source they appear as:
+     * String(byte ascii[], int hibyte, int offset, int count)
+     * <p/>
+     * This convoluted method shifts the brackets from the type to the variable.
+     *
+     * @param str to process
+     * @return the brackets rearranged
+     */
+    private static String rearrangeBrackets(String str) {
+        String params = str.substring(str.indexOf("(") + 1, str.lastIndexOf(")"));
+        String[] parts = params.split("(?=\\s)");
+        StringBuilder builder = new StringBuilder();
+        builder.append(str.substring(0, str.indexOf("(") + 1));
+        for ( int i = 0; i < parts.length; i++ ) {
+            if ( parts[i].contains("[") ) {
+                String tmp[] = parts[i].split("\\[\\]");
+                if ( tmp.length > 1 ) {
+                    if ( tmp[1].contains(",") ) {
+                        builder.append(tmp[0]);
+                        builder.append((tmp[1].replace(",", "") + "[]" + ","));
+                    } else {
+                        builder.append(tmp[0]);
+                        builder.append(tmp[1] + "[]");
+                    }
+                } else {
+                    builder.append(parts[i]);
+                }
+            } else {
+                builder.append(parts[i]);
+            }
+        }
+        builder.append(")");
+        return builder.toString().replace("\u00A0", " ");
     }
 
     /**
@@ -138,15 +286,11 @@ public class JavaDocParser {
         listeners.add(listener);
     }
 
-    /**
-     * Get the result of the parsing.
-     *
-     * @return
-     */
-    public JavaClassData getClassData() {
-        return classData;
+    public HashMap<String, JavaObject> getObjectData() {
+        return objectData;
     }
 }
+
 
 /**
  * A window to display processing progress.
@@ -158,8 +302,12 @@ abstract class ProgressWindow<T> extends JFrame {
 
     /* This will be updated by the listener */
     JLabel lblProgress = new JLabel();
+
+    /* This doesn't do anything yet */
     JButton btnCancel = new JButton("Cancel");
     JLabel lblTitle = new JLabel("Loading...");
+
+    /* Display progress */
     JProgressBar progressBar = new JProgressBar();
 
     public ProgressWindow() {
@@ -198,12 +346,13 @@ abstract class ProgressWindow<T> extends JFrame {
     abstract public T execute();
 }
 
+
 /**
  * Parses the Java documentation and displays the progress.
  */
-class ParserProgressWindow extends ProgressWindow<JavaClassData> {
+class ParserProgressWindow extends ProgressWindow<HashMap<String, JavaObject>> {
     @Override
-    public JavaClassData execute() {
+    public HashMap<String, JavaObject> execute() {
         JavaDocParser parser = new JavaDocParser("/home/facetoe/tmp/docs/api/");
         parser.addActionListener(new ActionListener() {
             @Override
@@ -220,9 +369,11 @@ class ParserProgressWindow extends ProgressWindow<JavaClassData> {
             }
         });
 
-        parser.parse("allclasses-noframe.html");
+        HashMap<String, JavaObject> data = parser.parse("allclasses-noframe.html");
         setVisible(false);
         dispose();
-        return parser.getClassData();
+
+        return data;
     }
+
 }

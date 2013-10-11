@@ -6,18 +6,28 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0f725b18-1f9a-4ce0-8608-872f2385b0ad" name="Default" comment="">
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/Parser.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/JavaDocParser.java" />
+    <list default="true" id="0f725b18-1f9a-4ce0-8608-872f2385b0ad" name="Default" comment="Changed how the docs are parsed to extract more information about methods and constructors. Got rid of the JavaClassData object and replaced it with JavaObject.">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/JavaClassData.java" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/JReader.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/JReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/JReaderPanel.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/JReaderPanel.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/JReaderSetup.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/JReaderSetup.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/JSourcePanel.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/JSourcePanel.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/JavaDocParser.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/JavaDocParser.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/PathData.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/PathData.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/Utilities.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/Utilities.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/resources/themes/darkTheme.xml" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/resources/themes/darkTheme.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/resources/themes/eclipseTheme.xml" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/resources/themes/eclipseTheme.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/resources/themes/ideaTheme.xml" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/resources/themes/ideaTheme.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jreader.jar.xml" afterPath="$PROJECT_DIR$/jreader.jar.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="JReader.iws" />
     <ignored path=".idea/workspace.xml" />
     <file path="/Main.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1380211146514" ignored="false" />
-    <file path="/Parser.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381413718958" ignored="false" />
-    <file path="/Dummy.txt" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381413583458" ignored="false" />
-    <file path="/fragment.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381413808471" ignored="false" />
-    <file path="/JReader.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381396877295" ignored="false" />
+    <file path="/Parser.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381414147936" ignored="false" />
+    <file path="/Dummy.txt" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381479428172" ignored="false" />
+    <file path="/fragment.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381477062297" ignored="false" />
+    <file path="/JReader.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381478317751" ignored="false" />
     <file path="/SimpleSwingBrowser.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1380348006669" ignored="false" />
     <file path="/AutoCompleteTextField.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381394809207" ignored="false" />
     <file path="/Trie.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1380283989308" ignored="false" />
@@ -26,21 +36,22 @@
     <file path="/JSourceViewPane.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1380599395647" ignored="false" />
     <file path="/LoadWindow.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1380861786626" ignored="false" />
     <file path="/config.properties" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1380961567814" ignored="false" />
-    <file path="/JSourcePanel.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381307672844" ignored="false" />
+    <file path="/JSourcePanel.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381478445066" ignored="false" />
     <file path="/JSourcePane.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1380953403175" ignored="false" />
-    <file path="/Utilities.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381390517298" ignored="false" />
+    <file path="/Utilities.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381470750192" ignored="false" />
     <file path="/Config.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1380966812870" ignored="false" />
-    <file path="/JReaderSetup.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381413659098" ignored="false" />
+    <file path="/JReaderSetup.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381470347543" ignored="false" />
     <file path="/ButtonTabComponent.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381130789307" ignored="false" />
     <file path="/SourceDownloader.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381149809165" ignored="false" />
     <file path="/DownloadProgressExample.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381149457879" ignored="false" />
-    <file path="/FileDownloader.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381210642919" ignored="false" />
+    <file path="/FileDownloader.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381418105182" ignored="false" />
     <file path="/Unzipper.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381152064609" ignored="false" />
     <file path="/jreader.xml" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381290714277" ignored="false" />
     <file path="/jreader.jar.xml" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381294298971" ignored="false" />
-    <file path="/PathData.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381395592669" ignored="false" />
+    <file path="/PathData.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381420202988" ignored="false" />
     <file path="/JavaClassData.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381404654359" ignored="false" />
-    <file path="/JavaDocParser.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381413701422" ignored="false" />
+    <file path="/JavaDocParser.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381479552283" ignored="false" />
+    <file path="/JavaObjectData.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381420492913" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,6 +66,7 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
+    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true">
       <breakpoint>
         <option name="NOTIFY_CAUGHT" value="true" />
@@ -91,7 +103,6 @@
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
     </breakpoint_any>
-    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_rules />
     <ui_properties />
   </component>
@@ -104,52 +115,54 @@
       <file leaf-file-name="JReader.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/JReader.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="393" column="32" selection-start="15590" selection-end="15590" vertical-scroll-proportion="0.0">
+            <state line="210" column="12" selection-start="7707" selection-end="7707" vertical-scroll-proportion="0.0">
               <folding>
-                <element signature="e#968#984#0" expanded="true" />
-                <element signature="e#3902#4247#0" expanded="true" />
-                <element signature="e#4236#4237#0" expanded="true" />
-                <element signature="e#4289#4623#0" expanded="true" />
-                <element signature="e#4612#4613#0" expanded="true" />
-                <element signature="e#4663#5267#0" expanded="true" />
-                <element signature="e#5256#5257#0" expanded="true" />
-                <element signature="e#5350#6194#0" expanded="true" />
-                <element signature="e#6183#6184#0" expanded="true" />
-                <element signature="e#10004#11370#0" expanded="true" />
-                <element signature="e#10275#11312#0" expanded="true" />
-                <element signature="e#11277#11278#0" expanded="true" />
-                <element signature="e#11343#11344#0" expanded="true" />
-                <element signature="e#15862#15987#0" expanded="true" />
-                <element signature="e#15976#15977#0" expanded="true" />
+                <element signature="e#3294#3451#0" expanded="true" />
+                <element signature="e#3440#3441#0" expanded="true" />
+                <element signature="e#4252#4409#0" expanded="true" />
+                <element signature="e#4398#4399#0" expanded="true" />
+                <element signature="e#4492#5428#0" expanded="true" />
+                <element signature="e#5417#5418#0" expanded="true" />
+                <element signature="e#15345#15470#0" expanded="true" />
+                <element signature="e#15459#15460#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="JavaDocParser.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="jreader.jar.xml" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/jreader.jar.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="244" column="69" selection-start="9896" selection-end="9896" vertical-scroll-proportion="0.33240223">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="JavaDocParser.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/JavaDocParser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="168" column="11" selection-start="5463" selection-end="5463" vertical-scroll-proportion="0.36842105">
+            <state line="249" column="77" selection-start="8696" selection-end="8696" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#723#739#0" expanded="true" />
-                <element signature="e#986#1019#0" expanded="true" />
-                <element signature="e#1341#1357#0" expanded="true" />
-                <element signature="e#3037#3053#0" expanded="true" />
-                <element signature="e#6619#7246#0" expanded="true" />
-                <element signature="e#7235#7236#0" expanded="true" />
+                <element signature="e#630#638#0" expanded="true" />
+                <element signature="e#699#715#0" expanded="true" />
+                <element signature="e#1540#1548#0" expanded="true" />
+                <element signature="e#2113#2146#0" expanded="true" />
+                <element signature="e#2403#2423#0" expanded="true" />
+                <element signature="e#2534#2550#0" expanded="true" />
+                <element signature="e#11815#12448#0" expanded="true" />
+                <element signature="e#12437#12438#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="JavaClassData.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/JavaClassData.java">
+      <file leaf-file-name="FileDownloader.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/FileDownloader.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="42" selection-start="450" selection-end="450" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state line="45" column="25" selection-start="1848" selection-end="1848" vertical-scroll-proportion="0.0">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -166,7 +179,7 @@
       <file leaf-file-name="Utilities.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/Utilities.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="106" column="0" selection-start="3611" selection-end="3611" vertical-scroll-proportion="0.0">
+            <state line="137" column="48" selection-start="4789" selection-end="4789" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -175,7 +188,7 @@
       <file leaf-file-name="PathData.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/PathData.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="90" column="7" selection-start="2906" selection-end="2906" vertical-scroll-proportion="0.0">
+            <state line="108" column="54" selection-start="3701" selection-end="3701" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -184,7 +197,7 @@
       <file leaf-file-name="JSourcePanel.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/JSourcePanel.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="57" column="0" selection-start="1957" selection-end="1957" vertical-scroll-proportion="0.0">
+            <state line="84" column="21" selection-start="2870" selection-end="2870" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -193,7 +206,7 @@
       <file leaf-file-name="JReaderSetup.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/JReaderSetup.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="162" column="0" selection-start="6504" selection-end="6504" vertical-scroll-proportion="0.0">
+            <state line="157" column="30" selection-start="6309" selection-end="6309" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -217,22 +230,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/SourceDownloader.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/Unzipper.java" />
-        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/FileDownloader.java" />
         <option value="$PROJECT_DIR$/jreader.xml" />
         <option value="$PROJECT_DIR$/.idea/artifacts/JReader.xml" />
         <option value="$PROJECT_DIR$/jreader.jar.xml" />
-        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/JSourcePanel.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/JReaderPanel.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/AutoCompleteTextField.java" />
-        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/Utilities.java" />
+        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/Parser.java" />
+        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/FileDownloader.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/PathData.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/JavaClassData.java" />
-        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/Parser.java" />
-        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/JReader.java" />
+        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/JavaObjectData.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/JReaderSetup.java" />
+        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/JReader.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/JavaDocParser.java" />
+        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/Utilities.java" />
+        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/JSourcePanel.java" />
       </list>
     </option>
   </component>
@@ -324,6 +337,7 @@
     </navigator>
     <panes>
       <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -412,20 +426,19 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="GenerateAntBuildDialog.generateIdeaHomeProperty" value="true" />
     <property name="project.structure.last.edited" value="Artifacts" />
-    <property name="project.structure.proportion" value="0.15" />
     <property name="OverrideImplement.combined" value="true" />
+    <property name="project.structure.proportion" value="0.15" />
     <property name="options.splitter.main.proportions" value="0.3" />
-    <property name="GenerateAntBuildDialog.generateSingleFile" value="true" />
-    <property name="recentsLimit" value="5" />
     <property name="MemberChooser.sorted" value="false" />
-    <property name="GenerateAntBuildDialog.inclineRuntiemClasspath" value="false" />
+    <property name="recentsLimit" value="5" />
+    <property name="GenerateAntBuildDialog.generateSingleFile" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="GenerateAntBuildDialog.inclineRuntiemClasspath" value="false" />
     <property name="GenerateAntBuildDialog.outputFileNameProperty" value="jreader.jar" />
     <property name="GenerateAntBuildDialog.enableUiFormCompile" value="true" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
@@ -439,8 +452,8 @@
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="restartRequiresConfirmation" value="true" />
     <property name="GenerateAntBuildDialog.backupFiles" value="false" />
-    <property name="dynamic.classpath" value="false" />
     <property name="options.searchVisible" value="true" />
+    <property name="dynamic.classpath" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -618,7 +631,11 @@
       <created>1381406840264</created>
       <updated>1381406840264</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="Refactored documentation parsing to separate logic from display.">
+      <created>1381413993313</created>
+      <updated>1381413993313</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TodoView" selected-index="3">
@@ -654,13 +671,13 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3204698" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3204698" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32885906" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24960381" sideWeight="0.67449665" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24960381" sideWeight="0.59731543" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24881141" sideWeight="0.8020134" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19798657" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24881141" sideWeight="0.6795302" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3808725" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
@@ -709,7 +726,7 @@
     <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="false" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Put PathData class into its own file." />
+    <option name="LAST_COMMIT_MESSAGE" value="Changed how the docs are parsed to extract more information about methods and constructors. Got rid of the JavaClassData object and replaced it with JavaObject." />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -723,8 +740,6 @@
     <option name="UPDATE_FILTER_BY_SCOPE" value="false" />
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
-    <MESSAGE value="Changed tack, I'm going to use the existing documentation structure after all. Found some good code for a basic browser that I can extend." />
-    <MESSAGE value="Added Search functionality and forward/back buttons." />
     <MESSAGE value="Made it possible to browse all the docs, not just the classes." />
     <MESSAGE value="Split JReader class into JReaderPanel and JReader." />
     <MESSAGE value="Got tabbed panes working" />
@@ -748,6 +763,8 @@
     <MESSAGE value="Removed redundant code." />
     <MESSAGE value="Added check to prevent error when user is browsing with frames enabled." />
     <MESSAGE value="Put PathData class into its own file." />
+    <MESSAGE value="Refactored documentation parsing to separate logic from display." />
+    <MESSAGE value="Changed how the docs are parsed to extract more information about methods and constructors. Got rid of the JavaClassData object and replaced it with JavaObject." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -757,16 +774,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/.idea/libraries/zip4j_1_3_1.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/jreader.jar.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="250" column="20" selection-start="9965" selection-end="9965" vertical-scroll-proportion="-150.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/META-INF/MANIFEST.MF">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
@@ -776,23 +783,23 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="148" column="42" selection-start="5617" selection-end="5617" vertical-scroll-proportion="0.0">
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#862#870#0" expanded="true" />
-            <element signature="e#921#929#0" expanded="true" />
-            <element signature="e#2408#5454#0" expanded="true" />
-            <element signature="e#2683#3422#0" expanded="true" />
-            <element signature="e#3147#3380#0" expanded="true" />
-            <element signature="e#3353#3354#0" expanded="true" />
-            <element signature="e#3403#3404#0" expanded="true" />
-            <element signature="e#3480#4038#0" expanded="true" />
-            <element signature="e#4019#4020#0" expanded="true" />
-            <element signature="e#4163#5344#0" expanded="true" />
-            <element signature="e#4474#5252#0" expanded="true" />
-            <element signature="e#5213#5214#0" expanded="true" />
-            <element signature="e#5317#5318#0" expanded="true" />
-            <element signature="e#5443#5444#0" expanded="true" />
-            <element signature="e#6762#7451#0" expanded="true" />
-            <element signature="e#7440#7441#0" expanded="true" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#754#762#0" expanded="true" />
+            <element signature="e#813#821#0" expanded="true" />
+            <element signature="e#2318#5364#0" expanded="true" />
+            <element signature="e#2593#3332#0" expanded="true" />
+            <element signature="e#3057#3290#0" expanded="true" />
+            <element signature="e#3263#3264#0" expanded="true" />
+            <element signature="e#3313#3314#0" expanded="true" />
+            <element signature="e#3390#3948#0" expanded="true" />
+            <element signature="e#3929#3930#0" expanded="true" />
+            <element signature="e#4073#5254#0" expanded="true" />
+            <element signature="e#4384#5162#0" expanded="true" />
+            <element signature="e#5123#5124#0" expanded="true" />
+            <element signature="e#5227#5228#0" expanded="true" />
+            <element signature="e#5353#5354#0" expanded="true" />
+            <element signature="e#6679#7394#0" expanded="true" />
+            <element signature="e#7383#7384#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -818,92 +825,88 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/Utilities.java">
+    <entry file="jar://$PROJECT_DIR$/lib/jsoup-1.7.2.jar!/org/jsoup/Jsoup.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="106" column="0" selection-start="3611" selection-end="3611" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="19" column="43" selection-start="891" selection-end="891" vertical-scroll-proportion="-3.96" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/JSourcePanel.java">
+    <entry file="jar://$PROJECT_DIR$/lib/jsoup-1.7.2.jar!/org/jsoup/nodes/Element.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="57" column="0" selection-start="1957" selection-end="1957" vertical-scroll-proportion="0.0">
+        <state line="130" column="37" selection-start="6423" selection-end="6423" vertical-scroll-proportion="-3.96" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/FileDownloader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="45" column="25" selection-start="1848" selection-end="1848" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/PathData.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="90" column="7" selection-start="2906" selection-end="2906" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/JavaClassData.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="42" selection-start="450" selection-end="450" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/lib/jsoup-1.7.2.jar!/org/jsoup/Jsoup.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="43" selection-start="891" selection-end="891" vertical-scroll-proportion="-3.96">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/lib/jsoup-1.7.2.jar!/org/jsoup/nodes/Element.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="130" column="37" selection-start="6423" selection-end="6423" vertical-scroll-proportion="-3.96">
+        <state line="108" column="54" selection-start="3701" selection-end="3701" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/JReaderSetup.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="162" column="0" selection-start="6504" selection-end="6504" vertical-scroll-proportion="0.0">
+        <state line="157" column="30" selection-start="6309" selection-end="6309" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/JavaDocParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="249" column="77" selection-start="8696" selection-end="8696" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#630#638#0" expanded="true" />
+            <element signature="e#699#715#0" expanded="true" />
+            <element signature="e#1540#1548#0" expanded="true" />
+            <element signature="e#2113#2146#0" expanded="true" />
+            <element signature="e#2403#2423#0" expanded="true" />
+            <element signature="e#2534#2550#0" expanded="true" />
+            <element signature="e#11815#12448#0" expanded="true" />
+            <element signature="e#12437#12438#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/Utilities.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="137" column="48" selection-start="4789" selection-end="4789" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/JSourcePanel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="84" column="21" selection-start="2870" selection-end="2870" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/JReader.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="393" column="32" selection-start="15590" selection-end="15590" vertical-scroll-proportion="0.0">
+        <state line="210" column="12" selection-start="7707" selection-end="7707" vertical-scroll-proportion="0.0">
           <folding>
-            <element signature="e#968#984#0" expanded="true" />
-            <element signature="e#3902#4247#0" expanded="true" />
-            <element signature="e#4236#4237#0" expanded="true" />
-            <element signature="e#4289#4623#0" expanded="true" />
-            <element signature="e#4612#4613#0" expanded="true" />
-            <element signature="e#4663#5267#0" expanded="true" />
-            <element signature="e#5256#5257#0" expanded="true" />
-            <element signature="e#5350#6194#0" expanded="true" />
-            <element signature="e#6183#6184#0" expanded="true" />
-            <element signature="e#10004#11370#0" expanded="true" />
-            <element signature="e#10275#11312#0" expanded="true" />
-            <element signature="e#11277#11278#0" expanded="true" />
-            <element signature="e#11343#11344#0" expanded="true" />
-            <element signature="e#15862#15987#0" expanded="true" />
-            <element signature="e#15976#15977#0" expanded="true" />
+            <element signature="e#3294#3451#0" expanded="true" />
+            <element signature="e#3440#3441#0" expanded="true" />
+            <element signature="e#4252#4409#0" expanded="true" />
+            <element signature="e#4398#4399#0" expanded="true" />
+            <element signature="e#4492#5428#0" expanded="true" />
+            <element signature="e#5417#5418#0" expanded="true" />
+            <element signature="e#15345#15470#0" expanded="true" />
+            <element signature="e#15459#15460#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/JavaDocParser.java">
+    <entry file="file://$PROJECT_DIR$/jreader.jar.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="168" column="11" selection-start="5463" selection-end="5463" vertical-scroll-proportion="0.36842105">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#723#739#0" expanded="true" />
-            <element signature="e#986#1019#0" expanded="true" />
-            <element signature="e#1341#1357#0" expanded="true" />
-            <element signature="e#3037#3053#0" expanded="true" />
-            <element signature="e#6619#7246#0" expanded="true" />
-            <element signature="e#7235#7236#0" expanded="true" />
-          </folding>
+        <state line="244" column="69" selection-start="9896" selection-end="9896" vertical-scroll-proportion="0.33240223">
+          <folding />
         </state>
       </provider>
     </entry>

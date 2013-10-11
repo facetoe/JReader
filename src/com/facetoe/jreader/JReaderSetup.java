@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.concurrent.CancellationException;
 
@@ -153,7 +154,7 @@ public class JReaderSetup {
             try {
 
                 ParserProgressWindow progressWindow = new ParserProgressWindow();
-                JavaClassData data = progressWindow.execute();
+                HashMap<String, JavaObject> data = progressWindow.execute();
                 Utilities.writeCLassData(Config.getEntry("classDataFile"), data);
                 Config.setEntry("dataIsParsed", "true");
 

@@ -30,8 +30,12 @@ class PathData {
     public PathData(String docPath) {
         this.docPath = docPath;
 
-        /* If path is already pointing to a java file just extract the name and we're done  */
-        if ( docPath.endsWith(".java") ) {
+        /* If path is pointing to a java file or a website just extract the name and we're done  */
+        if ( docPath.endsWith(".java")
+                || docPath.startsWith("http://")
+                || docPath.startsWith("https://")
+                || docPath.startsWith("www.") ) {
+
             srcPath = docPath;
             extractFileName();
         } else {
@@ -93,6 +97,7 @@ class PathData {
      */
     private void extractFileName() {
 
+        //TODO Make it handle nested classes like SomeClass.NestedClass
         /* Sometimes the urls contain "path/filename.html#methodname" so extract the file name substring */
         if ( docPath.contains("#") ) {
             fileName = docPath.substring(docPath.lastIndexOf("/") + 1, docPath.indexOf("#"));
