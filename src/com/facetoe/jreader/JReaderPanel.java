@@ -13,7 +13,6 @@ import java.awt.*;
 import java.io.File;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
-import java.util.Stack;
 
 import static javafx.concurrent.Worker.State.FAILED;
 
@@ -25,8 +24,7 @@ public class JReaderPanel extends JPanel {
     private WebView view;
     private JFXPanel jfxPanel;
     private JProgressBar progressBar;
-    private Stack<String> nextStack = new Stack<String>();
-    private Stack<String> backStack = new Stack<String>();
+
     private String currentPage;
     private String initialURL;
 
@@ -104,7 +102,6 @@ public class JReaderPanel extends JPanel {
                         if ( !newValue.endsWith(".java") ) {
                             System.out.println("Pushing back: " + newValue);
                             currentPage = newValue;
-                            backStack.push(newValue);
                         }
                     }
                 });
@@ -141,34 +138,24 @@ public class JReaderPanel extends JPanel {
      * Navigate to the next page.
      */
     public void next() {
-        if ( !nextStack.empty() ) {
-            String page = nextStack.pop();
-
-            if ( page.equalsIgnoreCase(currentPage) && !nextStack.empty() ) {
-                page = nextStack.pop();
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                getEngine().executeScript("history.forward()");
             }
-
-            loadURL(page);
-            backStack.push(currentPage);
-            currentPage = page;
-        }
+        });
     }
 
     /**
      * Navigate to the previous page.
      */
     public void back() {
-        if ( !backStack.empty() ) {
-            String page = backStack.pop();
-
-            if ( page.equalsIgnoreCase(currentPage) && !backStack.empty() ) {
-                page = backStack.pop();
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                getEngine().executeScript("history.back()");
             }
-
-            loadURL(page);
-            nextStack.push(currentPage);
-            currentPage = page;
-        }
+        });
     }
 
     /**
@@ -177,7 +164,6 @@ public class JReaderPanel extends JPanel {
     //TODO Make it possible for the user to set their homepage.
     public void home() {
         loadURL(Config.getEntry("docDir") + File.separator + "index.html");
-        nextStack.clear();
     }
 
     /**

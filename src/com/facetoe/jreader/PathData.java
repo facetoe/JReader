@@ -32,9 +32,9 @@ class PathData {
 
         /* If path is pointing to a java file or a website just extract the name and we're done  */
         if ( docPath.endsWith(".java")
-                || docPath.startsWith("http://")
-                || docPath.startsWith("https://")
-                || docPath.startsWith("www.") ) {
+                || docPath.contains("http:/")
+                || docPath.contains("https:/")
+                || docPath.contains("www.") ) {
 
             srcPath = docPath;
             extractFileName();

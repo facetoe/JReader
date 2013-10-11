@@ -143,6 +143,7 @@ public class JReader extends JFrame {
 
                     searchBar.addWordsToTrie(new ArrayList<String>(classData.keySet()));
                 }
+                System.out.println("Fired");
                 currentTab = ( JPanel ) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
             }
         });
@@ -215,10 +216,8 @@ public class JReader extends JFrame {
                 newTab.findString(pathData.getSearchTerm(), context);
             }
 
-        } else {
-
+        } else if ( currentObj != null ) {
             newTab.findString(currentObj.getFullObjName(), context);
-
         }
 
         disableBrowserButtons();
