@@ -21,21 +21,32 @@ class JavaObject implements Serializable {
     private String objName;
     private String path;
 
-    private ArrayList<String> constructors = new ArrayList<String>();
-    private HashMap<String, String> methods = new HashMap<String, String>();
+    private HashMap<String, String> objectItems = new HashMap<String, String>();
 
-    public JavaObject(String fullObjName, String objName, String path) {
+    public JavaObject(String objName, String fullObjName, String path) {
         this.fullObjName = fullObjName;
         this.objName = objName;
         this.path = path;
     }
 
-    public void addMethod(String methodSig, String methodSigFull) {
-        methods.put(methodSig, methodSigFull);
+    public void addItem(String objName, String fullObjName) {
+        objectItems.put(objName, fullObjName);
     }
 
-    public void addConstructor(String constructorSig) {
-        constructors.add(constructorSig);
+    HashMap<String, String> getObjectItems() {
+        return objectItems;
+    }
+
+    public ArrayList<String> getObjectItemsShort() {
+        return new ArrayList<String>(objectItems.keySet());
+    }
+
+    public ArrayList<String> getObjectItemsLong() {
+        return new ArrayList<String>(objectItems.values());
+    }
+
+    public String getObjectItemLong(String itemName) {
+        return objectItems.get(itemName);
     }
 
     String getFullObjName() {
@@ -48,20 +59,6 @@ class JavaObject implements Serializable {
 
     String getPath() {
         return path;
-    }
-
-    ArrayList<String> getConstructors() {
-        return constructors;
-    }
-
-    HashMap<String, String> getMethods() {
-        return methods;
-    }
-
-    public ArrayList<String> getAllData() {
-        ArrayList<String> data = new ArrayList<String>(methods.keySet());
-        data.addAll(constructors);
-        return data;
     }
 
     @Override
@@ -77,10 +74,15 @@ class JavaObject implements Serializable {
 public class JavaDocParser {
 
 
-    /**
-     * The class name as the key with another HashMap as the value.
-     * The second HashMap contains all the methods and their associated URLs
-     */
+//    public static void main(String[] args) {
+//        long startTime = System.nanoTime();
+//        JavaDocParser parser = new JavaDocParser("/home/facetoe/tmp/docs/api/");
+//        parser.parse("allclasses-noframe.html");
+//        long estimatedTime = System.nanoTime() - startTime;
+//        System.out.println("Finished in: " + estimatedTime / 1000000000);
+//    }
+
+
     private HashMap<String, HashMap<String, String>> allClassData = new HashMap<String, HashMap<String, String>>();
 
     /* The base path for the Java docs: /dir/dir/dir/docs/api/ */
@@ -129,16 +131,8 @@ public class JavaDocParser {
         for ( Element link : links ) {
             fireEvent(ActionEvent.ACTION_PERFORMED, link.text(), ( long ) ((count * 100.0f) / numLinks));
             count++;
-            try {
-                String relativePath = link.attr("href");
-                parseClassFile(relativePath, basePath + relativePath, link.text());
-            } catch ( Exception ex ) {
-                System.out.println("Error at: " + link.text());
-                System.out.println(ex.getClass());
-                ex.printStackTrace();
-                System.exit(0);
-
-            }
+            String relativePath = link.attr("href");
+            parseClassFile(relativePath, basePath + relativePath, link.text());
         }
         fireEvent(ActionEvent.ACTION_LAST, "Complete", 100);
         return objectData;
@@ -183,45 +177,33 @@ public class JavaDocParser {
             }
         }
 
+        //TODO remove the exit and handle the error better
         if ( fullObjName == null ) {
+            System.err.println("NAME WAS NULL");
+            System.exit(1);
             return;
         }
 
-        JavaObject object = new JavaObject(fullObjName, className, relativePath);
+        JavaObject object = new JavaObject(className, fullObjName, relativePath);
 
-        Elements constructors = doc.select("html body div.contentContainer div.summary ul.blockList li.blockList ul.blockList li.blockList table.overviewSummary tbody tr.altColor td.colOne");
+        Elements classData = doc.select("html body div.contentContainer div.summary ul.blockList li.blockList ul.blockList li.blockList table.overviewSummary tbody tr");
 
-        /* Add all the constructors */
-        for ( Element element : constructors ) {
-            String signature = element.select("td").text();
-            if ( signature.contains("(") ) {
-                signature = rearrangeBrackets(signature.substring(0, signature.lastIndexOf(")") + 1));
-                object.addConstructor(signature);
+        for ( Element item : classData ) {
+            String itemSigFull = item.select("code").text();
+            if ( !itemSigFull.isEmpty() ) {
+                if ( itemSigFull.contains("(") ) {
+                    itemSigFull = rearrangeBrackets(itemSigFull);
+                    String[] methodSigParts = itemSigFull.split("^(\\w+ )+");
+                    String methodSig = methodSigParts[methodSigParts.length - 1];
+                    object.addItem(methodSig, itemSigFull);
+                } else {
+                    String[] fieldSigParts = itemSigFull.split("^(\\w+ )+");
+                    String fieldSig = fieldSigParts[fieldSigParts.length - 1];
+                    object.addItem(fieldSig, itemSigFull);
+                }
             }
         }
 
-        Elements methods = doc.select("html body div.contentContainer div.summary ul.blockList li.blockList ul.blockList li.blockList table.overviewSummary tbody tr.altColor");
-
-        /* Add all the methods */
-        for ( Element method : methods ) {
-            String methodSigFull = method.select("code").text();
-            if ( methodSigFull.contains(")") ) {
-                methodSigFull = rearrangeBrackets(methodSigFull);
-
-                /**
-                 * This regexp splits on, for example:
-                 * static String someMethodName()
-                 * or
-                 * String someMethodName()
-                 *
-                 * This is so we can have the full signature for searching the source, as well as
-                 * just the method name.
-                 */
-                String[] methodSigParts = methodSigFull.split("^\\w+ \\w+ |^\\w+ ");
-                String methodSig = methodSigParts[methodSigParts.length - 1];
-                object.addMethod(methodSig, methodSigFull);
-            }
-        }
         objectData.put(className, object);
     }
 

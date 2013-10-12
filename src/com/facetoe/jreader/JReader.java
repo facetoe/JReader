@@ -138,7 +138,7 @@ public class JReader extends JFrame {
                 } else if ( tabbedPane.getComponentAt(tabbedPane.getSelectedIndex()) instanceof JReaderPanel ) {
                     enableBrowserButtons();
                     if ( currentObject != null ) {
-                        searchBar.removeWordsFromTrie(new ArrayList<String>(currentObject.getMethods().keySet()));
+                        searchBar.removeWordsFromTrie(currentObject.getObjectItemsShort());
                     }
 
                     searchBar.addWordsToTrie(new ArrayList<String>(classData.keySet()));
@@ -185,7 +185,7 @@ public class JReader extends JFrame {
         JavaObject currentObj = classData.get(pathData.getObjectName());
         if ( currentObj != null ) {
             currentObject = currentObj;
-            searchBar.addWordsToTrie(new ArrayList<String>(currentObject.getMethods().keySet()));
+            searchBar.addWordsToTrie(currentObject.getObjectItemsShort());
         }
 
         if ( !Utilities.isGoodSourcePath(filePath) ) {
@@ -341,7 +341,7 @@ public class JReader extends JFrame {
         } else {
             JSourcePanel sourcePanel = ( JSourcePanel ) currentTab;
             //TODO Figure out a good way to deal with the search context. Maybe have preferences or something.
-            String fullMethod = currentObject.getMethods().get(searchBar.getText());
+            String fullMethod = currentObject.getObjectItemLong(searchBar.getText());
             System.out.println(fullMethod);
             if ( fullMethod != null ) {
                 sourcePanel.findString(fullMethod, new SearchContext());
@@ -380,22 +380,21 @@ public class JReader extends JFrame {
     }
 
     public static void main(String[] args) {
+
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch ( ClassNotFoundException e ) {
-            e.printStackTrace();
-        } catch ( InstantiationException e ) {
-            e.printStackTrace();
-        } catch ( IllegalAccessException e ) {
-            e.printStackTrace();
-        } catch ( UnsupportedLookAndFeelException e ) {
-            e.printStackTrace();
+            for ( UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels() ) {
+                if ( "Nimbus".equals(info.getName()) ) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch ( Exception e ) {
+            // If Nimbus is not available, you can set the GUI to another look and feel.
         }
 
-        if ( !JReaderSetup.isSetup() )
+        if ( !JReaderSetup.isSetup() ) {
             JReaderSetup.setup();
-
-        System.out.println(System.getProperty("user.home"));
+        }
 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
