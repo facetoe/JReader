@@ -3,6 +3,8 @@ package com.facetoe.jreader;
 /**
  * Accepts a local path and extracts various information from it.
  */
+
+//TODO refactor this or remove it entirely as most of what it does is unecessary now I've improved the parsing.
 class PathData {
     private String docPath;
 
@@ -119,9 +121,5 @@ class PathData {
 
     String getObjectName() {
         return objectName;
-    }
-
-    String getSearchTerm() {
-        return searchTerm;
     }
 }

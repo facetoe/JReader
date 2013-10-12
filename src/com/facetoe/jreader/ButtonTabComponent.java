@@ -45,6 +45,7 @@ public class ButtonTabComponent extends JPanel {
     private final JTabbedPane pane;
     private UUID id;
     private String title;
+    private JLabel label;
 
     public ButtonTabComponent(String title, final JTabbedPane pane) {
         //unset default FlowLayout' gaps
@@ -58,7 +59,15 @@ public class ButtonTabComponent extends JPanel {
         id = UUID.randomUUID();
 
         //make JLabel read titles from JTabbedPane
-        JLabel label = new JLabel(title);
+        label = new JLabel() {
+            public String getText() {
+                int i = pane.indexOfTabComponent(ButtonTabComponent.this);
+                if ( i != -1 ) {
+                    return pane.getTitleAt(i);
+                }
+                return null;
+            }
+        };
 
         add(label);
         //add more space between the label and the button
@@ -111,6 +120,7 @@ public class ButtonTabComponent extends JPanel {
                 ButtonTabComponent component = ( ButtonTabComponent ) pane.getTabComponentAt(i);
                 if ( component != null && component.getId().equals(this.id) ) {
                     index = i;
+                    break;
                 }
             }
             System.out.println("Removing tab at index: " + index);

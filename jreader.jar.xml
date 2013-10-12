@@ -89,17 +89,17 @@
     <!-- Project Libraries -->
 
     <path id="library.jsoup-1.7.2.classpath">
-        <pathelement location="${basedir}/lib/jsoup-1.7.2.jar"/>
+        <pathelement location="/com/facetoe/jreader/lib/jsoup-1.7.2.jar"/>
     </path>
 
     <path id="library.jsyntaxpane-0.9.5-b29.classpath"/>
 
     <path id="library.rsyntaxtextarea.classpath">
-        <pathelement location="${basedir}/lib/rsyntaxtextarea.jar"/>
+        <pathelement location="/com/facetoe/jreader/lib/rsyntaxtextarea.jar"/>
     </path>
 
     <path id="library.zip4j_1.3.1.classpath">
-        <pathelement location="${basedir}/lib/zip4j_1.3.1.jar"/>
+        <pathelement location="/com/facetoe/jreader/lib/zip4j_1.3.1.jar"/>
     </path>
 
 

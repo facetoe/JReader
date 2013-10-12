@@ -248,7 +248,9 @@ public class JReader extends JFrame {
                                         if ( newVal.endsWith(".java") ) {
                                             newSourceTab(new PathData(newVal.replaceAll("file:\\/\\/", "")));
                                         } else if ( currentTab instanceof JReaderPanel ) {
-                                            JReaderPanel jReaderPanel = ( JReaderPanel ) currentTab;
+                                            //TODO clean this up.
+                                            String tabTitle = newVal.substring(newVal.lastIndexOf("/") + 1, newVal.length());
+                                            tabbedPane.setTitleAt(tabbedPane.getSelectedIndex(), tabTitle);
                                             PathData pathData = new PathData(newVal);
                                             if ( Utilities.isGoodSourcePath(pathData.getSrcPath()) ) {
                                                 enableSourceButton();
