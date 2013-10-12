@@ -77,7 +77,10 @@ public class JavaDocParser {
 //    public static void main(String[] args) {
 //        long startTime = System.nanoTime();
 //        JavaDocParser parser = new JavaDocParser("/home/facetoe/tmp/docs/api/");
-//        parser.parse("allclasses-noframe.html");
+//        //parser.parse("allclasses-noframe.html");
+//
+//        parser.parseClassFile("", "/home/facetoe/tmp/docs/api/javax/swing/JRootPane.html", "JRootPane");
+//
 //        long estimatedTime = System.nanoTime() - startTime;
 //        System.out.println("Finished in: " + estimatedTime / 1000000000);
 //    }
@@ -190,16 +193,48 @@ public class JavaDocParser {
 
         for ( Element item : classData ) {
             String itemSigFull = item.select("code").text();
+
             if ( !itemSigFull.isEmpty() ) {
+
+                // Is a method or constructor
                 if ( itemSigFull.contains("(") ) {
                     itemSigFull = rearrangeBrackets(itemSigFull);
-                    String[] methodSigParts = itemSigFull.split("^(\\w+ )+");
-                    String methodSig = methodSigParts[methodSigParts.length - 1];
+
+                    String methodSig;
+
+                    /* Sometimes there is extra information concerning deprecated methods. We don't want that,
+                     * so remove it otherwise we get messed up search functionality in JSourcePane. */
+                    if ( item.getElementsByTag("i").size() > 0 ) {
+                        String annoyingAddition = item.getElementsByTag("i").select("code").text();
+                        itemSigFull = itemSigFull.replace(annoyingAddition, "");
+                        methodSig = extractMethodName(itemSigFull);
+
+                    } else {
+                        methodSig = extractMethodName(itemSigFull);
+                    }
                     object.addItem(methodSig, itemSigFull);
+
+                    // Is a nested class
+                } else if ( itemSigFull.contains(".") ) {
+                    String nestedClassName = item.getElementsByClass("colLast").select("a").text();
+
+                    int classBegin = nestedClassName.lastIndexOf(".") + 1;
+                    int classEnd = nestedClassName.length();
+
+                    nestedClassName = nestedClassName.substring(classBegin, classEnd);
+                    String signature = item.getElementsByClass("colFirst").text();
+                    String fullNestedClassSig = (signature + " " + nestedClassName).replaceAll("\u00A0", " ").replaceAll("\\s+", " ");
+
+                    object.addItem(nestedClassName, fullNestedClassSig);
+
+                    // Is a field
                 } else {
-                    String[] fieldSigParts = itemSigFull.split("^(\\w+ )+");
-                    String fieldSig = fieldSigParts[fieldSigParts.length - 1];
-                    object.addItem(fieldSig, itemSigFull);
+
+                    //TOO figure out how to determine whether it is marked final or not. As it is the search fails
+                    // fails if it is marked as final.
+//                    String[] fieldSigParts = itemSigFull.split("^(\\w+ )+");
+//                    String fieldSig = fieldSigParts[fieldSigParts.length - 1];
+//                    object.addItem(fieldSig, itemSigFull);
                 }
             }
         }
@@ -243,6 +278,28 @@ public class JavaDocParser {
         }
         builder.append(")");
         return builder.toString().replace("\u00A0", " ");
+    }
+
+    private String extractMethodName(String methodSig) {
+        boolean inParams = false;
+        boolean inMethodName = false;
+        StringBuilder builder = new StringBuilder();
+
+        for ( int i = methodSig.length() - 1; i >= 0; i-- ) {
+            if ( methodSig.charAt(i) == ')' ) {
+                inParams = true;
+            } else if ( methodSig.charAt(i) == '(' ) {
+                inParams = false;
+                inMethodName = true;
+            } else if ( Character.isSpaceChar(methodSig.charAt(i)) && inMethodName ) {
+                break;
+            }
+
+            if ( inParams || inMethodName ) {
+                builder.append(methodSig.charAt(i));
+            }
+        }
+        return builder.reverse().toString();
     }
 
     /**
