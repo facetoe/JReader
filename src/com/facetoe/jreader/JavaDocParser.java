@@ -73,19 +73,6 @@ class JavaObject implements Serializable {
  */
 public class JavaDocParser {
 
-
-//    public static void main(String[] args) {
-//        long startTime = System.nanoTime();
-//        JavaDocParser parser = new JavaDocParser("/home/facetoe/tmp/docs/api/");
-//        //parser.parse("allclasses-noframe.html");
-//
-//        parser.parseClassFile("", "/home/facetoe/tmp/docs/api/javax/swing/JRootPane.html", "JRootPane");
-//
-//        long estimatedTime = System.nanoTime() - startTime;
-//        System.out.println("Finished in: " + estimatedTime / 1000000000);
-//    }
-
-
     private HashMap<String, HashMap<String, String>> allClassData = new HashMap<String, HashMap<String, String>>();
 
     /* The base path for the Java docs: /dir/dir/dir/docs/api/ */
@@ -392,7 +379,7 @@ abstract class ProgressWindow<T> extends JFrame {
 class ParserProgressWindow extends ProgressWindow<HashMap<String, JavaObject>> {
     @Override
     public HashMap<String, JavaObject> execute() {
-        JavaDocParser parser = new JavaDocParser("/home/facetoe/tmp/docs/api/");
+        JavaDocParser parser = new JavaDocParser(Config.getEntry("apiDir"));
         parser.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

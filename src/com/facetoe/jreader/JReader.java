@@ -211,22 +211,8 @@ public class JReader extends JFrame {
         context.setMatchCase(true);
         context.setWholeWord(true);
 
-        String searchTerm = pathData.getSearchTerm();
-
-        if ( searchTerm != null ) {
-            String className = "class " + pathData.getSearchTerm();
-            String interfaceName = "interface " + pathData.getSearchTerm();
-            String enumName = "enum " + pathData.getSearchTerm();
-
-            if ( newTab.findString(className, context) ) {
-            } else if ( newTab.findString(interfaceName, context) ) {
-            } else if ( newTab.findString(enumName, context) ) {
-            } else {
-                newTab.findString(pathData.getSearchTerm(), context);
-            }
-
-        } else if ( currentObj != null ) {
-            newTab.findString(currentObj.getFullObjName(), context);
+        if ( currentObj != null ) {
+            newTab.findString(currentObj.getFullObjName(), new SearchContext());
         }
 
         disableBrowserButtons();
@@ -290,6 +276,8 @@ public class JReader extends JFrame {
 
                             @Override
                             public void mouseReleased(MouseEvent e) {
+                                if ( e.isPopupTrigger() )
+                                    doPop(e);
                             }
 
                             @Override
@@ -298,6 +286,7 @@ public class JReader extends JFrame {
 
                             @Override
                             public void mouseExited(MouseEvent e) {
+
                             }
 
                             private void doPop(MouseEvent e) {
