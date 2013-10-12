@@ -13,6 +13,7 @@ import java.awt.*;
 import java.io.File;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
+import java.util.concurrent.CountDownLatch;
 
 import static javafx.concurrent.Worker.State.FAILED;
 
@@ -24,6 +25,7 @@ public class JReaderPanel extends JPanel {
     private WebView view;
     private JFXPanel jfxPanel;
     private JProgressBar progressBar;
+    private CountDownLatch latch;
 
     private String currentPage;
     private String initialURL;
@@ -34,7 +36,8 @@ public class JReaderPanel extends JPanel {
      * @param url          to display when the panel is loaded.
      * @param jProgressBar reference to the main JReader progress bar so we can display progress.
      */
-    public JReaderPanel(String url, JProgressBar jProgressBar) {
+    public JReaderPanel(String url, JProgressBar jProgressBar, CountDownLatch latch) {
+        this.latch = latch;
         init(url, jProgressBar);
     }
 
@@ -43,7 +46,8 @@ public class JReaderPanel extends JPanel {
      *
      * @param jProgressBar reference to of the main JReader progress bar so we can display progress.
      */
-    public JReaderPanel(JProgressBar jProgressBar) {
+    public JReaderPanel(JProgressBar jProgressBar, CountDownLatch latch) {
+        this.latch = latch;
         init(Config.getEntry("docDir") + File.separator + "index.html", jProgressBar);
     }
 
@@ -60,6 +64,7 @@ public class JReaderPanel extends JPanel {
         setLayout(new BorderLayout());
         createScene();
         loadURL(initialURL);
+        System.out.println("Finished loading");
     }
 
     /**
@@ -130,6 +135,10 @@ public class JReaderPanel extends JPanel {
 
                 jfxPanel.setScene(new Scene(view));
                 add(jfxPanel);
+                System.out.println("Counted down");
+
+                /* Release the latch on the Swing thread. */
+                latch.countDown();
             }
         });
     }

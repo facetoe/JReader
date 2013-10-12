@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.CountDownLatch;
 
 public class JReader extends JFrame {
 
@@ -23,6 +24,11 @@ public class JReader extends JFrame {
     private JButton btnHome = new JButton("Home");
     private JButton btnSource = new JButton("View Source");
     private JButton btnCollapse = new JButton("Collapse");
+
+    /* This is necessary to make the Swing thread wait until the javafx content is loaded on startup.
+     * If it's not set then the Swing components are displayed before there is any content in them. */
+    CountDownLatch javafxLoadLatch = new CountDownLatch(1);
+
 
     private HashMap<String, JavaObject> classData;
     private JavaObject currentObject;
@@ -157,6 +163,9 @@ public class JReader extends JFrame {
         setSize(1024, 600);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("JReader");
+
+        System.out.println("Setting visible");
+
         setVisible(true);
     }
 
@@ -228,7 +237,12 @@ public class JReader extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                final JReaderPanel readerPanel = new JReaderPanel(progressBar);
+                final JReaderPanel readerPanel = new JReaderPanel(progressBar, javafxLoadLatch);
+                try {
+                    javafxLoadLatch.await();
+                } catch ( InterruptedException e ) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
 
                 if ( hasButton ) {
                     addCloseButtonToTab(readerPanel, title);

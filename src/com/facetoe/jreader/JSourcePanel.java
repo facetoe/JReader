@@ -83,6 +83,7 @@ public class JSourcePanel extends JPanel {
      */
     public boolean findString(String text, SearchContext context) {
         boolean found;
+        int caretPos = textArea.getCaretPosition();
         context.setSearchFor(text);
         context.setSearchForward(true);
 
@@ -90,6 +91,9 @@ public class JSourcePanel extends JPanel {
         if ( !found ) {
             textArea.setCaretPosition(0);
             found = SearchEngine.find(textArea, context);
+            if ( !found ) {
+                textArea.setCaretPosition(caretPos);
+            }
         }
         return found;
     }
