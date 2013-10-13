@@ -15,6 +15,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 
+class ViewSourceAction extends AbstractAction {
+    JReader jReader;
+
+    public ViewSourceAction(JReader jReader) {
+        super("View Source");
+        this.jReader = jReader;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        jReader.newSourceTab(null);
+    }
+}
+
 public class JReader extends JFrame {
 
     private JLabel lblStatus = new JLabel();
@@ -24,6 +38,8 @@ public class JReader extends JFrame {
     private JButton btnHome = new JButton("Home");
     private JButton btnSource = new JButton("View Source");
     private JButton btnCollapse = new JButton("Collapse");
+
+    private JMenuItem mnuNewSource;
 
     /* This is necessary to make the Swing thread wait until the javafx content is loaded on startup.
      * If it's not set then the Swing components are displayed before there is any content in them. */
@@ -43,6 +59,16 @@ public class JReader extends JFrame {
 
         loadJavaDocData();
         initAutocompleteTextField();
+
+        JMenuBar menuBar = new JMenuBar();
+        JMenu menu = new JMenu("Test Menu");
+        mnuNewSource = new JMenuItem(new ViewSourceAction(this));
+
+
+        menu.add(mnuNewSource);
+        menuBar.add(menu);
+
+        setJMenuBar(menuBar);
 
         /* You create 3 panels, left, right and top. The components go into the left and
            right panels with their own layout manager and they both go in the top panel.
@@ -111,7 +137,7 @@ public class JReader extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if ( currentTab instanceof JReaderPanel ) {
                     JReaderPanel panel = ( JReaderPanel ) currentTab;
-                    newSourceTab(new PathData(panel.getCurrentPage()));
+                    newSourceTab(null);
                 }
             }
         });
@@ -140,16 +166,17 @@ public class JReader extends JFrame {
             public void stateChanged(ChangeEvent e) {
                 if ( tabbedPane.getComponentAt(tabbedPane.getSelectedIndex()) instanceof JSourcePanel ) {
                     disableBrowserButtons();
+                    disableNewSourceOption();
                     searchBar.removeWordsFromTrie(new ArrayList<String>(classData.keySet()));
                 } else if ( tabbedPane.getComponentAt(tabbedPane.getSelectedIndex()) instanceof JReaderPanel ) {
                     enableBrowserButtons();
+                    enableNewSourceOption();
                     if ( currentObject != null ) {
                         searchBar.removeWordsFromTrie(currentObject.getObjectItemsShort());
                     }
 
                     searchBar.addWordsToTrie(new ArrayList<String>(classData.keySet()));
                 }
-                System.out.println("Fired");
                 currentTab = ( JPanel ) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
             }
         });
@@ -187,7 +214,22 @@ public class JReader extends JFrame {
         tabbedPane.setTabComponentAt(index, tabButton);
     }
 
-    private void newSourceTab(PathData pathData) {
+    public void newSourceTab(PathData pathData) {
+
+        if ( pathData == null ) {
+            if ( currentTab instanceof JReaderPanel ) {
+                JReaderPanel panel = ( JReaderPanel ) currentTab;
+                pathData = new PathData(panel.getCurrentPage());
+                if ( !Utilities.isGoodSourcePath(pathData.getSrcPath()) ) {
+                    System.err.println("Bad File Path");
+                    return;
+                }
+            } else {
+                System.err.println("Not a ReaderPanel");
+                return;
+            }
+        }
+
         String title = pathData.getFileName();
         String filePath = pathData.getSrcPath();
 
@@ -216,6 +258,7 @@ public class JReader extends JFrame {
         }
 
         disableBrowserButtons();
+        disableNewSourceOption();
     }
 
     private void newJReaderTab(final String title, final boolean hasButton) {
@@ -253,9 +296,9 @@ public class JReader extends JFrame {
                                             tabbedPane.setTitleAt(tabbedPane.getSelectedIndex(), tabTitle);
                                             PathData pathData = new PathData(newVal);
                                             if ( Utilities.isGoodSourcePath(pathData.getSrcPath()) ) {
-                                                enableSourceButton();
+                                                enableNewSourceOption();
                                             } else {
-                                                disableSourceButton();
+                                                disableNewSourceOption();
                                             }
                                         }
                                     }
@@ -318,7 +361,7 @@ public class JReader extends JFrame {
                 });
 
                 tabbedPane.setSelectedComponent(readerPanel);
-                disableSourceButton();
+                disableNewSourceOption();
             }
         });
     }
@@ -335,8 +378,14 @@ public class JReader extends JFrame {
         btnHome.setEnabled(true);
     }
 
-    private void disableSourceButton() {
+    private void disableNewSourceOption() {
         btnSource.setEnabled(false);
+        mnuNewSource.setEnabled(false);
+    }
+
+    private void enableNewSourceOption() {
+        btnSource.setEnabled(true);
+        mnuNewSource.setEnabled(true);
     }
 
     private void handleSearch() {
@@ -354,10 +403,6 @@ public class JReader extends JFrame {
                 sourcePanel.findString(searchBar.getText(), new SearchContext());
             }
         }
-    }
-
-    private void enableSourceButton() {
-        btnSource.setEnabled(true);
     }
 
     private void loadJavaDocData() {

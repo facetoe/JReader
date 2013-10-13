@@ -23,12 +23,6 @@ class PathData {
      */
     private String objectName;
 
-    /**
-     * Either a CONSTANT or method, or null
-     */
-    private String searchTerm;
-
-
     public PathData(String docPath) {
         this.docPath = docPath;
 
@@ -70,7 +64,6 @@ class PathData {
             String nestedClassName = parts[parts.length - 2];
             String newPath = path.substring(0, path.lastIndexOf("/") + 1) + objectName + ".java";
             srcPath = srcDir + newPath;
-            searchTerm = nestedClassName;
         }
 
         /* If there is a '#' character it's either a method or a constant like:
@@ -85,8 +78,6 @@ class PathData {
             } else {
                 methodName = " " + methodName;
             }
-
-            searchTerm = methodName;
 
             /* Finally, convert the .html to .java so we can load it up */
             srcPath = srcDir + parts[0].replace(".html", ".java");

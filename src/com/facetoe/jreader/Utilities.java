@@ -33,25 +33,6 @@ public class Utilities {
     }
 
     /**
-     * Extracts the method name from path including the first bracket.
-     * Without including the first bracket calling JSourcePane.findString(methodName) will usually
-     * locate the string in the comments instead of at the declaration.
-     *
-     * @param path to extract the method name from
-     * @return the method name
-     */
-    //TODO fix this method so it works for constants as well as method names
-    public static String extractMethodNameFromPath(String path) {
-        String methodName = null;
-        if ( path.contains("#") ) {
-            String[] parts = path.split("#");
-            methodName = parts[1];
-            methodName = methodName.substring(0, methodName.indexOf("(") + 1);
-        }
-        return methodName;
-    }
-
-    /**
      * Takes bytes and returns a human readable string like "35KB"
      *
      * @param bytes to convert.
