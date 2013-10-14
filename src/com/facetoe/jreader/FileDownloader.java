@@ -1,8 +1,5 @@
 package com.facetoe.jreader;
 
-import javax.swing.*;
-import javax.swing.border.CompoundBorder;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileOutputStream;
@@ -13,208 +10,209 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.util.ArrayList;
 import java.util.concurrent.CancellationException;
 
-public class FileDownloader {
-    private interface RBCWrapperDelegate {
-        // The RBCWrapperDelegate receives rbcProgressCallback() messages
-        // from the read loop.  It is passed the progress as a percentage
-        // if known, or -1.0 to indicate indeterminate progress.
-        //
-        // This callback hangs the read loop so a smart implementation will
-        // spend the least amount of time possible here before returning.
-        //
-        // One possible implementation is to push the progress message
-        // atomically onto a queue managed by a secondary thread then
-        // wake that thread up.  The queue manager thread then updates
-        // the user interface progress bar.  This lets the read loop
-        // continue as fast as possible.
-        public void rbcProgressCallback(RBCWrapper rbc, double progress);
+
+interface RBCWrapperDelegate {
+    // The RBCWrapperDelegate receives rbcProgressCallback() messages
+    // from the read loop.  It is passed the progress as a percentage
+    // if known, or -1.0 to indicate indeterminate progress.
+    //
+    // This callback hangs the read loop so a smart implementation will
+    // spend the least amount of time possible here before returning.
+    //
+    // One possible implementation is to push the progress message
+    // atomically onto a queue managed by a secondary thread then
+    // wake that thread up.  The queue manager thread then updates
+    // the user interface progress bar.  This lets the read loop
+    // continue as fast as possible.
+    public void rbcProgressCallback(RBCWrapper rbc, double progress);
+}
+
+class FileDownloader implements RBCWrapperDelegate {
+    String localPath;
+    String remoteURL;
+    ReadableByteChannel rbc;
+    HttpURLConnection connection;
+    ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
+
+    public static void main(String[] args) {
+        if ( new FileDownloaderProgressWindow("/home/facetoe/tmp/test/test.img", "https://upload.wikimedia.org/wikipedia/commons/1/1e/Piwo_gratis.jpg").execute() ) {
+            System.out.println("Success");
+        } else {
+            System.out.println("Canceled");
+        }
     }
 
-    public void download(String localPath, String remoteURL) throws IOException {
-        new Downloader(localPath, remoteURL).download();
+    public FileDownloader(String localPath, String remoteURL) {
+
+        this.localPath = localPath;
+        this.remoteURL = remoteURL;
     }
 
-    private static final class Downloader extends JFrame implements RBCWrapperDelegate {
+    public void download() throws IOException, CancellationException {
+        FileOutputStream fos;
+        URL url;
 
-        JPanel panel = new JPanel();
-        JButton btnCancel = new JButton("Cancel");
-        JLabel lblProgress = new JLabel("Connecting...");
-        JProgressBar progressBar = new JProgressBar();
-        String localPath;
-        String remoteURL;
-        ReadableByteChannel rbc;
-        HttpURLConnection connection;
-        private boolean wasCanceled = false;
+        url = new URL(remoteURL);
+        rbc = new RBCWrapper(Channels.newChannel(url.openStream()), contentLength(url), this);
+        fos = new FileOutputStream(localPath);
+        fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+    }
 
-        public Downloader(String localPath, String remoteURL) {
+    public void rbcProgressCallback(RBCWrapper rbc, double progress) {
+        fireEvent(ActionEvent.ACTION_PERFORMED, Utilities.humanReadableByteCount(rbc.getReadSoFar(), true), ( long ) progress);
+    }
 
-            this.localPath = localPath;
-            this.remoteURL = remoteURL;
+    private long contentLength(URL url) {
+        long contentLength = -1;
 
-            btnCancel.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    Config.setEntry("hasSrc", "false");
-                    wasCanceled = true;
-                    lblProgress.setText("Canceled.");
-                    /**
-                     * If the user clicks cancel straight away the rbc and connection won't be initialized.
-                     * Wait until the connection begins and then cancel it.
-                     */
-                    while ( true ) {
-                        if ( rbc == null || connection == null ) {
-                            try {
-                                Thread.sleep(1000);
-                            } catch ( InterruptedException ex ) {
-                                ex.printStackTrace();
-                            }
-                        } else if ( rbc.isOpen() ) {
-                            break;
-                        }
-                    }
+        try {
 
-                    try {
-                        connection.disconnect();
-                        rbc.close();
+            HttpURLConnection.setFollowRedirects(true);
 
-                    } catch ( IOException e1 ) {
-                        e1.printStackTrace();
-                    }
-                    setVisible(false);
-                    dispose();
-                }
-            });
+            connection = ( HttpURLConnection ) url.openConnection();
+            connection.setConnectTimeout(15 * 1000);
+            connection.setRequestMethod("HEAD");
 
-            panel.setLayout(new BorderLayout(10, 10));
-            panel.add(lblProgress, BorderLayout.CENTER);
-            panel.add(progressBar, BorderLayout.NORTH);
-            panel.add(btnCancel, BorderLayout.EAST);
-            panel.setBorder(new CompoundBorder(BorderFactory.createEtchedBorder(), BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+            contentLength = connection.getContentLengthLong();
 
-            setTitle("JReader");
-            setResizable(false);
-
-//            try {
-//                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-//            } catch ( ClassNotFoundException e ) {
-//                e.printStackTrace();
-//            } catch ( InstantiationException e ) {
-//                e.printStackTrace();
-//            } catch ( IllegalAccessException e ) {
-//                e.printStackTrace();
-//            } catch ( UnsupportedLookAndFeelException e ) {
-//                e.printStackTrace();
-//            }
-
-            getContentPane().add(panel, BorderLayout.NORTH);
-            setPreferredSize(new Dimension(550, 72));
-            setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-            pack();
-            setVisible(true);
-        }
-
-        public void download() throws IOException, CancellationException {
-            FileOutputStream fos;
-            URL url;
-
-            url = new URL(remoteURL);
-            rbc = new RBCWrapper(Channels.newChannel(url.openStream()), contentLength(url), this);
-            fos = new FileOutputStream(localPath);
-            fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-
-            if ( !wasCanceled ) {
-                lblProgress.setText("Complete.");
-                Config.setEntry("hasSrc", "true");
-            } else {
-                throw new CancellationException("User Canceled");
+            /**
+             * For some reason the content length isn't being returned correctly.
+             * I'm hardcoding the java source zipfile size so the progress bar works.
+             */
+            if ( contentLength == -1 ) {
+                contentLength = 36689314;
             }
 
-            try {
-                Thread.sleep(1000);
-            } catch ( InterruptedException ex ) {
-                ex.printStackTrace();
-            }
 
-            setVisible(false);
-            dispose();
+        } catch ( ProtocolException ex ) {
+            ex.printStackTrace();
+        } catch ( IOException ex ) {
+            ex.printStackTrace();
+        } catch ( Exception ex ) {
+            ex.printStackTrace();
         }
 
-        public void rbcProgressCallback(RBCWrapper rbc, double progress) {
-            progressBar.setValue(( int ) progress);
-            lblProgress.setText(String.format("Downloaded %.02f%% of %s", progress, Utilities.humanReadableByteCount(rbc.expectedSize, true)));
+        return contentLength;
+    }
+
+    public void addActionListener(ActionListener listener) {
+        listeners.add(listener);
+    }
+
+    public void fireEvent(int eventType, String message, long progress) {
+        ActionEvent event = new ActionEvent(this, eventType, message, progress, 0);
+        for ( ActionListener listener : listeners ) {
+            listener.actionPerformed(event);
         }
+    }
+}
 
-        private long contentLength(URL url) {
-            long contentLength = -1;
+class RBCWrapper implements ReadableByteChannel {
+    private RBCWrapperDelegate delegate;
+    private long expectedSize;
+    private ReadableByteChannel rbc;
+    private long readSoFar;
 
-            try {
+    RBCWrapper(ReadableByteChannel rbc, long expectedSize, RBCWrapperDelegate delegate) {
+        this.delegate = delegate;
+        this.expectedSize = expectedSize;
+        this.rbc = rbc;
+    }
 
-                HttpURLConnection.setFollowRedirects(true);
+    public void close() throws IOException {
+        rbc.close();
+    }
 
-                connection = ( HttpURLConnection ) url.openConnection();
-                connection.setConnectTimeout(15 * 1000);
-                connection.setRequestMethod("HEAD");
+    public long getReadSoFar() {
+        return readSoFar;
+    }
 
-                contentLength = connection.getContentLengthLong();
+    public boolean isOpen() {
+        return rbc.isOpen();
+    }
 
+    public int read(ByteBuffer bb) throws IOException {
+        int n;
+        double progress;
 
+        if ( (n = rbc.read(bb)) > 0 ) {
+            readSoFar += n;
+            progress = expectedSize > 0 ? ( double ) readSoFar / ( double ) expectedSize * 100.0 : -1.0;
+            delegate.rbcProgressCallback(this, progress);
+        }
+        return n;
+    }
+}
+
+class FileDownloaderProgressWindow extends ProgressWindow<Boolean> {
+
+    String localDest;
+    String remoteSrc;
+    private boolean wasCanceled = false;
+
+    public FileDownloaderProgressWindow(String localDestination, String remoteSource) {
+        localDest = localDestination;
+        remoteSrc = remoteSource;
+    }
+
+    @Override
+    public Boolean execute() {
+        final FileDownloader downloader = new FileDownloader(localDest, remoteSrc);
+
+        btnCancel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 /**
-                 * For some reason the content length isn't being returned correctly.
-                 * I'm hardcoding the java source zipfile size so the progress bar works.
+                 * If the user clicks cancel straight away the rbc and connection won't be initialized.
+                 * Wait until the connection begins and then cancel it.
                  */
-                if ( contentLength == -1 ) {
-                    contentLength = 36689314;
+                while ( true ) {
+                    if ( downloader.rbc == null || downloader.connection == null ) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch ( InterruptedException ex ) {
+                            ex.printStackTrace();
+                        }
+                    } else if ( downloader.rbc.isOpen() ) {
+                        break;
+                    }
                 }
 
+                try {
+                    downloader.connection.disconnect();
+                    downloader.rbc.close();
 
-            } catch ( ProtocolException ex ) {
-                JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), ex.getClass().toString(), JOptionPane.ERROR_MESSAGE);
-            } catch ( IOException ex ) {
-                JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), ex.getClass().toString(), JOptionPane.ERROR_MESSAGE);
-            } catch ( Exception ex ) {
-                JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), ex.getClass().toString(), JOptionPane.ERROR_MESSAGE);
+                } catch ( IOException e1 ) {
+                    e1.printStackTrace();
+                } finally {
+                    wasCanceled = true;
+                }
             }
+        });
 
-            return contentLength;
-        }
-    }
-
-    private static final class RBCWrapper implements ReadableByteChannel {
-        private RBCWrapperDelegate delegate;
-        private long expectedSize;
-        private ReadableByteChannel rbc;
-        private long readSoFar;
-
-        RBCWrapper(ReadableByteChannel rbc, long expectedSize, RBCWrapperDelegate delegate) {
-            this.delegate = delegate;
-            this.expectedSize = expectedSize;
-            this.rbc = rbc;
-        }
-
-        public void close() throws IOException {
-            rbc.close();
-        }
-
-        public long getReadSoFar() {
-            return readSoFar;
-        }
-
-        public boolean isOpen() {
-            return rbc.isOpen();
-        }
-
-        public int read(ByteBuffer bb) throws IOException {
-            int n;
-            double progress;
-
-            if ( (n = rbc.read(bb)) > 0 ) {
-                readSoFar += n;
-                progress = expectedSize > 0 ? ( double ) readSoFar / ( double ) expectedSize * 100.0 : -1.0;
-                delegate.rbcProgressCallback(this, progress);
+        downloader.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if ( e.getID() == ActionEvent.ACTION_PERFORMED ) {
+                    progressBar.setValue(( int ) e.getWhen());
+                    lblTitle.setText("Downloaded: ");
+                    lblProgress.setText(e.getActionCommand());
+                }
             }
-            return n;
+        });
+
+        try {
+            downloader.download();
+        } catch ( IOException e ) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return Boolean.FALSE;
         }
+
+        setVisible(false);
+        dispose();
+        return (wasCanceled == false);
     }
 }

@@ -26,7 +26,7 @@ class ViewSourceAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        jReader.newSourceTab();
+        jReader.newSourceTab(null);
     }
 }
 
@@ -213,37 +213,33 @@ public class JReader extends JFrame {
         tabbedPane.setTabComponentAt(index, tabButton);
     }
 
-    public void newSourceTab() {
+    public void newSourceTab(String path) {
         String title = null;
         String filePath = null;
         if ( currentTab instanceof JReaderPanel ) {
-            JReaderPanel panel = ( JReaderPanel ) currentTab;
-            String path = panel.getCurrentPage();
-
-            if ( path.endsWith(".java") ) {
-                filePath = path.replaceAll("file:\\/\\/", "");
+            if ( path != null && path.endsWith(".java") ) {
+                filePath = path;
+                title = Utilities.extractFileName(filePath);
             } else {
+                JReaderPanel panel = ( JReaderPanel ) currentTab;
+                path = panel.getCurrentPage();
                 filePath = Utilities.docPathToSourcePath(panel.getCurrentPage());
-                title = Utilities.extractTitle(panel.getCurrentPage());
+                title = Utilities.extractFileName(filePath);
+            }
 
-                if ( !Utilities.isGoodSourcePath(filePath) ) {
-                    System.err.println("Bad File Path");
-                    return;
-                }
+            System.out.println("Path: " + path);
+
+            if ( !Utilities.isGoodSourcePath(filePath) ) {
+                System.err.println("Bad File Path");
+                return;
             }
 
         } else {
             System.err.println("Not a ReaderPanel");
             return;
         }
-//        String title = pathData.getFileName();
-//        String filePath = pathData.getSrcPath();
 
-
-        JavaObject currentObj = classData.get(searchBar.getText());
-        if ( currentObj != null ) {
-            System.out.println(currentObj.getObjName());
-            currentObject = currentObj;
+        if ( currentObject != null ) {
             searchBar.addWordsToTrie(currentObject.getObjectItemsShort());
         } else {
             System.out.println("IT was null");
@@ -255,7 +251,6 @@ public class JReader extends JFrame {
         }
 
         JSourcePanel newTab = new JSourcePanel(filePath);
-
         addCloseButtonToTab(newTab, title);
         tabbedPane.setSelectedComponent(newTab);
 
@@ -263,13 +258,14 @@ public class JReader extends JFrame {
         context.setMatchCase(true);
         context.setWholeWord(true);
 
-        if ( currentObj != null ) {
-            newTab.findString(currentObj.getFullObjName(), new SearchContext());
+        if ( currentObject != null ) {
+            newTab.findString(currentObject.getFullObjName(), new SearchContext());
         }
 
         disableBrowserButtons();
         disableNewSourceOption();
         searchBar.requestFocus();
+        searchBar.setText("");
     }
 
     private void newJReaderTab(final String title, final boolean hasButton) {
@@ -300,7 +296,7 @@ public class JReader extends JFrame {
                                     @Override
                                     public void run() {
                                         if ( newVal.endsWith(".java") ) {
-                                            newSourceTab();
+                                            newSourceTab(newVal.replace("file://", ""));
                                         } else if ( currentTab instanceof JReaderPanel ) {
                                             //TODO clean this up.
                                             String tabTitle = Utilities.extractTitle(newVal);
@@ -410,7 +406,7 @@ public class JReader extends JFrame {
             JSourcePanel sourcePanel = ( JSourcePanel ) currentTab;
             //TODO Figure out a good way to deal with the search context. Maybe have preferences or something.
             String fullMethod = currentObject.getObjectItemLong(searchBar.getText());
-            System.out.println(fullMethod);
+            System.out.println("Method: " + fullMethod);
             if ( fullMethod != null ) {
                 sourcePanel.findString(fullMethod, new SearchContext());
             } else {
@@ -443,30 +439,30 @@ public class JReader extends JFrame {
         searchBar.addWordsToTrie(test);
     }
 
-    public static void main(String[] args) {
-
-        try {
-            for ( UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels() ) {
-                if ( "Nimbus".equals(info.getName()) ) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch ( Exception e ) {
-            // If Nimbus is not available, you can set the GUI to another look and feel.
-        }
-
-        if ( !JReaderSetup.isSetup() ) {
-            JReaderSetup.setup();
-        }
-
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new JReader();
-            }
-        });
-    }
+//    public static void main(String[] args) {
+//
+//        try {
+//            for ( UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels() ) {
+//                if ( "Nimbus".equals(info.getName()) ) {
+//                    UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//        } catch ( Exception e ) {
+//            // If Nimbus is not available, you can set the GUI to another look and feel.
+//        }
+//
+//        if ( !JReaderSetup.isSetup() ) {
+//            JReaderSetup.setup();
+//        }
+//
+//        SwingUtilities.invokeLater(new Runnable() {
+//            @Override
+//            public void run() {
+//                new JReader();
+//            }
+//        });
+//    }
 }
 
 

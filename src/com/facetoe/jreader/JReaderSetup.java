@@ -177,18 +177,18 @@ public class JReaderSetup {
     public static void getJavaSource(String srcDirPath) {
         int result = JOptionPane.showConfirmDialog(null, "JReader needs to download the Java source code.", "", JOptionPane.OK_CANCEL_OPTION);
         if ( result == JOptionPane.OK_OPTION ) {
-            try {
-                downloadJavaSource(srcDirPath, "http://sourceforge.net/projects/jdk7src/files/latest/download");
-                Config.setEntry("hasSrc", "true");
-
-            } catch ( IOException e ) {
-                Config.setEntry("hasSrc", "false");
-                JOptionPane.showMessageDialog(null, e.getMessage(), e.getClass().toString(), JOptionPane.ERROR_MESSAGE);
-
-            } catch ( CancellationException e ) {
-                Config.setEntry("hasSrc", "false");
-                JOptionPane.showMessageDialog(null, e.getMessage(), e.getClass().toString(), JOptionPane.WARNING_MESSAGE);
-            }
+//            try {
+//                downloadJavaSource(srcDirPath, "http://sourceforge.net/projects/jdk7src/files/latest/download");
+//                Config.setEntry("hasSrc", "true");
+//
+//            } catch ( IOException e ) {
+//                Config.setEntry("hasSrc", "false");
+//                JOptionPane.showMessageDialog(null, e.getMessage(), e.getClass().toString(), JOptionPane.ERROR_MESSAGE);
+//
+//            } catch ( CancellationException e ) {
+//                Config.setEntry("hasSrc", "false");
+//                JOptionPane.showMessageDialog(null, e.getMessage(), e.getClass().toString(), JOptionPane.WARNING_MESSAGE);
+//            }
         } else {
             JOptionPane.showMessageDialog(null, "JReader cannot function without the source code. Please try again later");
             System.exit(0);
@@ -212,10 +212,10 @@ public class JReaderSetup {
     }
 
 
-    public static void downloadJavaSource(String localDestination, String remoteURL) throws IOException, CancellationException {
-        FileDownloader downloader = new FileDownloader();
-        downloader.download(localDestination, remoteURL);
-    }
+//    public static void downloadJavaSource(String localDestination, String remoteURL) throws IOException, CancellationException {
+//        FileDownloader downloader = new FileDownloader();
+//        downloader.download(localDestination, remoteURL);
+//    }
 
     public static boolean isJava7DocsDir(File docDir) {
         File[] dirList = docDir.listFiles();

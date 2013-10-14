@@ -92,6 +92,19 @@ public class Utilities {
         return "";
     }
 
+    public static String extractFileName(String path) {
+        int nameBegin = path.lastIndexOf("/") + 1;
+        int nameEnd;
+
+        if ( path.contains("#") ) {
+            nameEnd = path.indexOf("#");
+        } else {
+            nameEnd = path.length();
+        }
+
+        return path.substring(nameBegin, nameEnd);
+    }
+
     /**
      * Takes bytes and returns a human readable string like "35KB"
      *

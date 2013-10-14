@@ -339,11 +339,11 @@ abstract class ProgressWindow<T> extends JFrame {
     public ProgressWindow() {
 
         //TODO figure out what to do with the button.
-        btnCancel.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            }
-        });
+//        btnCancel.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//            }
+//        });
 
         progressBar.setIndeterminate(false);
 
