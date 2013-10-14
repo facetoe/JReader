@@ -2,6 +2,9 @@ package com.facetoe.jreader;
 
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 import javax.swing.*;
 import java.io.*;
@@ -14,9 +17,22 @@ import java.util.HashMap;
 public class Utilities {
 
 //    public static void main(String[] args) {
-//        String orig = "file:///C:/Users/windowsBox/Desktop/docs/api/org/omg/PortableServer/SERVANT_RETENTION_POLICY_ID.html";
-//          System.out.println("Orig: " + orig);
-//          System.out.println("Modi: " + docPathToSourcePath(orig));
+//        try {
+//            long startTime = System.currentTimeMillis();
+//
+//            Document doc = Jsoup.parse(new File("/home/facetoe/tmp/docs/api/java/awt/Container.html"), "UTF-8");
+//            Elements title = doc.getElementsByClass("title");
+//            for ( Element element : title ) {
+//                System.out.println(title.text());
+//            }
+//            long estimatedTime = System.currentTimeMillis() - startTime;
+//            System.out.println("Took: " + estimatedTime / 1000000000);
+//
+//        } catch ( FileNotFoundException e ) {
+//            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//        } catch ( IOException ex ) {
+//            ex.printStackTrace();
+//        }
 //    }
 
     /**
@@ -30,6 +46,50 @@ public class Utilities {
     public static String readFile(String path, Charset encoding) throws IOException {
         byte[] encoded = Files.readAllBytes(Paths.get(path));
         return encoding.decode(ByteBuffer.wrap(encoded)).toString();
+    }
+
+    public static String docPathToSourcePath(String docPath) {
+        docPath = browserPathToSystemPath(docPath);
+
+        /* Chop off the section of docPath that points to the Java docs */
+        String path = docPath.substring(docPath.lastIndexOf("api") + 3, docPath.length());
+
+        /* If there are more than 2 periods it's probably a nested class like: /dir/dir/SomeClass.SomeNestedClass.html */
+        if ( path.split("\\.").length > 2 ) {
+            String objectName = path.substring(path.lastIndexOf("/") + 1, path.indexOf("."));
+            String[] parts = path.split("\\.");
+            path = path.substring(0, path.lastIndexOf("/") + 1) + objectName + ".java";
+        }
+
+        String srcPath = (Config.getEntry("srcDir") + path).replace(".html", ".java");
+        return srcPath;
+    }
+
+    public static String browserPathToSystemPath(String path) {
+        path = path.replace("file://", "");
+        if ( path.contains("#") ) {
+            path = path.substring(0, path.indexOf("#"));
+        }
+        return path;
+    }
+
+    public static String extractTitle(String path) {
+        try {
+            path = browserPathToSystemPath(path);
+
+            Document doc = Jsoup.parse(new File(path), "UTF-8");
+            Elements title = doc.getElementsByTag("h2");
+
+            if ( title.size() >= 1 ) {
+                return title.get(0).text().toString();
+            }
+
+        } catch ( FileNotFoundException e ) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch ( IOException ex ) {
+            ex.printStackTrace();
+        }
+        return "";
     }
 
     /**

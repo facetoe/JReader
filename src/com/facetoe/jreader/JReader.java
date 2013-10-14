@@ -20,12 +20,13 @@ class ViewSourceAction extends AbstractAction {
 
     public ViewSourceAction(JReader jReader) {
         super("View Source");
+        putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_S));
         this.jReader = jReader;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        jReader.newSourceTab(null);
+        jReader.newSourceTab();
     }
 }
 
@@ -36,7 +37,7 @@ public class JReader extends JFrame {
     private JButton btnBack = new JButton("Back");
     private JButton btnNext = new JButton("Next");
     private JButton btnHome = new JButton("Home");
-    private JButton btnSource = new JButton("View Source");
+    private JButton btnSource;// = new JButton("View Source");
     private JButton btnCollapse = new JButton("Collapse");
 
     private JMenuItem mnuNewSource;
@@ -62,8 +63,9 @@ public class JReader extends JFrame {
 
         JMenuBar menuBar = new JMenuBar();
         JMenu menu = new JMenu("Test Menu");
-        mnuNewSource = new JMenuItem(new ViewSourceAction(this));
-
+        mnuNewSource = new JMenuItem("Hello", KeyEvent.CTRL_MASK);
+        mnuNewSource.setAction(new ViewSourceAction(this));
+        btnSource = new JButton(new ViewSourceAction(this));
 
         menu.add(mnuNewSource);
         menuBar.add(menu);
@@ -132,15 +134,15 @@ public class JReader extends JFrame {
             }
         });
 
-        btnSource.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if ( currentTab instanceof JReaderPanel ) {
-                    JReaderPanel panel = ( JReaderPanel ) currentTab;
-                    newSourceTab(null);
-                }
-            }
-        });
+//        btnSource.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                if ( currentTab instanceof JReaderPanel ) {
+//                    JReaderPanel panel = ( JReaderPanel ) currentTab;
+//                    newSourceTab(null);
+//                }
+//            }
+//        });
 
         btnCollapse.addActionListener(new ActionListener() {
             @Override
@@ -196,12 +198,9 @@ public class JReader extends JFrame {
         setVisible(true);
     }
 
-    //TODO maybe set currentObject here
-    private void loadClass(String className) {
-        String path = classData.get(className).getPath();
-        if ( path != null && currentTab instanceof JReaderPanel ) {
-            String url = Config.getEntry("docDir") + "api" + File.separator + path;
-
+    private void loadClass() {
+        if ( currentObject != null && currentTab != null && currentTab instanceof JReaderPanel ) {
+            String url = Config.getEntry("apiDir") + currentObject.getPath();
             JReaderPanel jReaderPanel = ( JReaderPanel ) currentTab;
             jReaderPanel.loadURL(url);
         }
@@ -214,29 +213,40 @@ public class JReader extends JFrame {
         tabbedPane.setTabComponentAt(index, tabButton);
     }
 
-    public void newSourceTab(PathData pathData) {
+    public void newSourceTab() {
+        String title = null;
+        String filePath = null;
+        if ( currentTab instanceof JReaderPanel ) {
+            JReaderPanel panel = ( JReaderPanel ) currentTab;
+            String path = panel.getCurrentPage();
 
-        if ( pathData == null ) {
-            if ( currentTab instanceof JReaderPanel ) {
-                JReaderPanel panel = ( JReaderPanel ) currentTab;
-                pathData = new PathData(panel.getCurrentPage());
-                if ( !Utilities.isGoodSourcePath(pathData.getSrcPath()) ) {
+            if ( path.endsWith(".java") ) {
+                filePath = path.replaceAll("file:\\/\\/", "");
+            } else {
+                filePath = Utilities.docPathToSourcePath(panel.getCurrentPage());
+                title = Utilities.extractTitle(panel.getCurrentPage());
+
+                if ( !Utilities.isGoodSourcePath(filePath) ) {
                     System.err.println("Bad File Path");
                     return;
                 }
-            } else {
-                System.err.println("Not a ReaderPanel");
-                return;
             }
+
+        } else {
+            System.err.println("Not a ReaderPanel");
+            return;
         }
+//        String title = pathData.getFileName();
+//        String filePath = pathData.getSrcPath();
 
-        String title = pathData.getFileName();
-        String filePath = pathData.getSrcPath();
 
-        JavaObject currentObj = classData.get(pathData.getObjectName());
+        JavaObject currentObj = classData.get(searchBar.getText());
         if ( currentObj != null ) {
+            System.out.println(currentObj.getObjName());
             currentObject = currentObj;
             searchBar.addWordsToTrie(currentObject.getObjectItemsShort());
+        } else {
+            System.out.println("IT was null");
         }
 
         if ( !Utilities.isGoodSourcePath(filePath) ) {
@@ -259,6 +269,7 @@ public class JReader extends JFrame {
 
         disableBrowserButtons();
         disableNewSourceOption();
+        searchBar.requestFocus();
     }
 
     private void newJReaderTab(final String title, final boolean hasButton) {
@@ -289,13 +300,13 @@ public class JReader extends JFrame {
                                     @Override
                                     public void run() {
                                         if ( newVal.endsWith(".java") ) {
-                                            newSourceTab(new PathData(newVal.replaceAll("file:\\/\\/", "")));
+                                            newSourceTab();
                                         } else if ( currentTab instanceof JReaderPanel ) {
                                             //TODO clean this up.
-                                            String tabTitle = newVal.substring(newVal.lastIndexOf("/") + 1, newVal.length());
+                                            String tabTitle = Utilities.extractTitle(newVal);
                                             tabbedPane.setTitleAt(tabbedPane.getSelectedIndex(), tabTitle);
-                                            PathData pathData = new PathData(newVal);
-                                            if ( Utilities.isGoodSourcePath(pathData.getSrcPath()) ) {
+                                            System.out.println(Utilities.docPathToSourcePath(newVal));
+                                            if ( Utilities.isGoodSourcePath(Utilities.docPathToSourcePath(newVal)) ) {
                                                 enableNewSourceOption();
                                             } else {
                                                 disableNewSourceOption();
@@ -390,8 +401,11 @@ public class JReader extends JFrame {
 
     private void handleSearch() {
         if ( currentTab instanceof JReaderPanel ) {
-            loadClass(searchBar.getText());
-            searchBar.setText("");
+            if ( classData.get(searchBar.getText()) != null ) {
+                currentObject = classData.get(searchBar.getText());
+                loadClass();
+            }
+
         } else {
             JSourcePanel sourcePanel = ( JSourcePanel ) currentTab;
             //TODO Figure out a good way to deal with the search context. Maybe have preferences or something.

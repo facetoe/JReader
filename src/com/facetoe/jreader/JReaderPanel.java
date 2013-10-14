@@ -105,7 +105,6 @@ public class JReaderPanel extends JPanel {
                     public void changed(ObservableValue<? extends String> ov, String oldValue, final String newValue) {
                         System.out.println("New val: " + newValue);
                         if ( !newValue.endsWith(".java") ) {
-                            System.out.println("Pushing back: " + newValue);
                             currentPage = newValue;
                         }
                     }
