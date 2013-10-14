@@ -177,18 +177,14 @@ public class JReaderSetup {
     public static void getJavaSource(String srcDirPath) {
         int result = JOptionPane.showConfirmDialog(null, "JReader needs to download the Java source code.", "", JOptionPane.OK_CANCEL_OPTION);
         if ( result == JOptionPane.OK_OPTION ) {
-//            try {
-//                downloadJavaSource(srcDirPath, "http://sourceforge.net/projects/jdk7src/files/latest/download");
-//                Config.setEntry("hasSrc", "true");
-//
-//            } catch ( IOException e ) {
-//                Config.setEntry("hasSrc", "false");
-//                JOptionPane.showMessageDialog(null, e.getMessage(), e.getClass().toString(), JOptionPane.ERROR_MESSAGE);
-//
-//            } catch ( CancellationException e ) {
-//                Config.setEntry("hasSrc", "false");
-//                JOptionPane.showMessageDialog(null, e.getMessage(), e.getClass().toString(), JOptionPane.WARNING_MESSAGE);
-//            }
+
+            FileDownloaderProgressWindow progressWindow = new FileDownloaderProgressWindow(srcDirPath, "http://sourceforge.net/projects/jdk7src/files/latest/download");
+            if ( progressWindow.execute() ) {
+                Config.setEntry("hasSrc", "true");
+            } else {
+                Config.setEntry("hasSrc", "false");
+            }
+
         } else {
             JOptionPane.showMessageDialog(null, "JReader cannot function without the source code. Please try again later");
             System.exit(0);

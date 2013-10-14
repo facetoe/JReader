@@ -37,13 +37,13 @@ class FileDownloader implements RBCWrapperDelegate {
     HttpURLConnection connection;
     ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
 
-    public static void main(String[] args) {
-        if ( new FileDownloaderProgressWindow("/home/facetoe/tmp/test/test.img", "https://upload.wikimedia.org/wikipedia/commons/1/1e/Piwo_gratis.jpg").execute() ) {
-            System.out.println("Success");
-        } else {
-            System.out.println("Canceled");
-        }
-    }
+//    public static void main(String[] args) {
+//        if ( new FileDownloaderProgressWindow("/home/facetoe/tmp/test/test.img", "https://upload.wikimedia.org/wikipedia/commons/1/1e/Piwo_gratis.jpg").execute() ) {
+//            System.out.println("Success");
+//        } else {
+//            System.out.println("Canceled");
+//        }
+//    }
 
     public FileDownloader(String localPath, String remoteURL) {
 
