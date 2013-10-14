@@ -30,6 +30,37 @@ class ViewSourceAction extends AbstractAction {
     }
 }
 
+class CloseTabAction extends AbstractAction {
+    JTabbedPane tabbedPane;
+
+    public CloseTabAction(JTabbedPane tabbedPane) {
+        this.tabbedPane = tabbedPane;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        int index = tabbedPane.getSelectedIndex();
+        ButtonTabComponent component = ( ButtonTabComponent ) tabbedPane.getTabComponentAt(index);
+
+        if ( component != null ) {
+            component.removeTab();
+        }
+    }
+}
+
+class NewReaderTabAction extends AbstractAction {
+    JReader reader;
+
+    public NewReaderTabAction(JReader reader) {
+        this.reader = reader;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        reader.newJReaderTab("Jreader", true);
+    }
+}
+
 public class JReader extends JFrame {
 
     private JLabel lblStatus = new JLabel();
@@ -66,11 +97,23 @@ public class JReader extends JFrame {
         mnuNewSource = new JMenuItem("Hello", KeyEvent.CTRL_MASK);
         mnuNewSource.setAction(new ViewSourceAction(this));
         btnSource = new JButton(new ViewSourceAction(this));
+        setJMenuBar(menuBar);
 
         menu.add(mnuNewSource);
         menuBar.add(menu);
 
-        setJMenuBar(menuBar);
+        Action action = new CloseTabAction(tabbedPane);
+        String keyStrokeAndKey = "control C";
+        KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
+        getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(keyStroke, keyStrokeAndKey);
+        getRootPane().getActionMap().put(keyStrokeAndKey, action);
+
+        action = new NewReaderTabAction(this);
+        keyStrokeAndKey = "control N";
+        keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
+        getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(keyStroke, keyStrokeAndKey);
+        getRootPane().getActionMap().put(keyStrokeAndKey, action);
+
 
         /* You create 3 panels, left, right and top. The components go into the left and
            right panels with their own layout manager and they both go in the top panel.
@@ -102,6 +145,15 @@ public class JReader extends JFrame {
         statusBar.setBorder(BorderFactory.createEmptyBorder(3, 5, 3, 5));
         statusBar.add(lblStatus, BorderLayout.CENTER);
         statusBar.add(progressBar, BorderLayout.EAST);
+
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if ( e.isControlDown() && e.getKeyChar() != 's' && e.getKeyCode() == KeyEvent.VK_S ) {
+
+                }
+            }
+        });
 
         btnBack.addActionListener(new ActionListener() {
             @Override
@@ -268,7 +320,7 @@ public class JReader extends JFrame {
         searchBar.setText("");
     }
 
-    private void newJReaderTab(final String title, final boolean hasButton) {
+    public void newJReaderTab(final String title, final boolean hasButton) {
 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -356,11 +408,18 @@ public class JReader extends JFrame {
                             }
                         });
 
+                        //TODO remove this and put it on the JFrame
                         readerPanel.getJFXPanel().addKeyListener(new KeyAdapter() {
                             @Override
                             public void keyPressed(KeyEvent e) {
                                 if ( e.isControlDown() && e.getKeyChar() != 's' && e.getKeyCode() == KeyEvent.VK_S ) {
                                     System.out.println("Select All");
+                                    int index = tabbedPane.getSelectedIndex();
+                                    ButtonTabComponent component = ( ButtonTabComponent ) tabbedPane.getTabComponentAt(index);
+
+                                    if ( component != null ) {
+                                        component.removeTab();
+                                    }
                                 }
                             }
                         });
@@ -449,7 +508,17 @@ public class JReader extends JFrame {
                 }
             }
         } catch ( Exception e ) {
-            // If Nimbus is not available, you can set the GUI to another look and feel.
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch ( ClassNotFoundException e1 ) {
+                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch ( InstantiationException e1 ) {
+                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch ( IllegalAccessException e1 ) {
+                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch ( UnsupportedLookAndFeelException e1 ) {
+                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
         }
 
         if ( !JReaderSetup.isSetup() ) {

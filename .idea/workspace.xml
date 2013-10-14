@@ -7,18 +7,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0f725b18-1f9a-4ce0-8608-872f2385b0ad" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/FileDownloader.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/FileDownloader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ButtonTabComponent.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ButtonTabComponent.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/JReader.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/JReader.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/JReaderSetup.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/JReaderSetup.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="JReader.iws" />
     <ignored path=".idea/workspace.xml" />
     <file path="/Main.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1380211146514" ignored="false" />
     <file path="/Parser.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381414147936" ignored="false" />
-    <file path="/Dummy.txt" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381741335780" ignored="false" />
+    <file path="/Dummy.txt" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381742737385" ignored="false" />
     <file path="/fragment.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381741701858" ignored="false" />
-    <file path="/JReader.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381729634941" ignored="false" />
+    <file path="/JReader.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381745484401" ignored="false" />
     <file path="/SimpleSwingBrowser.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1380348006669" ignored="false" />
     <file path="/AutoCompleteTextField.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381669237131" ignored="false" />
     <file path="/Trie.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1380283989308" ignored="false" />
@@ -32,7 +31,7 @@
     <file path="/Utilities.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381728557003" ignored="false" />
     <file path="/Config.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1380966812870" ignored="false" />
     <file path="/JReaderSetup.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381742152135" ignored="false" />
-    <file path="/ButtonTabComponent.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381593548167" ignored="false" />
+    <file path="/ButtonTabComponent.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381743615123" ignored="false" />
     <file path="/SourceDownloader.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381149809165" ignored="false" />
     <file path="/DownloadProgressExample.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381149457879" ignored="false" />
     <file path="/FileDownloader.java" changelist="0f725b18-1f9a-4ce0-8608-872f2385b0ad" time="1381740968567" ignored="false" />
@@ -109,37 +108,46 @@
       <file leaf-file-name="JReader.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/JReader.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="450" column="33" selection-start="17127" selection-end="17127" vertical-scroll-proportion="0.19417475">
+            <state line="50" column="19" selection-start="1339" selection-end="1339" vertical-scroll-proportion="-1.9417475">
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#3546#3781#0" expanded="true" />
-                <element signature="e#3770#3771#0" expanded="true" />
-                <element signature="e#3819#4054#0" expanded="true" />
-                <element signature="e#4043#4044#0" expanded="true" />
-                <element signature="e#4092#4327#0" expanded="true" />
-                <element signature="e#4316#4317#0" expanded="true" />
-                <element signature="e#4367#4524#0" expanded="true" />
-                <element signature="e#4513#4514#0" expanded="true" />
-                <element signature="e#4937#5271#0" expanded="true" />
-                <element signature="e#5260#5261#0" expanded="true" />
-                <element signature="e#5311#5468#0" expanded="true" />
-                <element signature="e#5457#5458#0" expanded="true" />
-                <element signature="e#5551#6555#0" expanded="true" />
-                <element signature="e#6544#6545#0" expanded="true" />
-                <element signature="e#9553#14409#0" expanded="true" />
-                <element signature="e#10206#14278#0" expanded="true" />
-                <element signature="e#10372#11923#0" expanded="true" />
-                <element signature="e#10643#11865#0" expanded="true" />
-                <element signature="e#11830#11831#0" expanded="true" />
-                <element signature="e#11896#11897#0" expanded="true" />
-                <element signature="e#13284#13577#0" expanded="true" />
-                <element signature="e#13542#13543#0" expanded="true" />
-                <element signature="e#14259#14260#0" expanded="true" />
-                <element signature="e#14398#14399#0" expanded="true" />
-                <element signature="e#16682#16690#0" expanded="true" />
-                <element signature="e#17349#17474#0" expanded="true" />
-                <element signature="e#17463#17464#0" expanded="true" />
+                <element signature="e#5235#5470#0" expanded="true" />
+                <element signature="e#5459#5460#0" expanded="true" />
+                <element signature="e#5508#5743#0" expanded="true" />
+                <element signature="e#5732#5733#0" expanded="true" />
+                <element signature="e#5781#6016#0" expanded="true" />
+                <element signature="e#6005#6006#0" expanded="true" />
+                <element signature="e#6056#6213#0" expanded="true" />
+                <element signature="e#6202#6203#0" expanded="true" />
+                <element signature="e#6626#6960#0" expanded="true" />
+                <element signature="e#6949#6950#0" expanded="true" />
+                <element signature="e#7000#7157#0" expanded="true" />
+                <element signature="e#7146#7147#0" expanded="true" />
+                <element signature="e#7240#8244#0" expanded="true" />
+                <element signature="e#8233#8234#0" expanded="true" />
+                <element signature="e#11241#16530#0" expanded="true" />
+                <element signature="e#11894#16399#0" expanded="true" />
+                <element signature="e#12060#13611#0" expanded="true" />
+                <element signature="e#12331#13553#0" expanded="true" />
+                <element signature="e#13518#13519#0" expanded="true" />
+                <element signature="e#13584#13585#0" expanded="true" />
+                <element signature="e#14972#15265#0" expanded="true" />
+                <element signature="e#15230#15231#0" expanded="true" />
+                <element signature="e#16380#16381#0" expanded="true" />
+                <element signature="e#16519#16520#0" expanded="true" />
+                <element signature="e#18803#18811#0" expanded="true" />
+                <element signature="e#20167#20292#0" expanded="true" />
+                <element signature="e#20281#20282#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ButtonTabComponent.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ButtonTabComponent.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="84" column="5" selection-start="3226" selection-end="3226" vertical-scroll-proportion="0.0">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -172,7 +180,7 @@
       <file leaf-file-name="JReaderSetup.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/JReaderSetup.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="186" column="0" selection-start="7494" selection-end="7494" vertical-scroll-proportion="0.0">
+            <state line="186" column="0" selection-start="7497" selection-end="7497" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -230,7 +238,6 @@
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/Parser.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/JavaClassData.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/JavaObjectData.java" />
-        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/ButtonTabComponent.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/JSourcePanel.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/AutoCompleteTextField.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/JReaderPanel.java" />
@@ -240,6 +247,7 @@
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/FileDownloader.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/JReaderSetupWindow.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/JReaderSetup.java" />
+        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/ButtonTabComponent.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/JReader.java" />
       </list>
     </option>
@@ -794,7 +802,11 @@
       <created>1381741366704</created>
       <updated>1381741366704</updated>
     </task>
-    <option name="localTasksCounter" value="34" />
+    <task id="LOCAL-00034" summary="Add new FileDownloaderProgressWindow to JReaderSetup.">
+      <created>1381742751644</created>
+      <updated>1381742751644</updated>
+    </task>
+    <option name="localTasksCounter" value="35" />
     <servers />
   </component>
   <component name="TodoView" selected-index="0">
@@ -885,7 +897,7 @@
     <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="false" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor FileDownloader to use ProgressWindow." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add new FileDownloaderProgressWindow to JReaderSetup." />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -899,7 +911,6 @@
     <option name="UPDATE_FILTER_BY_SCOPE" value="false" />
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
-    <MESSAGE value="Added cancel option to download. Added download and extract methods to JReaderSetup." />
     <MESSAGE value="Fixed some bugs with incorrect paths getting passed to JSourcePane. Added experimental code folding/expanding methods. Added some comments." />
     <MESSAGE value="Added more comments." />
     <MESSAGE value="JReader didn't really need to implement runnable." />
@@ -924,6 +935,7 @@
     <MESSAGE value="Added prototype menu." />
     <MESSAGE value="Removed PathData class." />
     <MESSAGE value="Refactor FileDownloader to use ProgressWindow." />
+    <MESSAGE value="Add new FileDownloaderProgressWindow to JReaderSetup." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -963,13 +975,6 @@
     <entry file="file://$PROJECT_DIR$/jreader.jar.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="241" column="13" selection-start="9770" selection-end="9770" vertical-scroll-proportion="5.040373">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ButtonTabComponent.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="55" column="25" selection-start="2355" selection-end="2355" vertical-scroll-proportion="0.46583852">
           <folding />
         </state>
       </provider>
@@ -1027,43 +1032,50 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/JReaderSetup.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="186" column="0" selection-start="7494" selection-end="7494" vertical-scroll-proportion="0.0">
+        <state line="186" column="0" selection-start="7497" selection-end="7497" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ButtonTabComponent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="84" column="5" selection-start="3226" selection-end="3226" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/JReader.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="450" column="33" selection-start="17127" selection-end="17127" vertical-scroll-proportion="0.19417475">
+        <state line="50" column="19" selection-start="1339" selection-end="1339" vertical-scroll-proportion="-1.9417475">
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#3546#3781#0" expanded="true" />
-            <element signature="e#3770#3771#0" expanded="true" />
-            <element signature="e#3819#4054#0" expanded="true" />
-            <element signature="e#4043#4044#0" expanded="true" />
-            <element signature="e#4092#4327#0" expanded="true" />
-            <element signature="e#4316#4317#0" expanded="true" />
-            <element signature="e#4367#4524#0" expanded="true" />
-            <element signature="e#4513#4514#0" expanded="true" />
-            <element signature="e#4937#5271#0" expanded="true" />
-            <element signature="e#5260#5261#0" expanded="true" />
-            <element signature="e#5311#5468#0" expanded="true" />
-            <element signature="e#5457#5458#0" expanded="true" />
-            <element signature="e#5551#6555#0" expanded="true" />
-            <element signature="e#6544#6545#0" expanded="true" />
-            <element signature="e#9553#14409#0" expanded="true" />
-            <element signature="e#10206#14278#0" expanded="true" />
-            <element signature="e#10372#11923#0" expanded="true" />
-            <element signature="e#10643#11865#0" expanded="true" />
-            <element signature="e#11830#11831#0" expanded="true" />
-            <element signature="e#11896#11897#0" expanded="true" />
-            <element signature="e#13284#13577#0" expanded="true" />
-            <element signature="e#13542#13543#0" expanded="true" />
-            <element signature="e#14259#14260#0" expanded="true" />
-            <element signature="e#14398#14399#0" expanded="true" />
-            <element signature="e#16682#16690#0" expanded="true" />
-            <element signature="e#17349#17474#0" expanded="true" />
-            <element signature="e#17463#17464#0" expanded="true" />
+            <element signature="e#5235#5470#0" expanded="true" />
+            <element signature="e#5459#5460#0" expanded="true" />
+            <element signature="e#5508#5743#0" expanded="true" />
+            <element signature="e#5732#5733#0" expanded="true" />
+            <element signature="e#5781#6016#0" expanded="true" />
+            <element signature="e#6005#6006#0" expanded="true" />
+            <element signature="e#6056#6213#0" expanded="true" />
+            <element signature="e#6202#6203#0" expanded="true" />
+            <element signature="e#6626#6960#0" expanded="true" />
+            <element signature="e#6949#6950#0" expanded="true" />
+            <element signature="e#7000#7157#0" expanded="true" />
+            <element signature="e#7146#7147#0" expanded="true" />
+            <element signature="e#7240#8244#0" expanded="true" />
+            <element signature="e#8233#8234#0" expanded="true" />
+            <element signature="e#11241#16530#0" expanded="true" />
+            <element signature="e#11894#16399#0" expanded="true" />
+            <element signature="e#12060#13611#0" expanded="true" />
+            <element signature="e#12331#13553#0" expanded="true" />
+            <element signature="e#13518#13519#0" expanded="true" />
+            <element signature="e#13584#13585#0" expanded="true" />
+            <element signature="e#14972#15265#0" expanded="true" />
+            <element signature="e#15230#15231#0" expanded="true" />
+            <element signature="e#16380#16381#0" expanded="true" />
+            <element signature="e#16519#16520#0" expanded="true" />
+            <element signature="e#18803#18811#0" expanded="true" />
+            <element signature="e#20167#20292#0" expanded="true" />
+            <element signature="e#20281#20282#0" expanded="true" />
           </folding>
         </state>
       </provider>
