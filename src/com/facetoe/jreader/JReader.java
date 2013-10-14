@@ -52,12 +52,25 @@ class NewReaderTabAction extends AbstractAction {
     JReader reader;
 
     public NewReaderTabAction(JReader reader) {
+        super("New Reader Tab");
         this.reader = reader;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         reader.newJReaderTab("Jreader", true);
+    }
+}
+
+class QuitAction extends AbstractAction {
+
+    public QuitAction() {
+        super("Quit");
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        System.exit(0);
     }
 }
 
@@ -93,14 +106,22 @@ public class JReader extends JFrame {
         initAutocompleteTextField();
 
         JMenuBar menuBar = new JMenuBar();
-        JMenu menu = new JMenu("Test Menu");
-        mnuNewSource = new JMenuItem("Hello", KeyEvent.CTRL_MASK);
+        JMenu windowMenu = new JMenu("Window");
+        mnuNewSource = new JMenuItem();
         mnuNewSource.setAction(new ViewSourceAction(this));
+        windowMenu.add(mnuNewSource);
         btnSource = new JButton(new ViewSourceAction(this));
-        setJMenuBar(menuBar);
 
-        menu.add(mnuNewSource);
-        menuBar.add(menu);
+        JMenu fileMenu = new JMenu("File");
+        JMenuItem itmQuit = new JMenuItem(new QuitAction());
+        fileMenu.add(itmQuit);
+        menuBar.add(fileMenu);
+
+        JMenuItem mnuNewTab = new JMenuItem();
+        mnuNewTab.setAction(new NewReaderTabAction(this));
+        setJMenuBar(menuBar);
+        windowMenu.add(mnuNewTab);
+        menuBar.add(windowMenu);
 
         Action action = new CloseTabAction(tabbedPane);
         String keyStrokeAndKey = "control C";
@@ -111,8 +132,15 @@ public class JReader extends JFrame {
         action = new NewReaderTabAction(this);
         keyStrokeAndKey = "control N";
         keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
-        getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(keyStroke, keyStrokeAndKey);
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, keyStrokeAndKey);
         getRootPane().getActionMap().put(keyStrokeAndKey, action);
+
+        action = new QuitAction();
+        keyStrokeAndKey = "control Q";
+        keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, keyStrokeAndKey);
+        getRootPane().getActionMap().put(keyStrokeAndKey, action);
+
 
 
         /* You create 3 panels, left, right and top. The components go into the left and

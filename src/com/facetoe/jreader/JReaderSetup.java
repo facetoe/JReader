@@ -1,7 +1,5 @@
 package com.facetoe.jreader;
 
-import net.lingala.zip4j.exception.ZipException;
-
 import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -194,12 +192,10 @@ public class JReaderSetup {
     public static void extractSource(String srcDirPath) {
         int result = JOptionPane.showConfirmDialog(null, "JReader will now extract the source code", "", JOptionPane.OK_CANCEL_OPTION);
         if ( result == JOptionPane.OK_OPTION ) {
-            try {
-                Utilities.unzip(srcDirPath, srcDirPath.replaceAll("\\.zip", ""));
+            if ( new UnZipperProgressWindow(srcDirPath, srcDirPath.replace(".zip", "")).execute() ) {
                 Config.setEntry("srcIsExtracted", "true");
-            } catch ( ZipException e ) {
+            } else {
                 Config.setEntry("srcIsExtracted", "false");
-                JOptionPane.showMessageDialog(null, e.getMessage(), e.getClass().toString(), JOptionPane.ERROR_MESSAGE);
             }
         } else {
             JOptionPane.showMessageDialog(null, "JReader cannot function without the source code. Please try again later.");
