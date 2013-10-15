@@ -39,19 +39,19 @@ public class JReaderSetup {
             createConfig(dataFolderPath);
             createClassDataFile(dataFolderPath);
 
-            if ( !Config.getEntry("hasDocs").equals("true") ) {
+            if ( !Config.getString("hasDocs").equals("true") ) {
                 chooseDocs(null);
             }
 
-            if ( !Config.getEntry("dataIsParsed").equals("true") ) {
+            if ( !Config.getString("dataIsParsed").equals("true") ) {
                 parseDocumentation();
             }
 
-            if ( !Config.getEntry("hasSrc").equals("true") ) {
+            if ( !Config.getString("hasSrc").equals("true") ) {
                 getJavaSource(srcDirPath);
             }
 
-            if ( !Config.getEntry("srcIsExtracted").equals("true") && Config.getEntry("hasSrc").equals("true") ) {
+            if ( !Config.getString("srcIsExtracted").equals("true") && Config.getString("hasSrc").equals("true") ) {
                 extractSource(srcDirPath);
             }
 
@@ -74,12 +74,12 @@ public class JReaderSetup {
 
         if ( !config.exists() ) {
             if ( config.createNewFile() ) {
-                Config.setEntry("configFile", fileName);
-                Config.setEntry("hasDocs", "false");
-                Config.setEntry("dataIsParsed", "false");
-                Config.setEntry("hasSrc", "false");
-                Config.setEntry("srcIsExtracted", "false");
-                Config.setEntry("srcDir", dataDir + "src-jdk" + File.separator);
+                Config.setString("configFile", fileName);
+                Config.setString("hasDocs", "false");
+                Config.setString("dataIsParsed", "false");
+                Config.setString("hasSrc", "false");
+                Config.setString("srcIsExtracted", "false");
+                Config.setString("srcDir", dataDir + "src-jdk" + File.separator);
             } else {
                 throw new IOException("Unable to create config file at: " + dataDir);
             }
@@ -93,7 +93,7 @@ public class JReaderSetup {
             if ( !classData.createNewFile() ) {
                 throw new IOException("Unable to create class data file at: " + fileName);
             } else {
-                Config.setEntry("classDataFile", classData.getAbsolutePath());
+                Config.setString("classDataFile", classData.getAbsolutePath());
             }
         }
     }
@@ -120,9 +120,9 @@ public class JReaderSetup {
             if ( result == JFileChooser.APPROVE_OPTION ) {
                 File docDir = fileChooser.getSelectedFile();
                 if ( isJava7DocsDir(docDir) ) {
-                    Config.setEntry("docDir", docDir.getAbsolutePath() + File.separator);
-                    Config.setEntry("apiDir", docDir.getAbsolutePath() + File.separator + "api" + File.separator);
-                    Config.setEntry("hasDocs", "true");
+                    Config.setString("docDir", docDir.getAbsolutePath() + File.separator);
+                    Config.setString("apiDir", docDir.getAbsolutePath() + File.separator + "api" + File.separator);
+                    Config.setString("hasDocs", "true");
                     break;
                 } else {
                     result = JOptionPane.showConfirmDialog(null,
@@ -153,14 +153,14 @@ public class JReaderSetup {
 
                 ParserProgressWindow progressWindow = new ParserProgressWindow();
                 HashMap<String, JavaObject> data = progressWindow.execute();
-                Utilities.writeCLassData(Config.getEntry("classDataFile"), data);
-                Config.setEntry("dataIsParsed", "true");
+                Utilities.writeCLassData(Config.getString("classDataFile"), data);
+                Config.setString("dataIsParsed", "true");
 
             } catch ( IOException e ) {
                 e.printStackTrace();
 
             } catch ( CancellationException ex ) {
-                Config.setEntry("dataIsParsed", "false");
+                Config.setString("dataIsParsed", "false");
                 JOptionPane.showMessageDialog(null, "Goodbye");
                 System.exit(0);
             }
@@ -178,9 +178,9 @@ public class JReaderSetup {
 
             FileDownloaderProgressWindow progressWindow = new FileDownloaderProgressWindow(srcDirPath, "http://sourceforge.net/projects/jdk7src/files/latest/download");
             if ( progressWindow.execute() ) {
-                Config.setEntry("hasSrc", "true");
+                Config.setString("hasSrc", "true");
             } else {
-                Config.setEntry("hasSrc", "false");
+                Config.setString("hasSrc", "false");
             }
 
         } else {
@@ -193,9 +193,9 @@ public class JReaderSetup {
         int result = JOptionPane.showConfirmDialog(null, "JReader will now extract the source code", "", JOptionPane.OK_CANCEL_OPTION);
         if ( result == JOptionPane.OK_OPTION ) {
             if ( new UnZipperProgressWindow(srcDirPath, srcDirPath.replace(".zip", "")).execute() ) {
-                Config.setEntry("srcIsExtracted", "true");
+                Config.setString("srcIsExtracted", "true");
             } else {
-                Config.setEntry("srcIsExtracted", "false");
+                Config.setString("srcIsExtracted", "false");
             }
         } else {
             JOptionPane.showMessageDialog(null, "JReader cannot function without the source code. Please try again later.");
@@ -238,10 +238,10 @@ public class JReaderSetup {
 
         File dataDir = new File(dataDirPath);
         if ( dataDir.exists() ) {
-            if ( Config.getEntry("hasDocs").equals("true")
-                    && Config.getEntry("dataIsParsed").equals("true")
-                    && Config.getEntry("hasSrc").equals("true")
-                    && Config.getEntry("srcIsExtracted").equals("true") ) {
+            if ( Config.getString("hasDocs").equals("true")
+                    && Config.getString("dataIsParsed").equals("true")
+                    && Config.getString("hasSrc").equals("true")
+                    && Config.getString("srcIsExtracted").equals("true") ) {
                 return true;
             }
         }

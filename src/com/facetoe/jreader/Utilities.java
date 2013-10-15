@@ -54,12 +54,10 @@ public class Utilities {
         /* If there are more than 3 periods it's probably a nested class like: /dir/dir/SomeClass.SomeNestedClass.html */
         if ( path.split("\\.").length > 3 ) {
             String objectName = path.substring(path.lastIndexOf("/") + 1, path.indexOf("."));
-            String[] parts = path.split("\\.");
             path = path.substring(0, path.lastIndexOf("/") + 1) + objectName + ".java";
         }
 
-        String srcPath = (Config.getEntry("srcDir") + path).replace(".html", ".java");
-        return srcPath;
+        return (Config.getString("srcDir") + path).replace(".html", ".java");
     }
 
     public static String browserPathToSystemPath(String path) {
@@ -86,7 +84,7 @@ public class Utilities {
             Elements title = doc.getElementsByTag("h2");
 
             if ( title.size() >= 1 ) {
-                return title.get(0).text().toString();
+                return title.get(0).text();
             }
 
         } catch ( FileNotFoundException e ) {
@@ -136,7 +134,7 @@ public class Utilities {
         }
 
         /* Make sure it hasn't already been converted */
-        if ( !path.contains(Config.getEntry("srcDir")) )
+        if ( !path.contains(Config.getString("srcDir")) )
             path = docPathToSourcePath(path);
 
         /**

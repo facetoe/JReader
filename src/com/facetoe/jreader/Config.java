@@ -1,40 +1,25 @@
 package com.facetoe.jreader;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Properties;
+import java.util.prefs.Preferences;
 
 
 class Config {
 
-    static private final Properties config = new Properties();
-    static private final String configFilePath = System.getProperty("user.home") +
-            File.separator +
-            ".jreader" +
-            File.separator +
-            "config.properties";
+    static private final Preferences prefs = Preferences.userRoot().node("com/facetoe/jreader");
 
-    static public void setEntry(String key, String value) {
-        try {
-            config.load(new FileInputStream(configFilePath));
-
-            config.setProperty(key, value);
-
-            config.store(new FileOutputStream(configFilePath), null);
-
-        } catch ( IOException ex ) {
-            ex.printStackTrace();
-        }
+    static public void setString(String key, String value) {
+        prefs.put(key, value);
     }
 
-    static public String getEntry(String key) {
-        try {
-            config.load(new FileInputStream(configFilePath));
-        } catch ( IOException ex ) {
-            ex.printStackTrace();
-        }
-        return config.getProperty(key);
+    static public void setBool(String key, boolean value) {
+        prefs.putBoolean(key, value);
+    }
+
+    static public String getString(String key) {
+        return prefs.get(key, null);
+    }
+
+    static public boolean getBool(String key, boolean def) {
+        return prefs.getBoolean(key, def);
     }
 }

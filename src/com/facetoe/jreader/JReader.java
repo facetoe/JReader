@@ -280,7 +280,7 @@ public class JReader extends JFrame {
 
     private void loadClass() {
         if ( currentObject != null && currentTab != null && currentTab instanceof JReaderPanel ) {
-            String url = Config.getEntry("apiDir") + currentObject.getPath();
+            String url = Config.getString("apiDir") + currentObject.getPath();
             JReaderPanel jReaderPanel = ( JReaderPanel ) currentTab;
             jReaderPanel.loadURL(url);
         }
@@ -294,8 +294,8 @@ public class JReader extends JFrame {
     }
 
     public void newSourceTab(String path) {
-        String title = null;
-        String filePath = null;
+        String title;
+        String filePath;
         if ( currentTab instanceof JReaderPanel ) {
             if ( path != null && path.endsWith(".java") ) {
                 filePath = path;
@@ -357,7 +357,7 @@ public class JReader extends JFrame {
                 try {
                     javafxLoadLatch.await();
                 } catch ( InterruptedException e ) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    e.printStackTrace();
                 }
 
                 if ( hasButton ) {
@@ -503,17 +503,17 @@ public class JReader extends JFrame {
 
     private void loadJavaDocData() {
         try {
-            classData = Utilities.readClassData(new File(Config.getEntry("classDataFile")));
+            classData = Utilities.readClassData(new File(Config.getString("classDataFile")));
         } catch ( IOException e ) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Failed to load class data at" + Config.getEntry("classDataFile"),
+            JOptionPane.showMessageDialog(this, "Failed to load class data at" + Config.getString("classDataFile"),
                     "Fatal Error",
                     JOptionPane.ERROR_MESSAGE);
             System.exit(1);
 
         } catch ( ClassNotFoundException e ) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Failed to load class data at" + Config.getEntry("classDataFile"),
+            JOptionPane.showMessageDialog(this, "Failed to load class data at" + Config.getString("classDataFile"),
                     "Fatal Error",
                     JOptionPane.ERROR_MESSAGE);
             System.exit(1);
