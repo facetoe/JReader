@@ -1,12 +1,9 @@
 package com.facetoe.jreader;
 
-import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import javax.swing.*;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -54,8 +51,8 @@ public class Utilities {
         /* Chop off the section of docPath that points to the Java docs */
         String path = docPath.substring(docPath.lastIndexOf("api") + 3, docPath.length());
 
-        /* If there are more than 2 periods it's probably a nested class like: /dir/dir/SomeClass.SomeNestedClass.html */
-        if ( path.split("\\.").length > 2 ) {
+        /* If there are more than 3 periods it's probably a nested class like: /dir/dir/SomeClass.SomeNestedClass.html */
+        if ( path.split("\\.").length > 3 ) {
             String objectName = path.substring(path.lastIndexOf("/") + 1, path.indexOf("."));
             String[] parts = path.split("\\.");
             path = path.substring(0, path.lastIndexOf("/") + 1) + objectName + ".java";
@@ -74,9 +71,17 @@ public class Utilities {
     }
 
     public static String extractTitle(String path) {
-        try {
-            path = browserPathToSystemPath(path);
+        if ( path.contains("http://")
+                || path.contains("https://")
+                || path.contains("www.") ) {
+            return extractFileName(path);
 
+        } else if ( path.startsWith("file:/") ) {
+            path = browserPathToSystemPath(path);
+        }
+
+
+        try {
             Document doc = Jsoup.parse(new File(path), "UTF-8");
             Elements title = doc.getElementsByTag("h2");
 
@@ -120,29 +125,19 @@ public class Utilities {
         return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 
-    /**
-     * Takes zip file at sourcePath and extracts to destPath.
-     *
-     * @param sourcePath of zip file.
-     * @param destPath   location to extract to.
-     * @throws ZipException
-     */
-    public static void unzip(String sourcePath, String destPath) throws ZipException {
-        try {
-            ZipFile zipFile = new ZipFile(sourcePath);
-            zipFile.extractAll(destPath);
-        } catch ( ZipException e ) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, e.getMessage(), e.getClass().toString(), JOptionPane.ERROR_MESSAGE);
-        }
-        Config.setEntry("hasSrc", "true");
-    }
-
     public static boolean isGoodSourcePath(String path) {
 
         if ( path == null ) {
             return false;
+        } else if ( path.startsWith("http:/")
+                || path.startsWith("https:/")
+                || path.startsWith("www.") ) {
+            return false;
         }
+
+        /* Make sure it hasn't already been converted */
+        if ( !path.contains(Config.getEntry("srcDir")) )
+            path = docPathToSourcePath(path);
 
         /**
          * Some paths look like: src-jdk/javax/imageio/ImageReader.java#readAll(int, javax.imageio.ImageReadParam)
@@ -159,7 +154,6 @@ public class Utilities {
         if ( !file.exists() || file.isDirectory() ) {
             return false;
         }
-
         return true;
     }
 

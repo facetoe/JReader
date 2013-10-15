@@ -381,8 +381,7 @@ public class JReader extends JFrame {
                                             //TODO clean this up.
                                             String tabTitle = Utilities.extractTitle(newVal);
                                             tabbedPane.setTitleAt(tabbedPane.getSelectedIndex(), tabTitle);
-                                            System.out.println(Utilities.docPathToSourcePath(newVal));
-                                            if ( Utilities.isGoodSourcePath(Utilities.docPathToSourcePath(newVal)) ) {
+                                            if ( Utilities.isGoodSourcePath(newVal) ) {
                                                 enableNewSourceOption();
                                             } else {
                                                 disableNewSourceOption();
