@@ -21,6 +21,8 @@ public class JReaderSetup {
 //            setup();
 //    }
 
+    private static Config config = Config.getInstance();
+
     public static void setup() {
         String userHome = System.getProperty("user.home");
         String dataFolderPath = userHome + File.separator + ".jreader" + File.separator;
@@ -36,22 +38,22 @@ public class JReaderSetup {
         }
 
         try {
-            createConfig(dataFolderPath);
+            createconfig(dataFolderPath);
             createClassDataFile(dataFolderPath);
 
-            if ( !Config.getString("hasDocs").equals("true") ) {
+            if ( !config.getBool("hasDocs", false) ) {
                 chooseDocs(null);
             }
 
-            if ( !Config.getString("dataIsParsed").equals("true") ) {
+            if ( !config.getBool("dataIsParsed", false) ) {
                 parseDocumentation();
             }
 
-            if ( !Config.getString("hasSrc").equals("true") ) {
+            if ( !config.getBool("hasSrc", false) ) {
                 getJavaSource(srcDirPath);
             }
 
-            if ( !Config.getString("srcIsExtracted").equals("true") && Config.getString("hasSrc").equals("true") ) {
+            if ( !config.getBool("srcIsExtracted", false) && config.getBool("hasSrc", false) ) {
                 extractSource(srcDirPath);
             }
 
@@ -68,22 +70,12 @@ public class JReaderSetup {
         }
     }
 
-    public static void createConfig(String dataDir) throws IOException {
-        String fileName = dataDir + "config.properties";
-        File config = new File(fileName);
-
-        if ( !config.exists() ) {
-            if ( config.createNewFile() ) {
-                Config.setString("configFile", fileName);
-                Config.setString("hasDocs", "false");
-                Config.setString("dataIsParsed", "false");
-                Config.setString("hasSrc", "false");
-                Config.setString("srcIsExtracted", "false");
-                Config.setString("srcDir", dataDir + "src-jdk" + File.separator);
-            } else {
-                throw new IOException("Unable to create config file at: " + dataDir);
-            }
-        }
+    public static void createconfig(String dataDir) throws IOException {
+        config.setBool("hasDocs", false);
+        config.setBool("dataIsParsed", false);
+        config.setBool("hasSrc", false);
+        config.setBool("srcIsExtracted", false);
+        config.setString("srcDir", dataDir + "src-jdk" + File.separator);
     }
 
     public static void createClassDataFile(String dataDir) throws IOException {
@@ -93,7 +85,7 @@ public class JReaderSetup {
             if ( !classData.createNewFile() ) {
                 throw new IOException("Unable to create class data file at: " + fileName);
             } else {
-                Config.setString("classDataFile", classData.getAbsolutePath());
+                config.setString("classDataFile", classData.getAbsolutePath());
             }
         }
     }
@@ -120,9 +112,9 @@ public class JReaderSetup {
             if ( result == JFileChooser.APPROVE_OPTION ) {
                 File docDir = fileChooser.getSelectedFile();
                 if ( isJava7DocsDir(docDir) ) {
-                    Config.setString("docDir", docDir.getAbsolutePath() + File.separator);
-                    Config.setString("apiDir", docDir.getAbsolutePath() + File.separator + "api" + File.separator);
-                    Config.setString("hasDocs", "true");
+                    config.setString("docDir", docDir.getAbsolutePath() + File.separator);
+                    config.setString("apiDir", docDir.getAbsolutePath() + File.separator + "api" + File.separator);
+                    config.setBool("hasDocs", true);
                     break;
                 } else {
                     result = JOptionPane.showConfirmDialog(null,
@@ -153,14 +145,14 @@ public class JReaderSetup {
 
                 ParserProgressWindow progressWindow = new ParserProgressWindow();
                 HashMap<String, JavaObject> data = progressWindow.execute();
-                Utilities.writeCLassData(Config.getString("classDataFile"), data);
-                Config.setString("dataIsParsed", "true");
+                Utilities.writeCLassData(config.getString("classDataFile"), data);
+                config.setBool("dataIsParsed", true);
 
             } catch ( IOException e ) {
                 e.printStackTrace();
 
             } catch ( CancellationException ex ) {
-                Config.setString("dataIsParsed", "false");
+                config.setBool("dataIsParsed", false);
                 JOptionPane.showMessageDialog(null, "Goodbye");
                 System.exit(0);
             }
@@ -178,9 +170,9 @@ public class JReaderSetup {
 
             FileDownloaderProgressWindow progressWindow = new FileDownloaderProgressWindow(srcDirPath, "http://sourceforge.net/projects/jdk7src/files/latest/download");
             if ( progressWindow.execute() ) {
-                Config.setString("hasSrc", "true");
+                config.setBool("hasSrc", true);
             } else {
-                Config.setString("hasSrc", "false");
+                config.setBool("hasSrc", false);
             }
 
         } else {
@@ -193,9 +185,9 @@ public class JReaderSetup {
         int result = JOptionPane.showConfirmDialog(null, "JReader will now extract the source code", "", JOptionPane.OK_CANCEL_OPTION);
         if ( result == JOptionPane.OK_OPTION ) {
             if ( new UnZipperProgressWindow(srcDirPath, srcDirPath.replace(".zip", "")).execute() ) {
-                Config.setString("srcIsExtracted", "true");
+                config.setBool("srcIsExtracted", true);
             } else {
-                Config.setString("srcIsExtracted", "false");
+                config.setBool("srcIsExtracted", false);
             }
         } else {
             JOptionPane.showMessageDialog(null, "JReader cannot function without the source code. Please try again later.");
@@ -238,10 +230,10 @@ public class JReaderSetup {
 
         File dataDir = new File(dataDirPath);
         if ( dataDir.exists() ) {
-            if ( Config.getString("hasDocs").equals("true")
-                    && Config.getString("dataIsParsed").equals("true")
-                    && Config.getString("hasSrc").equals("true")
-                    && Config.getString("srcIsExtracted").equals("true") ) {
+            if ( config.getBool("hasDocs", false)
+                    && config.getBool("dataIsParsed", false)
+                    && config.getBool("hasSrc", false)
+                    && config.getBool("srcIsExtracted", false) ) {
                 return true;
             }
         }

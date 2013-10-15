@@ -48,7 +48,7 @@ public class JReaderPanel extends JPanel {
      */
     public JReaderPanel(JProgressBar jProgressBar, CountDownLatch latch) {
         this.latch = latch;
-        init(Config.getString("docDir") + File.separator + "index.html", jProgressBar);
+        init(Config.getInstance().getString("docDir") + File.separator + "index.html", jProgressBar);
     }
 
     /**
@@ -171,7 +171,7 @@ public class JReaderPanel extends JPanel {
      */
     //TODO Make it possible for the user to set their homepage.
     public void home() {
-        loadURL(Config.getString("docDir") + File.separator + "index.html");
+        loadURL(Config.getInstance().getString("docDir") + File.separator + "index.html");
     }
 
     /**

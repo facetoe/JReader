@@ -86,6 +86,7 @@ public class JReader extends JFrame {
 
     private JMenuItem mnuNewSource;
     private SearchContext searchContext = new SearchContext();
+    private Config config = Config.getInstance();
 
     /* This is necessary to make the Swing thread wait until the javafx content is loaded on startup.
      * If it's not set then the Swing components are displayed before there is any content in them. */
@@ -126,34 +127,34 @@ public class JReader extends JFrame {
 
         JMenu mnuFind = new JMenu("Find");
         final JCheckBoxMenuItem chkWholeWord = new JCheckBoxMenuItem("Whole Word");
-        chkWholeWord.setState(Config.getBool("searchWholeWord", false));
+        chkWholeWord.setState(config.getBool("searchWholeWord", false));
         chkWholeWord.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 searchContext.setWholeWord(chkWholeWord.getState());
-                Config.setBool("searchWholeWord", chkWholeWord.getState());
+                config.setBool("searchWholeWord", chkWholeWord.getState());
             }
         });
         mnuFind.add(chkWholeWord);
 
         final JCheckBoxMenuItem chkMatchCase = new JCheckBoxMenuItem("Match Case");
-        chkMatchCase.setState(Config.getBool("searchMatchCase", false));
+        chkMatchCase.setState(config.getBool("searchMatchCase", false));
         chkMatchCase.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 searchContext.setMatchCase(chkMatchCase.getState());
-                Config.setBool("searchMatchCase", chkMatchCase.getState());
+                config.setBool("searchMatchCase", chkMatchCase.getState());
             }
         });
         mnuFind.add(chkMatchCase);
 
         final JCheckBoxMenuItem chkRegexp = new JCheckBoxMenuItem("Regular Expression");
-        chkRegexp.setState(Config.getBool("searchRegexp", false));
+        chkRegexp.setState(config.getBool("searchRegexp", false));
         chkRegexp.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 searchContext.setRegularExpression(chkRegexp.getState());
-                Config.setBool("searchRegexp", chkRegexp.getState());
+                config.setBool("searchRegexp", chkRegexp.getState());
             }
         });
         mnuFind.add(chkRegexp);
@@ -318,7 +319,7 @@ public class JReader extends JFrame {
 
     private void loadClass() {
         if ( currentObject != null && currentTab != null && currentTab instanceof JReaderPanel ) {
-            String url = Config.getString("apiDir") + currentObject.getPath();
+            String url = config.getString("apiDir") + currentObject.getPath();
             JReaderPanel jReaderPanel = ( JReaderPanel ) currentTab;
             jReaderPanel.loadURL(url);
         }
@@ -536,17 +537,17 @@ public class JReader extends JFrame {
 
     private void loadJavaDocData() {
         try {
-            classData = Utilities.readClassData(new File(Config.getString("classDataFile")));
+            classData = Utilities.readClassData(new File(config.getString("classDataFile")));
         } catch ( IOException e ) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Failed to load class data at" + Config.getString("classDataFile"),
+            JOptionPane.showMessageDialog(this, "Failed to load class data at" + config.getString("classDataFile"),
                     "Fatal Error",
                     JOptionPane.ERROR_MESSAGE);
             System.exit(1);
 
         } catch ( ClassNotFoundException e ) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Failed to load class data at" + Config.getString("classDataFile"),
+            JOptionPane.showMessageDialog(this, "Failed to load class data at" + config.getString("classDataFile"),
                     "Fatal Error",
                     JOptionPane.ERROR_MESSAGE);
             System.exit(1);

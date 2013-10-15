@@ -4,22 +4,31 @@ import java.util.prefs.Preferences;
 
 
 class Config {
+    private final Preferences prefs = Preferences.userNodeForPackage(this.getClass());
+    private static Config instance = new Config();
 
-    static private final Preferences prefs = Preferences.userRoot().node("com/facetoe/jreader");
+    private Config() {
 
-    static public void setString(String key, String value) {
+    }
+
+    public static Config getInstance() {
+        return instance;
+    }
+
+    public void setString(String key, String value) {
         prefs.put(key, value);
     }
 
-    static public void setBool(String key, boolean value) {
+    public void setBool(String key, boolean value) {
         prefs.putBoolean(key, value);
     }
 
-    static public String getString(String key) {
+    public String getString(String key) {
+        System.out.println(prefs.toString());
         return prefs.get(key, null);
     }
 
-    static public boolean getBool(String key, boolean def) {
+    public boolean getBool(String key, boolean def) {
         return prefs.getBoolean(key, def);
     }
 }

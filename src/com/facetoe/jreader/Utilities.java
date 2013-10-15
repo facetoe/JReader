@@ -57,7 +57,7 @@ public class Utilities {
             path = path.substring(0, path.lastIndexOf("/") + 1) + objectName + ".java";
         }
 
-        return (Config.getString("srcDir") + path).replace(".html", ".java");
+        return (Config.getInstance().getString("srcDir") + path).replace(".html", ".java");
     }
 
     public static String browserPathToSystemPath(String path) {
@@ -134,7 +134,7 @@ public class Utilities {
         }
 
         /* Make sure it hasn't already been converted */
-        if ( !path.contains(Config.getString("srcDir")) )
+        if ( !path.contains(Config.getInstance().getString("srcDir")) )
             path = docPathToSourcePath(path);
 
         /**

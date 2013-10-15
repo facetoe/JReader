@@ -379,7 +379,7 @@ abstract class ProgressWindow<T> extends JFrame {
 class ParserProgressWindow extends ProgressWindow<HashMap<String, JavaObject>> {
     @Override
     public HashMap<String, JavaObject> execute() {
-        JavaDocParser parser = new JavaDocParser(Config.getString("apiDir"));
+        JavaDocParser parser = new JavaDocParser(Config.getInstance().getString("apiDir"));
         parser.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
