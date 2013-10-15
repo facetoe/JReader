@@ -85,6 +85,7 @@ public class JReader extends JFrame {
     private JButton btnCollapse = new JButton("Collapse");
 
     private JMenuItem mnuNewSource;
+    private SearchContext searchContext = new SearchContext();
 
     /* This is necessary to make the Swing thread wait until the javafx content is loaded on startup.
      * If it's not set then the Swing components are displayed before there is any content in them. */
@@ -122,6 +123,43 @@ public class JReader extends JFrame {
         setJMenuBar(menuBar);
         windowMenu.add(mnuNewTab);
         menuBar.add(windowMenu);
+
+        JMenu mnuFind = new JMenu("Find");
+        final JCheckBoxMenuItem chkWholeWord = new JCheckBoxMenuItem("Whole Word");
+        chkWholeWord.setState(Config.getBool("searchWholeWord", false));
+        chkWholeWord.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                searchContext.setWholeWord(chkWholeWord.getState());
+                Config.setBool("searchWholeWord", chkWholeWord.getState());
+            }
+        });
+        mnuFind.add(chkWholeWord);
+
+        final JCheckBoxMenuItem chkMatchCase = new JCheckBoxMenuItem("Match Case");
+        chkMatchCase.setState(Config.getBool("searchMatchCase", false));
+        chkMatchCase.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                searchContext.setMatchCase(chkMatchCase.getState());
+                Config.setBool("searchMatchCase", chkMatchCase.getState());
+            }
+        });
+        mnuFind.add(chkMatchCase);
+
+        final JCheckBoxMenuItem chkRegexp = new JCheckBoxMenuItem("Regular Expression");
+        chkRegexp.setState(Config.getBool("searchRegexp", false));
+        chkRegexp.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                searchContext.setRegularExpression(chkRegexp.getState());
+                Config.setBool("searchRegexp", chkRegexp.getState());
+            }
+        });
+        mnuFind.add(chkRegexp);
+
+        menuBar.add(mnuFind);
+
 
         Action action = new CloseTabAction(tabbedPane);
         String keyStrokeAndKey = "control C";
@@ -334,12 +372,8 @@ public class JReader extends JFrame {
         addCloseButtonToTab(newTab, title);
         tabbedPane.setSelectedComponent(newTab);
 
-        SearchContext context = new SearchContext();
-        context.setMatchCase(true);
-        context.setWholeWord(true);
-
         if ( currentObject != null ) {
-            newTab.findString(currentObject.getFullObjName(), new SearchContext());
+            newTab.findString(currentObject.getFullObjName(), searchContext);
         }
 
         disableBrowserButtons();
@@ -490,13 +524,12 @@ public class JReader extends JFrame {
 
         } else {
             JSourcePanel sourcePanel = ( JSourcePanel ) currentTab;
-            //TODO Figure out a good way to deal with the search context. Maybe have preferences or something.
             String fullMethod = currentObject.getObjectItemLong(searchBar.getText());
             System.out.println("Method: " + fullMethod);
             if ( fullMethod != null ) {
-                sourcePanel.findString(fullMethod, new SearchContext());
+                sourcePanel.findString(fullMethod, searchContext);
             } else {
-                sourcePanel.findString(searchBar.getText(), new SearchContext());
+                sourcePanel.findString(searchBar.getText(), searchContext);
             }
         }
     }
