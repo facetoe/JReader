@@ -16,14 +16,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-class JavaObject implements Serializable {
+class JavaObjectOld implements Serializable {
     private String fullObjName;
     private String objName;
     private String path;
 
     private HashMap<String, String> objectItems = new HashMap<String, String>();
 
-    public JavaObject(String objName, String fullObjName, String path) {
+    public JavaObjectOld(String objName, String fullObjName, String path) {
         this.fullObjName = fullObjName;
         this.objName = objName;
         this.path = path;
@@ -69,7 +69,7 @@ class JavaObject implements Serializable {
 
 
 /**
- * Parses the Java documentation and packages it in a HashMap with the class name as key and a JavaObject as the value.
+ * Parses the Java documentation and packages it in a HashMap with the class name as key and a JavaObjectOld as the value.
  */
 public class JavaDocParser {
 
@@ -78,8 +78,8 @@ public class JavaDocParser {
     /* The base path for the Java docs: /dir/dir/dir/docs/api/ */
     private String basePath;
 
-    /* HashMap containing the class name as the key and a JavaObject object as the value */
-    private HashMap<String, JavaObject> objectData = new HashMap<String, JavaObject>();
+    /* HashMap containing the class name as the key and a JavaObjectOld object as the value */
+    private HashMap<String, JavaObjectOld> objectData = new HashMap<String, JavaObjectOld>();
 
     /* Action listeners for this parser */
     private ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
@@ -94,7 +94,7 @@ public class JavaDocParser {
      *
      * @param indexFile should be allclasses-noframe.html
      */
-    public HashMap<String, JavaObject> parse(String indexFile) {
+    public HashMap<String, JavaObjectOld> parse(String indexFile) {
 
         File inFile = new File(basePath + indexFile);
         Document doc = null;
@@ -174,7 +174,7 @@ public class JavaDocParser {
             return;
         }
 
-        JavaObject object = new JavaObject(className, fullObjName, relativePath);
+        JavaObjectOld object = new JavaObjectOld(className, fullObjName, relativePath);
 
         Elements classData = doc.select("html body div.contentContainer div.summary ul.blockList li.blockList ul.blockList li.blockList table.overviewSummary tbody tr");
 
@@ -312,7 +312,7 @@ public class JavaDocParser {
         listeners.add(listener);
     }
 
-    public HashMap<String, JavaObject> getObjectData() {
+    public HashMap<String, JavaObjectOld> getObjectData() {
         return objectData;
     }
 }
@@ -376,9 +376,9 @@ abstract class ProgressWindow<T> extends JFrame {
 /**
  * Parses the Java documentation and displays the progress.
  */
-class ParserProgressWindow extends ProgressWindow<HashMap<String, JavaObject>> {
+class ParserProgressWindow extends ProgressWindow<HashMap<String, JavaObjectOld>> {
     @Override
-    public HashMap<String, JavaObject> execute() {
+    public HashMap<String, JavaObjectOld> execute() {
         JavaDocParser parser = new JavaDocParser(Config.getInstance().getString("apiDir"));
         parser.addActionListener(new ActionListener() {
             @Override
@@ -395,7 +395,7 @@ class ParserProgressWindow extends ProgressWindow<HashMap<String, JavaObject>> {
             }
         });
 
-        HashMap<String, JavaObject> data = parser.parse("allclasses-noframe.html");
+        HashMap<String, JavaObjectOld> data = parser.parse("allclasses-noframe.html");
         setVisible(false);
         dispose();
 

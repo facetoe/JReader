@@ -24,7 +24,6 @@ class Config {
     }
 
     public String getString(String key) {
-        System.out.println(prefs.toString());
         return prefs.get(key, null);
     }
 

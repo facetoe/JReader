@@ -93,8 +93,8 @@ public class JReader extends JFrame {
     CountDownLatch javafxLoadLatch = new CountDownLatch(1);
 
 
-    private HashMap<String, JavaObject> classData;
-    private JavaObject currentObject;
+    private HashMap<String, JavaObjectOld> classData;
+    private JavaObjectOld currentObject;
 
     private AutoCompleteTextField searchBar = new AutoCompleteTextField();
     private JProgressBar progressBar = new JProgressBar();
@@ -559,40 +559,39 @@ public class JReader extends JFrame {
         searchBar.addWordsToTrie(test);
     }
 
-    public static void main(String[] args) {
-
-        try {
-            for ( UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels() ) {
-                if ( "Nimbus".equals(info.getName()) ) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch ( Exception e ) {
-            try {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch ( ClassNotFoundException e1 ) {
-                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch ( InstantiationException e1 ) {
-                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch ( IllegalAccessException e1 ) {
-                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch ( UnsupportedLookAndFeelException e1 ) {
-                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-        }
-
-        if ( !JReaderSetup.isSetup() ) {
-            JReaderSetup.setup();
-        }
-
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new JReader();
-            }
-        });
-    }
+//    public static void main(String[] args) {
+//        try {
+//            for ( UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels() ) {
+//                if ( "Nimbus".equals(info.getName()) ) {
+//                    UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//        } catch ( Exception e ) {
+//            try {
+//                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//            } catch ( ClassNotFoundException e1 ) {
+//                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//            } catch ( InstantiationException e1 ) {
+//                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//            } catch ( IllegalAccessException e1 ) {
+//                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//            } catch ( UnsupportedLookAndFeelException e1 ) {
+//                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//            }
+//        }
+//
+//        if ( !JReaderSetup.isSetup() ) {
+//            JReaderSetup.setup();
+//        }
+//
+//        SwingUtilities.invokeLater(new Runnable() {
+//            @Override
+//            public void run() {
+//                new JReader();
+//            }
+//        });
+//    }
 }
 
 

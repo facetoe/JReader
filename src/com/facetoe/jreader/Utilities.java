@@ -162,7 +162,7 @@ public class Utilities {
      * @param data     HashMap to write
      * @throws IOException
      */
-    public static void writeCLassData(String filePath, HashMap<String, JavaObject> data) throws IOException {
+    public static void writeCLassData(String filePath, HashMap<String, JavaObjectOld> data) throws IOException {
         FileOutputStream fileOut = new FileOutputStream(filePath);
         ObjectOutputStream outStream = new ObjectOutputStream(fileOut);
         outStream.writeObject(data);
@@ -178,10 +178,10 @@ public class Utilities {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public static HashMap<String, JavaObject> readClassData(File classDataFile) throws IOException, ClassNotFoundException {
+    public static HashMap<String, JavaObjectOld> readClassData(File classDataFile) throws IOException, ClassNotFoundException {
         FileInputStream fileIn = new FileInputStream(classDataFile);
         ObjectInputStream in = new ObjectInputStream(fileIn);
-        HashMap<String, JavaObject> classData = ( HashMap<String, JavaObject> ) in.readObject();
+        HashMap<String, JavaObjectOld> classData = ( HashMap<String, JavaObjectOld> ) in.readObject();
         in.close();
         fileIn.close();
 

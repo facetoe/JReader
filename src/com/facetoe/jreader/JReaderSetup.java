@@ -38,8 +38,12 @@ public class JReaderSetup {
         }
 
         try {
-            createconfig(dataFolderPath);
-            createClassDataFile(dataFolderPath);
+
+            if ( !dataDir.exists() || !new File(dataFolderPath + File.separator + "classData.ser").exists() ) {
+                dataDir.mkdirs();
+                createconfig(dataFolderPath);
+                createClassDataFile(dataFolderPath);
+            }
 
             if ( !config.getBool("hasDocs", false) ) {
                 chooseDocs(null);
@@ -144,7 +148,7 @@ public class JReaderSetup {
             try {
 
                 ParserProgressWindow progressWindow = new ParserProgressWindow();
-                HashMap<String, JavaObject> data = progressWindow.execute();
+                HashMap<String, JavaObjectOld> data = progressWindow.execute();
                 Utilities.writeCLassData(config.getString("classDataFile"), data);
                 config.setBool("dataIsParsed", true);
 
@@ -224,9 +228,7 @@ public class JReaderSetup {
     public static boolean isSetup() {
         String dataDirPath = System.getProperty("user.home") +
                 File.separator +
-                ".jreader" +
-                File.separator +
-                "config.properties";
+                ".jreader";
 
         File dataDir = new File(dataDirPath);
         if ( dataDir.exists() ) {
