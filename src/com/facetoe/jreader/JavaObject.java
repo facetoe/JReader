@@ -10,7 +10,6 @@ import java.util.HashMap;
  * User: facetoe
  * Date: 16/10/13
  * Time: 12:41 PM
- * To change this template use File | Settings | File Templates.
  */
 public abstract class JavaObject<T> {
     T typeDeclaration;

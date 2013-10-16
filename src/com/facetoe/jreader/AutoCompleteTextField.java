@@ -15,7 +15,7 @@ import java.util.Comparator;
  * Auto complete text field. Uses a Trie structure internally to add and remove words to be completed.
  * Only works with two words at a time.
  */
-public class AutoCompleteTextField extends JTextField {
+class AutoCompleteTextField extends JTextField {
 
     private AutoCompleteTextFieldDocumentFilter docFilter;
 

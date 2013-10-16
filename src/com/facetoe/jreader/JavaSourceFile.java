@@ -8,7 +8,6 @@ import java.util.HashMap;
  * User: facetoe
  * Date: 16/10/13
  * Time: 12:49 PM
- * To change this template use File | Settings | File Templates.
  */
 public class JavaSourceFile {
     private ArrayList<JavaClassOrInterface> fileContents = new ArrayList<JavaClassOrInterface>();

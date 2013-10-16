@@ -45,7 +45,6 @@ public class ButtonTabComponent extends JPanel {
     private final JTabbedPane pane;
     private UUID id;
     private String title;
-    private JLabel label;
     TabButton button;
 
     public ButtonTabComponent(String title, final JTabbedPane pane) {
@@ -60,7 +59,7 @@ public class ButtonTabComponent extends JPanel {
         id = UUID.randomUUID();
 
         //make JLabel read titles from JTabbedPane
-        label = new JLabel() {
+        JLabel label = new JLabel() {
             public String getText() {
                 int i = pane.indexOfTabComponent(ButtonTabComponent.this);
                 if ( i != -1 ) {

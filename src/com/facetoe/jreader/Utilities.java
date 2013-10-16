@@ -88,7 +88,7 @@ public class Utilities {
             }
 
         } catch ( FileNotFoundException e ) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         } catch ( IOException ex ) {
             ex.printStackTrace();
         }

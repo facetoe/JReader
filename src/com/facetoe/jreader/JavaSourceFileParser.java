@@ -16,18 +16,19 @@ public class JavaSourceFileParser {
         int errors = 0;
         int parsedFiles = 0;
         long startTime = System.nanoTime();
-
-        for ( File file : files ) {
-            if ( file.getName().contains(".java") ) {
-                System.out.println(file.getName());
-                try {
-                    JavaSourceFile sourceFile = parse(new FileInputStream(file));
-                    System.out.println(sourceFile.getAllDeclarations().size());
-                    parsedFiles++;
-                } catch ( ParseException e ) {
-                    errors++;
-                } catch ( IOException e ) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        if ( files != null ) {
+            for ( File file : files ) {
+                if ( file.getName().contains(".java") ) {
+                    System.out.println(file.getName());
+                    try {
+                        JavaSourceFile sourceFile = parse(new FileInputStream(file));
+                        System.out.println(sourceFile.getAllDeclarations().size());
+                        parsedFiles++;
+                    } catch ( ParseException e ) {
+                        errors++;
+                    } catch ( IOException e ) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -43,8 +44,7 @@ public class JavaSourceFileParser {
         } finally {
             inputStream.close();
         }
-        JavaSourceFile javaSourceFile = ( JavaSourceFile ) new SourceFileVisitor().visit(cu, null);
-        return javaSourceFile;
+        return ( JavaSourceFile ) new SourceFileVisitor().visit(cu, null);
     }
 }
 

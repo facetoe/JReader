@@ -76,13 +76,10 @@ class QuitAction extends AbstractAction {
 
 public class JReader extends JFrame {
 
-    private JLabel lblStatus = new JLabel();
-    private JButton btnSearch = new JButton("Search");
     private JButton btnBack = new JButton("Back");
     private JButton btnNext = new JButton("Next");
     private JButton btnHome = new JButton("Home");
     private JButton btnSource;// = new JButton("View Source");
-    private JButton btnCollapse = new JButton("Collapse");
 
     private JMenuItem mnuNewSource;
     private SearchContext searchContext = new SearchContext();
@@ -195,11 +192,13 @@ public class JReader extends JFrame {
         progressBar.setStringPainted(true);
 
         leftBar.add(searchBar, BorderLayout.WEST);
+        JButton btnSearch = new JButton("Search");
         leftBar.add(btnSearch, BorderLayout.EAST);
         rightBar.add(btnBack);
         rightBar.add(btnNext);
         rightBar.add(btnHome);
         rightBar.add(btnSource);
+        JButton btnCollapse = new JButton("Collapse");
         rightBar.add(btnCollapse);
 
 
@@ -210,6 +209,7 @@ public class JReader extends JFrame {
 
         JPanel statusBar = new JPanel(new BorderLayout(5, 0));
         statusBar.setBorder(BorderFactory.createEmptyBorder(3, 5, 3, 5));
+        JLabel lblStatus = new JLabel();
         statusBar.add(lblStatus, BorderLayout.CENTER);
         statusBar.add(progressBar, BorderLayout.EAST);
 

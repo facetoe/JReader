@@ -213,6 +213,6 @@ class FileDownloaderProgressWindow extends ProgressWindow<Boolean> {
 
         setVisible(false);
         dispose();
-        return (wasCanceled == false);
+        return (!wasCanceled);
     }
 }

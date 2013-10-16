@@ -13,7 +13,6 @@ import java.util.concurrent.CancellationException;
  * User: facetoe
  * Date: 5/10/13
  * Time: 5:59 PM
- * To change this template use File | Settings | File Templates.
  */
 public class JReaderSetup {
 
@@ -40,13 +39,16 @@ public class JReaderSetup {
         try {
 
             if ( !dataDir.exists() || !new File(dataFolderPath + File.separator + "classData.ser").exists() ) {
-                dataDir.mkdirs();
-                createconfig(dataFolderPath);
-                createClassDataFile(dataFolderPath);
+                if ( dataDir.mkdirs() ) {
+                    createconfig(dataFolderPath);
+                    createClassDataFile(dataFolderPath);
+                } else {
+                    throw new IOException("Failed to created directory: " + dataDir.getAbsolutePath());
+                }
             }
 
             if ( !config.getBool("hasDocs", false) ) {
-                chooseDocs(null);
+                chooseDocs();
             }
 
             if ( !config.getBool("dataIsParsed", false) ) {
@@ -94,7 +96,7 @@ public class JReaderSetup {
         }
     }
 
-    public static void chooseDocs(JFrame frame) {
+    public static void chooseDocs() {
 
         int result = JOptionPane.showConfirmDialog(null,
                 "Before you can run JReader we need to do some setup.\n" +
@@ -111,7 +113,7 @@ public class JReaderSetup {
         do {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            result = fileChooser.showOpenDialog(frame);
+            result = fileChooser.showOpenDialog(null);
 
             if ( result == JFileChooser.APPROVE_OPTION ) {
                 File docDir = fileChooser.getSelectedFile();
@@ -207,18 +209,19 @@ public class JReaderSetup {
 
     public static boolean isJava7DocsDir(File docDir) {
         File[] dirList = docDir.listFiles();
-
-        for ( File file : dirList ) {
-            if ( file.getName().equalsIgnoreCase("index.html") ) {
-                try {
-                    Scanner scanner = new Scanner(file);
-                    while ( scanner.hasNextLine() ) {
-                        if ( scanner.nextLine().contains("Java Platform Standard Edition 7 Documentation") ) {
-                            return true;
+        if ( dirList != null ) {
+            for ( File file : dirList ) {
+                if ( file.getName().equalsIgnoreCase("index.html") ) {
+                    try {
+                        Scanner scanner = new Scanner(file);
+                        while ( scanner.hasNextLine() ) {
+                            if ( scanner.nextLine().contains("Java Platform Standard Edition 7 Documentation") ) {
+                                return true;
+                            }
                         }
+                    } catch ( FileNotFoundException e ) {
+                        e.printStackTrace();
                     }
-                } catch ( FileNotFoundException e ) {
-                    e.printStackTrace();
                 }
             }
         }

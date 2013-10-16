@@ -11,7 +11,6 @@ import java.util.ArrayList;
  * User: facetoe
  * Date: 16/10/13
  * Time: 12:47 PM
- * To change this template use File | Settings | File Templates.
  */
 public class SourceFileVisitor extends GenericVisitorAdapter {
 

@@ -30,7 +30,6 @@ public class UnZipper {
             zipFile.setRunInThread(true);
             zipFile.extractAll(destFile);
             ProgressMonitor pm = zipFile.getProgressMonitor();
-            long totalWork = pm.getTotalWork();
 
             while ( pm.getState() == ProgressMonitor.STATE_BUSY ) {
                 if ( pm.getCurrentOperation() == ProgressMonitor.OPERATION_EXTRACT ) {
@@ -61,8 +60,8 @@ public class UnZipper {
 }
 
 class UnZipperProgressWindow extends ProgressWindow<Boolean> {
-    String srcFile;
-    String destFile;
+    private String srcFile;
+    private String destFile;
 
     public UnZipperProgressWindow(String srcFile, String destFile) {
         this.srcFile = srcFile;
