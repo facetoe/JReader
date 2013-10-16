@@ -1,5 +1,6 @@
 package com.facetoe.jreader;
 
+import com.facetoe.jreader.util.Utilities;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.Theme;

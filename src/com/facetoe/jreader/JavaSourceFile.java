@@ -68,6 +68,14 @@ public class JavaSourceFile {
         return enums;
     }
 
+    public String getEnclosingClassDeclaration() {
+        if ( fileContents.size() > 0 ) {
+            return fileContents.get(0).fullDeclaration;
+        } else {
+            return "";
+        }
+    }
+
     private ArrayList<String> getDeclarationsAsArrayList(HashMap<String, String> declarations) {
         return new ArrayList<String>(declarations.keySet());
     }

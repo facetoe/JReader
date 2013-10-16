@@ -1,5 +1,7 @@
 package com.facetoe.jreader;
 
+import com.facetoe.jreader.util.Utilities;
+
 import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -150,7 +152,7 @@ public class JReaderSetup {
             try {
 
                 ParserProgressWindow progressWindow = new ParserProgressWindow();
-                HashMap<String, JavaObjectOld> data = progressWindow.execute();
+                HashMap<String, String> data = progressWindow.execute();
                 Utilities.writeCLassData(config.getString("classDataFile"), data);
                 config.setBool("dataIsParsed", true);
 

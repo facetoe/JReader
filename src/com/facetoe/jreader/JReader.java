@@ -1,5 +1,7 @@
 package com.facetoe.jreader;
 
+import com.facetoe.jreader.util.Utilities;
+import japa.parser.ParseException;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -10,6 +12,7 @@ import javax.swing.event.ChangeEvent;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -90,8 +93,8 @@ public class JReader extends JFrame {
     CountDownLatch javafxLoadLatch = new CountDownLatch(1);
 
 
-    private HashMap<String, JavaObjectOld> classData;
-    private JavaObjectOld currentObject;
+    private HashMap<String, String> classNames;
+    private JavaSourceFile currentSourceFile;
 
     private AutoCompleteTextField searchBar = new AutoCompleteTextField();
     private JProgressBar progressBar = new JProgressBar();
@@ -288,15 +291,15 @@ public class JReader extends JFrame {
                 if ( tabbedPane.getComponentAt(tabbedPane.getSelectedIndex()) instanceof JSourcePanel ) {
                     disableBrowserButtons();
                     disableNewSourceOption();
-                    searchBar.removeWordsFromTrie(new ArrayList<String>(classData.keySet()));
+                    searchBar.removeWordsFromTrie(new ArrayList<String>(classNames.keySet()));
                 } else if ( tabbedPane.getComponentAt(tabbedPane.getSelectedIndex()) instanceof JReaderPanel ) {
                     enableBrowserButtons();
                     enableNewSourceOption();
-                    if ( currentObject != null ) {
-                        searchBar.removeWordsFromTrie(currentObject.getObjectItemsShort());
+                    if ( currentSourceFile != null ) {
+                        searchBar.removeWordsFromTrie(currentSourceFile.getAllDeclarations());
                     }
 
-                    searchBar.addWordsToTrie(new ArrayList<String>(classData.keySet()));
+                    searchBar.addWordsToTrie(new ArrayList<String>(classNames.keySet()));
                 }
                 currentTab = ( JPanel ) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
             }
@@ -317,11 +320,10 @@ public class JReader extends JFrame {
         setVisible(true);
     }
 
-    private void loadClass() {
-        if ( currentObject != null && currentTab != null && currentTab instanceof JReaderPanel ) {
-            String url = config.getString("apiDir") + currentObject.getPath();
-            JReaderPanel jReaderPanel = ( JReaderPanel ) currentTab;
-            jReaderPanel.loadURL(url);
+    private void loadClass(String path) {
+        JReaderPanel panel = ( JReaderPanel ) currentTab;
+        if ( panel != null ) {
+            panel.loadURL(path);
         }
     }
 
@@ -353,13 +355,21 @@ public class JReader extends JFrame {
                 return;
             }
 
+            try {
+                currentSourceFile = JavaSourceFileParser.parse(new FileInputStream(filePath));
+            } catch ( ParseException e ) {
+                e.printStackTrace();
+            } catch ( IOException e ) {
+                e.printStackTrace();
+            }
+
         } else {
             System.err.println("Not a ReaderPanel");
             return;
         }
 
-        if ( currentObject != null ) {
-            searchBar.addWordsToTrie(currentObject.getObjectItemsShort());
+        if ( currentSourceFile != null ) {
+            addAutoCompleteWords();
         } else {
             System.out.println("IT was null");
         }
@@ -373,8 +383,8 @@ public class JReader extends JFrame {
         addCloseButtonToTab(newTab, title);
         tabbedPane.setSelectedComponent(newTab);
 
-        if ( currentObject != null ) {
-            newTab.findString(currentObject.getFullObjName(), searchContext);
+        if ( currentSourceFile != null ) {
+            newTab.findString(currentSourceFile.getEnclosingClassDeclaration(), searchContext);
         }
 
         disableBrowserButtons();
@@ -494,6 +504,18 @@ public class JReader extends JFrame {
         });
     }
 
+    private void addAutoCompleteWords() {
+        if ( currentSourceFile != null ) {
+            searchBar.addWordsToTrie(currentSourceFile.getAllDeclarations());
+        }
+    }
+
+    private void removeAutoCompleteWords() {
+        if ( currentSourceFile != null ) {
+            searchBar.removeWordsFromTrie(currentSourceFile.getAllDeclarations());
+        }
+    }
+
     private void disableBrowserButtons() {
         btnBack.setEnabled(false);
         btnNext.setEnabled(false);
@@ -518,16 +540,16 @@ public class JReader extends JFrame {
 
     private void handleSearch() {
         if ( currentTab instanceof JReaderPanel ) {
-            if ( classData.get(searchBar.getText()) != null ) {
-                currentObject = classData.get(searchBar.getText());
-                loadClass();
+            String relativePath = classNames.get(searchBar.getText());
+            if ( relativePath != null ) {
+                String path = config.getString("apiDir") + relativePath;
+                loadClass(path);
             }
-
         } else {
             JSourcePanel sourcePanel = ( JSourcePanel ) currentTab;
-            String fullMethod = currentObject.getObjectItemLong(searchBar.getText());
-            System.out.println("Method: " + fullMethod);
+            String fullMethod = currentSourceFile.getItemDeclarationLong(searchBar.getText());
             if ( fullMethod != null ) {
+                System.out.println(fullMethod);
                 sourcePanel.findString(fullMethod, searchContext);
             } else {
                 sourcePanel.findString(searchBar.getText(), searchContext);
@@ -537,7 +559,7 @@ public class JReader extends JFrame {
 
     private void loadJavaDocData() {
         try {
-            classData = Utilities.readClassData(new File(config.getString("classDataFile")));
+            classNames = Utilities.readClassData(new File(config.getString("classDataFile")));
         } catch ( IOException e ) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Failed to load class data at" + config.getString("classDataFile"),
@@ -555,43 +577,42 @@ public class JReader extends JFrame {
     }
 
     private void initAutocompleteTextField() {
-        ArrayList<String> test = new ArrayList<String>(classData.keySet());
-        searchBar.addWordsToTrie(test);
+        searchBar.addWordsToTrie(new ArrayList<String>(classNames.keySet()));
     }
 
-//    public static void main(String[] args) {
-//        try {
-//            for ( UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels() ) {
-//                if ( "Nimbus".equals(info.getName()) ) {
-//                    UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }
-//        } catch ( Exception e ) {
-//            try {
-//                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-//            } catch ( ClassNotFoundException e1 ) {
-//                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//            } catch ( InstantiationException e1 ) {
-//                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//            } catch ( IllegalAccessException e1 ) {
-//                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//            } catch ( UnsupportedLookAndFeelException e1 ) {
-//                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//            }
-//        }
-//
-//        if ( !JReaderSetup.isSetup() ) {
-//            JReaderSetup.setup();
-//        }
-//
-//        SwingUtilities.invokeLater(new Runnable() {
-//            @Override
-//            public void run() {
-//                new JReader();
-//            }
-//        });
-//    }
+    public static void main(String[] args) {
+        try {
+            for ( UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels() ) {
+                if ( "Nimbus".equals(info.getName()) ) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch ( Exception e ) {
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch ( ClassNotFoundException e1 ) {
+                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch ( InstantiationException e1 ) {
+                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch ( IllegalAccessException e1 ) {
+                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch ( UnsupportedLookAndFeelException e1 ) {
+                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+        }
+
+        if ( !JReaderSetup.isSetup() ) {
+            JReaderSetup.setup();
+        }
+
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new JReader();
+            }
+        });
+    }
 }
 
 

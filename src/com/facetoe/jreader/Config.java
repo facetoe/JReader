@@ -3,7 +3,7 @@ package com.facetoe.jreader;
 import java.util.prefs.Preferences;
 
 
-class Config {
+public class Config {
     private final Preferences prefs = Preferences.userNodeForPackage(this.getClass());
     private static Config instance = new Config();
 
