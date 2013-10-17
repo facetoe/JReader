@@ -1,5 +1,6 @@
 package com.facetoe.jreader;
 
+import com.facetoe.jreader.util.Config;
 import com.facetoe.jreader.util.Utilities;
 import japa.parser.ParseException;
 import javafx.application.Platform;
@@ -416,17 +417,19 @@ public class JReader extends JFrame {
                     public void run() {
                         readerPanel.getEngine().locationProperty().addListener(new ChangeListener<String>() {
                             @Override
-                            public void changed(ObservableValue<? extends String> observableValue, final String oldVal, final String newVal) {
+                            public void changed(ObservableValue<? extends String> observableValue, final String oldURL, final String newURL) {
                                 SwingUtilities.invokeLater(new Runnable() {
                                     @Override
                                     public void run() {
-                                        if ( newVal.endsWith(".java") ) {
-                                            newSourceTab(newVal.replace("file://", ""));
+                                        if ( newURL.endsWith(".java") ) {
+                                            newSourceTab(newURL.replace("file://", ""));
                                         } else if ( currentTab instanceof JReaderPanel ) {
                                             //TODO clean this up.
-                                            String tabTitle = Utilities.extractTitle(newVal);
+                                            String tabTitle = Utilities.extractTitle(newURL);
                                             tabbedPane.setTitleAt(tabbedPane.getSelectedIndex(), tabTitle);
-                                            if ( Utilities.isGoodSourcePath(newVal) ) {
+                                            if ( !newURL.startsWith("http")
+                                                    && !newURL.startsWith("www.")
+                                                    && Utilities.isGoodSourcePath(Utilities.docPathToSourcePath(newURL)) ) {
                                                 enableNewSourceOption();
                                             } else {
                                                 disableNewSourceOption();
@@ -580,39 +583,39 @@ public class JReader extends JFrame {
         searchBar.addWordsToTrie(new ArrayList<String>(classNames.keySet()));
     }
 
-    public static void main(String[] args) {
-        try {
-            for ( UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels() ) {
-                if ( "Nimbus".equals(info.getName()) ) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch ( Exception e ) {
-            try {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch ( ClassNotFoundException e1 ) {
-                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch ( InstantiationException e1 ) {
-                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch ( IllegalAccessException e1 ) {
-                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch ( UnsupportedLookAndFeelException e1 ) {
-                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-        }
-
-        if ( !JReaderSetup.isSetup() ) {
-            JReaderSetup.setup();
-        }
-
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new JReader();
-            }
-        });
-    }
+//    public static void main(String[] args) {
+//        try {
+//            for ( UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels() ) {
+//                if ( "Nimbus".equals(info.getName()) ) {
+//                    UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//        } catch ( Exception e ) {
+//            try {
+//                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//            } catch ( ClassNotFoundException e1 ) {
+//                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//            } catch ( InstantiationException e1 ) {
+//                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//            } catch ( IllegalAccessException e1 ) {
+//                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//            } catch ( UnsupportedLookAndFeelException e1 ) {
+//                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//            }
+//        }
+//
+//        if ( !JReaderSetup.isSetup() ) {
+//            JReaderSetup.setup();
+//        }
+//
+//        SwingUtilities.invokeLater(new Runnable() {
+//            @Override
+//            public void run() {
+//                new JReader();
+//            }
+//        });
+//    }
 }
 
 

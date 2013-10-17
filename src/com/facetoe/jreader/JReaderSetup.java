@@ -1,5 +1,6 @@
 package com.facetoe.jreader;
 
+import com.facetoe.jreader.util.Config;
 import com.facetoe.jreader.util.Utilities;
 
 import javax.swing.*;
@@ -31,15 +32,7 @@ public class JReaderSetup {
 
         File dataDir = new File(dataFolderPath);
 
-        if ( !dataDir.exists() ) {
-            if ( !dataDir.mkdirs() ) {
-                JOptionPane.showMessageDialog(null, "Failed to create data directory", "Fatal Error", JOptionPane.ERROR_MESSAGE);
-                System.exit(1);
-            }
-        }
-
         try {
-
             if ( !dataDir.exists() || !new File(dataFolderPath + File.separator + "classData.ser").exists() ) {
                 if ( dataDir.mkdirs() ) {
                     createconfig(dataFolderPath);
@@ -150,7 +143,6 @@ public class JReaderSetup {
         int result = JOptionPane.showConfirmDialog(null, "JReader now needs to parse the Java docs.\nThis will only happen once.", "", JOptionPane.OK_CANCEL_OPTION);
         if ( result == JOptionPane.OK_OPTION ) {
             try {
-
                 ParserProgressWindow progressWindow = new ParserProgressWindow();
                 HashMap<String, String> data = progressWindow.execute();
                 Utilities.writeCLassData(config.getString("classDataFile"), data);
@@ -203,11 +195,6 @@ public class JReaderSetup {
         }
     }
 
-
-//    public static void downloadJavaSource(String localDestination, String remoteURL) throws IOException, CancellationException {
-//        FileDownloader downloader = new FileDownloader();
-//        downloader.download(localDestination, remoteURL);
-//    }
 
     public static boolean isJava7DocsDir(File docDir) {
         File[] dirList = docDir.listFiles();

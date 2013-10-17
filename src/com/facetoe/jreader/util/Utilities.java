@@ -1,6 +1,5 @@
 package com.facetoe.jreader.util;
 
-import com.facetoe.jreader.Config;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -133,10 +132,6 @@ public class Utilities {
                 || path.startsWith("www.") ) {
             return false;
         }
-
-        /* Make sure it hasn't already been converted */
-        if ( !path.contains(Config.getInstance().getString("srcDir")) )
-            path = docPathToSourcePath(path);
 
         /**
          * Some paths look like: src-jdk/javax/imageio/ImageReader.java#readAll(int, javax.imageio.ImageReadParam)

@@ -39,7 +39,7 @@ public class JavaSourceFile {
     public ArrayList<String> getConstructorDeclarations() {
         ArrayList<String> constructors = new ArrayList<String>();
         for ( JavaClassOrInterface fileContent : fileContents ) {
-            constructors.addAll(getDeclarationsAsArrayList(fileContent.getConstructors()));
+            constructors.addAll(getDeclarations(fileContent.getConstructors()));
         }
         return constructors;
     }
@@ -47,7 +47,7 @@ public class JavaSourceFile {
     public ArrayList<String> getMethodDeclarations() {
         ArrayList<String> methods = new ArrayList<String>();
         for ( JavaClassOrInterface fileContent : fileContents ) {
-            methods.addAll(getDeclarationsAsArrayList(fileContent.getMethods()));
+            methods.addAll(getDeclarations(fileContent.getMethods()));
         }
         return methods;
     }
@@ -55,7 +55,7 @@ public class JavaSourceFile {
     public ArrayList<String> getFieldDeclarations() {
         ArrayList<String> fields = new ArrayList<String>();
         for ( JavaClassOrInterface fileContent : fileContents ) {
-            fields.addAll(getDeclarationsAsArrayList(fileContent.getFields()));
+            fields.addAll(getDeclarations(fileContent.getFields()));
         }
         return fields;
     }
@@ -63,7 +63,7 @@ public class JavaSourceFile {
     public ArrayList<String> getEnumDeclarations() {
         ArrayList<String> enums = new ArrayList<String>();
         for ( JavaClassOrInterface fileContent : fileContents ) {
-            enums.addAll(getDeclarationsAsArrayList(fileContent.getEnums()));
+            enums.addAll(getDeclarations(fileContent.getEnums()));
         }
         return enums;
     }
@@ -76,7 +76,7 @@ public class JavaSourceFile {
         }
     }
 
-    private ArrayList<String> getDeclarationsAsArrayList(HashMap<String, String> declarations) {
+    private ArrayList<String> getDeclarations(HashMap<String, String> declarations) {
         return new ArrayList<String>(declarations.keySet());
     }
 }

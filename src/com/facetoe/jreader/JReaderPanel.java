@@ -1,5 +1,6 @@
 package com.facetoe.jreader;
 
+import com.facetoe.jreader.util.Config;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;

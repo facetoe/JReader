@@ -3,39 +3,14 @@ package com.facetoe.jreader;
 import japa.parser.JavaParser;
 import japa.parser.ParseException;
 import japa.parser.ast.CompilationUnit;
+import japa.parser.ast.body.*;
+import japa.parser.ast.visitor.GenericVisitorAdapter;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class JavaSourceFileParser {
-
-//    public static void main(String[] args) {
-//        File dir = new File("/home/facetoe/.jreader/src-jdk/java/awt/");
-//        File[] files = dir.listFiles();
-//        int errors = 0;
-//        int parsedFiles = 0;
-//        long startTime = System.nanoTime();
-//        if ( files != null ) {
-//            for ( File file : files ) {
-//                if ( file.getName().contains(".java") ) {
-//                    System.out.println(file.getName());
-//                    try {
-//                        JavaSourceFile sourceFile = parse(new FileInputStream(file));
-//                        System.out.println(sourceFile.getAllDeclarations().size());
-//                        parsedFiles++;
-//                    } catch ( ParseException e ) {
-//                        errors++;
-//                    } catch ( IOException e ) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        }
-//        long estimatedTime = System.nanoTime() - startTime;
-//
-//        System.out.println(String.format("Parsed %d files in %.2f seconds with %d errors.", parsedFiles, (estimatedTime / 1000000000.0), errors));
-//    }
-
     public static JavaSourceFile parse(FileInputStream inputStream) throws ParseException, IOException {
         CompilationUnit cu = null;
         try {
@@ -44,6 +19,78 @@ public class JavaSourceFileParser {
             inputStream.close();
         }
         return ( JavaSourceFile ) new SourceFileVisitor().visit(cu, null);
+    }
+
+    private static class SourceFileVisitor extends GenericVisitorAdapter {
+        @Override
+        public Object visit(CompilationUnit n, Object arg) {
+            ArrayList<JavaClassOrInterface> classesAndInterfaces = new ArrayList<JavaClassOrInterface>();
+            if ( n != null && n.getTypes() != null ) {
+                for ( TypeDeclaration type : n.getTypes() ) {
+                    if ( type instanceof ClassOrInterfaceDeclaration ) {
+                        JavaClassOrInterface javaObj = new JavaClassOrInterface(( ClassOrInterfaceDeclaration ) type);
+
+                        for ( BodyDeclaration declaration : type.getMembers() ) {
+                            if ( declaration instanceof MethodDeclaration ) {
+                                JavaMethod method = ( JavaMethod ) visit(( MethodDeclaration ) declaration, null);
+                                javaObj.addMethod(method);
+
+                            } else if ( declaration instanceof FieldDeclaration ) {
+                                JavaField field = ( JavaField ) visit(( FieldDeclaration ) declaration, null);
+                                javaObj.addField(field);
+
+                            } else if ( declaration instanceof EnumDeclaration ) {
+                                JavaEnum javaEnum = ( JavaEnum ) visit(( EnumDeclaration ) declaration, null);
+                                javaObj.addEnum(javaEnum);
+
+                            } else if ( declaration instanceof ConstructorDeclaration ) {
+                                JavaConstructor constructor = ( JavaConstructor ) visit(( ConstructorDeclaration ) declaration, null);
+                                javaObj.addConstructor(constructor);
+
+                            } else {
+                                //System.out.println(declaration.getClass());
+                            }
+                        }
+                        classesAndInterfaces.add(javaObj);
+                    }
+                }
+            } else {
+                System.out.println("Null Fuck");
+            }
+            return new JavaSourceFile(classesAndInterfaces);
+        }
+
+        @Override
+        public Object visit(ClassOrInterfaceDeclaration n, Object arg) {
+            return new JavaClassOrInterface(n).getDeclaration();
+        }
+
+        @Override
+        public Object visit(ConstructorDeclaration n, Object arg) {
+            return new JavaConstructor(n);
+        }
+
+        @Override
+        public Object visit(EnumConstantDeclaration n, Object arg) {
+            System.out.println("Called enumConstant");
+            System.exit(0); //TODO remove this!
+            return null;
+        }
+
+        @Override
+        public Object visit(EnumDeclaration n, Object arg) {
+            return new JavaEnum(n);
+        }
+
+        @Override
+        public Object visit(FieldDeclaration n, Object arg) {
+            return new JavaField(n);
+        }
+
+        @Override
+        public Object visit(MethodDeclaration n, Object arg) {
+            return new JavaMethod(n);
+        }
     }
 }
 

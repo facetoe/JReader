@@ -1,5 +1,6 @@
 package com.facetoe.jreader;
 
+import com.facetoe.jreader.util.Config;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;

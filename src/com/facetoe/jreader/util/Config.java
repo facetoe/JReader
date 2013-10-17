@@ -1,4 +1,4 @@
-package com.facetoe.jreader;
+package com.facetoe.jreader.util;
 
 import java.util.prefs.Preferences;
 

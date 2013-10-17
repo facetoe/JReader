@@ -17,7 +17,7 @@ import java.awt.*;
  *
  * @param <T> The object returned by the processing.
  */
-abstract class ProgressWindow<T> extends JFrame {
+public abstract class ProgressWindow<T> extends JFrame {
     JPanel panel = new JPanel();
 
     /* This will be updated by the listener */
