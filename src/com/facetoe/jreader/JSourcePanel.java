@@ -12,6 +12,7 @@ import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
 
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +24,7 @@ import java.nio.file.Paths;
  * Displays source code with syntax highlighting and cold folding.
  */
 public class JSourcePanel extends JPanel {
+
     RSyntaxTextArea textArea;
     RTextScrollPane scrollPane;
 
@@ -97,5 +99,46 @@ public class JSourcePanel extends JPanel {
             }
         }
         return found;
+    }
+
+    /**
+     * Highlights and scrolls to a method, constructor, field or enum declaration.
+     * This method is necessary because really long method or function declarations are
+     * formatted in the source like method(ReallyLongClassTypeThing superDescriptiveNameForYou,
+     * AnotherAmazingLongObject incredibleyLongJavaName)
+     * <p/>
+     * Attempts to search for these will fail because of the unexpected newline and spaces.
+     * ,
+     *
+     * @param beginLine Where this selection starts.
+     * @param endLine   The end of the entire block if it's a method or constructor.
+     * @param beginCol  The column in which this selection begins.
+     */
+    public void highlightDeclaration(int beginLine, int endLine, int beginCol) {
+        try {
+            int start = textArea.getLineStartOffset(beginLine - 1);
+            int end = textArea.getLineEndOffset(endLine - 1);
+
+            String body = textArea.getText();
+
+            //  If you don't do -1 it chops off the first character.
+            start += beginCol - 1;
+            String selectText = "";
+
+            // Loop through until we hit a semicolon or opening bracket appending to selectText.
+            for ( int i = start; i < end; i++ ) {
+                if ( body.charAt(i) == '{' || body.charAt(i) == ';' ) {
+                    break;
+                }
+                selectText += body.charAt(i);
+            }
+
+            // Now search for the text and it should succeed.
+            SearchContext context = new SearchContext(selectText);
+            SearchEngine.find(textArea, context);
+        } catch ( BadLocationException ex ) {
+            System.out.println(ex);
+        }
+
     }
 }

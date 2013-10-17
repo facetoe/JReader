@@ -272,7 +272,7 @@ public class JReader extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if ( currentTab instanceof JSourcePanel ) {
                     JSourcePanel sourcePanel = ( JSourcePanel ) currentTab;
-                    sourcePanel.collapseAllComments();
+                    //JavaObject obj = currentSourceFile.getFieldDeclarations()
                 }
             }
         });
@@ -385,7 +385,7 @@ public class JReader extends JFrame {
         tabbedPane.setSelectedComponent(newTab);
 
         if ( currentSourceFile != null ) {
-            newTab.findString(currentSourceFile.getEnclosingClassDeclaration(), searchContext);
+            //newTab.findString(currentSourceFile.getEnclosingClassDeclaration(), searchContext);
         }
 
         disableBrowserButtons();
@@ -550,10 +550,15 @@ public class JReader extends JFrame {
             }
         } else {
             JSourcePanel sourcePanel = ( JSourcePanel ) currentTab;
-            String fullMethod = currentSourceFile.getItemDeclarationLong(searchBar.getText());
-            if ( fullMethod != null ) {
-                System.out.println(fullMethod);
-                sourcePanel.findString(fullMethod, searchContext);
+            JavaObject method = currentSourceFile.getItem(searchBar.getText());
+            if ( method != null ) {
+                //System.out.println(method);
+                //sourcePanel.findString(fullMethod, searchContext);
+                sourcePanel.highlightDeclaration(method.getBeginLine(), method.getEndLine(),
+                        method.beginColumn,
+                        method.endColumn);
+
+
             } else {
                 sourcePanel.findString(searchBar.getText(), searchContext);
             }
@@ -583,39 +588,39 @@ public class JReader extends JFrame {
         searchBar.addWordsToTrie(new ArrayList<String>(classNames.keySet()));
     }
 
-//    public static void main(String[] args) {
-//        try {
-//            for ( UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels() ) {
-//                if ( "Nimbus".equals(info.getName()) ) {
-//                    UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }
-//        } catch ( Exception e ) {
-//            try {
-//                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-//            } catch ( ClassNotFoundException e1 ) {
-//                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//            } catch ( InstantiationException e1 ) {
-//                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//            } catch ( IllegalAccessException e1 ) {
-//                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//            } catch ( UnsupportedLookAndFeelException e1 ) {
-//                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//            }
-//        }
-//
-//        if ( !JReaderSetup.isSetup() ) {
-//            JReaderSetup.setup();
-//        }
-//
-//        SwingUtilities.invokeLater(new Runnable() {
-//            @Override
-//            public void run() {
-//                new JReader();
-//            }
-//        });
-//    }
+    public static void main(String[] args) {
+        try {
+            for ( UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels() ) {
+                if ( "Nimbus".equals(info.getName()) ) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch ( Exception e ) {
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch ( ClassNotFoundException e1 ) {
+                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch ( InstantiationException e1 ) {
+                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch ( IllegalAccessException e1 ) {
+                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch ( UnsupportedLookAndFeelException e1 ) {
+                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+        }
+
+        if ( !JReaderSetup.isSetup() ) {
+            JReaderSetup.setup();
+        }
+
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new JReader();
+            }
+        });
+    }
 }
 
 

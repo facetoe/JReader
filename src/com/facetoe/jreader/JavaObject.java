@@ -15,6 +15,10 @@ public abstract class JavaObject<T> {
     T typeDeclaration;
     protected String fullDeclaration;
     protected String declaration;
+    protected int beginLine;
+    protected int endLine;
+    protected int beginColumn;
+    protected int endColumn;
 
     public JavaObject() {
     }
@@ -37,6 +41,22 @@ public abstract class JavaObject<T> {
         return declaration;
     }
 
+    public int getBeginLine() {
+        return beginLine;
+    }
+
+    public int getEndLine() {
+        return endLine;
+    }
+
+    public int getBeginColumn() {
+        return beginColumn;
+    }
+
+    public int getEndColumn() {
+        return endColumn;
+    }
+
     @Override
     public String toString() {
         return fullDeclaration;
@@ -44,18 +64,22 @@ public abstract class JavaObject<T> {
 }
 
 class JavaClassOrInterface extends JavaObject<ClassOrInterfaceDeclaration> {
-    HashMap<String, String> methods = new HashMap<String, String>();
-    HashMap<String, String> constructors = new HashMap<String, String>();
-    HashMap<String, String> enums = new HashMap<String, String>();
-    HashMap<String, String> fields = new HashMap<String, String>();
+    HashMap<String, JavaObject> methods = new HashMap<String, JavaObject>();
+    HashMap<String, JavaObject> constructors = new HashMap<String, JavaObject>();
+    HashMap<String, JavaObject> enums = new HashMap<String, JavaObject>();
+    HashMap<String, JavaObject> fields = new HashMap<String, JavaObject>();
 
     static final int CLASS = 0;
     static final int INTERFACE = 1;
 
     int type;
 
-    public JavaClassOrInterface(ClassOrInterfaceDeclaration classOrInterfaceDeclaration) {
-        super(classOrInterfaceDeclaration);
+    public JavaClassOrInterface(ClassOrInterfaceDeclaration typedec) {
+        super(typedec);
+        beginColumn = typedec.getBeginColumn();
+        endColumn = typedec.getEndColumn();
+        beginLine = typedec.getBeginLine();
+        endLine = typedec.getEndLine();
     }
 
     @Override
@@ -81,34 +105,34 @@ class JavaClassOrInterface extends JavaObject<ClassOrInterfaceDeclaration> {
     }
 
     public void addConstructor(JavaConstructor constructor) {
-        constructors.put(constructor.declaration, constructor.fullDeclaration);
+        constructors.put(constructor.declaration, constructor);
     }
 
     public void addField(JavaField field) {
-        fields.put(field.declaration, field.fullDeclaration);
+        fields.put(field.declaration, field);
     }
 
     public void addEnum(JavaEnum javaEnum) {
-        enums.put(javaEnum.declaration, javaEnum.fullDeclaration);
+        enums.put(javaEnum.declaration, javaEnum);
     }
 
     public void addMethod(JavaMethod method) {
-        methods.put(method.declaration, method.fullDeclaration);
+        methods.put(method.declaration, method);
     }
 
-    HashMap<String, String> getMethods() {
+    HashMap<String, JavaObject> getMethods() {
         return methods;
     }
 
-    HashMap<String, String> getConstructors() {
+    HashMap<String, JavaObject> getConstructors() {
         return constructors;
     }
 
-    HashMap<String, String> getEnums() {
+    HashMap<String, JavaObject> getEnums() {
         return enums;
     }
 
-    HashMap<String, String> getFields() {
+    HashMap<String, JavaObject> getFields() {
         return fields;
     }
 
@@ -129,8 +153,12 @@ class JavaClassOrInterface extends JavaObject<ClassOrInterfaceDeclaration> {
 
 class JavaField extends JavaObject<FieldDeclaration> {
 
-    public JavaField(FieldDeclaration fieldDeclaration) {
-        super(fieldDeclaration);
+    public JavaField(FieldDeclaration typeDec) {
+        super(typeDec);
+        beginColumn = typeDec.getBeginColumn();
+        endColumn = typeDec.getEndColumn();
+        beginLine = typeDec.getBeginLine();
+        endLine = typeDec.getEndLine();
     }
 
     @Override
@@ -155,8 +183,12 @@ class JavaField extends JavaObject<FieldDeclaration> {
 
 class JavaEnum extends JavaObject<EnumDeclaration> {
 
-    public JavaEnum(EnumDeclaration enumDeclaration) {
-        super(enumDeclaration);
+    public JavaEnum(EnumDeclaration typeDec) {
+        super(typeDec);
+        beginColumn = typeDec.getBeginColumn();
+        endColumn = typeDec.getEndColumn();
+        beginLine = typeDec.getBeginLine();
+        endLine = typeDec.getEndLine();
     }
 
     @Override
@@ -176,8 +208,12 @@ class JavaEnum extends JavaObject<EnumDeclaration> {
 
 class JavaMethod extends JavaObject<MethodDeclaration> {
 
-    public JavaMethod(MethodDeclaration typeDeclaration) {
-        super(typeDeclaration);
+    public JavaMethod(MethodDeclaration typeDec) {
+        super(typeDec);
+        beginColumn = typeDec.getBeginColumn();
+        endColumn = typeDec.getEndColumn();
+        beginLine = typeDec.getBeginLine();
+        endLine = typeDec.getEndLine();
     }
 
     @Override
@@ -205,8 +241,12 @@ class JavaMethod extends JavaObject<MethodDeclaration> {
 
 class JavaConstructor extends JavaObject<ConstructorDeclaration> {
 
-    public JavaConstructor(ConstructorDeclaration typeDeclaration) {
-        super(typeDeclaration);
+    public JavaConstructor(ConstructorDeclaration typeDec) {
+        super(typeDec);
+        beginColumn = typeDec.getBeginColumn();
+        endColumn = typeDec.getEndColumn();
+        beginLine = typeDec.getBeginLine();
+        endLine = typeDec.getEndLine();
     }
 
     @Override

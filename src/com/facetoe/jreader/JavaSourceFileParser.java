@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class JavaSourceFileParser {
+
     public static JavaSourceFile parse(FileInputStream inputStream) throws ParseException, IOException {
         CompilationUnit cu = null;
         try {
