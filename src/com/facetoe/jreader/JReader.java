@@ -369,12 +369,6 @@ public class JReader extends JFrame {
             return;
         }
 
-        if ( currentSourceFile != null ) {
-            addAutoCompleteWords();
-        } else {
-            System.out.println("IT was null");
-        }
-
         if ( !Utilities.isGoodSourcePath(filePath) ) {
             JOptionPane.showMessageDialog(this, "Bad File: " + filePath, "Error", JOptionPane.WARNING_MESSAGE);
             return;
@@ -385,7 +379,11 @@ public class JReader extends JFrame {
         tabbedPane.setSelectedComponent(newTab);
 
         if ( currentSourceFile != null ) {
-            //newTab.findString(currentSourceFile.getEnclosingClassDeclaration(), searchContext);
+            addAutoCompleteWords();
+            JavaClassOrInterface obj = currentSourceFile.getEnclosingClass();
+            newTab.highlightDeclaration(obj.getBeginLine(), obj.getEndLine(), obj.beginColumn);
+        } else {
+            System.out.println("IT was null");
         }
 
         disableBrowserButtons();
@@ -552,13 +550,8 @@ public class JReader extends JFrame {
             JSourcePanel sourcePanel = ( JSourcePanel ) currentTab;
             JavaObject method = currentSourceFile.getItem(searchBar.getText());
             if ( method != null ) {
-                //System.out.println(method);
-                //sourcePanel.findString(fullMethod, searchContext);
                 sourcePanel.highlightDeclaration(method.getBeginLine(), method.getEndLine(),
-                        method.beginColumn,
-                        method.endColumn);
-
-
+                        method.beginColumn);
             } else {
                 sourcePanel.findString(searchBar.getText(), searchContext);
             }

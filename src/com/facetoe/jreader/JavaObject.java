@@ -11,13 +11,35 @@ import java.util.HashMap;
  * Date: 16/10/13
  * Time: 12:41 PM
  */
+
+/**
+ * Abstract class to represent different declarations.
+ * Might be better to refactor it as an interface.
+ *
+ * @param <T>
+ */
 public abstract class JavaObject<T> {
+
+    // The declaration
     T typeDeclaration;
+
+    // Full declaration including modifiers
     protected String fullDeclaration;
+
+    // Just the name and parameters
     protected String declaration;
+
+    // Line in the source file where this item begins
     protected int beginLine;
+
+    // Line in the source file where this item ends
+    // Note, this includes the entire block, not just declarations
     protected int endLine;
+
+    //Column where the declaration begins
     protected int beginColumn;
+
+    //Column where the declaration ends.
     protected int endColumn;
 
     public JavaObject() {
@@ -64,6 +86,9 @@ public abstract class JavaObject<T> {
 }
 
 class JavaClassOrInterface extends JavaObject<ClassOrInterfaceDeclaration> {
+
+    // All of this class or interfaces methods, constructors, enums and fields.
+    // The key is the name and parameters with the object as the value.
     HashMap<String, JavaObject> methods = new HashMap<String, JavaObject>();
     HashMap<String, JavaObject> constructors = new HashMap<String, JavaObject>();
     HashMap<String, JavaObject> enums = new HashMap<String, JavaObject>();
@@ -71,19 +96,21 @@ class JavaClassOrInterface extends JavaObject<ClassOrInterfaceDeclaration> {
 
     static final int CLASS = 0;
     static final int INTERFACE = 1;
-
     int type;
 
-    public JavaClassOrInterface(ClassOrInterfaceDeclaration typedec) {
-        super(typedec);
-        beginColumn = typedec.getBeginColumn();
-        endColumn = typedec.getEndColumn();
-        beginLine = typedec.getBeginLine();
-        endLine = typedec.getEndLine();
+    public JavaClassOrInterface(ClassOrInterfaceDeclaration typeDec) {
+        super(typeDec);
+        beginColumn = typeDec.getBeginColumn();
+        endColumn = typeDec.getEndColumn();
+        beginLine = typeDec.getBeginLine();
+        endLine = typeDec.getEndLine();
     }
 
     @Override
     void extractFullDeclaration() {
+        // The object passed in from JavaSourceFileParser has lots of information we don't want,
+        // such as comments, javadoc etc. Creating a new object and calling toString()
+        // makes it much easier to parse
         fullDeclaration = new ClassOrInterfaceDeclaration(typeDeclaration.getModifiers(),
                 typeDeclaration.isInterface(),
                 typeDeclaration.getName())
@@ -161,6 +188,9 @@ class JavaField extends JavaObject<FieldDeclaration> {
         endLine = typeDec.getEndLine();
     }
 
+    // The object passed in from JavaSourceFileParser has lots of information we don't want,
+    // such as comments, javadoc etc. Creating a new object and calling toString()
+    // makes it much easier to parse
     @Override
     void extractFullDeclaration() {
         String field = new FieldDeclaration(typeDeclaration.getModifiers(),
@@ -191,6 +221,9 @@ class JavaEnum extends JavaObject<EnumDeclaration> {
         endLine = typeDec.getEndLine();
     }
 
+    // The object passed in from JavaSourceFileParser has lots of information we don't want,
+    // such as comments, javadoc etc. Creating a new object and calling toString()
+    // makes it much easier to parse
     @Override
     void extractFullDeclaration() {
         fullDeclaration = new EnumDeclaration(typeDeclaration.getModifiers(),
@@ -216,6 +249,9 @@ class JavaMethod extends JavaObject<MethodDeclaration> {
         endLine = typeDec.getEndLine();
     }
 
+    // The object passed in from JavaSourceFileParser has lots of information we don't want,
+    // such as comments, javadoc etc. Creating a new object and calling toString()
+    // makes it much easier to parse
     @Override
     void extractFullDeclaration() {
         fullDeclaration = new MethodDeclaration(typeDeclaration.getModifiers(),
@@ -249,6 +285,9 @@ class JavaConstructor extends JavaObject<ConstructorDeclaration> {
         endLine = typeDec.getEndLine();
     }
 
+    // The object passed in from JavaSourceFileParser has lots of information we don't want,
+    // such as comments, javadoc etc. Creating a new object and calling toString()
+    // makes it much easier to parse
     @Override
     void extractFullDeclaration() {
         fullDeclaration = new ConstructorDeclaration(null,
@@ -258,7 +297,7 @@ class JavaConstructor extends JavaObject<ConstructorDeclaration> {
                 typeDeclaration.getName(),
                 typeDeclaration.getParameters(),
                 typeDeclaration.getThrows(),
-                new BlockStmt())
+                new BlockStmt()) // Add a new, empty block or it throws an error.
                 .toString()
                 .replace("{", "")
                 .replace("}", "")

@@ -12,6 +12,14 @@ import java.util.ArrayList;
 
 public class JavaSourceFileParser {
 
+    /**
+     * Parses a Java source file and extracts constructor, method, field and enum declarations.
+     *
+     * @param inputStream for the file being parsed
+     * @return JavaSourceFile object that contains the result of the parsing.
+     * @throws ParseException
+     * @throws IOException
+     */
     public static JavaSourceFile parse(FileInputStream inputStream) throws ParseException, IOException {
         CompilationUnit cu = null;
         try {
@@ -22,13 +30,29 @@ public class JavaSourceFileParser {
         return ( JavaSourceFile ) new SourceFileVisitor().visit(cu, null);
     }
 
+    /**
+     * This class is responsible for extracting the information out of the file.
+     */
     private static class SourceFileVisitor extends GenericVisitorAdapter {
+
+        /**
+         * Visits each type declaration and extracts full and partial declarations from it.
+         *
+         * @param cu  Compilation unit returned by JavaParser.parse()
+         * @param arg This isn't used.
+         * @return JavaSourceFile object containing all the data.
+         */
         @Override
-        public Object visit(CompilationUnit n, Object arg) {
+        public Object visit(CompilationUnit cu, Object arg) {
             ArrayList<JavaClassOrInterface> classesAndInterfaces = new ArrayList<JavaClassOrInterface>();
-            if ( n != null && n.getTypes() != null ) {
-                for ( TypeDeclaration type : n.getTypes() ) {
+            if ( cu != null && cu.getTypes() != null ) {
+                for ( TypeDeclaration type : cu.getTypes() ) {
+
+                    // For each class declaration loop through its body and extract method, constructor and
+                    // field declarations.
                     if ( type instanceof ClassOrInterfaceDeclaration ) {
+
+                        // Store each class or interface's data in this object
                         JavaClassOrInterface javaObj = new JavaClassOrInterface(( ClassOrInterfaceDeclaration ) type);
 
                         for ( BodyDeclaration declaration : type.getMembers() ) {
@@ -49,14 +73,14 @@ public class JavaSourceFileParser {
                                 javaObj.addConstructor(constructor);
 
                             } else {
-                                //System.out.println(declaration.getClass());
+                                // As far as I can tell this only catches annotations, which might be useful to add later.
                             }
                         }
                         classesAndInterfaces.add(javaObj);
                     }
                 }
             } else {
-                System.out.println("Null Fuck");
+                System.err.println("Null");
             }
             return new JavaSourceFile(classesAndInterfaces);
         }

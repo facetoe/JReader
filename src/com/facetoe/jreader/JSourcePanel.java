@@ -77,8 +77,6 @@ public class JSourcePanel extends JPanel {
         foldCollapser.collapseFolds(foldManager);
     }
 
-    //TODO Figure out how to set the SearchContext in a half decent way.
-
     /**
      * @param text    to search for
      * @param context The search context for this search.
@@ -104,8 +102,8 @@ public class JSourcePanel extends JPanel {
     /**
      * Highlights and scrolls to a method, constructor, field or enum declaration.
      * This method is necessary because really long method or function declarations are
-     * formatted in the source like method(ReallyLongClassTypeThing superDescriptiveNameForYou,
-     * AnotherAmazingLongObject incredibleyLongJavaName)
+     * formatted in the source like: <code>method(ReallyLongClassTypeThing superDescriptiveNameForYou,
+     * AnotherAmazingLongObject incredibleyLongJavaName)</code>
      * <p/>
      * Attempts to search for these will fail because of the unexpected newline and spaces.
      * ,
@@ -134,11 +132,10 @@ public class JSourcePanel extends JPanel {
             }
 
             // Now search for the text and it should succeed.
-            SearchContext context = new SearchContext(selectText);
-            SearchEngine.find(textArea, context);
+            findString(selectText, new SearchContext(selectText));
+
         } catch ( BadLocationException ex ) {
             System.out.println(ex);
         }
-
     }
 }

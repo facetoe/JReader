@@ -12,6 +12,7 @@ import java.util.HashMap;
 public class JavaSourceFile {
     private ArrayList<JavaClassOrInterface> fileContents = new ArrayList<JavaClassOrInterface>();
     private HashMap<String, JavaObject> allObjects = new HashMap<String, JavaObject>();
+    private JavaClassOrInterface enclosingClass;
 
     public JavaSourceFile(ArrayList<JavaClassOrInterface> fileContents) {
         this.fileContents = fileContents;
@@ -29,6 +30,15 @@ public class JavaSourceFile {
 
     public JavaObject getItem(String item) {
         return allObjects.get(item);
+    }
+
+    public JavaClassOrInterface getEnclosingClass() {
+        if ( fileContents.size() > 0 ) {
+
+            // The enclosing class is always first.
+            return fileContents.get(0);
+        }
+        return null;
     }
 }
 
