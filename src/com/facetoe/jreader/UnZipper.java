@@ -19,8 +19,7 @@ public class UnZipper {
         destFile = destinationFile;
     }
 
-    public boolean unzip() {
-        try {
+    public void unzip() throws ZipException, Exception{
             ZipFile zipFile = new ZipFile(srcFile);
 
             // Set runInThread variable of ZipFile to true.
@@ -38,13 +37,8 @@ public class UnZipper {
             }
 
             if ( pm.getResult() == ProgressMonitor.RESULT_ERROR ) {
-                return false;
+               throw new Exception(pm.getException().getMessage(), pm.getException().getCause());
             }
-
-        } catch ( ZipException e ) {
-            e.printStackTrace();
-        }
-        return true;
     }
 
     public void fireEvent(int eventType, String message, long progress) {
@@ -70,7 +64,7 @@ class UnZipperProgressWindow extends ProgressWindow<Boolean> {
     }
 
     @Override
-    public Boolean execute() {
+    public Boolean execute() throws Exception{
         UnZipper unZipper = new UnZipper(srcFile, destFile);
         unZipper.addActionListener(new ActionListener() {
             @Override
@@ -81,10 +75,10 @@ class UnZipperProgressWindow extends ProgressWindow<Boolean> {
             }
         });
 
-        boolean result = unZipper.unzip();
+        unZipper.unzip();
         setVisible(false);
         dispose();
 
-        return result;
+        return true; // Always returns true;
     }
 }

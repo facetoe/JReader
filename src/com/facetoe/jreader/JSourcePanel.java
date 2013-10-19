@@ -1,6 +1,5 @@
 package com.facetoe.jreader;
 
-import com.facetoe.jreader.util.Utilities;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.Theme;
@@ -60,12 +59,6 @@ public class JSourcePanel extends JPanel {
         } catch ( IOException e ) {
             e.printStackTrace();
         }
-
-        /**
-         * Set the caret position to the top of the page, otherwise the page scrolls to the bottom and search
-         * doesn't work as expected.
-         */
-        textArea.setCaretPosition(0);
     }
 
     /**

@@ -1,7 +1,5 @@
 package com.facetoe.jreader;
 
-import com.facetoe.jreader.util.Config;
-import com.facetoe.jreader.util.Utilities;
 import japa.parser.ParseException;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -87,11 +85,13 @@ public class JReader extends JFrame {
 
     private JMenuItem mnuNewSource;
     private SearchContext searchContext = new SearchContext();
-    private Config config = Config.getInstance();
 
     /* This is necessary to make the Swing thread wait until the javafx content is loaded on startup.
      * If it's not set then the Swing components are displayed before there is any content in them. */
     CountDownLatch javafxLoadLatch = new CountDownLatch(1);
+
+    /* Keeps track of which profile we are using and provides access to the settings for that profile. */
+    ProfileManager profileManager = ProfileManager.getInstance();
 
 
     private HashMap<String, String> classNames;
@@ -128,40 +128,39 @@ public class JReader extends JFrame {
 
         JMenu mnuFind = new JMenu("Find");
         final JCheckBoxMenuItem chkWholeWord = new JCheckBoxMenuItem("Whole Word");
-        chkWholeWord.setState(config.getBool("searchWholeWord", false));
+        chkWholeWord.setState(profileManager.wholeWordIsEnabled());
         chkWholeWord.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 searchContext.setWholeWord(chkWholeWord.getState());
-                config.setBool("searchWholeWord", chkWholeWord.getState());
+                profileManager.setWholeWordEnabled(chkWholeWord.getState());
             }
         });
         mnuFind.add(chkWholeWord);
 
         final JCheckBoxMenuItem chkMatchCase = new JCheckBoxMenuItem("Match Case");
-        chkMatchCase.setState(config.getBool("searchMatchCase", false));
+        chkMatchCase.setState(profileManager.matchCaseIsEnabled());
         chkMatchCase.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 searchContext.setMatchCase(chkMatchCase.getState());
-                config.setBool("searchMatchCase", chkMatchCase.getState());
+                profileManager.setMatchCaseEnabled(chkMatchCase.getState());
             }
         });
         mnuFind.add(chkMatchCase);
 
         final JCheckBoxMenuItem chkRegexp = new JCheckBoxMenuItem("Regular Expression");
-        chkRegexp.setState(config.getBool("searchRegexp", false));
+        chkRegexp.setState(profileManager.regexpIsEnabled());
         chkRegexp.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 searchContext.setRegularExpression(chkRegexp.getState());
-                config.setBool("searchRegexp", chkRegexp.getState());
+                profileManager.setRegexpEnabled(chkRegexp.getState());
             }
         });
         mnuFind.add(chkRegexp);
 
         menuBar.add(mnuFind);
-
 
         Action action = new CloseTabAction(tabbedPane);
         String keyStrokeAndKey = "control C";
@@ -543,7 +542,7 @@ public class JReader extends JFrame {
         if ( currentTab instanceof JReaderPanel ) {
             String relativePath = classNames.get(searchBar.getText());
             if ( relativePath != null ) {
-                String path = config.getString("apiDir") + relativePath;
+                String path = profileManager.getDocDir() + relativePath;
                 loadClass(path);
             }
         } else {
@@ -560,17 +559,20 @@ public class JReader extends JFrame {
 
     private void loadJavaDocData() {
         try {
-            classNames = Utilities.readClassData(new File(config.getString("classDataFile")));
+            File classDataFile = new File(profileManager.getClassDataFilePath());
+            classNames = Utilities.readClassData(classDataFile);
         } catch ( IOException e ) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Failed to load class data at" + config.getString("classDataFile"),
+            JOptionPane.showMessageDialog(this, "Failed to load class data at"
+                    + profileManager.getClassDataFilePath(),
                     "Fatal Error",
                     JOptionPane.ERROR_MESSAGE);
             System.exit(1);
 
         } catch ( ClassNotFoundException e ) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Failed to load class data at" + config.getString("classDataFile"),
+            JOptionPane.showMessageDialog(this, "Failed to load class data at"
+                    + profileManager.getClassDataFilePath(),
                     "Fatal Error",
                     JOptionPane.ERROR_MESSAGE);
             System.exit(1);
@@ -604,7 +606,7 @@ public class JReader extends JFrame {
         }
 
         if ( !JReaderSetup.isSetup() ) {
-            JReaderSetup.setup();
+            JReaderSetup.setUp();
         }
 
         SwingUtilities.invokeLater(new Runnable() {

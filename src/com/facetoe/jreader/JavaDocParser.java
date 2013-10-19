@@ -1,6 +1,5 @@
 package com.facetoe.jreader;
 
-import com.facetoe.jreader.util.Config;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -18,30 +17,52 @@ import java.util.HashMap;
  */
 public class JavaDocParser {
 
-    private HashMap<String, HashMap<String, String>> allClassData = new HashMap<String, HashMap<String, String>>();
 
-    /* The base path for the Java docs: /dir/dir/dir/docs/api/ */
-    private String basePath;
-
-    /* HashMap containing the class name as the key and a JavaObjectOld object as the value */
-    private HashMap<String, String> classNames = new HashMap<String, String>();
+//    public static void main(String[] args) {
+//        String fileName = "/home/facetoe/tmp/docs/api/allclasses-noframe.html";
+//        String file2 = "/home/facetoe/tmp/docOutput/allclasses-noframe.html";
+//
+//        JavaDocParser parser = new JavaDocParser();
+//
+//
+//        try {
+//            HashMap<String, String> cl = parser.parse(fileName);
+//            for ( String s : cl.keySet() ) {
+//                System.out.println(s);
+//            }
+//            System.out.println(cl.size());
+//        } catch ( Exception e ) {
+//            e.printStackTrace();
+//        }
+//
+//    }
 
     /* Action listeners for this parser */
     private ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
-
-    public JavaDocParser(String basePath) {
-        this.basePath = basePath;
-    }
 
     /**
      * Parses the Java docs by extracting the class names from the index file and
      * then visiting each class HTML file and extracting method information.
      *
-     * @param indexFile should be allclasses-noframe.html
+     * @param filePath should point to allclasses-noframe.html
      */
-    public HashMap<String, String> parse(String indexFile) {
+    public HashMap<String, String> parse(String filePath) throws Exception {
+        HashMap<String, String> classNames = parseNewJavadoc(filePath);
+        if(classNames == null) {
+            classNames = parseOldJavadoc(filePath);
+        }
 
-        File inFile = new File(basePath + indexFile);
+        if(classNames == null) {
+            throw new Exception("Failed to parse index file at: " + filePath);
+        }
+        System.out.println(classNames.size());
+
+
+        return classNames;
+    }
+
+    private HashMap<String, String> parseNewJavadoc(String filePath) {
+        File inFile = new File(filePath);
         Document doc = null;
         try {
             doc = Jsoup.parse(inFile, "UTF-8");
@@ -54,11 +75,16 @@ public class JavaDocParser {
         assert doc != null;
         container = doc.select("div.indexContainer");
 
+        if(container.size() == 0) {
+            return null;
+        }
 
         /* Extract all the links */
         Elements links = container.select("a");
         int numLinks = links.size();
         int count = 0;
+
+        HashMap<String, String> classNames = new HashMap<String, String>();
 
         /* Loop over all the links, extracting the name and link */
         for ( Element link : links ) {
@@ -69,6 +95,68 @@ public class JavaDocParser {
         }
         fireEvent(ActionEvent.ACTION_LAST, "Complete", 100);
         return classNames;
+    }
+
+    private HashMap<String, String> parseOldJavadoc(String filePath) {
+        HashMap<String, String> classNames = new HashMap<String, String>();
+        try {
+            Document doc = Jsoup.parse(new File(filePath), "UTF-8");
+            Elements classes = doc.select("html body table tbody tr td font.FrameItemFont a");
+
+            if(classes.size() == 0) {
+                return null;
+            }
+
+            for ( Element aClass : classes ) {
+                classNames.put(aClass.text(), aClass.attr("href"));
+            }
+
+        } catch ( IOException e ) {
+            e.printStackTrace();
+        }
+        return classNames;
+    }
+
+    public static String extractPackage(String filePath) {
+        String packageName = extractNewJavadocPackage(filePath);
+        if(packageName != null) {
+            return packageName;
+        } else {
+            return extractOldJavadocPackage(filePath);
+        }
+    }
+
+    private static String extractNewJavadocPackage(String filePath) {
+        Document doc;
+        Elements packageName = null;
+        try {
+            doc = Jsoup.parse(new File(filePath), "UTF-8");
+            packageName = doc.select("html body div.contentContainer ul.inheritance li ul.inheritance li ul.inheritance li ul.inheritance li ul.inheritance li");
+        } catch ( IOException e ) {
+            e.printStackTrace();
+        }
+
+        if( packageName.size() == 0) {
+            return null;
+        }  else {
+            return packageName.get(0).text();
+        }
+    }
+
+    private static String extractOldJavadocPackage(String filePath) {
+        Document doc;
+        Elements packageName = null;
+        try {
+            doc = Jsoup.parse(new File(filePath), "UTF-8");
+            packageName = doc.select("html body pre b");
+        } catch ( IOException e ) {
+            e.printStackTrace();
+        }
+        if(packageName.size() == 0) {
+            return null;
+        } else {
+            return packageName.get(0).text();
+        }
     }
 
     /**
@@ -101,8 +189,8 @@ public class JavaDocParser {
  */
 class ParserProgressWindow extends ProgressWindow<HashMap<String, String>> {
     @Override
-    public HashMap<String, String> execute() {
-        JavaDocParser parser = new JavaDocParser(Config.getInstance().getString("apiDir"));
+    public HashMap<String, String> execute() throws Exception{
+        JavaDocParser parser = new JavaDocParser();
         parser.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -118,7 +206,9 @@ class ParserProgressWindow extends ProgressWindow<HashMap<String, String>> {
             }
         });
 
-        HashMap<String, String> data = parser.parse("allclasses-noframe.html");
+        System.out.println(ProfileManager.getInstance().getDocDir());
+        HashMap<String, String> data = parser.parse(ProfileManager.getInstance().getDocDir() + "allclasses-noframe.html");
+
         setVisible(false);
         dispose();
 

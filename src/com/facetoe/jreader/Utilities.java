@@ -1,4 +1,4 @@
-package com.facetoe.jreader.util;
+package com.facetoe.jreader;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -10,6 +10,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Scanner;
 
 public class Utilities {
 
@@ -47,9 +48,10 @@ public class Utilities {
 
     public static String docPathToSourcePath(String docPath) {
         docPath = browserPathToSystemPath(docPath);
+        ProfileManager profileManager = ProfileManager.getInstance();
 
         /* Chop off the section of docPath that points to the Java docs */
-        String path = docPath.substring(docPath.lastIndexOf("api") + 3, docPath.length());
+        String path = docPath.replace(profileManager.getDocDir(), "");
 
         /* If there are more than 3 periods it's probably a nested class like: /dir/dir/SomeClass.SomeNestedClass.html */
         if ( path.split("\\.").length > 3 ) {
@@ -57,7 +59,7 @@ public class Utilities {
             path = path.substring(0, path.lastIndexOf("/") + 1) + objectName + ".java";
         }
 
-        return (Config.getInstance().getString("srcDir") + path).replace(".html", ".java");
+        return (profileManager.getSrcDir() + File.separator +  path).replace(".html", ".java");
     }
 
     public static String browserPathToSystemPath(String path) {
@@ -152,13 +154,21 @@ public class Utilities {
     }
 
     /**
-     * Takes a HashMap of JavaObjects and writes to file at filePath.
+     * Takes a HashMap of class names and relative urls and writes to file at filePath.
      *
-     * @param filePath to write the data to. File must exist.
+     * @param filePath to write the data to.
      * @param data     HashMap to write
      * @throws IOException
      */
     public static void writeCLassData(String filePath, HashMap<String, String> data) throws IOException {
+        File file = new File(filePath);
+
+        if(!file.exists()) {
+            boolean wasSuccess = file.createNewFile();
+            if(!wasSuccess) {
+                throw new IOException("Failed to save class data at: " + filePath);
+            }
+        }
         FileOutputStream fileOut = new FileOutputStream(filePath);
         ObjectOutputStream outStream = new ObjectOutputStream(fileOut);
         outStream.writeObject(data);
@@ -167,7 +177,7 @@ public class Utilities {
     }
 
     /**
-     * Reads a HashMap of JavaObjects from classDataFile and returns it.
+     * Reads a HashMap of class names and urls from classDataFile and returns it.
      *
      * @param classDataFile The file to write to
      * @return HashMap The data to write.
@@ -175,13 +185,35 @@ public class Utilities {
      * @throws ClassNotFoundException
      */
     public static HashMap<String, String> readClassData(File classDataFile) throws IOException, ClassNotFoundException {
-        FileInputStream fileIn = new FileInputStream(classDataFile);
+        FileInputStream fileIn = new FileInputStream(classDataFile); //TODO change this to string to be more consistent with the write method
         ObjectInputStream in = new ObjectInputStream(fileIn);
         HashMap<String, String> classData = ( HashMap<String, String> ) in.readObject();
         in.close();
         fileIn.close();
 
         return classData;
+    }
+
+    public static boolean isJavaDocsDir(File docDir) {
+        File[] dirList = docDir.listFiles();
+        String line;
+        for ( File file : dirList ) {
+            if ( file.getName().equalsIgnoreCase("index.html") ) {
+                try {
+                    Scanner scanner = new Scanner(file);
+                    while ( scanner.hasNextLine() ) {
+                        line = scanner.nextLine();
+                        if ( (line.contains("Java") && line.contains("Documentation"))
+                                || line.contains("Generated Documentation")) {
+                            return true;
+                        }
+                    }
+                } catch ( FileNotFoundException e ) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return false;
     }
 }
 

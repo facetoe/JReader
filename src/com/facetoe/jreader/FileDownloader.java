@@ -1,7 +1,5 @@
 package com.facetoe.jreader;
 
-import com.facetoe.jreader.util.Utilities;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileOutputStream;

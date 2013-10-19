@@ -1,6 +1,5 @@
 package com.facetoe.jreader;
 
-import com.facetoe.jreader.util.Config;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -27,6 +26,7 @@ public class JReaderPanel extends JPanel {
     private JFXPanel jfxPanel;
     private JProgressBar progressBar;
     private CountDownLatch latch;
+    private final ProfileManager profileManager = ProfileManager.getInstance();
 
     private String currentPage;
     private String initialURL;
@@ -49,7 +49,7 @@ public class JReaderPanel extends JPanel {
      */
     public JReaderPanel(JProgressBar jProgressBar, CountDownLatch latch) {
         this.latch = latch;
-        init(Config.getInstance().getString("docDir") + File.separator + "index.html", jProgressBar);
+        init(profileManager.getDocDir() + File.separator + "overview-summary.html", jProgressBar);
     }
 
     /**
@@ -172,7 +172,7 @@ public class JReaderPanel extends JPanel {
      */
     //TODO Make it possible for the user to set their homepage.
     public void home() {
-        loadURL(Config.getInstance().getString("docDir") + File.separator + "index.html");
+        loadURL(profileManager.getDocDir() + File.separator + "overview-summary.html");
     }
 
     /**

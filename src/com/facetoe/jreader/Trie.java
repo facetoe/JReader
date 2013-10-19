@@ -169,7 +169,7 @@ public class Trie {
      * Return the node at the end of the prefix
      *
      * @param prefix
-     * @return com.myAdventureGame.TrieNode or null if nothing found
+     * @return TrieNode or null if nothing found
      */
     private TrieNode getNodeByPrefix(String prefix) {
         char[] pre = prefix.toCharArray();
@@ -201,7 +201,7 @@ public class Trie {
 }
 
 /**
- * This class defines a node for the com.myAdventureGame.Trie
+ * This class defines a node for the Trie
  */
 class TrieNode {
     private final Map<Character, TrieNode> children = new HashMap<Character, TrieNode>();
@@ -226,7 +226,7 @@ class TrieNode {
      * Return a child node by character
      *
      * @param character
-     * @return com.myAdventureGame.TrieNode or null if no node has this character
+     * @return TrieNode or null if no node has this character
      */
     public TrieNode getNode(char character) {
         return children.get(character);

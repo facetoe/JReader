@@ -55,6 +55,7 @@ public abstract class ProgressWindow<T> extends JFrame {
         setPreferredSize(new Dimension(550, 72));
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         pack();
+        setLocationRelativeTo(null);
         setVisible(true);
     }
 
@@ -63,5 +64,5 @@ public abstract class ProgressWindow<T> extends JFrame {
      *
      * @return the result of processing.
      */
-    abstract public T execute();
+    abstract public T execute() throws Exception;
 }
