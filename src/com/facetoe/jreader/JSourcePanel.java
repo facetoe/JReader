@@ -41,7 +41,7 @@ public class JSourcePanel extends JPanel {
 
         //TODO Figure out a way for the user to set themes.
         try {
-            InputStream in = getClass().getResourceAsStream("/com/facetoe/jreader/resources/themes/ideaTheme.xml");
+            InputStream in = getClass().getResourceAsStream("/com/facetoe/jreader/resources/icons/themes/ideaTheme.xml");
             Theme theme = Theme.load(in);
             theme.apply(textArea);
         } catch ( IOException e ) {

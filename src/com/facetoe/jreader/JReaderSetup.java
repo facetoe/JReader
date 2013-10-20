@@ -141,7 +141,8 @@ public class JReaderSetup {
                     return chosenDir;
                 } else {
                     result = JOptionPane.showConfirmDialog(null,
-                            "That doesn't appear to be the right directory, the directory should be called \"docs\".\n" +
+                            "That doesn't appear to be the right directory, the directory should be called \"docs\"\n" +
+                                    " and contain an index.html file.\n" +
                                     "Would you like to try again?",
                             "Setup", JOptionPane.OK_CANCEL_OPTION);
 
@@ -180,7 +181,7 @@ public class JReaderSetup {
         }
     }
 
-    private static HashMap<String, String> parseDocs() throws Exception {
+    public static HashMap<String, String> parseDocs() throws Exception {
         int result = JOptionPane.showConfirmDialog(null, "JReader now needs to parse the Java docs.\nThis will only happen once.", "", JOptionPane.OK_CANCEL_OPTION);
         if ( result == JOptionPane.OK_OPTION ) {
             ParserProgressWindow progressWindow = new ParserProgressWindow();

@@ -170,7 +170,6 @@ public class JReaderPanel extends JPanel {
     /**
      * Navigate to the home page
      */
-    //TODO Make it possible for the user to set their homepage.
     public void home() {
         loadURL(profileManager.getDocDir() + File.separator + "overview-summary.html");
     }

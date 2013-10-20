@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Created with IntelliJ IDEA.
@@ -63,9 +64,20 @@ public class NewProfileWindow {
         btnOK.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println(txtDocs.getText());
-                System.out.println(txtSrc.getText());
-                System.out.println(txtName.getText());
+                ProfileManager manager = ProfileManager.getInstance();
+                String name = txtName.getText();
+                String fileName = name.replaceAll("[^A-Za-z0-9]", "_") + ".ser";
+                manager.newProfile(name, fileName,
+                        txtDocs.getText() + File.separator,
+                        txtSrc.getText() + File.separator);
+                try {
+                    manager.saveProfiles();
+                } catch ( IOException e1 ) {
+                    JOptionPane.showMessageDialog(frame, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+
+                frame.setVisible(false);
+                frame.dispose();
             }
         });
 
@@ -77,6 +89,12 @@ public class NewProfileWindow {
                     frame.dispose();
                 }
             });
+
+        frame.setContentPane(parentPanel);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 
     private File showFileDialog() {
@@ -91,10 +109,6 @@ public class NewProfileWindow {
     }
 
 //    public static void main(String[] args) {
-//        frame.setContentPane(new NewProfileWindow().parentPanel);
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        frame.pack();
-//        frame.setLocationRelativeTo(null);
-//        frame.setVisible(true);
+//        new NewProfileWindow();
 //    }
 }

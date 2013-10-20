@@ -116,6 +116,35 @@ public class JReader extends JFrame {
         btnSource = new JButton(new ViewSourceAction(this));
 
         JMenu fileMenu = new JMenu("File");
+        final JMenuItem itmNewProfile = new JMenuItem("New Profile");
+        itmNewProfile.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new NewProfileWindow();
+                if(currentTab instanceof JReaderPanel) {
+                    JReaderPanel panel = (JReaderPanel)currentTab;
+                    panel.loadURL(profileManager.getDocDir() + File.separator + "overview-summary.html");
+                }
+            }
+        });
+        fileMenu.add(itmNewProfile);
+
+        JMenu subMenuProfiles = new JMenu("Change Profile");
+
+        ArrayList<String> profiles = profileManager.getProfileNames();
+        for ( String profile : profiles ) {
+            JMenuItem item = new JMenuItem(profile);
+            final String profileName = profile;
+            item.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                   profileManager.setCurrentProfile(profileName);
+                }
+            });
+            subMenuProfiles.add(item);
+        }
+        fileMenu.add(subMenuProfiles);
+
         JMenuItem itmQuit = new JMenuItem(new QuitAction());
         fileMenu.add(itmQuit);
         menuBar.add(fileMenu);
@@ -256,23 +285,10 @@ public class JReader extends JFrame {
             }
         });
 
-//        btnSource.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                if ( currentTab instanceof JReaderPanel ) {
-//                    JReaderPanel panel = ( JReaderPanel ) currentTab;
-//                    newSourceTab(null);
-//                }
-//            }
-//        });
-
         btnCollapse.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if ( currentTab instanceof JSourcePanel ) {
-                    JSourcePanel sourcePanel = ( JSourcePanel ) currentTab;
-                    //JavaObject obj = currentSourceFile.getFieldDeclarations()
-                }
+
             }
         });
 

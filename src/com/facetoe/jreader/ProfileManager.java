@@ -1,6 +1,8 @@
 package com.facetoe.jreader;
 
+import javax.swing.*;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -41,6 +43,30 @@ public class ProfileManager implements Serializable {
         Profile profile = new Profile(name, fileName, docDir, srcDir);
         profiles.put(profile.name, profile);
         currentProfile = profile;
+
+        try {
+            writeProfile(currentProfile);
+        } catch ( IOException e ) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+
+        File profileDir = new File(getPath());
+        File[] files = profileDir.listFiles();
+        boolean hasClassData = false;
+        for ( File file : files ) {
+            if(file.getName().equalsIgnoreCase(Config.CLASS_DATA_FILE_NAME)) {
+                hasClassData = true;
+            }
+        }
+        if(!hasClassData) {
+            try {
+                HashMap<String, String> classData = JReaderSetup.parseDocs();
+                Utilities.writeCLassData(getPath() + Config.CLASS_DATA_FILE_NAME, classData);
+            } catch ( Exception e ) {
+                JOptionPane.showMessageDialog(null, e.getMessage());
+            }
+        }
+        Config.setString(Config.CURRENT_PROFILE, currentProfile.name);
     }
 
     public void loadProfiles() throws IOException, ClassNotFoundException{
@@ -105,8 +131,8 @@ public class ProfileManager implements Serializable {
         return profile;
     }
 
-    public Profile getCurrentProfile() {
-        return currentProfile;
+    public ArrayList<String> getProfileNames() {
+        return new ArrayList<String>(profiles.keySet());
     }
 
     public String getPath() {
