@@ -622,7 +622,7 @@ public class JReader extends JFrame {
         }
 
         if ( !JReaderSetup.isSetup() ) {
-            JReaderSetup.setUp();
+            //JReaderSetup.setUp();
         }
 
         SwingUtilities.invokeLater(new Runnable() {

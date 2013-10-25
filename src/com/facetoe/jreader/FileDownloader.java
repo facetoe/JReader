@@ -61,6 +61,32 @@ class FileDownloader implements RBCWrapperDelegate {
         fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
     }
 
+    public void cancel() {
+        /**
+         * If cancel() is called immediately after download() is called the rbc and connection won't be initialized.
+         * Wait until the connection begins and then cancel it.
+         */
+        while ( true ) {
+            if ( rbc == null || connection == null ) {
+                try {
+                    Thread.sleep(1000);
+                } catch ( InterruptedException ex ) {
+                    ex.printStackTrace();
+                }
+            } else if ( rbc.isOpen() ) {
+                break;
+            }
+        }
+
+        try {
+            connection.disconnect();
+            rbc.close();
+
+        } catch ( IOException e1 ) {
+            e1.printStackTrace();
+        }
+    }
+
     public void rbcProgressCallback(RBCWrapper rbc, double progress) {
         fireEvent(ActionEvent.ACTION_PERFORMED, Utilities.humanReadableByteCount(rbc.getReadSoFar(), true), ( long ) progress);
     }
@@ -165,31 +191,8 @@ class FileDownloaderProgressWindow extends ProgressWindow<Boolean> {
         btnCancel.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                /**
-                 * If the user clicks cancel straight away the rbc and connection won't be initialized.
-                 * Wait until the connection begins and then cancel it.
-                 */
-                while ( true ) {
-                    if ( downloader.rbc == null || downloader.connection == null ) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch ( InterruptedException ex ) {
-                            ex.printStackTrace();
-                        }
-                    } else if ( downloader.rbc.isOpen() ) {
-                        break;
-                    }
-                }
-
-                try {
-                    downloader.connection.disconnect();
-                    downloader.rbc.close();
-
-                } catch ( IOException e1 ) {
-                    e1.printStackTrace();
-                } finally {
-                    wasCanceled = true;
-                }
+              downloader.cancel();
+              wasCanceled = true;
             }
         });
 

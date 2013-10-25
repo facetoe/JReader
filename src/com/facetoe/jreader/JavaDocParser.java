@@ -18,25 +18,6 @@ import java.util.HashMap;
 public class JavaDocParser {
 
 
-//    public static void main(String[] args) {
-//        String fileName = "/home/facetoe/tmp/docs/api/allclasses-noframe.html";
-//        String file2 = "/home/facetoe/tmp/docOutput/allclasses-noframe.html";
-//
-//        JavaDocParser parser = new JavaDocParser();
-//
-//
-//        try {
-//            HashMap<String, String> cl = parser.parse(fileName);
-//            for ( String s : cl.keySet() ) {
-//                System.out.println(s);
-//            }
-//            System.out.println(cl.size());
-//        } catch ( Exception e ) {
-//            e.printStackTrace();
-//        }
-//
-//    }
-
     /* Action listeners for this parser */
     private ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
 

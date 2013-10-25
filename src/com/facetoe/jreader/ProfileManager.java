@@ -60,7 +60,10 @@ public class ProfileManager implements Serializable {
         }
         if(!hasClassData) {
             try {
-                HashMap<String, String> classData = JReaderSetup.parseDocs();
+                JavaDocParser parser = new JavaDocParser();
+                HashMap<String, String> classData = parser.parse(getDocDir() +
+                Config.ALL_CLASSSES_DOC_FILE);
+
                 Utilities.writeCLassData(getPath() + Config.CLASS_DATA_FILE_NAME, classData);
             } catch ( Exception e ) {
                 JOptionPane.showMessageDialog(null, e.getMessage());
