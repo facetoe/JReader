@@ -23,8 +23,7 @@ import java.util.concurrent.ExecutionException;
  * Date: 20/10/13
  * Time: 10:34 AM
  */
-public class SetupWindow {
-    JFrame frame = new JFrame("JReader Setup");
+public class SetupWindow extends JDialog {
     private JPanel pnlParent;
 
     private JPanel pnlInfo;
@@ -33,27 +32,22 @@ public class SetupWindow {
     private JButton btnCancel;
     private JProgressBar progressBar;
     private JLabel icnLocate;
+    private JLabel icnDownload;
     private JLabel icnParse;
-    private JLabel icnExtract;
     private JLabel lblStatus;
     private JLabel lblInfo;
-    private JLabel icnDownload;
+    private JLabel icnExtract;
 
 
     SetupWorker worker = new SetupWorker();
 
 
     public SetupWindow() {
-        frame.setContentPane(pnlParent);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setResizable(false);
-        frame.pack();
-        frame.setVisible(true);
-
         btnOK.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
+                    btnOK.setEnabled(false);
                     worker.execute();
                 } catch ( Exception e1 ) {
                     e1.printStackTrace();
@@ -65,14 +59,25 @@ public class SetupWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 worker.cancel(true);
+                setVisible(false);
+                dispose();
+                System.exit(0);
             }
         });
+
+        setTitle("JReader Setup");
+        setModalityType(ModalityType.APPLICATION_MODAL);
+        setContentPane(pnlParent);
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        setResizable(false);
+        pack();
+        setVisible(true);
     }
 
-    private void setLabelIcon(JLabel label, String iconPath) {
+    private void setTickIcon(JLabel label) {
         BufferedImage icon = null;
         try {
-            icon = ImageIO.read(new File(iconPath));
+            icon = ImageIO.read(getClass().getResourceAsStream("/com/facetoe/jreader/resources/icons/system_tick_alt_03.png"));
         } catch ( IOException e ) {
             e.printStackTrace();
         }
@@ -105,26 +110,26 @@ public class SetupWindow {
         CellConstraints cc = new CellConstraints();
         pnlInfo.add(label1, cc.xy(1, 3));
         final JLabel label2 = new JLabel();
-        label2.setText("Parse Documentation");
+        label2.setText("Download Java Source");
         pnlInfo.add(label2, cc.xy(1, 5));
         final JLabel label3 = new JLabel();
-        label3.setText("Extract Java Source");
+        label3.setText("Parse Documentation");
         pnlInfo.add(label3, cc.xy(1, 9));
         icnLocate = new JLabel();
-        icnLocate.setText("Label");
+        icnLocate.setText("");
         pnlInfo.add(icnLocate, cc.xy(3, 3));
-        icnParse = new JLabel();
-        icnParse.setText("Label");
-        pnlInfo.add(icnParse, cc.xy(3, 5));
-        icnExtract = new JLabel();
-        icnExtract.setText("Label");
-        pnlInfo.add(icnExtract, cc.xy(3, 9));
-        final JLabel label4 = new JLabel();
-        label4.setText("Download Java Source");
-        pnlInfo.add(label4, cc.xy(1, 7));
         icnDownload = new JLabel();
-        icnDownload.setText("Label");
-        pnlInfo.add(icnDownload, cc.xy(3, 7));
+        icnDownload.setText("");
+        pnlInfo.add(icnDownload, cc.xy(3, 5));
+        icnParse = new JLabel();
+        icnParse.setText("");
+        pnlInfo.add(icnParse, cc.xy(3, 9));
+        final JLabel label4 = new JLabel();
+        label4.setText("Extract Java Source");
+        pnlInfo.add(label4, cc.xy(1, 7));
+        icnExtract = new JLabel();
+        icnExtract.setText("");
+        pnlInfo.add(icnExtract, cc.xy(3, 7));
         pnlDocs = new JPanel();
         pnlDocs.setLayout(new FormLayout("fill:d:grow", "center:d:noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow"));
         pnlParent.add(pnlDocs, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(20, 20), null, 0, false));
@@ -164,7 +169,39 @@ public class SetupWindow {
     class SetupWorker extends SwingWorker<Boolean, String> {
 
 
+        @Override
+        protected Boolean doInBackground() throws Exception {
+            if ( !(JReaderSetup.hasDataDir() && JReaderSetup.hasDataDir()) ) {
+                JReaderSetup.createDirectoriesAndConfig();
+            }
+
+            File docDir = JReaderSetup.chooseDocs();
+            if ( docDir == null ) {
+                setTickIcon(icnLocate);
+                cancel(true);
+            } else {
+                setTickIcon(icnLocate);
+            }
+
+            if ( !Config.getBool(Config.HAS_JAVALANG_SOURCE) )
+                downloadSource();
+
+            if ( !Config.getBool(Config.HAS_EXTRACTED_SOURCE) )
+                extractSource();
+
+            if ( !Config.getBool(Config.HAS_DEFAULT_PROFILE) )
+                setUpDefaultProfile(docDir);
+
+            if ( !Config.getBool(Config.HAS_PARSED_DOCS) )
+                parseDocs(docDir);
+
+            setVisible(false);
+            dispose();
+            return true;
+        }
+
         private void downloadSource() throws IOException {
+            progressBar.setValue(0);
             lblInfo.setText("Downloading Source");
             lblStatus.setText("Connecting...");
 
@@ -181,15 +218,16 @@ public class SetupWindow {
             downloader.download();
 
             Config.setBool(Config.HAS_JAVALANG_SOURCE, true);
-            setLabelIcon(icnDownload, "/home/facetoe/tmp/system_tick_alt_03.png");
+            setTickIcon(icnDownload);
             lblStatus.setText("Complete");
-            progressBar.setValue(0);
         }
 
         private void extractSource() throws Exception {
 
             lblInfo.setText("Extracting Source");
             lblStatus.setText("Initializing...");
+            progressBar.setValue(0);
+            progressBar.setIndeterminate(true);
 
             String zipPath = Config.dataDirectory + Config.JAVA_LANG_ZIP;
             UnZipper unZipper = new UnZipper(zipPath, zipPath.replace(".zip", ""));
@@ -204,7 +242,7 @@ public class SetupWindow {
 
             Config.setBool(Config.HAS_EXTRACTED_SOURCE, true);
             lblStatus.setText("Complete");
-            setLabelIcon(icnExtract, "/home/facetoe/tmp/system_tick_alt_03.png");
+            setTickIcon(icnExtract);
 
         }
 
@@ -214,7 +252,7 @@ public class SetupWindow {
                     + File.separator;
 
             ProfileManager profileManager = ProfileManager.getInstance();
-            String javaDocsPath = docDir.getAbsolutePath() + File.separator + "api" + File.separator;
+            String javaDocsPath = docDir.getAbsolutePath() + File.separator;
             profileManager.newProfile("Default", "default.ser", javaDocsPath, srcPath);
 
             profileManager.saveProfiles();
@@ -223,15 +261,16 @@ public class SetupWindow {
         }
 
         private void parseDocs(File docDir) throws Exception {
+            progressBar.setValue(0);
+            progressBar.setIndeterminate(false);
             lblInfo.setText("Parsing Documentation");
             lblStatus.setText("Loading...");
+
             String path = docDir.getAbsolutePath()
                     + File.separator
-                    + "api"
-                    + File.separator
-                    + "allclasses-noframe.html"; //TODO fix this
-            JavaDocParser parser = new JavaDocParser();
+                    + "allclasses-noframe.html";
 
+            JavaDocParser parser = new JavaDocParser();
             parser.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -247,26 +286,7 @@ public class SetupWindow {
 
             Config.setBool(Config.HAS_PARSED_DOCS, true);
             lblStatus.setText("Complete");
-            setLabelIcon(icnParse, "/home/facetoe/tmp/system_tick_alt_03.png");
-        }
-
-        @Override
-        protected Boolean doInBackground() throws Exception {
-            JReaderSetup.createDirectoriesAndConfig();
-            File docDir = JReaderSetup.chooseDocs();
-            if ( docDir == null ) {
-                setLabelIcon(icnLocate, "/home/facetoe/tmp/crossIcon.png");
-                cancel(true);
-            } else {
-                setLabelIcon(icnLocate, "/home/facetoe/tmp/system_tick_alt_03.png");
-            }
-
-            downloadSource();
-            extractSource();
-            setUpDefaultProfile(docDir);
-            parseDocs(docDir);
-            System.out.println(JReaderSetup.isSetup());
-            return true;
+            setTickIcon(icnParse);
         }
 
         @Override
@@ -275,10 +295,14 @@ public class SetupWindow {
                 get();
             } catch ( InterruptedException e ) {
                 e.printStackTrace();
+                JOptionPane.showMessageDialog(null, e.getMessage());
+
             } catch ( ExecutionException e ) {
                 e.printStackTrace();
+                JOptionPane.showMessageDialog(null, e.getMessage());
+
             } catch ( CancellationException e ) {
-                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "User canceled.");
             }
         }
     }

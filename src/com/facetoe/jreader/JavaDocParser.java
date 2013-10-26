@@ -29,11 +29,11 @@ public class JavaDocParser {
      */
     public HashMap<String, String> parse(String filePath) throws Exception {
         HashMap<String, String> classNames = parseNewJavadoc(filePath);
-        if(classNames == null) {
+        if ( classNames == null ) {
             classNames = parseOldJavadoc(filePath);
         }
 
-        if(classNames == null) {
+        if ( classNames == null ) {
             throw new Exception("Failed to parse index file at: " + filePath);
         }
         System.out.println(classNames.size());
@@ -56,7 +56,7 @@ public class JavaDocParser {
         assert doc != null;
         container = doc.select("div.indexContainer");
 
-        if(container.size() == 0) {
+        if ( container.size() == 0 ) {
             return null;
         }
 
@@ -84,7 +84,7 @@ public class JavaDocParser {
             Document doc = Jsoup.parse(new File(filePath), "UTF-8");
             Elements classes = doc.select("html body table tbody tr td font.FrameItemFont a");
 
-            if(classes.size() == 0) {
+            if ( classes.size() == 0 ) {
                 return null;
             }
 
@@ -100,7 +100,7 @@ public class JavaDocParser {
 
     public static String extractPackage(String filePath) {
         String packageName = extractNewJavadocPackage(filePath);
-        if(packageName != null) {
+        if ( packageName != null ) {
             return packageName;
         } else {
             return extractOldJavadocPackage(filePath);
@@ -117,9 +117,9 @@ public class JavaDocParser {
             e.printStackTrace();
         }
 
-        if( packageName.size() == 0) {
+        if ( packageName.size() == 0 ) {
             return null;
-        }  else {
+        } else {
             return packageName.get(0).text();
         }
     }
@@ -133,7 +133,7 @@ public class JavaDocParser {
         } catch ( IOException e ) {
             e.printStackTrace();
         }
-        if(packageName.size() == 0) {
+        if ( packageName.size() == 0 ) {
             return null;
         } else {
             return packageName.get(0).text();
@@ -170,7 +170,7 @@ public class JavaDocParser {
  */
 class ParserProgressWindow extends ProgressWindow<HashMap<String, String>> {
     @Override
-    public HashMap<String, String> execute() throws Exception{
+    public HashMap<String, String> execute() throws Exception {
         JavaDocParser parser = new JavaDocParser();
         parser.addActionListener(new ActionListener() {
             @Override

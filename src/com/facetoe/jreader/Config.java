@@ -27,13 +27,13 @@ public class Config {
     private static Properties properties = new Properties();
 
     static String dataDirectory = System.getProperty("user.home") +
-    File.separator +
-    DATA_DIR_NAME +
-    File.separator;
+            File.separator +
+            DATA_DIR_NAME +
+            File.separator;
 
     public static String propertiesFilePath = dataDirectory +
-    CONFIG_FILE_NAME +
-    File.separator;
+            CONFIG_FILE_NAME +
+            File.separator;
 
     public static void setString(String key, String value) {
         setEntry(key, value);

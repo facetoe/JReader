@@ -16,7 +16,7 @@ import java.io.IOException;
  * Date: 18/10/13
  * Time: 11:55 AM
  */
-public class NewProfileWindow {
+public class NewProfileWindow extends JDialog {
     private static JFrame frame = new JFrame("New Profile");
 
     private JPanel parentPanel;
@@ -41,6 +41,7 @@ public class NewProfileWindow {
             public void actionPerformed(ActionEvent e) {
                 File chosenDir = showFileDialog();
                 if ( chosenDir != null ) {
+                    chosenDir = Utilities.findDocDir(chosenDir);
                     if ( !Utilities.isJavaDocsDir(chosenDir) ) {
                         JOptionPane.showMessageDialog(parentPanel,
                                 "Invalid directory. Please choose the top level directory that contains the index.html file.",
@@ -74,31 +75,33 @@ public class NewProfileWindow {
                 manager.newProfile(name, fileName,
                         txtDocs.getText() + File.separator,
                         txtSrc.getText() + File.separator);
+                manager.setCurrentProfile(name);
                 try {
                     manager.saveProfiles();
                 } catch ( IOException e1 ) {
                     JOptionPane.showMessageDialog(frame, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
 
-                frame.setVisible(false);
-                frame.dispose();
+                setVisible(false);
+                dispose();
             }
         });
 
-        btnCancel.addActionListener(new
-                                            ActionListener() {
-                                                @Override
-                                                public void actionPerformed(ActionEvent e) {
-                                                    frame.setVisible(false);
-                                                    frame.dispose();
-                                                }
-                                            });
+        btnCancel.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        setVisible(false);
+                        dispose();
+                    }
+                });
 
-        frame.setContentPane(parentPanel);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        setContentPane(parentPanel);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setModalityType(ModalityType.APPLICATION_MODAL);
+        pack();
+        setLocationRelativeTo(null);
+        setVisible(true);
     }
 
     private File showFileDialog() {

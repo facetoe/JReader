@@ -28,7 +28,7 @@ public class ProfileManager implements Serializable {
         }
 
         String currentProfileName = Config.getString(Config.CURRENT_PROFILE);
-        if(!currentProfileName.isEmpty()) {
+        if ( !currentProfileName.isEmpty() ) {
             currentProfile = profiles.get(currentProfileName);
         } else {
             System.out.println("No default profile");
@@ -54,15 +54,15 @@ public class ProfileManager implements Serializable {
         File[] files = profileDir.listFiles();
         boolean hasClassData = false;
         for ( File file : files ) {
-            if(file.getName().equalsIgnoreCase(Config.CLASS_DATA_FILE_NAME)) {
+            if ( file.getName().equalsIgnoreCase(Config.CLASS_DATA_FILE_NAME) ) {
                 hasClassData = true;
             }
         }
-        if(!hasClassData) {
+        if ( !hasClassData ) {
             try {
                 JavaDocParser parser = new JavaDocParser();
                 HashMap<String, String> classData = parser.parse(getDocDir() +
-                Config.ALL_CLASSSES_DOC_FILE);
+                        Config.ALL_CLASSSES_DOC_FILE);
 
                 Utilities.writeCLassData(getPath() + Config.CLASS_DATA_FILE_NAME, classData);
             } catch ( Exception e ) {
@@ -72,27 +72,31 @@ public class ProfileManager implements Serializable {
         Config.setString(Config.CURRENT_PROFILE, currentProfile.name);
     }
 
-    public void loadProfiles() throws IOException, ClassNotFoundException{
+    public void loadProfiles() throws IOException, ClassNotFoundException {
         File profileDir = new File(Config.getString(Config.PROFILE_DIR));
         File[] profDirs = profileDir.listFiles();
-        for ( File profDir : profDirs ) {
-            if(profDir.isDirectory()) {
-                File[] profFiles = profDir.listFiles();
-                for ( File profFile : profFiles ) {
-                    if(profFile.getName().endsWith(".ser")
-                            && !profFile.getName()
-                            .equalsIgnoreCase(Config.CLASS_DATA_FILE_NAME)) {
+        if ( profDirs != null ) {
+            for ( File profDir : profDirs ) {
+                if ( profDir.isDirectory() ) {
+                    File[] profFiles = profDir.listFiles();
+                    if ( profFiles != null ) {
+                        for ( File profFile : profFiles ) {
+                            if ( profFile.getName().endsWith(".ser")
+                                    && !profFile.getName()
+                                    .equalsIgnoreCase(Config.CLASS_DATA_FILE_NAME) ) {
 
-                        Profile profile = readProfile(profFile.getAbsolutePath());
-                        System.out.println("Loaded: " + profile.name);
-                        profiles.put(profile.name, profile);
+                                Profile profile = readProfile(profFile.getAbsolutePath());
+                                System.out.println("Loaded: " + profile.name);
+                                profiles.put(profile.name, profile);
+                            }
+                        }
                     }
                 }
             }
         }
     }
 
-    public void saveProfiles() throws IOException{
+    public void saveProfiles() throws IOException {
         for ( String s : profiles.keySet() ) {
             writeProfile(profiles.get(s));
         }
@@ -102,18 +106,18 @@ public class ProfileManager implements Serializable {
         String profileDirPath = Config.getString(Config.PROFILE_DIR) + profile.name;
         File profileDir = new File(profileDirPath);
 
-        if(!profileDir.exists()) {
+        if ( !profileDir.exists() ) {
             boolean wasSuccess = profileDir.mkdirs();
-            if(!wasSuccess) {
+            if ( !wasSuccess ) {
                 throw new IOException("Failed to create profile directory at: " + profileDirPath);
             }
         }
 
         File file = new File(profileDirPath + File.separator + profile.fileName);
 
-        if(!file.exists()) {
+        if ( !file.exists() ) {
             boolean wasSuccess = file.createNewFile();
-            if(!wasSuccess) {
+            if ( !wasSuccess ) {
                 throw new IOException("Failed to create profile file at: " + profileDir);
             }
         }
@@ -128,7 +132,7 @@ public class ProfileManager implements Serializable {
     public Profile readProfile(String filePath) throws IOException, ClassNotFoundException {
         FileInputStream fileIn = new FileInputStream(filePath);
         ObjectInputStream in = new ObjectInputStream(fileIn);
-        Profile profile = (Profile ) in.readObject();
+        Profile profile = ( Profile ) in.readObject();
         in.close();
         fileIn.close();
         return profile;
@@ -147,8 +151,9 @@ public class ProfileManager implements Serializable {
     }
 
     public boolean setCurrentProfile(String profileName) {
-        if(profiles.containsKey(profileName)) {
+        if ( profiles.containsKey(profileName) ) {
             currentProfile = profiles.get(profileName);
+            Config.setString(Config.CURRENT_PROFILE, profileName);
             return true;
         }
         return false;

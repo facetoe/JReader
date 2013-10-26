@@ -171,7 +171,12 @@ public class JReaderPanel extends JPanel {
      * Navigate to the home page
      */
     public void home() {
-        loadURL(profileManager.getDocDir() + File.separator + "overview-summary.html");
+        File overviewFile = new File(profileManager.getDocDir() +  File.separator +  "overview-summary.html");
+        if(overviewFile == null) {
+            System.err.println("Failed to load overview file at: " + overviewFile.getAbsolutePath());
+        } else {
+            loadURL(overviewFile.getAbsolutePath());
+        }
     }
 
     /**
@@ -198,6 +203,7 @@ public class JReaderPanel extends JPanel {
                     }
                     engine.load(path);
                 }
+
             }
         });
     }

@@ -81,6 +81,7 @@ public class JReaderSetup {
             int result = chooser.showOpenDialog(null);
             if ( result == JFileChooser.APPROVE_OPTION ) {
                 File chosenDir = chooser.getSelectedFile();
+                chosenDir = Utilities.findDocDir(chosenDir);
                 if ( Utilities.isJavaDocsDir(chosenDir) ) {
                     return chosenDir;
                 } else {

@@ -50,7 +50,7 @@
               <forms/>
             </constraints>
             <properties>
-              <text value="Parse Documentation"/>
+              <text value="Download Java Source"/>
             </properties>
           </component>
           <component id="16252" class="javax.swing.JLabel">
@@ -59,7 +59,7 @@
               <forms/>
             </constraints>
             <properties>
-              <text value="Extract Java Source"/>
+              <text value="Parse Documentation"/>
             </properties>
           </component>
           <component id="26845" class="javax.swing.JLabel" binding="icnLocate">
@@ -68,25 +68,25 @@
               <forms/>
             </constraints>
             <properties>
-              <text value="Label"/>
+              <text value=""/>
             </properties>
           </component>
-          <component id="b8b4c" class="javax.swing.JLabel" binding="icnParse">
+          <component id="b8b4c" class="javax.swing.JLabel" binding="icnDownload">
             <constraints>
               <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <forms/>
             </constraints>
             <properties>
-              <text value="Label"/>
+              <text value=""/>
             </properties>
           </component>
-          <component id="5bfa5" class="javax.swing.JLabel" binding="icnExtract">
+          <component id="5bfa5" class="javax.swing.JLabel" binding="icnParse">
             <constraints>
               <grid row="8" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <forms/>
             </constraints>
             <properties>
-              <text value="Label"/>
+              <text value=""/>
             </properties>
           </component>
           <component id="cefcc" class="javax.swing.JLabel">
@@ -95,16 +95,16 @@
               <forms/>
             </constraints>
             <properties>
-              <text value="Download Java Source"/>
+              <text value="Extract Java Source"/>
             </properties>
           </component>
-          <component id="4e49" class="javax.swing.JLabel" binding="icnDownload">
+          <component id="4e49" class="javax.swing.JLabel" binding="icnExtract">
             <constraints>
               <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <forms/>
             </constraints>
             <properties>
-              <text value="Label"/>
+              <text value=""/>
             </properties>
           </component>
         </children>

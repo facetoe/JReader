@@ -191,8 +191,8 @@ class FileDownloaderProgressWindow extends ProgressWindow<Boolean> {
         btnCancel.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-              downloader.cancel();
-              wasCanceled = true;
+                downloader.cancel();
+                wasCanceled = true;
             }
         });
 

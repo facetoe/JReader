@@ -19,26 +19,26 @@ public class UnZipper {
         destFile = destinationFile;
     }
 
-    public void unzip() throws ZipException, Exception{
-            ZipFile zipFile = new ZipFile(srcFile);
+    public void unzip() throws ZipException, Exception {
+        ZipFile zipFile = new ZipFile(srcFile);
 
-            // Set runInThread variable of ZipFile to true.
-            // When this variable is set, Zip4j will run any task in a new thread
-            // If this variable is not set, Zip4j will run all tasks in the current
-            // thread.
-            zipFile.setRunInThread(true);
-            zipFile.extractAll(destFile);
-            ProgressMonitor pm = zipFile.getProgressMonitor();
+        // Set runInThread variable of ZipFile to true.
+        // When this variable is set, Zip4j will run any task in a new thread
+        // If this variable is not set, Zip4j will run all tasks in the current
+        // thread.
+        zipFile.setRunInThread(true);
+        zipFile.extractAll(destFile);
+        ProgressMonitor pm = zipFile.getProgressMonitor();
 
-            while ( pm.getState() == ProgressMonitor.STATE_BUSY ) {
-                if ( pm.getCurrentOperation() == ProgressMonitor.OPERATION_EXTRACT ) {
-                    fireEvent(ActionEvent.ACTION_PERFORMED, pm.getFileName(), pm.getWorkCompleted());
-                }
+        while ( pm.getState() == ProgressMonitor.STATE_BUSY ) {
+            if ( pm.getCurrentOperation() == ProgressMonitor.OPERATION_EXTRACT ) {
+                fireEvent(ActionEvent.ACTION_PERFORMED, pm.getFileName(), pm.getWorkCompleted());
             }
+        }
 
-            if ( pm.getResult() == ProgressMonitor.RESULT_ERROR ) {
-               throw new Exception(pm.getException().getMessage(), pm.getException().getCause());
-            }
+        if ( pm.getResult() == ProgressMonitor.RESULT_ERROR ) {
+            throw new Exception(pm.getException().getMessage(), pm.getException().getCause());
+        }
     }
 
     public void fireEvent(int eventType, String message, long progress) {
@@ -64,7 +64,7 @@ class UnZipperProgressWindow extends ProgressWindow<Boolean> {
     }
 
     @Override
-    public Boolean execute() throws Exception{
+    public Boolean execute() throws Exception {
         UnZipper unZipper = new UnZipper(srcFile, destFile);
         unZipper.addActionListener(new ActionListener() {
             @Override

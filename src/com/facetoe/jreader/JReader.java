@@ -28,7 +28,14 @@ class ViewSourceAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        jReader.newSourceTab(null);
+        SwingWorker worker = new SwingWorker() {
+            @Override
+            protected Object doInBackground() throws Exception {
+                jReader.newSourceTab(null);
+                return null;  //To change body of implemented methods use File | Settings | File Templates.
+            }
+        };
+        worker.execute();
     }
 }
 
@@ -81,9 +88,12 @@ public class JReader extends JFrame {
     private JButton btnBack = new JButton("Back");
     private JButton btnNext = new JButton("Next");
     private JButton btnHome = new JButton("Home");
+    JButton btnSearch = new JButton("Search");
+
     private JButton btnSource;// = new JButton("View Source");
 
     private JMenuItem mnuNewSource;
+    private JMenu subMenuProfiles;
     private SearchContext searchContext = new SearchContext();
 
     /* This is necessary to make the Swing thread wait until the javafx content is loaded on startup.
@@ -91,7 +101,7 @@ public class JReader extends JFrame {
     CountDownLatch javafxLoadLatch = new CountDownLatch(1);
 
     /* Keeps track of which profile we are using and provides access to the settings for that profile. */
-    ProfileManager profileManager = ProfileManager.getInstance();
+    ProfileManager profileManager;
 
 
     private HashMap<String, String> classNames;
@@ -105,9 +115,31 @@ public class JReader extends JFrame {
 
     public JReader() {
 
-        loadJavaDocData();
-        initAutocompleteTextField();
+        if(!JReaderSetup.isSetup()) {
+            new SetupWindow();
+        }
 
+        profileManager = ProfileManager.getInstance();
+        addJavaDocCLassNames();
+        newJReaderTab("JReader", false);
+
+        initMenus();
+        initActions();
+        initTopPanel();
+        initListeners();
+
+        add(tabbedPane, BorderLayout.CENTER);
+        setPreferredSize(new Dimension(1024, 600));
+        setSize(1024, 600);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setTitle("JReader");
+
+        System.out.println("Setting visible");
+        pack();
+        setVisible(true);
+    }
+
+    private void initMenus() {
         JMenuBar menuBar = new JMenuBar();
         JMenu windowMenu = new JMenu("Window");
         mnuNewSource = new JMenuItem();
@@ -121,15 +153,16 @@ public class JReader extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new NewProfileWindow();
-                if(currentTab instanceof JReaderPanel) {
-                    JReaderPanel panel = (JReaderPanel)currentTab;
+                if ( currentTab instanceof JReaderPanel ) {
+                    JReaderPanel panel = ( JReaderPanel ) currentTab;
                     panel.loadURL(profileManager.getDocDir() + File.separator + "overview-summary.html");
+                    subMenuProfiles.add(Config.getString(Config.CURRENT_PROFILE));
                 }
             }
         });
         fileMenu.add(itmNewProfile);
 
-        JMenu subMenuProfiles = new JMenu("Change Profile");
+        subMenuProfiles = new JMenu("Change Profile");
 
         ArrayList<String> profiles = profileManager.getProfileNames();
         for ( String profile : profiles ) {
@@ -138,7 +171,13 @@ public class JReader extends JFrame {
             item.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                   profileManager.setCurrentProfile(profileName);
+                    removeJavaDocClassNames();
+                    profileManager.setCurrentProfile(profileName);
+                    if(currentTab instanceof JReaderPanel) {
+                        JReaderPanel panel = (JReaderPanel)currentTab;
+                        panel.home();
+                    }
+                    addJavaDocCLassNames();
                 }
             });
             subMenuProfiles.add(item);
@@ -191,6 +230,9 @@ public class JReader extends JFrame {
 
         menuBar.add(mnuFind);
 
+    }
+
+    private void initActions() {
         Action action = new CloseTabAction(tabbedPane);
         String keyStrokeAndKey = "control C";
         KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
@@ -208,10 +250,10 @@ public class JReader extends JFrame {
         keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, keyStrokeAndKey);
         getRootPane().getActionMap().put(keyStrokeAndKey, action);
+    }
 
-
-
-        /* You create 3 panels, left, right and top. The components go into the left and
+    private void initTopPanel() {
+          /* You create 3 panels, left, right and top. The components go into the left and
            right panels with their own layout manager and they both go in the top panel.
          */
         JPanel topBar = new JPanel(new BorderLayout(5, 0));
@@ -224,7 +266,6 @@ public class JReader extends JFrame {
         progressBar.setStringPainted(true);
 
         leftBar.add(searchBar, BorderLayout.WEST);
-        JButton btnSearch = new JButton("Search");
         leftBar.add(btnSearch, BorderLayout.EAST);
         rightBar.add(btnBack);
         rightBar.add(btnNext);
@@ -245,15 +286,12 @@ public class JReader extends JFrame {
         statusBar.add(lblStatus, BorderLayout.CENTER);
         statusBar.add(progressBar, BorderLayout.EAST);
 
-        addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if ( e.isControlDown() && e.getKeyChar() != 's' && e.getKeyCode() == KeyEvent.VK_S ) {
 
-                }
-            }
-        });
+        add(topBar, BorderLayout.NORTH);
+        add(statusBar, BorderLayout.SOUTH);
+    }
 
+    private void initListeners() {
         btnBack.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -285,13 +323,6 @@ public class JReader extends JFrame {
             }
         });
 
-        btnCollapse.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-            }
-        });
-
         searchBar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -299,7 +330,6 @@ public class JReader extends JFrame {
             }
         });
 
-        newJReaderTab("JReader", false);
 
         tabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
             @Override
@@ -320,20 +350,6 @@ public class JReader extends JFrame {
                 currentTab = ( JPanel ) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
             }
         });
-
-        add(topBar, BorderLayout.NORTH);
-        add(tabbedPane, BorderLayout.CENTER);
-        add(statusBar, BorderLayout.SOUTH);
-        pack();
-
-        setPreferredSize(new Dimension(1024, 600));
-        setSize(1024, 600);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setTitle("JReader");
-
-        System.out.println("Setting visible");
-
-        setVisible(true);
     }
 
     private void loadClass(String path) {
@@ -414,7 +430,9 @@ public class JReader extends JFrame {
             public void run() {
                 final JReaderPanel readerPanel = new JReaderPanel(progressBar, javafxLoadLatch);
                 try {
+                    System.out.println("Waiting");
                     javafxLoadLatch.await();
+                    System.out. println("Finished");
                 } catch ( InterruptedException e ) {
                     e.printStackTrace();
                 }
@@ -573,10 +591,11 @@ public class JReader extends JFrame {
         }
     }
 
-    private void loadJavaDocData() {
+    private void addJavaDocCLassNames() {
         try {
             File classDataFile = new File(profileManager.getClassDataFilePath());
             classNames = Utilities.readClassData(classDataFile);
+            searchBar.addWordsToTrie(new ArrayList<String>(classNames.keySet()));
         } catch ( IOException e ) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Failed to load class data at"
@@ -595,8 +614,8 @@ public class JReader extends JFrame {
         }
     }
 
-    private void initAutocompleteTextField() {
-        searchBar.addWordsToTrie(new ArrayList<String>(classNames.keySet()));
+    private void removeJavaDocClassNames() {
+        searchBar.removeWordsFromTrie(new ArrayList<String>(classNames.keySet()));
     }
 
     public static void main(String[] args) {
@@ -619,10 +638,6 @@ public class JReader extends JFrame {
             } catch ( UnsupportedLookAndFeelException e1 ) {
                 e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
-        }
-
-        if ( !JReaderSetup.isSetup() ) {
-            //JReaderSetup.setUp();
         }
 
         SwingUtilities.invokeLater(new Runnable() {

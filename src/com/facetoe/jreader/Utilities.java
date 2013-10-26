@@ -195,15 +195,20 @@ public class Utilities {
     }
 
     public static boolean isJavaDocsDir(File docDir) {
-        File file = findDocIndexFile(docDir, "index.html");
-        if(file == null) {
+        docDir = findDocDir(docDir);
+        File overviewFile = new File(docDir.getAbsoluteFile() + File.separator + "overview-summary.html");
+        File indexFile = new File(docDir.getAbsoluteFile() + File.separator + "index.html");
+        File classFile = new File(docDir.getAbsoluteFile() + File.separator + "allclasses-noframe.html");
+        if ( indexFile == null
+                || classFile == null
+                || overviewFile == null ) {
             return false;
         }
 
         Scanner scanner = null;
         String line;
         try {
-            scanner = new Scanner(file);
+            scanner = new Scanner(indexFile);
             while ( scanner.hasNextLine() ) {
                 line = scanner.nextLine();
                 if ( (line.contains("Java") && line.contains("Documentation"))
@@ -218,22 +223,44 @@ public class Utilities {
         return false;
     }
 
-    public static File findDocIndexFile(File rootDir, String indexFileName) {
+    public static File findDocDir(File rootDir) {
         File[] files = rootDir.listFiles();
-        if ( files == null ) {
-            return null;
-        }
-
-        for ( File file : files ) {
-            if ( file.isDirectory() ) {
-                findDocIndexFile(file, indexFileName);
-            } else {
-                if ( file.getName().equals(indexFileName) ) {
+        if(files != null) {
+            for ( File file : files ) {
+                if(file.getName().equals("api")) {
                     return file;
                 }
             }
         }
-        return null;
+        return rootDir;
     }
+
+
+    public static void deleteDirectoryAndContents(File file)
+            throws IOException {
+        if ( file.isDirectory() ) {
+            if ( file.list().length == 0 ) {
+                file.delete();
+
+            } else {
+                String files[] = file.list();
+
+                // Recursive delete everything in here
+                for ( String temp : files ) {
+                    File fileDelete = new File(file, temp);
+                    deleteDirectoryAndContents(fileDelete);
+                }
+
+                // Delete enclosing file
+                if ( file.list().length == 0 ) {
+                    file.delete();
+                }
+            }
+        } else {
+            // It's a file, just delete it.
+            file.delete();
+        }
+    }
+
 }
 
