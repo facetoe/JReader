@@ -103,7 +103,7 @@ public class ProfileManager implements Serializable {
     }
 
     private void writeProfile(Profile profile) throws IOException {
-        String profileDirPath = Config.getString(Config.PROFILE_DIR) + profile.name;
+        String profileDirPath = Config.getString(Config.PROFILE_DIR) + profile.profileDirName;
         File profileDir = new File(profileDirPath);
 
         if ( !profileDir.exists() ) {
@@ -143,7 +143,7 @@ public class ProfileManager implements Serializable {
     }
 
     public String getPath() {
-        return Config.getString(Config.PROFILE_DIR) + File.separator + currentProfile.name + File.separator;
+        return Config.getString(Config.PROFILE_DIR) + File.separator + currentProfile.profileDirName + File.separator;
     }
 
     public String getClassDataFilePath() {
@@ -158,6 +158,14 @@ public class ProfileManager implements Serializable {
         }
         return false;
     }
+
+//    public void deleteProfile(String profileName) {
+//        Profile profile = profiles.get(profileName);
+//        File profileDir = new File(Config.getString(Config.PROFILE_DIR) + File.separator + profile.)
+//        if(profile != null) {
+//            Utilities.deleteDirectoryAndContents(new File(profile.));
+//        }
+//    }
 
     public String getDocDir() {
         return currentProfile.docDir;
@@ -197,6 +205,7 @@ public class ProfileManager implements Serializable {
 
     private class Profile implements Serializable {
         private static final long serialVersionUID = 1L;
+        private String profileDirName;
         private String docDir;
         private String srcDir;
         private String fileName;
@@ -216,6 +225,7 @@ public class ProfileManager implements Serializable {
         public Profile(String name, String fileName, String docDir, String srcDir) {
             this.name = name;
             this.fileName = fileName;
+            this.profileDirName = name.replaceAll("[^a-zA-Z0-9.-]", "_");
             this.docDir = docDir;
             this.srcDir = srcDir;
             this.regexpIsEnabled = false;

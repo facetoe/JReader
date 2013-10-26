@@ -19,6 +19,8 @@
     <children>
       <grid id="5cb53" binding="pnlName" layout-manager="FormLayout">
         <rowspec value="center:d:noGrow"/>
+        <rowspec value="top:4dlu:noGrow"/>
+        <rowspec value="center:d:grow"/>
         <colspec value="fill:104px:noGrow"/>
         <colspec value="left:17dlu:noGrow"/>
         <colspec value="fill:d:grow"/>
@@ -33,10 +35,10 @@
         <children>
           <component id="a60f5" class="javax.swing.JTextField" binding="txtName">
             <constraints>
-              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
-              <forms defaultalign-horz="false"/>
+              <forms defaultalign-horz="false" defaultalign-vert="false"/>
             </constraints>
             <properties>
               <preferredSize width="350" height="20"/>
@@ -52,6 +54,12 @@
               <text value="Profile Name:"/>
             </properties>
           </component>
+          <vspacer id="66118">
+            <constraints>
+              <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-vert="false"/>
+            </constraints>
+          </vspacer>
         </children>
       </grid>
       <grid id="bd2f9" binding="pnlDocs" layout-manager="FormLayout">

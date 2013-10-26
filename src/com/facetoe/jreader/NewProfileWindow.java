@@ -1,5 +1,6 @@
 package com.facetoe.jreader;
 
+import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -134,17 +135,19 @@ public class NewProfileWindow extends JDialog {
         parentPanel.setLayout(new FormLayout("fill:d:grow", "center:d:noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow"));
         parentPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10), null));
         pnlName = new JPanel();
-        pnlName.setLayout(new FormLayout("fill:104px:noGrow,left:17dlu:noGrow,fill:d:grow", "center:d:noGrow"));
+        pnlName.setLayout(new FormLayout("fill:104px:noGrow,left:17dlu:noGrow,fill:d:grow", "center:d:noGrow,top:4dlu:noGrow,center:d:grow"));
         CellConstraints cc = new CellConstraints();
         parentPanel.add(pnlName, cc.xy(1, 1));
         pnlName.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), null));
         txtName = new JTextField();
         txtName.setPreferredSize(new Dimension(350, 20));
         txtName.setToolTipText("Name for this profile");
-        pnlName.add(txtName, cc.xy(3, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+        pnlName.add(txtName, cc.xy(3, 1, CellConstraints.FILL, CellConstraints.FILL));
         final JLabel label1 = new JLabel();
         label1.setText("Profile Name:");
         pnlName.add(label1, cc.xy(1, 1));
+        final Spacer spacer1 = new Spacer();
+        pnlName.add(spacer1, cc.xy(3, 3, CellConstraints.DEFAULT, CellConstraints.FILL));
         pnlDocs = new JPanel();
         pnlDocs.setLayout(new FormLayout("fill:101px:noGrow,left:19dlu:noGrow,fill:d:grow,left:4dlu:noGrow,fill:max(d;4px):noGrow", "center:d:noGrow"));
         parentPanel.add(pnlDocs, cc.xy(1, 3));
@@ -194,7 +197,7 @@ public class NewProfileWindow extends JDialog {
         return parentPanel;
     }
 
-//    public static void main(String[] args) {
+    //    public static void main(String[] args) {
 //        new NewProfileWindow();
 //    }
 }
