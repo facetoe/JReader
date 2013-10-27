@@ -14,13 +14,27 @@ public class JavaSourceFile {
     private HashMap<String, JavaObject> allObjects = new HashMap<String, JavaObject>();
     private JavaClassOrInterface enclosingClass;
 
+    /* When a JavaSourceFile object is created, gather all the declarations into <code>allObjects</code> for easy access */
     public JavaSourceFile(ArrayList<JavaClassOrInterface> fileContents) {
         this.fileContents = fileContents;
         for ( JavaClassOrInterface fileContent : fileContents ) {
-            allObjects.putAll(fileContent.getConstructors());
-            allObjects.putAll(fileContent.getMethods());
-            allObjects.putAll(fileContent.getFields());
-            allObjects.putAll(fileContent.getEnums());
+            addAllObjectData(fileContent);
+        }
+    }
+
+
+    private void addAllObjectData(JavaClassOrInterface classOrInterface) {
+        allObjects.putAll(classOrInterface.getConstructors());
+        allObjects.putAll(classOrInterface.getMethods());
+        allObjects.putAll(classOrInterface.getFields());
+        allObjects.putAll(classOrInterface.getEnums());
+        allObjects.putAll(classOrInterface.getNestedClasses());
+        HashMap<String, JavaClassOrInterface> nestedClasses = classOrInterface.getNestedClasses();
+
+        /* For each nested class, recurse through it and each nested class it contains gathering all the declaration data */
+        for ( String s : nestedClasses.keySet() ) {
+            JavaClassOrInterface nestedClass = nestedClasses.get(s);
+            addAllObjectData(nestedClass);
         }
     }
 
@@ -30,6 +44,10 @@ public class JavaSourceFile {
 
     public JavaObject getItem(String item) {
         return allObjects.get(item);
+    }
+
+    public ArrayList<JavaClassOrInterface> getFileContents() {
+        return fileContents;
     }
 
     public JavaClassOrInterface getEnclosingClass() {

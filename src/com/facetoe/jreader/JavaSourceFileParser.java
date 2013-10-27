@@ -7,10 +7,26 @@ import japa.parser.ast.body.*;
 import japa.parser.ast.visitor.GenericVisitorAdapter;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class JavaSourceFileParser {
+
+    public static void main(String[] args) {
+        try {
+            JavaSourceFile file = parse(new FileInputStream("/home/facetoe/.jreader/src-jdk/java/awt/Container.java"));
+            for ( String s : file.getAllDeclarations() ) {
+                System.out.println(s);
+            }
+        } catch ( FileNotFoundException ex ) {
+            ex.printStackTrace();
+        } catch ( IOException ex ) {
+            ex.printStackTrace();
+        } catch ( ParseException ex ) {
+            ex.printStackTrace();
+        }
+    }
 
     /**
      * Parses a Java source file and extracts constructor, method, field and enum declarations.
@@ -48,35 +64,10 @@ public class JavaSourceFileParser {
             if ( cu != null && cu.getTypes() != null ) {
                 for ( TypeDeclaration type : cu.getTypes() ) {
 
-                    // For each class declaration loop through its body and extract method, constructor and
-                    // field declarations.
+                    // Visit each class declaration and extract all the data from it.
                     if ( type instanceof ClassOrInterfaceDeclaration ) {
-
-                        // Store each class or interface's data in this object
-                        JavaClassOrInterface javaObj = new JavaClassOrInterface(( ClassOrInterfaceDeclaration ) type);
-
-                        for ( BodyDeclaration declaration : type.getMembers() ) {
-                            if ( declaration instanceof MethodDeclaration ) {
-                                JavaMethod method = ( JavaMethod ) visit(( MethodDeclaration ) declaration, null);
-                                javaObj.addMethod(method);
-
-                            } else if ( declaration instanceof FieldDeclaration ) {
-                                JavaField field = ( JavaField ) visit(( FieldDeclaration ) declaration, null);
-                                javaObj.addField(field);
-
-                            } else if ( declaration instanceof EnumDeclaration ) {
-                                JavaEnum javaEnum = ( JavaEnum ) visit(( EnumDeclaration ) declaration, null);
-                                javaObj.addEnum(javaEnum);
-
-                            } else if ( declaration instanceof ConstructorDeclaration ) {
-                                JavaConstructor constructor = ( JavaConstructor ) visit(( ConstructorDeclaration ) declaration, null);
-                                javaObj.addConstructor(constructor);
-
-                            } else {
-                                // As far as I can tell this only catches annotations, which might be useful to add later.
-                            }
-                        }
-                        classesAndInterfaces.add(javaObj);
+                            JavaClassOrInterface javaObj = (JavaClassOrInterface)visit((ClassOrInterfaceDeclaration)type, null);
+                            classesAndInterfaces.add(javaObj);
                     }
                 }
             } else {
@@ -87,7 +78,42 @@ public class JavaSourceFileParser {
 
         @Override
         public Object visit(ClassOrInterfaceDeclaration n, Object arg) {
-            return new JavaClassOrInterface(n).getDeclaration();
+            // Store each class or interface's data in this object
+            JavaClassOrInterface javaObj = new JavaClassOrInterface(n);
+
+            for ( BodyDeclaration declaration : n.getMembers() ) {
+                if ( declaration instanceof MethodDeclaration ) {
+                    JavaMethod method = ( JavaMethod ) visit(( MethodDeclaration ) declaration, null);
+                    javaObj.addMethod(method);
+
+                } else if ( declaration instanceof FieldDeclaration ) {
+                    JavaField field = ( JavaField ) visit(( FieldDeclaration ) declaration, null);
+                    javaObj.addField(field);
+
+                } else if ( declaration instanceof EnumDeclaration ) {
+                    JavaEnum javaEnum = ( JavaEnum ) visit(( EnumDeclaration ) declaration, null);
+                    javaObj.addEnum(javaEnum);
+
+                } else if ( declaration instanceof ConstructorDeclaration ) {
+                    JavaConstructor constructor = ( JavaConstructor ) visit(( ConstructorDeclaration ) declaration, null);
+                    javaObj.addConstructor(constructor);
+
+
+                    /* If we have a nested class, recurse through it and each nested class that it contains
+                     * gathering data.  */
+                }else if (declaration instanceof ClassOrInterfaceDeclaration) {
+                    JavaClassOrInterface classOrInterface = (JavaClassOrInterface)visit((ClassOrInterfaceDeclaration) declaration, null);
+                    javaObj.addNestedClassOrInterface(classOrInterface);
+
+                } else {
+                    // As far as I can tell this only catches annotations, which might be useful to add later.
+                }
+            }
+            return javaObj;
+        }
+
+        public Object parseClassData(ClassOrInterfaceDeclaration classDec) {
+            return new JavaClassOrInterface(classDec).getDeclaration();
         }
 
         @Override

@@ -89,10 +89,11 @@ class JavaClassOrInterface extends JavaObject<ClassOrInterfaceDeclaration> {
 
     // All of this class or interfaces methods, constructors, enums and fields.
     // The key is the name and parameters with the object as the value.
-    HashMap<String, JavaObject> methods = new HashMap<String, JavaObject>();
-    HashMap<String, JavaObject> constructors = new HashMap<String, JavaObject>();
-    HashMap<String, JavaObject> enums = new HashMap<String, JavaObject>();
-    HashMap<String, JavaObject> fields = new HashMap<String, JavaObject>();
+    HashMap<String, JavaClassOrInterface> nestedClasses = new HashMap<String, JavaClassOrInterface>();
+    HashMap<String, JavaMethod> methods = new HashMap<String, JavaMethod>();
+    HashMap<String, JavaConstructor> constructors = new HashMap<String, JavaConstructor>();
+    HashMap<String, JavaEnum> enums = new HashMap<String, JavaEnum>();
+    HashMap<String, JavaField> fields = new HashMap<String, JavaField>();
 
     static final int CLASS = 0;
     static final int INTERFACE = 1;
@@ -147,20 +148,28 @@ class JavaClassOrInterface extends JavaObject<ClassOrInterfaceDeclaration> {
         methods.put(method.declaration, method);
     }
 
-    HashMap<String, JavaObject> getMethods() {
+    public void addNestedClassOrInterface(JavaClassOrInterface classOrInterface) {
+        nestedClasses.put(classOrInterface.declaration, classOrInterface);
+    }
+
+    HashMap<String, JavaMethod> getMethods() {
         return methods;
     }
 
-    HashMap<String, JavaObject> getConstructors() {
+    HashMap<String, JavaConstructor> getConstructors() {
         return constructors;
     }
 
-    HashMap<String, JavaObject> getEnums() {
+    HashMap<String, JavaEnum> getEnums() {
         return enums;
     }
 
-    HashMap<String, JavaObject> getFields() {
+    HashMap<String, JavaField> getFields() {
         return fields;
+    }
+
+    HashMap<String, JavaClassOrInterface> getNestedClasses() {
+        return nestedClasses;
     }
 
     int getType() {
