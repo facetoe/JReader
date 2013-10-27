@@ -11,9 +11,9 @@
     <orderEntry type="library" exported="" name="rsyntaxtextarea" level="project" />
     <orderEntry type="library" exported="" name="zip4j_1.3.1" level="project" />
     <orderEntry type="library" name="javaparser-1.0.11-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="jgoodies-forms" level="project" />
-    <orderEntry type="library" name="forms_rt" level="project" />
     <orderEntry type="library" name="log4j-1.2.14" level="project" />
+    <orderEntry type="library" name="forms_rt" level="project" />
+    <orderEntry type="library" name="jgoodies-forms" level="project" />
   </component>
 </module>
 
