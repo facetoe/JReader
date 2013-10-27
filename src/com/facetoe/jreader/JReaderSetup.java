@@ -26,11 +26,19 @@ public class JReaderSetup {
     }
 
     public static void createDirectoriesAndConfig() throws IOException {
+        boolean wasSuccess;
         File dataDir = new File(System.getProperty("user.home")
                 + File.separator
                 + Config.DATA_DIR_NAME
                 + File.separator);
-        boolean wasSuccess;
+        File configFile = new File(Config.propertiesFilePath);
+
+        String profileDirPath = dataDir.getAbsolutePath()
+                + File.separator
+                + Config.PROFILE_DIR_NAME
+                + File.separator;
+
+        File profileDir = new File(profileDirPath);
 
         if ( !dataDir.exists() ) {
             wasSuccess = dataDir.mkdirs();
@@ -42,34 +50,30 @@ public class JReaderSetup {
             System.err.println("Data Directory already exists.");
         }
 
-        File configFile = new File(Config.propertiesFilePath);
         if ( !configFile.exists() ) {
-            configFile.createNewFile();
+            wasSuccess = configFile.createNewFile();
+            if(wasSuccess) {
+                Config.setString(Config.DATA_DIR, dataDir.getAbsolutePath() + File.separator);
+                Config.setString(Config.CURRENT_PROFILE, "");
+                Config.setBool(Config.HAS_DEFAULT_PROFILE, false);
+                Config.setBool(Config.HAS_JAVALANG_SOURCE, false);
+                Config.setBool(Config.HAS_EXTRACTED_SOURCE, false);
+            } else {
+                System.err.println("Failed to create config file at:" + configFile.getAbsolutePath());
+            }
 
         } else {
             System.err.println("Config already exists.");
         }
 
-        String profileDirPath = dataDir.getAbsolutePath()
-                + File.separator
-                + Config.PROFILE_DIR_NAME
-                + File.separator;
-
-        File profileDir = new File(profileDirPath);
-
         if ( !profileDir.exists() ) {
             wasSuccess = profileDir.mkdirs();
-            if ( !wasSuccess ) {
+            if ( wasSuccess ) {
+                Config.setString(Config.PROFILE_DIR, profileDirPath);
+            } else {
                 throw new IOException("Failed to create profile directory at: " + profileDirPath);
             }
         }
-
-        Config.setString(Config.PROFILE_DIR, profileDirPath);
-        Config.setString(Config.DATA_DIR, dataDir.getAbsolutePath() + File.separator);
-        Config.setString(Config.CURRENT_PROFILE, "");
-        Config.setBool(Config.HAS_DEFAULT_PROFILE, false);
-        Config.setBool(Config.HAS_JAVALANG_SOURCE, false);
-        Config.setBool(Config.HAS_EXTRACTED_SOURCE, false);
     }
 
 

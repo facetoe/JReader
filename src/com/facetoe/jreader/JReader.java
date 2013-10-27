@@ -458,6 +458,7 @@ public class JReader extends JFrame {
                                             //TODO clean this up.
                                             String tabTitle = Utilities.extractTitle(newURL);
                                             tabbedPane.setTitleAt(tabbedPane.getSelectedIndex(), tabTitle);
+                                            System.out.println(Utilities.docPathToSourcePath(newURL));
                                             if ( !newURL.startsWith("http")
                                                     && !newURL.startsWith("www.")
                                                     && Utilities.isGoodSourcePath(Utilities.docPathToSourcePath(newURL)) ) {

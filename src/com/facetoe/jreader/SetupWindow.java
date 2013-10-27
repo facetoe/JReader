@@ -174,9 +174,9 @@ public class SetupWindow extends JDialog {
 
         @Override
         protected Boolean doInBackground() throws Exception {
-            if ( !(JReaderSetup.hasDataDir() && JReaderSetup.hasDataDir()) ) {
-                JReaderSetup.createDirectoriesAndConfig();
-            }
+
+            JReaderSetup.createDirectoriesAndConfig();
+
 
             File docDir = JReaderSetup.chooseDocs();
             if ( docDir == null ) {

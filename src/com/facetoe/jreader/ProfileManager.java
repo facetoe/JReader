@@ -15,7 +15,7 @@ import java.util.HashMap;
  */
 
 public class ProfileManager implements Serializable {
-    private final Logger log = Logger.getLogger(this.getClass());
+    private static final Logger log = Logger.getLogger(ProfileManager.class);
 
     private static final long serialVersionUID = 1L;
     private Profile currentProfile;
