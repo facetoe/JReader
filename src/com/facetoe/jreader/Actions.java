@@ -65,13 +65,14 @@ class NewReaderTabAction extends AbstractAction {
 }
 
 class QuitAction extends AbstractAction {
-
-    public QuitAction() {
+        JReader jReader;
+    public QuitAction(JReader jReader) {
         super("Quit");
+        this.jReader = jReader;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        System.exit(0);
+        jReader.handleQuit();
     }
 }

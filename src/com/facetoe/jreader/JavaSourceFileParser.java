@@ -16,9 +16,6 @@ public class JavaSourceFileParser {
     public static void main(String[] args) {
         try {
             JavaSourceFile file = parse(new FileInputStream("/home/facetoe/.jreader/src-jdk/java/awt/Container.java"));
-            for ( String s : file.getAllDeclarations() ) {
-                System.out.println(s);
-            }
         } catch ( FileNotFoundException ex ) {
             ex.printStackTrace();
         } catch ( IOException ex ) {
@@ -110,10 +107,6 @@ public class JavaSourceFileParser {
                 }
             }
             return javaObj;
-        }
-
-        public Object parseClassData(ClassOrInterfaceDeclaration classDec) {
-            return new JavaClassOrInterface(classDec).getDeclaration();
         }
 
         @Override

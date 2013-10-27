@@ -180,7 +180,7 @@ public class JReader extends JFrame {
         });
         fileMenu.add(subMenuDeleteProfile);
 
-        JMenuItem itmQuit = new JMenuItem(new QuitAction());
+        JMenuItem itmQuit = new JMenuItem(new QuitAction(this));
         fileMenu.add(itmQuit);
         menuBar.add(fileMenu);
 
@@ -240,7 +240,7 @@ public class JReader extends JFrame {
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, keyStrokeAndKey);
         getRootPane().getActionMap().put(keyStrokeAndKey, action);
 
-        action = new QuitAction();
+        action = new QuitAction(this);
         keyStrokeAndKey = "control Q";
         keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, keyStrokeAndKey);
@@ -605,6 +605,17 @@ public class JReader extends JFrame {
 
     private void removeJavaDocClassNames() {
         searchBar.removeWordsFromTrie(new ArrayList<String>(classNames.keySet()));
+    }
+
+    public void handleQuit() {
+        try {
+            System.out.println("Saving profiles..");
+            profileManager.saveProfiles();
+            System.out.println("Success!");
+            System.exit(0);
+        } catch ( IOException e ) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
