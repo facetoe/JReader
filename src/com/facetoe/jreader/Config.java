@@ -1,5 +1,7 @@
 package com.facetoe.jreader;
 
+import org.apache.log4j.Logger;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -8,6 +10,8 @@ import java.util.Properties;
 
 
 public class Config {
+    private static final Logger log = Logger.getLogger(Config.class);
+
     public static final String DATA_DIR = "dataDir";
     public static final String PROFILE_DIR = "profileDir";
     public static final String CURRENT_PROFILE = "currentProfile";
@@ -60,7 +64,7 @@ public class Config {
             properties.store(new FileOutputStream(propertiesFilePath), null);
 
         } catch ( IOException ex ) {
-            ex.printStackTrace();
+            log.error(ex.getMessage(), ex);
         }
     }
 
@@ -68,7 +72,7 @@ public class Config {
         try {
             properties.load(new FileInputStream(propertiesFilePath));
         } catch ( IOException ex ) {
-            ex.printStackTrace();
+            log.error(ex.getMessage(), ex);
         }
         return properties.getProperty(key);
     }

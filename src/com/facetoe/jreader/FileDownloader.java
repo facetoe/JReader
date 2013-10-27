@@ -1,5 +1,7 @@
 package com.facetoe.jreader;
 
+import org.apache.log4j.Logger;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileOutputStream;
@@ -31,19 +33,13 @@ interface RBCWrapperDelegate {
 }
 
 class FileDownloader implements RBCWrapperDelegate {
+    private final Logger log = Logger.getLogger(this.getClass());
+
     String localPath;
     String remoteURL;
     ReadableByteChannel rbc;
     HttpURLConnection connection;
     ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
-
-//    public static void main(String[] args) {
-//        if ( new FileDownloaderProgressWindow("/home/facetoe/tmp/test/test.img", "https://upload.wikimedia.org/wikipedia/commons/1/1e/Piwo_gratis.jpg").execute() ) {
-//            System.out.println("Success");
-//        } else {
-//            System.out.println("Canceled");
-//        }
-//    }
 
     public FileDownloader(String localPath, String remoteURL) {
 
@@ -71,7 +67,8 @@ class FileDownloader implements RBCWrapperDelegate {
                 try {
                     Thread.sleep(1000);
                 } catch ( InterruptedException ex ) {
-                    ex.printStackTrace();
+                    log.error(ex.getMessage(), ex);
+
                 }
             } else if ( rbc.isOpen() ) {
                 break;
@@ -83,7 +80,7 @@ class FileDownloader implements RBCWrapperDelegate {
             rbc.close();
 
         } catch ( IOException e1 ) {
-            e1.printStackTrace();
+            log.error(e1.getMessage(), e1);
         }
     }
 
@@ -114,11 +111,11 @@ class FileDownloader implements RBCWrapperDelegate {
 
 
         } catch ( ProtocolException ex ) {
-            ex.printStackTrace();
+            log.error(ex.getMessage(), ex);
         } catch ( IOException ex ) {
-            ex.printStackTrace();
+            log.error(ex.getMessage(), ex);
         } catch ( Exception ex ) {
-            ex.printStackTrace();
+            log.error(ex.getMessage(), ex);
         }
 
         return contentLength;
@@ -174,6 +171,7 @@ class RBCWrapper implements ReadableByteChannel {
 }
 
 class FileDownloaderProgressWindow extends ProgressWindow<Boolean> {
+    private final Logger log = Logger.getLogger(this.getClass());
 
     String localDest;
     String remoteSrc;
@@ -210,7 +208,7 @@ class FileDownloaderProgressWindow extends ProgressWindow<Boolean> {
         try {
             downloader.download();
         } catch ( IOException e ) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            log.error(e.getMessage(), e);
             return Boolean.FALSE;
         }
 

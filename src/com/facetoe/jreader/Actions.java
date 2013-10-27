@@ -29,6 +29,7 @@ class ViewSourceAction extends AbstractAction {
             }
         };
         worker.execute();
+
     }
 }
 

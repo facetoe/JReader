@@ -4,6 +4,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import org.apache.log4j.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -24,6 +25,8 @@ import java.util.concurrent.ExecutionException;
  * Time: 10:34 AM
  */
 public class SetupWindow extends JDialog {
+    private final Logger log = Logger.getLogger(this.getClass());
+
     private JPanel pnlParent;
 
     private JPanel pnlInfo;
@@ -50,7 +53,7 @@ public class SetupWindow extends JDialog {
                     btnOK.setEnabled(false);
                     worker.execute();
                 } catch ( Exception e1 ) {
-                    e1.printStackTrace();
+                    log.error(e1.getMessage(), e1);
                 }
             }
         });
@@ -79,7 +82,7 @@ public class SetupWindow extends JDialog {
         try {
             icon = ImageIO.read(getClass().getResourceAsStream("/com/facetoe/jreader/resources/icons/system_tick_alt_03.png"));
         } catch ( IOException e ) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         label.setIcon(new ImageIcon(icon));
     }
@@ -294,11 +297,11 @@ public class SetupWindow extends JDialog {
             try {
                 get();
             } catch ( InterruptedException e ) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
                 JOptionPane.showMessageDialog(null, e.getMessage());
 
             } catch ( ExecutionException e ) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
                 JOptionPane.showMessageDialog(null, e.getMessage());
 
             } catch ( CancellationException e ) {

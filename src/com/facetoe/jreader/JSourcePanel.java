@@ -1,5 +1,6 @@
 package com.facetoe.jreader;
 
+import org.apache.log4j.Logger;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.Theme;
@@ -23,6 +24,7 @@ import java.nio.file.Paths;
  * Displays source code with syntax highlighting and cold folding.
  */
 public class JSourcePanel extends JPanel {
+    private final Logger log = Logger.getLogger(this.getClass());
 
     RSyntaxTextArea textArea;
     RTextScrollPane scrollPane;
@@ -45,7 +47,7 @@ public class JSourcePanel extends JPanel {
             Theme theme = Theme.load(in);
             theme.apply(textArea);
         } catch ( IOException e ) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
 
         scrollPane = new RTextScrollPane(textArea);
@@ -57,7 +59,7 @@ public class JSourcePanel extends JPanel {
             String code = Utilities.readFile(Paths.get(filePath).toString(), StandardCharsets.UTF_8);
             textArea.setText(code);
         } catch ( IOException e ) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -128,7 +130,7 @@ public class JSourcePanel extends JPanel {
             findString(selectText, new SearchContext(selectText));
 
         } catch ( BadLocationException ex ) {
-            System.out.println(ex);
+            log.error("Bad location in highlightDeclaration:", ex);
         }
     }
 }

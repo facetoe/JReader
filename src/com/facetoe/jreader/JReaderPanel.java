@@ -7,6 +7,7 @@ import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,6 +22,8 @@ import static javafx.concurrent.Worker.State.FAILED;
  * Displays the Java documentation.
  */
 public class JReaderPanel extends JPanel {
+    private final Logger log = Logger.getLogger(this.getClass());
+
     private WebEngine engine;
     private WebView view;
     private JFXPanel jfxPanel;
@@ -65,7 +68,7 @@ public class JReaderPanel extends JPanel {
         setLayout(new BorderLayout());
         createScene();
         loadURL(initialURL);
-        System.out.println("Finished loading");
+        log.debug("Finished loading JReaderPanel");
     }
 
     /**
@@ -104,7 +107,7 @@ public class JReaderPanel extends JPanel {
                 engine.locationProperty().addListener(new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue<? extends String> ov, String oldValue, final String newValue) {
-                        System.out.println("New val: " + newValue);
+                        log.debug("New Path: " + newValue);
                         if ( !newValue.endsWith(".java") ) {
                             currentPage = newValue;
                         }
@@ -135,7 +138,7 @@ public class JReaderPanel extends JPanel {
 
                 jfxPanel.setScene(new Scene(view));
                 add(jfxPanel);
-                System.out.println("Counted down");
+                log.debug("Counted down latch");
 
                 /* Release the latch on the Swing thread. */
                 latch.countDown();

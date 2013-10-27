@@ -30,6 +30,8 @@ package com.facetoe.jreader;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.apache.log4j.Logger;
+
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
@@ -42,6 +44,8 @@ import java.util.UUID;
  * a JButton to close the tab it belongs to
  */
 public class ButtonTabComponent extends JPanel {
+    private final Logger log = Logger.getLogger(this.getClass());
+
     private final JTabbedPane pane;
     private UUID id;
     private String title;
@@ -87,10 +91,6 @@ public class ButtonTabComponent extends JPanel {
         return id;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
     class TabButton extends JButton implements ActionListener {
         UUID id;
 
@@ -130,7 +130,8 @@ public class ButtonTabComponent extends JPanel {
                     break;
                 }
             }
-            System.out.println("Removing tab at index: " + index);
+
+            log.debug("Removing tab at index: " + index);
             pane.remove(index);
         }
 

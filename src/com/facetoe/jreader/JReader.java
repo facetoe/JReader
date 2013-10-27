@@ -4,6 +4,7 @@ import japa.parser.ParseException;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import org.apache.log4j.Logger;
 import org.fife.ui.rtextarea.SearchContext;
 
 import javax.swing.*;
@@ -21,6 +22,7 @@ import java.util.concurrent.CountDownLatch;
 
 
 public class JReader extends JFrame {
+    private final Logger log = Logger.getLogger(this.getClass());
 
     private JButton btnBack = new JButton("Back");
     private JButton btnNext = new JButton("Next");
@@ -67,12 +69,21 @@ public class JReader extends JFrame {
         initListeners();
 
         add(tabbedPane, BorderLayout.CENTER);
+        setTitle("JReader");
         setPreferredSize(new Dimension(1024, 600));
         setSize(1024, 600);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setTitle("JReader");
 
-        System.out.println("Setting visible");
+        /* Make sure we save the profile state when the user clicks the close button */
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                handleQuit();
+                System.exit(0);
+            }
+        });
+
+        log.debug("Setting visible");
         pack();
         setVisible(true);
     }
@@ -368,7 +379,7 @@ public class JReader extends JFrame {
                 title = Utilities.extractFileName(filePath);
             }
 
-            System.out.println("Path: " + path);
+            log.debug("newSourceTab called with: " + path);
 
             if ( !Utilities.isGoodSourcePath(filePath) ) {
                 System.err.println("Bad File Path");
@@ -378,37 +389,38 @@ public class JReader extends JFrame {
             try {
                 currentSourceFile = JavaSourceFileParser.parse(new FileInputStream(filePath));
             } catch ( ParseException e ) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             } catch ( IOException e ) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
 
         } else {
-            System.err.println("Not a ReaderPanel");
+            log.warn("newSouceTab not called from ReaderPanel");
             return;
         }
 
         if ( !Utilities.isGoodSourcePath(filePath) ) {
+            log.warn("Bad file path: " + filePath);
             JOptionPane.showMessageDialog(this, "Bad File: " + filePath, "Error", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         JSourcePanel newTab = new JSourcePanel(filePath);
         addCloseButtonToTab(newTab, title);
-        tabbedPane.setSelectedComponent(newTab);
 
         if ( currentSourceFile != null ) {
             addAutoCompleteWords();
             JavaClassOrInterface obj = currentSourceFile.getEnclosingClass();
             newTab.highlightDeclaration(obj.getBeginLine(), obj.getEndLine(), obj.beginColumn);
         } else {
-            System.out.println("IT was null");
+            log.warn("");
         }
 
         disableBrowserButtons();
         disableNewSourceOption();
         searchBar.requestFocus();
         searchBar.setText("");
+        tabbedPane.setSelectedComponent(newTab);
     }
 
     public void newJReaderTab(final String title, final boolean hasButton) {
@@ -418,11 +430,11 @@ public class JReader extends JFrame {
             public void run() {
                 final JReaderPanel readerPanel = new JReaderPanel(progressBar, javafxLoadLatch);
                 try {
-                    System.out.println("Waiting");
+                    log.debug("Waiting for countdown latch");
                     javafxLoadLatch.await();
-                    System.out. println("Finished");
+                    log.debug("Latch released");
                 } catch ( InterruptedException e ) {
-                    e.printStackTrace();
+                    log.error(e.getMessage(), e);
                 }
 
                 if ( hasButton ) {
@@ -501,22 +513,6 @@ public class JReader extends JFrame {
                                 menu.show(e.getComponent(), e.getX(), e.getY());
                             }
                         });
-
-                        //TODO remove this and put it on the JFrame
-                        readerPanel.getJFXPanel().addKeyListener(new KeyAdapter() {
-                            @Override
-                            public void keyPressed(KeyEvent e) {
-                                if ( e.isControlDown() && e.getKeyChar() != 's' && e.getKeyCode() == KeyEvent.VK_S ) {
-                                    System.out.println("Select All");
-                                    int index = tabbedPane.getSelectedIndex();
-                                    ButtonTabComponent component = ( ButtonTabComponent ) tabbedPane.getTabComponentAt(index);
-
-                                    if ( component != null ) {
-                                        component.removeTab();
-                                    }
-                                }
-                            }
-                        });
                     }
                 });
 
@@ -586,7 +582,7 @@ public class JReader extends JFrame {
             classNames = Utilities.readClassData(classDataFile);
             searchBar.addWordsToTrie(new ArrayList<String>(classNames.keySet()));
         } catch ( IOException e ) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             JOptionPane.showMessageDialog(this, "Failed to load class data at"
                     + profileManager.getClassDataFilePath(),
                     "Fatal Error",
@@ -594,7 +590,7 @@ public class JReader extends JFrame {
             System.exit(1);
 
         } catch ( ClassNotFoundException e ) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             JOptionPane.showMessageDialog(this, "Failed to load class data at"
                     + profileManager.getClassDataFilePath(),
                     "Fatal Error",
@@ -609,16 +605,18 @@ public class JReader extends JFrame {
 
     public void handleQuit() {
         try {
-            System.out.println("Saving profiles..");
+            log.debug("Saving profiles..");
             profileManager.saveProfiles();
-            System.out.println("Success!");
+            log.debug("Success!");
             System.exit(0);
         } catch ( IOException e ) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
     public static void main(String[] args) {
+        Logger log = Logger.getLogger(JReader.class);
+
         try {
             for ( UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels() ) {
                 if ( "Nimbus".equals(info.getName()) ) {
@@ -630,13 +628,13 @@ public class JReader extends JFrame {
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             } catch ( ClassNotFoundException e1 ) {
-                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                log.error(e1.getMessage(), e1);  //To change body of catch statement use File | Settings | File Templates.
             } catch ( InstantiationException e1 ) {
-                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                log.error(e1.getMessage(), e1);  //To change body of catch statement use File | Settings | File Templates.
             } catch ( IllegalAccessException e1 ) {
-                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                log.error(e1.getMessage(), e1);  //To change body of catch statement use File | Settings | File Templates.
             } catch ( UnsupportedLookAndFeelException e1 ) {
-                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                log.error(e1.getMessage(), e1);  //To change body of catch statement use File | Settings | File Templates.
             }
         }
 

@@ -1,5 +1,6 @@
 package com.facetoe.jreader;
 
+import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,6 +17,7 @@ import java.util.HashMap;
  * Parses the Java documentation and packages it in a HashMap with the class name as key and a JavaObjectOld as the value.
  */
 public class JavaDocParser {
+    private static final Logger log = Logger.getLogger(JavaDocParser.class);
 
 
     /* Action listeners for this parser */
@@ -36,8 +38,6 @@ public class JavaDocParser {
         if ( classNames == null ) {
             throw new Exception("Failed to parse index file at: " + filePath);
         }
-        System.out.println(classNames.size());
-
 
         return classNames;
     }
@@ -48,7 +48,7 @@ public class JavaDocParser {
         try {
             doc = Jsoup.parse(inFile, "UTF-8");
         } catch ( IOException ex ) {
-            ex.printStackTrace();
+            log.error(ex.getMessage(), ex);
         }
 
         /* The indexContainer contains links to all the Java classes */
@@ -93,7 +93,7 @@ public class JavaDocParser {
             }
 
         } catch ( IOException e ) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return classNames;
     }
@@ -114,7 +114,7 @@ public class JavaDocParser {
             doc = Jsoup.parse(new File(filePath), "UTF-8");
             packageName = doc.select("html body div.contentContainer ul.inheritance li ul.inheritance li ul.inheritance li ul.inheritance li ul.inheritance li");
         } catch ( IOException e ) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
 
         if ( packageName.size() == 0 ) {
@@ -131,7 +131,7 @@ public class JavaDocParser {
             doc = Jsoup.parse(new File(filePath), "UTF-8");
             packageName = doc.select("html body pre b");
         } catch ( IOException e ) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         if ( packageName.size() == 0 ) {
             return null;
@@ -187,7 +187,6 @@ class ParserProgressWindow extends ProgressWindow<HashMap<String, String>> {
             }
         });
 
-        System.out.println(ProfileManager.getInstance().getDocDir());
         HashMap<String, String> data = parser.parse(ProfileManager.getInstance().getDocDir() + "allclasses-noframe.html");
 
         setVisible(false);

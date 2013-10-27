@@ -13,6 +13,7 @@
     <orderEntry type="library" name="javaparser-1.0.11-SNAPSHOT" level="project" />
     <orderEntry type="library" name="jgoodies-forms" level="project" />
     <orderEntry type="library" name="forms_rt" level="project" />
+    <orderEntry type="library" name="log4j-1.2.14" level="project" />
   </component>
 </module>
 

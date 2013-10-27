@@ -1,5 +1,7 @@
 package com.facetoe.jreader;
 
+import org.apache.log4j.Logger;
+
 import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -13,6 +15,8 @@ import java.util.HashMap;
  */
 
 public class ProfileManager implements Serializable {
+    private final Logger log = Logger.getLogger(this.getClass());
+
     private static final long serialVersionUID = 1L;
     private Profile currentProfile;
     private HashMap<String, Profile> profiles = new HashMap<String, Profile>();
@@ -22,16 +26,16 @@ public class ProfileManager implements Serializable {
         try {
             loadProfiles();
         } catch ( IOException e ) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         } catch ( ClassNotFoundException e ) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
 
         String currentProfileName = Config.getString(Config.CURRENT_PROFILE);
         if ( !currentProfileName.isEmpty() ) {
             currentProfile = profiles.get(currentProfileName);
         } else {
-            System.out.println("No default profile");
+            log.error("No default profile");
         }
     }
 
@@ -86,7 +90,7 @@ public class ProfileManager implements Serializable {
                                     .equalsIgnoreCase(Config.CLASS_DATA_FILE_NAME) ) {
 
                                 Profile profile = readProfile(profFile.getAbsolutePath());
-                                System.out.println("Loaded: " + profile.name);
+                                log.debug("Loaded profile: " + profile.name);
                                 profiles.put(profile.name, profile);
                             }
                         }
@@ -154,9 +158,9 @@ public class ProfileManager implements Serializable {
         if ( profiles.containsKey(profileName) ) {
             currentProfile = profiles.get(profileName);
             Config.setString(Config.CURRENT_PROFILE, profileName);
-            System.out.println("Set to: " + Config.getString(Config.CURRENT_PROFILE));
+            log.debug("Profile set to: " + Config.getString(Config.CURRENT_PROFILE));
         } else {
-            System.out.println("No such profile: " + profileName);
+            log.warn("No such profile: " + profileName);
         }
     }
 
@@ -169,7 +173,7 @@ public class ProfileManager implements Serializable {
                 profiles.remove(profileName);
                 setCurrentProfile("Default");
             } catch ( IOException e ) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         }
     }

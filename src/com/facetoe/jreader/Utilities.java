@@ -1,5 +1,6 @@
 package com.facetoe.jreader;
 
+import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -13,6 +14,8 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public class Utilities {
+    private static final Logger log = Logger.getLogger(Utilities.class);
+
 
 //    public static void main(String[] args) {
 //        try {
@@ -27,9 +30,9 @@ public class Utilities {
 //            System.out.println("Took: " + estimatedTime / 1000000000);
 //
 //        } catch ( FileNotFoundException e ) {
-//            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//            log.error(e.getMessage(), e);  //To change body of catch statement use File | Settings | File Templates.
 //        } catch ( IOException ex ) {
-//            ex.printStackTrace();
+//            log.error(ex.getMessage(), ex);
 //        }
 //    }
 
@@ -90,9 +93,9 @@ public class Utilities {
             }
 
         } catch ( FileNotFoundException e ) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         } catch ( IOException ex ) {
-            ex.printStackTrace();
+            log.error(ex.getMessage(), ex);
         }
         return "";
     }
@@ -205,7 +208,7 @@ public class Utilities {
             return false;
         }
 
-        Scanner scanner = null;
+        Scanner scanner;
         String line;
         try {
             scanner = new Scanner(indexFile);
@@ -218,7 +221,7 @@ public class Utilities {
                 }
             }
         } catch ( FileNotFoundException e ) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return false;
     }

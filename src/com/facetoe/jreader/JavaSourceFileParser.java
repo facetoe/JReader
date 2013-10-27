@@ -5,6 +5,7 @@ import japa.parser.ParseException;
 import japa.parser.ast.CompilationUnit;
 import japa.parser.ast.body.*;
 import japa.parser.ast.visitor.GenericVisitorAdapter;
+import org.apache.log4j.Logger;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -12,16 +13,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class JavaSourceFileParser {
+    private static final Logger log = Logger.getLogger(JavaSourceFileParser.class);
 
     public static void main(String[] args) {
         try {
             JavaSourceFile file = parse(new FileInputStream("/home/facetoe/.jreader/src-jdk/java/awt/Container.java"));
         } catch ( FileNotFoundException ex ) {
-            ex.printStackTrace();
+            log.error(ex.getMessage(), ex);
         } catch ( IOException ex ) {
-            ex.printStackTrace();
+            log.error(ex.getMessage(), ex);
         } catch ( ParseException ex ) {
-            ex.printStackTrace();
+            log.error(ex.getMessage(), ex);
         }
     }
 
@@ -68,7 +70,7 @@ public class JavaSourceFileParser {
                     }
                 }
             } else {
-                System.err.println("Null");
+                log.debug("Class or interface was null");
             }
             return new JavaSourceFile(classesAndInterfaces);
         }
@@ -116,8 +118,6 @@ public class JavaSourceFileParser {
 
         @Override
         public Object visit(EnumConstantDeclaration n, Object arg) {
-            System.out.println("Called enumConstant");
-            System.exit(0); //TODO remove this!
             return null;
         }
 
