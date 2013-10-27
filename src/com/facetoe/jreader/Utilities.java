@@ -6,9 +6,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.*;
+import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -17,24 +19,14 @@ public class Utilities {
     private static final Logger log = Logger.getLogger(Utilities.class);
 
 
-//    public static void main(String[] args) {
-//        try {
-//            long startTime = System.currentTimeMillis();
-//
-//            Document doc = Jsoup.parse(new File("/home/facetoe/tmp/docs/api/java/awt/Container.html"), "UTF-8");
-//            Elements title = doc.getElementsByClass("title");
-//            for ( Element element : title ) {
-//                System.out.println(title.text());
-//            }
-//            long estimatedTime = System.currentTimeMillis() - startTime;
-//            System.out.println("Took: " + estimatedTime / 1000000000);
-//
-//        } catch ( FileNotFoundException e ) {
-//            log.error(e.getMessage(), e);  //To change body of catch statement use File | Settings | File Templates.
-//        } catch ( IOException ex ) {
-//            log.error(ex.getMessage(), ex);
-//        }
-//    }
+    public static void main(String[] args) {
+        String path1 = "/this/path/has/several/different/sections";
+        String path2 = "/this/path/has/so/many/rabbits";
+
+        System.out.println(Paths.get(path1).subpath(3, 6));
+
+
+    }
 
     /**
      * Reads a file and returns a String.
@@ -49,20 +41,48 @@ public class Utilities {
         return encoding.decode(ByteBuffer.wrap(encoded)).toString();
     }
 
+    /**
+     * Takes a path like "file:///user/home/docPath/api/ClassName.html"
+     * and returns "/user/home/srcPath/api/ClassName.java" so it can be loaded in a JSourcePanel.
+     *
+     * This should work on both Windows and Unix systems...
+     * @param docPath
+     * @return the converted path
+     */
     public static String docPathToSourcePath(String docPath) {
         docPath = browserPathToSystemPath(docPath);
         ProfileManager profileManager = ProfileManager.getInstance();
 
-        /* Chop off the section of docPath that points to the Java docs */
-        String path = docPath.replace(profileManager.getDocDir(), "");
+        try {
+            /* This removes most of the "file://" part except on Windows the path comes out as "/c:/path/path */
+            docPath = URLDecoder.decode(docPath, "utf-8");
 
-        /* If there are more than 3 periods it's probably a nested class like: /dir/dir/SomeClass.SomeNestedClass.html */
-        if ( path.split("\\.").length > 3 ) {
-            String objectName = path.substring(path.lastIndexOf("/") + 1, path.indexOf("."));
-            path = path.substring(0, path.lastIndexOf("/") + 1) + objectName + ".java";
+            /* So we create a file object and get the path as "C:/path/path */
+            docPath = new File(docPath).getPath();
+        } catch (UnsupportedEncodingException e) {
+            log.error(e.getMessage(), e);
         }
 
-        return (profileManager.getSrcDir() + File.separator + path).replace(".html", ".java");
+        Path fullPath = Paths.get(docPath);
+        Path docSection = Paths.get(profileManager.getDocDir());
+
+        /* Here we extract the section of the path we are after,
+        which is everything after the documentation directory. */
+        String subPath =  fullPath.subpath(docSection.getNameCount(), fullPath.getNameCount()).toString();
+
+        /* And add the source directory to the beginning to get the complete path. */
+        String path =  profileManager.getSrcDir() + subPath;
+
+        /* If there are more than 3 periods it's probably a nested class like: /dir/dir/SomeClass.SomeNestedClass.html.
+         * Extract the just the class name. */
+         String fileName = Paths.get(path).getFileName().toString();
+         if ( fileName.split("\\.").length >= 2 ) {
+            String objectName = fileName.substring(0, fileName.indexOf("."));
+            path = path.substring(0, path.lastIndexOf("/") + 1) + objectName + ".java";
+             System.out.println(path);
+         }
+
+        return path.replace(".html", ".java");
     }
 
     public static String browserPathToSystemPath(String path) {
