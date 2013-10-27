@@ -150,22 +150,29 @@ public class ProfileManager implements Serializable {
         return getPath() + Config.CLASS_DATA_FILE_NAME;
     }
 
-    public boolean setCurrentProfile(String profileName) {
+    public void setCurrentProfile(String profileName) {
         if ( profiles.containsKey(profileName) ) {
             currentProfile = profiles.get(profileName);
             Config.setString(Config.CURRENT_PROFILE, profileName);
-            return true;
+            System.out.println("Set to: " + Config.getString(Config.CURRENT_PROFILE));
+        } else {
+            System.out.println("No such profile: " + profileName);
         }
-        return false;
     }
 
-//    public void deleteProfile(String profileName) {
-//        Profile profile = profiles.get(profileName);
-//        File profileDir = new File(Config.getString(Config.PROFILE_DIR) + File.separator + profile.)
-//        if(profile != null) {
-//            Utilities.deleteDirectoryAndContents(new File(profile.));
-//        }
-//    }
+    public void deleteProfile(String profileName) {
+        Profile profile = profiles.get(profileName);
+        File profileDir = new File(Config.getString(Config.PROFILE_DIR) + File.separator + profile.profileDirName);
+        if(profile != null) {
+            try {
+                Utilities.deleteDirectoryAndContents(profileDir);
+                profiles.remove(profileName);
+                setCurrentProfile("Default");
+            } catch ( IOException e ) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     public String getDocDir() {
         return currentProfile.docDir;

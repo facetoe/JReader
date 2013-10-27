@@ -8,6 +8,8 @@ import org.fife.ui.rtextarea.SearchContext;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -99,39 +101,83 @@ public class JReader extends JFrame {
         fileMenu.add(itmNewProfile);
 
         subMenuChangeProfile = new JMenu("Change Profile");
-        ArrayList<String> profiles = profileManager.getProfileNames();
-        for ( String profile : profiles ) {
-            JMenuItem item = new JMenuItem(profile);
-            final String profileName = profile;
-            item.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    removeJavaDocClassNames();
-                    profileManager.setCurrentProfile(profileName);
-                    if(currentTab instanceof JReaderPanel) {
-                        JReaderPanel panel = (JReaderPanel)currentTab;
-                        panel.home();
-                    }
-                    addJavaDocCLassNames();
+        subMenuChangeProfile.addMenuListener(new MenuListener() {
+            @Override
+            public void menuSelected(MenuEvent e) {
+                subMenuChangeProfile.removeAll();
+                ArrayList<String> profiles = profileManager.getProfileNames();
+                for ( String profile : profiles ) {
+                    JMenuItem item = new JMenuItem(profile);
+                    final String profileName = profile;
+                    item.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            removeJavaDocClassNames();
+                            profileManager.setCurrentProfile(profileName);
+                            if(currentTab instanceof JReaderPanel) {
+                                JReaderPanel panel = (JReaderPanel)currentTab;
+                                panel.home();
+                            }
+                            addJavaDocCLassNames();
+                        }
+                    });
+                    subMenuChangeProfile.add(item);
                 }
-            });
-            subMenuChangeProfile.add(item);
-        }
+            }
+
+            @Override
+            public void menuDeselected(MenuEvent e) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public void menuCanceled(MenuEvent e) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+        });
         fileMenu.add(subMenuChangeProfile);
 
-        subMenuDeleteProfile = new JMenu("Delete Profile");
-        profiles = profileManager.getProfileNames();
-        for ( String profile : profiles ) {
-            JMenuItem item = new JMenuItem(profile);
-            final String profileName = profile;
-            item.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
 
+        subMenuDeleteProfile = new JMenu("Delete Profile");
+        subMenuDeleteProfile.addMenuListener(new MenuListener() {
+            @Override
+            public void menuSelected(MenuEvent e) {
+                subMenuDeleteProfile.removeAll();
+                ArrayList<String> profiles = profileManager.getProfileNames();
+                for ( String profile : profiles ) {
+                    JMenuItem item = new JMenuItem(profile);
+                    if(profile.equals("Default")) {
+                        item.setEnabled(false);
+
+                    } else {
+
+                        final String profileName = profile;
+                        item.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                 int result = JOptionPane.showConfirmDialog(null,
+                                         "Are you sure you want to delete " + profileName + "?",
+                                         "Confirm Deletion", JOptionPane.YES_NO_OPTION);
+                                if(result == JOptionPane.YES_OPTION) {
+                                    profileManager.deleteProfile(profileName);
+                                }
+                            }
+                        });
+                    }
+                    subMenuDeleteProfile.add(item);
                 }
-            });
-            subMenuDeleteProfile.add(item);
-        }
+            }
+
+            @Override
+            public void menuDeselected(MenuEvent e) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public void menuCanceled(MenuEvent e) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+        });
         fileMenu.add(subMenuDeleteProfile);
 
         JMenuItem itmQuit = new JMenuItem(new QuitAction());
@@ -179,7 +225,6 @@ public class JReader extends JFrame {
         mnuFind.add(chkRegexp);
 
         menuBar.add(mnuFind);
-
     }
 
     private void initActions() {
@@ -300,13 +345,6 @@ public class JReader extends JFrame {
                 currentTab = ( JPanel ) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
             }
         });
-    }
-
-    private void loadClass(String path) {
-        JReaderPanel panel = ( JReaderPanel ) currentTab;
-        if ( panel != null ) {
-            panel.loadURL(path);
-        }
     }
 
     private void addCloseButtonToTab(JPanel tab, String title) {
@@ -527,7 +565,8 @@ public class JReader extends JFrame {
             String relativePath = classNames.get(searchBar.getText());
             if ( relativePath != null ) {
                 String path = profileManager.getDocDir() + relativePath;
-                loadClass(path);
+                JReaderPanel panel = (JReaderPanel) currentTab;
+                panel.loadURL(path);
             }
         } else {
             JSourcePanel sourcePanel = ( JSourcePanel ) currentTab;
