@@ -22,15 +22,8 @@ import java.util.concurrent.CountDownLatch;
 public class JReader extends JFrame {
     private final Logger log = Logger.getLogger(this.getClass());
 
-    private final JButton btnBack = new JButton("Back");
-    private final JButton btnNext = new JButton("Next");
-    private final JButton btnHome = new JButton("Home");
-    private final JButton btnSearch = new JButton("Search");
-    private final JButton btnSource = new JButton(new ViewSourceAction(this));
-    private AutoCompleteTextField searchBar = new AutoCompleteTextField();
-    private JProgressBar progressBar = new JProgressBar();
-
     private final JReaderMenuBar menuBar = new JReaderMenuBar(this);
+    private final JReaderTopPanel topPanel = new JReaderTopPanel(this);
 
     private SearchContext searchContext = new SearchContext();
 
@@ -58,11 +51,10 @@ public class JReader extends JFrame {
         addJavaDocCLassNames();
         newJReaderTab("JReader", false);
 
-        //initMenus();
         setJMenuBar(new JReaderMenuBar(this));
+        add(topPanel, BorderLayout.NORTH);
 
         initActions();
-        initTopPanel();
         initListeners();
 
         add(tabbedPane, BorderLayout.CENTER);
@@ -107,47 +99,8 @@ public class JReader extends JFrame {
         getRootPane().getActionMap().put(keyStrokeAndKey, action);
     }
 
-    private void initTopPanel() {
-          /* You create 3 panels, left, right and top. The components go into the left and
-           right panels with their own layout manager and they both go in the top panel.
-         */
-        JPanel topBar = new JPanel(new BorderLayout(5, 0));
-        JPanel leftBar = new JPanel(new BorderLayout());
-        JPanel rightBar = new JPanel(new FlowLayout());
-
-        searchBar.setPreferredSize(new Dimension(500, 15));
-
-        progressBar.setPreferredSize(new Dimension(150, 18));
-        progressBar.setStringPainted(true);
-
-        leftBar.add(searchBar, BorderLayout.WEST);
-        leftBar.add(btnSearch, BorderLayout.EAST);
-        rightBar.add(btnBack);
-        rightBar.add(btnNext);
-        rightBar.add(btnHome);
-        rightBar.add(btnSource);
-        JButton btnCollapse = new JButton("Collapse");
-        rightBar.add(btnCollapse);
-
-
-        topBar.add(leftBar, BorderLayout.WEST);
-        topBar.add(rightBar, BorderLayout.EAST);
-        topBar.setBorder(BorderFactory.createEmptyBorder(3, 5, 3, 5));
-
-
-        JPanel statusBar = new JPanel(new BorderLayout(5, 0));
-        statusBar.setBorder(BorderFactory.createEmptyBorder(3, 5, 3, 5));
-        JLabel lblStatus = new JLabel();
-        statusBar.add(lblStatus, BorderLayout.CENTER);
-        statusBar.add(progressBar, BorderLayout.EAST);
-
-
-        add(topBar, BorderLayout.NORTH);
-        add(statusBar, BorderLayout.SOUTH);
-    }
-
     private void initListeners() {
-        btnBack.addActionListener(new ActionListener() {
+        topPanel.getBtnBack().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JReaderPanel jReaderPanel = ( JReaderPanel ) currentTab;
@@ -155,7 +108,7 @@ public class JReader extends JFrame {
             }
         });
 
-        btnNext.addActionListener(new ActionListener() {
+        topPanel.getBtnNext().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JReaderPanel jReaderPanel = ( JReaderPanel ) currentTab;
@@ -163,7 +116,7 @@ public class JReader extends JFrame {
             }
         });
 
-        btnHome.addActionListener(new ActionListener() {
+        topPanel.getBtnHome().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JReaderPanel jReaderPanel = ( JReaderPanel ) currentTab;
@@ -171,14 +124,14 @@ public class JReader extends JFrame {
             }
         });
 
-        btnSearch.addActionListener(new ActionListener() {
+        topPanel.getBtnSearch().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 handleSearch();
             }
         });
 
-        searchBar.addActionListener(new ActionListener() {
+        topPanel.getSearchBar().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 handleSearch();
@@ -192,15 +145,15 @@ public class JReader extends JFrame {
                 if ( tabbedPane.getComponentAt(tabbedPane.getSelectedIndex()) instanceof JSourcePanel ) {
                     disableBrowserButtons();
                     disableNewSourceOption();
-                    searchBar.removeWordsFromTrie(new ArrayList<String>(classNames.keySet()));
+                    topPanel.getSearchBar().removeWordsFromTrie(new ArrayList<String>(classNames.keySet()));
                 } else if ( tabbedPane.getComponentAt(tabbedPane.getSelectedIndex()) instanceof JReaderPanel ) {
                     enableBrowserButtons();
                     enableNewSourceOption();
                     if ( currentSourceFile != null ) {
-                        searchBar.removeWordsFromTrie(currentSourceFile.getAllDeclarations());
+                        topPanel.getSearchBar().removeWordsFromTrie(currentSourceFile.getAllDeclarations());
                     }
 
-                    searchBar.addWordsToTrie(new ArrayList<String>(classNames.keySet()));
+                    topPanel.getSearchBar().addWordsToTrie(new ArrayList<String>(classNames.keySet()));
                 }
                 currentTab = ( JPanel ) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
             }
@@ -276,7 +229,7 @@ public class JReader extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                final JReaderPanel readerPanel = new JReaderPanel(progressBar, javafxLoadLatch);
+                final JReaderPanel readerPanel = new JReaderPanel(topPanel.getProgressBar(), javafxLoadLatch);
                 try {
                     log.debug("Waiting for countdown latch");
                     javafxLoadLatch.await();
@@ -372,41 +325,41 @@ public class JReader extends JFrame {
 
     private void addAutoCompleteWords() {
         if ( currentSourceFile != null ) {
-            searchBar.addWordsToTrie(currentSourceFile.getAllDeclarations());
+            topPanel.getSearchBar().addWordsToTrie(currentSourceFile.getAllDeclarations());
         }
     }
 
     private void removeAutoCompleteWords() {
         if ( currentSourceFile != null ) {
-            searchBar.removeWordsFromTrie(currentSourceFile.getAllDeclarations());
+            topPanel.getSearchBar().removeWordsFromTrie(currentSourceFile.getAllDeclarations());
         }
     }
 
     private void disableBrowserButtons() {
-        btnBack.setEnabled(false);
-        btnNext.setEnabled(false);
-        btnHome.setEnabled(false);
+        topPanel.getBtnBack().setEnabled(false);
+        topPanel.getBtnNext().setEnabled(false);
+        topPanel.getBtnHome().setEnabled(false);
     }
 
     private void enableBrowserButtons() {
-        btnBack.setEnabled(true);
-        btnNext.setEnabled(true);
-        btnHome.setEnabled(true);
+        topPanel.getBtnBack().setEnabled(true);
+        topPanel.getBtnNext().setEnabled(true);
+        topPanel.getBtnHome().setEnabled(true);
     }
 
     private void disableNewSourceOption() {
-        btnSource.setEnabled(false);
+        topPanel.getBtnSource().setEnabled(false);
         menuBar.disableNewSourceOption();
     }
 
     private void enableNewSourceOption() {
-        btnSource.setEnabled(true);
+        topPanel.getBtnSource().setEnabled(true);
         menuBar.enableNewSourceOption();
     }
 
     private void handleSearch() {
         if ( currentTab instanceof JReaderPanel ) {
-            String relativePath = classNames.get(searchBar.getText());
+            String relativePath = classNames.get(topPanel.getSearchBar().getText());
             if ( relativePath != null ) {
                 String path = profileManager.getDocDir() + relativePath;
                 JReaderPanel panel = (JReaderPanel) currentTab;
@@ -415,12 +368,12 @@ public class JReader extends JFrame {
         } else {
             JSourcePanel sourcePanel = ( JSourcePanel ) currentTab;
             System.out.println(currentTab);
-            JavaObject method = currentSourceFile.getItem(searchBar.getText());
+            JavaObject method = currentSourceFile.getItem(topPanel.getSearchBar().getText());
             if ( method != null ) {
                 sourcePanel.highlightDeclaration(method.getBeginLine(), method.getEndLine(),
                         method.beginColumn);
             } else {
-                sourcePanel.findString(searchBar.getText(), searchContext);
+                sourcePanel.findString(topPanel.getSearchBar().getText(), searchContext);
             }
         }
     }
@@ -429,7 +382,7 @@ public class JReader extends JFrame {
         try {
             File classDataFile = new File(profileManager.getClassDataFilePath());
             classNames = Utilities.readClassData(classDataFile);
-            searchBar.addWordsToTrie(new ArrayList<String>(classNames.keySet()));
+            topPanel.getSearchBar().addWordsToTrie(new ArrayList<String>(classNames.keySet()));
         } catch ( IOException e ) {
             log.error(e.getMessage(), e);
             JOptionPane.showMessageDialog(this, "Failed to load class data at"
@@ -457,12 +410,12 @@ public class JReader extends JFrame {
     }
 
     public void removeJavaDocClassNames() {
-        searchBar.removeWordsFromTrie(new ArrayList<String>(classNames.keySet()));
+        topPanel.getSearchBar().removeWordsFromTrie(new ArrayList<String>(classNames.keySet()));
     }
 
     public void resetSearchBar() {
-        searchBar.setText("");
-        searchBar.requestFocus();
+        topPanel.getSearchBar().setText("");
+        topPanel.getSearchBar().requestFocus();
     }
 
     public void handleQuit() {
