@@ -17,7 +17,6 @@ public class JReaderTopPanel extends JPanel {
     private final JButton btnSearch;
     private final JButton btnSource;
     private AutoCompleteTextField searchBar = new AutoCompleteTextField();
-    private JProgressBar progressBar = new JProgressBar();
 
     private JReader jReader;
 
@@ -40,9 +39,6 @@ public class JReaderTopPanel extends JPanel {
         JPanel rightBar = new JPanel(new FlowLayout());
 
         searchBar.setPreferredSize(new Dimension(500, 15));
-
-        progressBar.setPreferredSize(new Dimension(150, 18));
-        progressBar.setStringPainted(true);
 
         leftBar.add(searchBar, BorderLayout.WEST);
         leftBar.add(btnSearch, BorderLayout.EAST);
@@ -79,9 +75,5 @@ public class JReaderTopPanel extends JPanel {
 
     public AutoCompleteTextField getSearchBar() {
         return searchBar;
-    }
-
-    public JProgressBar getProgressBar() {
-        return progressBar;
     }
 }

@@ -24,6 +24,7 @@ public class JReader extends JFrame {
 
     private final JReaderMenuBar menuBar = new JReaderMenuBar(this);
     private final JReaderTopPanel topPanel = new JReaderTopPanel(this);
+    private final JReaderBottomPanel bottomPanel = new JReaderBottomPanel(this);
 
     private SearchContext searchContext = new SearchContext();
 
@@ -53,6 +54,7 @@ public class JReader extends JFrame {
 
         setJMenuBar(new JReaderMenuBar(this));
         add(topPanel, BorderLayout.NORTH);
+        add(bottomPanel, BorderLayout.SOUTH);
 
         initActions();
         initListeners();
@@ -229,7 +231,7 @@ public class JReader extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                final JReaderPanel readerPanel = new JReaderPanel(topPanel.getProgressBar(), javafxLoadLatch);
+                final JReaderPanel readerPanel = new JReaderPanel(bottomPanel.getProgressBar(), javafxLoadLatch);
                 try {
                     log.debug("Waiting for countdown latch");
                     javafxLoadLatch.await();
