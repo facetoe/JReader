@@ -58,8 +58,18 @@ public class JReaderTopPanel extends JPanel {
 
         searchBar.setPreferredSize(new Dimension(500, 30));
 
-        leftBar.add(searchBar, BorderLayout.CENTER);
-        leftBar.add(btnSearch, BorderLayout.EAST);
+        leftBar.add(searchBar);
+        leftBar.add(btnSearch);
+        ImageIcon loaderGif = Utilities.readAnimatedGif(
+                getClass().getResource("/com/facetoe/jreader/resources/icons/ajax-loader.gif"), this);
+
+
+        JLabel label = new JLabel();
+        label.setIcon(loaderGif);
+        loaderGif.setImageObserver(label);
+        leftBar.add(label);
+
+
         rightBar.add(btnBack);
         rightBar.add(btnNext);
         rightBar.add(btnHome);

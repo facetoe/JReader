@@ -9,7 +9,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
 
 /**
  * Created with IntelliJ IDEA.
@@ -72,16 +71,10 @@ public class NewProfileWindow extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 ProfileManager manager = ProfileManager.getInstance();
                 String name = txtName.getText();
-                String fileName = name.replaceAll("[^A-Za-z0-9]", "_") + ".ser";
-                manager.newProfile(name, fileName,
+                manager.newProfile(name,
                         txtDocs.getText() + File.separator,
                         txtSrc.getText() + File.separator);
                 manager.setCurrentProfile(name);
-                try {
-                    manager.saveProfiles();
-                } catch ( IOException e1 ) {
-                    JOptionPane.showMessageDialog(frame, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                }
 
                 setVisible(false);
                 dispose();

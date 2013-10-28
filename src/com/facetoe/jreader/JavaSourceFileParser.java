@@ -8,24 +8,23 @@ import japa.parser.ast.visitor.GenericVisitorAdapter;
 import org.apache.log4j.Logger;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class JavaSourceFileParser {
     private static final Logger log = Logger.getLogger(JavaSourceFileParser.class);
 
-    public static void main(String[] args) {
-        try {
-            JavaSourceFile file = parse(new FileInputStream("/home/facetoe/.jreader/src-jdk/java/awt/Container.java"));
-        } catch ( FileNotFoundException ex ) {
-            log.error(ex.getMessage(), ex);
-        } catch ( IOException ex ) {
-            log.error(ex.getMessage(), ex);
-        } catch ( ParseException ex ) {
-            log.error(ex.getMessage(), ex);
-        }
-    }
+//    public static void main(String[] args) {
+//        try {
+//            JavaSourceFile file = parse(new FileInputStream("/home/facetoe/.jreader/src-jdk/java/awt/Container.java"));
+//        } catch ( FileNotFoundException ex ) {
+//            log.error(ex.getMessage(), ex);
+//        } catch ( IOException ex ) {
+//            log.error(ex.getMessage(), ex);
+//        } catch ( ParseException ex ) {
+//            log.error(ex.getMessage(), ex);
+//        }
+//    }
 
     /**
      * Parses a Java source file and extracts constructor, method, field and enum declarations.
@@ -103,10 +102,8 @@ public class JavaSourceFileParser {
                 }else if (declaration instanceof ClassOrInterfaceDeclaration) {
                     JavaClassOrInterface classOrInterface = (JavaClassOrInterface)visit((ClassOrInterfaceDeclaration) declaration, null);
                     javaObj.addNestedClassOrInterface(classOrInterface);
-
-                } else {
-                    // As far as I can tell this only catches annotations, which might be useful to add later.
                 }
+
             }
             return javaObj;
         }

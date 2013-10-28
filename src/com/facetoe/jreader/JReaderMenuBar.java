@@ -102,7 +102,7 @@ public class JReaderMenuBar extends JMenuBar {
                                 JReaderPanel panel = (JReaderPanel)jReader.getCurrentTab();
                                 panel.home();
                             }
-                            jReader.addJavaDocCLassNames();
+                            jReader.addJavaDocClassNames();
                         }
                     });
                     subMenuChangeProfile.add(item);

@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -329,6 +330,21 @@ public class Utilities {
             // It's a file, just delete it.
             file.delete();
         }
+    }
+
+    public static ImageIcon readAnimatedGif(URL imgURL, Component component) {
+        Toolkit tk = Toolkit.getDefaultToolkit();
+        Image img = null;
+        try {
+            MediaTracker m = new MediaTracker(component);
+            img = tk.getImage(imgURL);
+            m.addImage(img, 0);
+            m.waitForAll();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ImageIcon(img);
     }
 
     public static ImageIcon readIcon(InputStream inStream, int width, int height) {

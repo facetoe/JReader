@@ -16,11 +16,17 @@ import java.util.HashMap;
 
 public class ProfileManager implements Serializable {
     private static final Logger log = Logger.getLogger(ProfileManager.class);
-
     private static final long serialVersionUID = 1L;
+
+    /* The current profile. */
     private Profile currentProfile;
-    private HashMap<String, Profile> profiles = new HashMap<String, Profile>();
-    private static ProfileManager instance = new ProfileManager();
+
+    /* All the profiles. */
+    private final HashMap<String, Profile> profiles = new HashMap<String, Profile>();
+
+    /* Singlton instance of ProfileManager. */
+    private static final ProfileManager instance = new ProfileManager();
+
 
     private ProfileManager() {
         try {
@@ -39,45 +45,54 @@ public class ProfileManager implements Serializable {
         }
     }
 
+    /**
+     * Get an instance of ProfileManager.
+     *
+     * @return ProfileManager instance.
+     */
     public static ProfileManager getInstance() {
         return instance;
     }
 
-    public void newProfile(String name, String fileName, String docDir, String srcDir) {
-        Profile profile = new Profile(name, fileName, docDir, srcDir);
+    /**
+     * Create a new Profile.
+     *
+     * @param name The name of this profile.
+     * @param docDir Where the Documentation is located.
+     * @param srcDir Where the source code is located.
+     */
+    public void newProfile(String name, String docDir, String srcDir) {
+        Profile profile = new Profile(name, docDir, srcDir);
         profiles.put(profile.name, profile);
         currentProfile = profile;
 
         try {
+            /* Save the profile now just in case. */
             writeProfile(currentProfile);
+
+            /* Parse the class data and save it. */
+            JavaDocParser parser = new JavaDocParser();
+            HashMap<String, String> classData = parser.parse(getDocDir() +
+                    Config.ALL_CLASSSES_DOC_FILE);
+            Utilities.writeCLassData(getPath() + Config.CLASS_DATA_FILE_NAME, classData);
+
+            /* Set it to the default so we can load it straight up on next launch. */
+            Config.setString(Config.CURRENT_PROFILE, currentProfile.name);
+            log.debug("Created profile: " + currentProfile.name);
+
         } catch ( IOException e ) {
             JOptionPane.showMessageDialog(null, e.getMessage());
+        } catch ( Exception e ) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
         }
-
-        File profileDir = new File(getPath());
-        File[] files = profileDir.listFiles();
-        boolean hasClassData = false;
-        for ( File file : files ) {
-            if ( file.getName().equalsIgnoreCase(Config.CLASS_DATA_FILE_NAME) ) {
-                hasClassData = true;
-            }
-        }
-        if ( !hasClassData ) {
-            try {
-                JavaDocParser parser = new JavaDocParser();
-                HashMap<String, String> classData = parser.parse(getDocDir() +
-                        Config.ALL_CLASSSES_DOC_FILE);
-
-                Utilities.writeCLassData(getPath() + Config.CLASS_DATA_FILE_NAME, classData);
-            } catch ( Exception e ) {
-                JOptionPane.showMessageDialog(null, e.getMessage());
-            }
-        }
-        Config.setString(Config.CURRENT_PROFILE, currentProfile.name);
-        log.debug("Created profile: " + currentProfile.name);
     }
 
-    public void loadProfiles() throws IOException, ClassNotFoundException {
+    /**
+     * Loads all the profiles.
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    void loadProfiles() throws IOException, ClassNotFoundException {
         File profileDir = new File(Config.getString(Config.PROFILE_DIR));
         File[] profDirs = profileDir.listFiles();
         if ( profDirs != null ) {
@@ -101,6 +116,10 @@ public class ProfileManager implements Serializable {
         }
     }
 
+    /**
+     * Saves all the profiles.
+     * @throws IOException
+     */
     public void saveProfiles() throws IOException {
         for ( String s : profiles.keySet() ) {
             log.debug("Saving: " + s);
@@ -108,6 +127,11 @@ public class ProfileManager implements Serializable {
         }
     }
 
+    /**
+     * Writes a profile to disk. If the direcory doesn't exist this method will try to create it.
+     * @param profile The profile to save.
+     * @throws IOException
+     */
     private void writeProfile(Profile profile) throws IOException {
         String profileDirPath = Config.getString(Config.PROFILE_DIR) + profile.profileDirName;
         File profileDir = new File(profileDirPath);
@@ -119,23 +143,30 @@ public class ProfileManager implements Serializable {
             }
         }
 
-        File file = new File(profileDirPath + File.separator + profile.fileName);
+        File classDataFile = new File(profileDirPath + File.separator + profile.classDataFileName);
 
-        if ( !file.exists() ) {
-            boolean wasSuccess = file.createNewFile();
+        if ( !classDataFile.exists() ) {
+            boolean wasSuccess = classDataFile.createNewFile();
             if ( !wasSuccess ) {
                 throw new IOException("Failed to create profile file at: " + profileDir);
             }
         }
 
-        FileOutputStream fileOut = new FileOutputStream(file);
+        FileOutputStream fileOut = new FileOutputStream(classDataFile);
         ObjectOutputStream outStream = new ObjectOutputStream(fileOut);
         outStream.writeObject(profile);
         outStream.close();
         fileOut.close();
     }
 
-    public Profile readProfile(String filePath) throws IOException, ClassNotFoundException {
+    /**
+     * Reads a profile and returns a Profile object.
+     * @param filePath Path to the profile.
+     * @return Profile object.
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    Profile readProfile(String filePath) throws IOException, ClassNotFoundException {
         FileInputStream fileIn = new FileInputStream(filePath);
         ObjectInputStream in = new ObjectInputStream(fileIn);
         Profile profile = ( Profile ) in.readObject();
@@ -148,37 +179,47 @@ public class ProfileManager implements Serializable {
         return new ArrayList<String>(profiles.keySet());
     }
 
-    public String getPath() {
-        return Config.getString(Config.PROFILE_DIR) + File.separator + currentProfile.profileDirName + File.separator;
-    }
-
-    public String getClassDataFilePath() {
-        return getPath() + Config.CLASS_DATA_FILE_NAME;
-    }
-
+    /**
+     * Sets <code>profileName</code> as the current profile.
+     * @param profileName The name of the profile to be set.
+     */
     public void setCurrentProfile(String profileName) {
         if ( profiles.containsKey(profileName) ) {
             currentProfile = profiles.get(profileName);
             Config.setString(Config.CURRENT_PROFILE, profileName);
             log.debug("Profile set to: " + Config.getString(Config.CURRENT_PROFILE));
         } else {
-            log.warn("No such profile: " + profileName);
+            log.error("No such profile: " + profileName);
         }
     }
 
+    /**
+     * Deletes a profile and the enclosing directory.
+     * If there are sub directories they will be deleted also.
+     * @param profileName The profile to be deleted.
+     */
     public void deleteProfile(String profileName) {
         Profile profile = profiles.get(profileName);
         File profileDir = new File(Config.getString(Config.PROFILE_DIR) + File.separator + profile.profileDirName);
-        if(profile != null) {
-            try {
-                Utilities.deleteDirectoryAndContents(profileDir);
-                profiles.remove(profileName);
-                setCurrentProfile("Default");
-                log.debug("Deleted: " + profile.name);
-            } catch ( IOException e ) {
-                log.error(e.getMessage(), e);
-            }
+        try {
+            Utilities.deleteDirectoryAndContents(profileDir);
+            profiles.remove(profileName);
+            setCurrentProfile("Default");
+            log.debug("Deleted: " + profile.name);
+        } catch ( IOException e ) {
+            log.error(e.getMessage(), e);
         }
+    }
+
+    public String getPath() {
+        return Config.getString(Config.PROFILE_DIR)
+                + File.separator
+                + currentProfile.profileDirName
+                + File.separator;
+    }
+
+    public String getClassDataFilePath() {
+        return getPath() + Config.CLASS_DATA_FILE_NAME;
     }
 
     public String getDocDir() {
@@ -187,10 +228,6 @@ public class ProfileManager implements Serializable {
 
     public String getSrcDir() {
         return currentProfile.srcDir;
-    }
-
-    public String getName() {
-        return currentProfile.name;
     }
 
     public boolean regexpIsEnabled() {
@@ -217,26 +254,36 @@ public class ProfileManager implements Serializable {
         currentProfile.matchCaseIsEnabled = value;
     }
 
+    /**
+     * Class to represent a profile.
+     */
     private class Profile implements Serializable {
         private static final long serialVersionUID = 1L;
-        private String profileDirName;
-        private String docDir;
-        private String srcDir;
-        private String fileName;
-        private String home;
-        private String name;
+
+        /* The name of the directory holding this profile */
+        private final String profileDirName;
+
+        /* Where the Java documentation is located for this profile.  */
+        private final String docDir;
+
+        /* Where the Java source code is located for this profile. */
+        private final String srcDir;
+
+        /* The name of the class data file. */
+        private final String classDataFileName;
+        //private String home;
+
+        private final String name;
 
         private boolean regexpIsEnabled;
         private boolean wholeWordIsEnabled;
         private boolean matchCaseIsEnabled;
 
-        public Profile() {
-
-        }
-
-        public Profile(String name, String fileName, String docDir, String srcDir) {
+        public Profile(String name, String docDir, String srcDir) {
             this.name = name;
-            this.fileName = fileName;
+
+            /* Don't want funny characters and spaces in the data file name */
+            this.classDataFileName = name.replaceAll("[^A-Za-z0-9]", "_") + ".ser";
 
             /* Don't want funny characters and spaces in the directory name */
             this.profileDirName = name.replaceAll("[^a-zA-Z0-9.-]", "_");
