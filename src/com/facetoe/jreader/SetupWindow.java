@@ -6,12 +6,10 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import org.apache.log4j.Logger;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -78,13 +76,8 @@ public class SetupWindow extends JDialog {
     }
 
     private void setTickIcon(JLabel label) {
-        BufferedImage icon = null;
-        try {
-            icon = ImageIO.read(getClass().getResourceAsStream("/com/facetoe/jreader/resources/icons/system_tick_alt_03.png"));
-        } catch ( IOException e ) {
-            log.error(e.getMessage(), e);
-        }
-        label.setIcon(new ImageIcon(icon));
+        label.setIcon(Utilities.readIcon(
+                getClass().getResourceAsStream("/com/facetoe/jreader/resources/icons/system_tick_alt_03.png")));
     }
 
     {

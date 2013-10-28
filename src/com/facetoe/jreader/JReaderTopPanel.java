@@ -11,42 +11,59 @@ import java.awt.*;
  */
 public class JReaderTopPanel extends JPanel {
 
-    private final JButton btnBack;
-    private final JButton btnNext;
-    private final JButton btnHome;
-    private final JButton btnSearch;
-    private final JButton btnSource;
-    private AutoCompleteTextField searchBar = new AutoCompleteTextField();
+    private JButton btnBack;
+    private JButton btnNext;
+    private JButton btnHome;
+    private JButton btnSearch;
+    private JButton btnSource;
+    private final AutoCompleteTextField searchBar = new AutoCompleteTextField();
 
-    private JReader jReader;
+    private final JReader jReader;
 
     public JReaderTopPanel(JReader jReader) {
         this.jReader = jReader;
-        btnBack = new JButton("Back");
-        btnSource = new JButton(new ViewSourceAction(this.jReader));
-        btnSearch = new JButton("Search");
-        btnHome = new JButton("Home");
-        btnNext = new JButton("Next");
+        initButtons();
         initTopPanel();
     }
 
+
+    /**
+     * Create the buttons and add icons.
+     */
+    private void initButtons() {
+        btnBack = new JButton(Utilities.readIcon(this.getClass().getResourceAsStream
+                ("/com/facetoe/jreader/resources/icons/arrow-left.png"), 20, 20));
+
+        btnNext = new JButton(Utilities.readIcon(this.getClass().getResourceAsStream
+                ("/com/facetoe/jreader/resources/icons/arrow-right.png"), 20, 20));
+
+        btnHome = new JButton(Utilities.readIcon(this.getClass().getResourceAsStream
+                ("/com/facetoe/jreader/resources/icons/home.png"), 20, 20));
+
+        btnSource = new JButton(new ViewSourceAction(this.jReader));
+        btnSource.setIcon(Utilities.readIcon(this.getClass().getResourceAsStream
+                ("/com/facetoe/jreader/resources/icons/javaSource.png"), 20, 20));
+
+        btnSearch = new JButton(Utilities.readIcon(this.getClass().getResourceAsStream
+                ("/com/facetoe/jreader/resources/icons/search.png"), 20, 20));
+    }
+
+    /**
+     * Put the whole panel together.
+     */
     private void initTopPanel() {
-                  /* You create 3 panels, left, right and top. The components go into the left and
-           right panels with their own layout manager and they both go in the top panel.
-         */
         setLayout(new BorderLayout(5, 0));
-        JPanel leftBar = new JPanel(new BorderLayout());
+        JPanel leftBar = new JPanel(new FlowLayout());
         JPanel rightBar = new JPanel(new FlowLayout());
 
-        searchBar.setPreferredSize(new Dimension(500, 15));
+        searchBar.setPreferredSize(new Dimension(500, 30));
 
-        leftBar.add(searchBar, BorderLayout.WEST);
+        leftBar.add(searchBar, BorderLayout.CENTER);
         leftBar.add(btnSearch, BorderLayout.EAST);
         rightBar.add(btnBack);
         rightBar.add(btnNext);
         rightBar.add(btnHome);
         rightBar.add(btnSource);
-
 
         add(leftBar, BorderLayout.WEST);
         add(rightBar, BorderLayout.EAST);

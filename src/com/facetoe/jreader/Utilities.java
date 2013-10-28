@@ -3,6 +3,10 @@ package com.facetoe.jreader;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URLDecoder;
 import java.nio.ByteBuffer;
@@ -325,6 +329,23 @@ public class Utilities {
             // It's a file, just delete it.
             file.delete();
         }
+    }
+
+    public static ImageIcon readIcon(InputStream inStream, int width, int height) {
+        ImageIcon imageIcon = readIcon(inStream);
+        Image image = imageIcon.getImage();
+        Image resizedImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        return new ImageIcon(resizedImage);
+    }
+
+    public static ImageIcon readIcon(InputStream inStream) {
+        try {
+            BufferedImage icon = ImageIO.read(inStream);
+            return new ImageIcon(icon);
+        } catch ( IOException e ) {
+            log.error(e.getMessage(), e);
+        }
+        return null;
     }
 
 }

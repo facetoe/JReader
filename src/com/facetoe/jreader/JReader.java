@@ -258,12 +258,16 @@ public class JReader extends JFrame {
                                         if ( newURL.endsWith(".java") ) {
                                             newSourceTab(newURL.replace("file://", ""));
                                         } else if ( currentTab instanceof JReaderPanel ) {
-                                            //TODO clean this up.
-                                            String tabTitle = Utilities.extractTitle(newURL);
+                                            String systemPath = Utilities.browserPathToSystemPath(newURL);
+                                            bottomPanel.getLblStatus().setText(systemPath);
+
+                                            String tabTitle = Utilities.extractTitle(systemPath);
                                             tabbedPane.setTitleAt(tabbedPane.getSelectedIndex(), tabTitle);
+
+                                            String srcPath = Utilities.docPathToSourcePath(newURL);
                                             if ( !newURL.startsWith("http")
                                                     && !newURL.startsWith("www.")
-                                                    && Utilities.isGoodSourcePath(Utilities.docPathToSourcePath(newURL)) ) {
+                                                    && Utilities.isGoodSourcePath(srcPath) ) {
                                                 enableNewSourceOption();
                                             } else {
                                                 disableNewSourceOption();
