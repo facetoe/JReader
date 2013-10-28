@@ -2,8 +2,6 @@ package com.facetoe.jreader;
 
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 
 import java.io.*;
 import java.net.URLDecoder;
@@ -20,11 +18,25 @@ public class Utilities {
 
 
     public static void main(String[] args) {
-        String path1 = "/this/path/has/several/different/sections";
-        String path2 = "/this/path/has/so/many/rabbits";
 
-        System.out.println(Paths.get(path1).subpath(3, 6));
 
+
+        try {
+            String path = "/home/facetoe/tmp/docs/api/java/awt/dnd/DropTarget.html";
+            FileInputStream inStream = new FileInputStream(path);
+            String line = null;
+            Scanner scanner = new Scanner(inStream);
+            while(scanner.hasNextLine()) {
+                line = scanner.nextLine();
+                if(line.contains("<title>")) {
+                    System.out.println(Jsoup.parse(line, "UTF-8").select("title").text());
+                    break;
+                }
+            }
+            System.out.println(line);
+        } catch ( FileNotFoundException e ) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -53,16 +65,6 @@ public class Utilities {
         docPath = browserPathToSystemPath(docPath);
         ProfileManager profileManager = ProfileManager.getInstance();
 
-        try {
-            /* This removes most of the "file://" part except on Windows the path comes out as "/c:/path/path */
-            docPath = URLDecoder.decode(docPath, "utf-8");
-
-            /* So we create a file object and get the path as "C:/path/path */
-            docPath = new File(docPath).getPath();
-        } catch (UnsupportedEncodingException e) {
-            log.error(e.getMessage(), e);
-        }
-
         Path fullPath = Paths.get(docPath);
         Path docSection = Paths.get(profileManager.getDocDir());
 
@@ -73,7 +75,7 @@ public class Utilities {
         /* And add the source directory to the beginning to get the complete path. */
         String path =  profileManager.getSrcDir() + subPath;
 
-        /* If there are more than 3 periods it's probably a nested class like: /dir/dir/SomeClass.SomeNestedClass.html.
+        /* If there are more than 2 periods it's probably a nested class like: /dir/dir/SomeClass.SomeNestedClass.html.
          * Extract the just the class name. */
          String fileName = Paths.get(path).getFileName().toString();
          if ( fileName.split("\\.").length >= 2 ) {
@@ -85,37 +87,60 @@ public class Utilities {
         return path.replace(".html", ".java");
     }
 
+    /**
+     * Converts a path from a URL to a system path. Trys to get rid of any crud that gets tacked on
+     * such as ?overview-summary.html etc.
+     * @param path
+     * @return the converted path.
+     */
     public static String browserPathToSystemPath(String path) {
         path = path.replace("file://", "");
+
+        try {
+            /* On Windows the above replace operation will leave the path as "/c:/path/path. */
+            /* We create a path object, convert it to a file object and get the path as "C:/path/path.
+             * There must be a better way to do this... */
+            path = URLDecoder.decode(path, "utf-8");
+            path = new File(path).getPath();
+        } catch (UnsupportedEncodingException e) {
+            log.error(e.getMessage(), e);
+        }
+
+        /* Some paths are like: docs/api/java/awt/dnd/DropTarget.html#DropTarget()
+         * We are only interested in the information before the '#', so remove the rest */
         if ( path.contains("#") ) {
             path = path.substring(0, path.indexOf("#"));
+        }
+
+        /* If the user is browsing with frames then this will be present.
+         * Remove it   */
+        if (path.contains("?overview-summary.html")) {
+            path = path.replace("?overview-summary.html", "");
         }
         return path;
     }
 
     public static String extractTitle(String path) {
-        if ( path.contains("http://")
-                || path.contains("https://")
-                || path.contains("www.") ) {
+        if(path.startsWith("http:/")
+                || path.startsWith("www.")
+                || path.startsWith("https:/") ) {
             return extractFileName(path);
-
-        } else if ( path.startsWith("file:/") ) {
-            path = browserPathToSystemPath(path);
         }
 
-
         try {
-            Document doc = Jsoup.parse(new File(path), "UTF-8");
-            Elements title = doc.getElementsByTag("h2");
-
-            if ( title.size() >= 1 ) {
-                return title.get(0).text();
+            path = browserPathToSystemPath(path);
+            FileInputStream inStream = new FileInputStream(path);
+            String line = null;
+            Scanner scanner = new Scanner(inStream);
+            while(scanner.hasNextLine()) {
+                line = scanner.nextLine();
+                if(line.contains("<title>")) {
+                    return Jsoup.parse(line, "UTF-8").select("title").text();
+                }
             }
-
+            System.out.println(line);
         } catch ( FileNotFoundException e ) {
-            log.error(e.getMessage(), e);
-        } catch ( IOException ex ) {
-            log.error(ex.getMessage(), ex);
+            e.printStackTrace();
         }
         return "";
     }
