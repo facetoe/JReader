@@ -264,9 +264,9 @@ public class Utilities {
         File overviewFile = new File(docDir.getAbsoluteFile() + File.separator + "overview-summary.html");
         File indexFile = new File(docDir.getAbsoluteFile() + File.separator + "index.html");
         File classFile = new File(docDir.getAbsoluteFile() + File.separator + "allclasses-noframe.html");
-        if ( indexFile == null
-                || classFile == null
-                || overviewFile == null ) {
+        if ( !indexFile.exists()
+               || !classFile.exists()
+               || !overviewFile.exists()) {
             return false;
         }
 

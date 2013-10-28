@@ -52,33 +52,3 @@ public class UnZipper {
         listeners.add(listener);
     }
 }
-
-class UnZipperProgressWindow extends ProgressWindow<Boolean> {
-    private String srcFile;
-    private String destFile;
-
-    public UnZipperProgressWindow(String srcFile, String destFile) {
-        this.srcFile = srcFile;
-        this.destFile = destFile;
-        progressBar.setIndeterminate(true);
-    }
-
-    @Override
-    public Boolean execute() throws Exception {
-        UnZipper unZipper = new UnZipper(srcFile, destFile);
-        unZipper.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                lblTitle.setText("Extracting: ");
-                lblProgress.setText(e.getActionCommand());
-                progressBar.setValue(( int ) e.getWhen());
-            }
-        });
-
-        unZipper.unzip();
-        setVisible(false);
-        dispose();
-
-        return true; // Always returns true;
-    }
-}

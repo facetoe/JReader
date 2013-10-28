@@ -163,35 +163,3 @@ public class JavaDocParser {
         listeners.add(listener);
     }
 }
-
-
-/**
- * Parses the Java documentation and displays the progress.
- */
-class ParserProgressWindow extends ProgressWindow<HashMap<String, String>> {
-    @Override
-    public HashMap<String, String> execute() throws Exception {
-        JavaDocParser parser = new JavaDocParser();
-        parser.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if ( e.getID() == ActionEvent.ACTION_PERFORMED ) {
-                    progressBar.setValue(( int ) e.getWhen());
-                    lblTitle.setText("Parsing: ");
-                    lblProgress.setText(e.getActionCommand());
-                } else if ( e.getID() == ActionEvent.ACTION_LAST ) {
-                    progressBar.setValue(( int ) e.getWhen());
-                    lblTitle.setText("Parsing: ");
-                    lblProgress.setText(e.getActionCommand());
-                }
-            }
-        });
-
-        HashMap<String, String> data = parser.parse(ProfileManager.getInstance().getDocDir() + "allclasses-noframe.html");
-
-        setVisible(false);
-        dispose();
-
-        return data;
-    }
-}

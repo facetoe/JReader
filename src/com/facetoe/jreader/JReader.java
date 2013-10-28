@@ -22,15 +22,15 @@ import java.util.concurrent.CountDownLatch;
 public class JReader extends JFrame {
     private final Logger log = Logger.getLogger(this.getClass());
 
-    private JButton btnBack = new JButton("Back");
-    private JButton btnNext = new JButton("Next");
-    private JButton btnHome = new JButton("Home");
-    JReaderMenuBar menuBar = new JReaderMenuBar(this);
+    private final JButton btnBack = new JButton("Back");
+    private final JButton btnNext = new JButton("Next");
+    private final JButton btnHome = new JButton("Home");
+    private final JButton btnSearch = new JButton("Search");
+    private final JButton btnSource = new JButton(new ViewSourceAction(this));
+    private AutoCompleteTextField searchBar = new AutoCompleteTextField();
+    private JProgressBar progressBar = new JProgressBar();
 
-
-
-    JButton btnSearch = new JButton("Search");
-    private JButton btnSource = new JButton(new ViewSourceAction(this));
+    private final JReaderMenuBar menuBar = new JReaderMenuBar(this);
 
     private SearchContext searchContext = new SearchContext();
 
@@ -38,15 +38,12 @@ public class JReader extends JFrame {
      * If it's not set then the Swing components are displayed before there is any content in them. */
     CountDownLatch javafxLoadLatch = new CountDownLatch(1);
 
+
     /* Keeps track of which profile we are using and provides access to the settings for that profile. */
     ProfileManager profileManager;
-
-
     private HashMap<String, String> classNames;
-    private JavaSourceFile currentSourceFile;
 
-    private AutoCompleteTextField searchBar = new AutoCompleteTextField();
-    private JProgressBar progressBar = new JProgressBar();
+    private JavaSourceFile currentSourceFile;
     private final JTabbedPane tabbedPane = new JTabbedPane();
 
     private JPanel currentTab;
@@ -91,7 +88,7 @@ public class JReader extends JFrame {
 
 
     private void initActions() {
-        Action action = new CloseTabAction(tabbedPane);
+        Action action = new CloseTabAction(tabbedPane, this);
         String keyStrokeAndKey = "control C";
         KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
         getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(keyStroke, keyStrokeAndKey);
@@ -270,8 +267,7 @@ public class JReader extends JFrame {
             log.warn("Source file was null");
         }
 
-        searchBar.requestFocus();
-        searchBar.setText("");
+        resetSearchBar();
         tabbedPane.setSelectedComponent(newTab);
     }
 
@@ -400,12 +396,12 @@ public class JReader extends JFrame {
 
     private void disableNewSourceOption() {
         btnSource.setEnabled(false);
-        menuBar.getMnuNewSource().setEnabled(false);
+        menuBar.disableNewSourceOption();
     }
 
     private void enableNewSourceOption() {
         btnSource.setEnabled(true);
-        menuBar.getMnuNewSource().setEnabled(true);
+        menuBar.enableNewSourceOption();
     }
 
     private void handleSearch() {
@@ -462,6 +458,11 @@ public class JReader extends JFrame {
 
     public void removeJavaDocClassNames() {
         searchBar.removeWordsFromTrie(new ArrayList<String>(classNames.keySet()));
+    }
+
+    public void resetSearchBar() {
+        searchBar.setText("");
+        searchBar.requestFocus();
     }
 
     public void handleQuit() {

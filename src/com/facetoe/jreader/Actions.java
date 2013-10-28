@@ -35,9 +35,11 @@ class ViewSourceAction extends AbstractAction {
 
 class CloseTabAction extends AbstractAction {
     JTabbedPane tabbedPane;
+    JReader jReader;
 
-    public CloseTabAction(JTabbedPane tabbedPane) {
+    public CloseTabAction(JTabbedPane tabbedPane, JReader jReader) {
         this.tabbedPane = tabbedPane;
+        this.jReader = jReader;
     }
 
     @Override
@@ -47,6 +49,7 @@ class CloseTabAction extends AbstractAction {
 
         if ( component != null ) {
             component.removeTab();
+            jReader.resetSearchBar();
         }
     }
 }
