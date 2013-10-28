@@ -74,6 +74,7 @@ public class ProfileManager implements Serializable {
             }
         }
         Config.setString(Config.CURRENT_PROFILE, currentProfile.name);
+        log.debug("Created profile: " + currentProfile.name);
     }
 
     public void loadProfiles() throws IOException, ClassNotFoundException {
@@ -102,6 +103,7 @@ public class ProfileManager implements Serializable {
 
     public void saveProfiles() throws IOException {
         for ( String s : profiles.keySet() ) {
+            log.debug("Saving: " + s);
             writeProfile(profiles.get(s));
         }
     }
@@ -172,6 +174,7 @@ public class ProfileManager implements Serializable {
                 Utilities.deleteDirectoryAndContents(profileDir);
                 profiles.remove(profileName);
                 setCurrentProfile("Default");
+                log.debug("Deleted: " + profile.name);
             } catch ( IOException e ) {
                 log.error(e.getMessage(), e);
             }
@@ -223,8 +226,6 @@ public class ProfileManager implements Serializable {
         private String home;
         private String name;
 
-        private final String CLASS_DATA_FILE = "classData.ser";
-
         private boolean regexpIsEnabled;
         private boolean wholeWordIsEnabled;
         private boolean matchCaseIsEnabled;
@@ -236,6 +237,8 @@ public class ProfileManager implements Serializable {
         public Profile(String name, String fileName, String docDir, String srcDir) {
             this.name = name;
             this.fileName = fileName;
+
+            /* Don't want funny characters and spaces in the directory name */
             this.profileDirName = name.replaceAll("[^a-zA-Z0-9.-]", "_");
             this.docDir = docDir;
             this.srcDir = srcDir;

@@ -120,6 +120,11 @@ public class Utilities {
         return path;
     }
 
+    /**
+     * Extracts the title from a local HTML file or the filename for remote pages.
+     * @param path
+     * @return the title
+     */
     public static String extractTitle(String path) {
         if(path.startsWith("http:/")
                 || path.startsWith("www.")
@@ -130,17 +135,29 @@ public class Utilities {
         try {
             path = browserPathToSystemPath(path);
             FileInputStream inStream = new FileInputStream(path);
-            String line = null;
+            String html;
             Scanner scanner = new Scanner(inStream);
+
             while(scanner.hasNextLine()) {
-                line = scanner.nextLine();
-                if(line.contains("<title>")) {
-                    return Jsoup.parse(line, "UTF-8").select("title").text();
+                html = scanner.nextLine();
+
+                /* This is sufficient for the Java 7 docs as the title is all in one line */
+                if(html.toLowerCase().contains("<title>") && html.toLowerCase().contains("<title/>")) {
+                    return Jsoup.parse(html, "UTF-8").select("title").text();
+                } else {
+
+                    /* The Java 6 documentation and generated javadocs spread the title over multiple lines */
+                    while(scanner.hasNextLine())
+                    {
+                        html += scanner.nextLine();
+                        if(html.toLowerCase().contains("</title>")) {
+                            return Jsoup.parse(html, "UTF-8").select("title").text();
+                        }
+                    }
                 }
             }
-            System.out.println(line);
         } catch ( FileNotFoundException e ) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return "";
     }
