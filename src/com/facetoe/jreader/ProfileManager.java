@@ -46,8 +46,20 @@ public class ProfileManager implements Serializable {
         String currentProfileName = Config.getString(Config.CURRENT_PROFILE);
         if ( !currentProfileName.isEmpty() ) {
             currentProfile = profiles.get(currentProfileName);
+
+            /* If it doesn't exist */
+            if(currentProfile == null) {
+                if(JReaderSetup.hasDefaultProfile()) {
+                    setCurrentProfile(Config.DEFAULT_PROFILE_NAME);
+                } else {
+                    log.error("No profile or default profile.");
+                    JOptionPane.showMessageDialog(null, "No default profile found.", "Fatal Error", JOptionPane.ERROR_MESSAGE);
+                    Config.setBool(Config.HAS_DEFAULT_PROFILE, false);
+                    System.exit(1);
+                }
+            }
         } else {
-            log.error("No default profile");
+            log.error("Current profile not set.");
         }
     }
 

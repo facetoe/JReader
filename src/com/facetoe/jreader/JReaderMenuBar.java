@@ -148,6 +148,10 @@ public class JReaderMenuBar extends JMenuBar {
 
                                     /* profileManager.deleteProfile sets the profile to Default. */
                                     profileManager.deleteProfile(profileName);
+                                    if(jReader.getCurrentTab() instanceof JReaderPanel) {
+                                        JReaderPanel panel = (JReaderPanel) jReader.getCurrentTab();
+                                        panel.home();
+                                    }
                                 }
                             }
                         });
