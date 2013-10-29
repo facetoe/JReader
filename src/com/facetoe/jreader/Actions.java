@@ -24,12 +24,11 @@ class ViewSourceAction extends AbstractAction {
         SwingWorker worker = new SwingWorker() {
             @Override
             protected Object doInBackground() throws Exception {
-                jReader.newSourceTab(null);
+                jReader.newSourceTab();
                 return null;  //To change body of implemented methods use File | Settings | File Templates.
             }
         };
         worker.execute();
-
     }
 }
 
