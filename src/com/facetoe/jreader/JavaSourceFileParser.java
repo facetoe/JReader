@@ -35,6 +35,7 @@ public class JavaSourceFileParser {
      * @throws IOException
      */
     public static JavaSourceFile parse(FileInputStream inputStream) throws ParseException, IOException {
+        log.debug("Parsing source file...");
         CompilationUnit cu = null;
         try {
             cu = JavaParser.parse(inputStream);
