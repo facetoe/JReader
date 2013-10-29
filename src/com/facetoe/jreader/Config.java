@@ -21,6 +21,7 @@ public class Config {
     public static final String HAS_PARSED_DOCS = "hasParsedDocs";
 
     public static final String PROFILE_DIR_NAME = "profiles";
+    public static final String DEFAULT_PROFILE_NAME = "Default";
     public static final String JAVA_LANG_ZIP = "src-jdk.zip";
     public static final String CLASS_DATA_FILE_NAME = "classData.ser";
     public static final String ALL_CLASSSES_DOC_FILE = "allclasses-noframe.html";
