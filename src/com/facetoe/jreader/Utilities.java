@@ -23,26 +23,6 @@ public class Utilities {
 
 
     public static void main(String[] args) {
-
-
-
-        try {
-            String path = "/home/facetoe/tmp/docs/api/java/awt/dnd/DropTarget.html";
-            FileInputStream inStream = new FileInputStream(path);
-            String line = null;
-            Scanner scanner = new Scanner(inStream);
-            while(scanner.hasNextLine()) {
-                line = scanner.nextLine();
-                if(line.contains("<title>")) {
-                    System.out.println(Jsoup.parse(line, "UTF-8").select("title").text());
-                    break;
-                }
-            }
-            System.out.println(line);
-        } catch ( FileNotFoundException e ) {
-            e.printStackTrace();
-        }
-
     }
 
     /**
@@ -57,6 +37,7 @@ public class Utilities {
         byte[] encoded = Files.readAllBytes(Paths.get(path));
         return encoding.decode(ByteBuffer.wrap(encoded)).toString();
     }
+
 
     /**
      * Takes a path like "file:///user/home/docPath/api/ClassName.html"
@@ -75,18 +56,19 @@ public class Utilities {
 
         /* Here we extract the section of the path we are after,
         which is everything after the documentation directory. */
-        String subPath =  fullPath.subpath(docSection.getNameCount(), fullPath.getNameCount()).toString();
+        String subPath =  fullPath.subpath(docSection.getNameCount(),
+                fullPath.getNameCount())
+                .toString();
 
         /* And add the source directory to the beginning to get the complete path. */
         String path =  profileManager.getSrcDir() + subPath;
 
         /* If there are more than 2 periods it's probably a nested class like: /dir/dir/SomeClass.SomeNestedClass.html.
-         * Extract the just the class name. */
+         * Extract the class name. */
          String fileName = Paths.get(path).getFileName().toString();
          if ( fileName.split("\\.").length >= 2 ) {
             String objectName = fileName.substring(0, fileName.indexOf("."));
             path = path.substring(0, path.lastIndexOf("/") + 1) + objectName + ".java";
-             System.out.println(path);
          }
 
         return path.replace(".html", ".java");
@@ -125,15 +107,14 @@ public class Utilities {
         return path;
     }
 
+
     /**
      * Extracts the title from a local HTML file or the filename for remote pages.
      * @param path
-     * @return the title
+     * @return the title or an empty string if something failed.
      */
     public static String extractTitle(String path) {
-        if(path.startsWith("http:/")
-                || path.startsWith("www.")
-                || path.startsWith("https:/") ) {
+        if( isWebAddress(path) ) {
             return extractFileName(path);
         }
 
@@ -151,7 +132,7 @@ public class Utilities {
                     return Jsoup.parse(html, "UTF-8").select("title").text();
                 } else {
 
-                    /* The Java 6 documentation and generated javadocs spread the title over multiple lines */
+                    /* The Java 6 documentation and older generated javadocs spread the title over multiple lines */
                     while(scanner.hasNextLine())
                     {
                         html += scanner.nextLine();
@@ -164,6 +145,7 @@ public class Utilities {
         } catch ( FileNotFoundException e ) {
             log.error(e.getMessage(), e);
         }
+
         return "";
     }
 
@@ -197,11 +179,7 @@ public class Utilities {
 
     public static boolean isGoodSourcePath(String path) {
 
-        if ( path == null ) {
-            return false;
-        } else if ( path.startsWith("http:/")
-                || path.startsWith("https:/")
-                || path.startsWith("www.") ) {
+        if ( path == null || isWebAddress(path) ) {
             return false;
         }
 
@@ -217,7 +195,7 @@ public class Utilities {
 
         File file = new File(path);
 
-        if ( !file.exists() || file.isDirectory() ) {
+        if ( !file.isFile() ) {
             return false;
         }
         return true;
@@ -257,7 +235,7 @@ public class Utilities {
     public static HashMap<String, String> readClassData(File classDataFile) throws IOException, ClassNotFoundException {
         FileInputStream fileIn = new FileInputStream(classDataFile); //TODO change this to string to be more consistent with the write method
         ObjectInputStream in = new ObjectInputStream(fileIn);
-        HashMap<String, String> classData = ( HashMap<String, String> ) in.readObject();
+        @SuppressWarnings( "unchecked" ) HashMap<String, String> classData = ( HashMap<String, String> ) in.readObject();
         in.close();
         fileIn.close();
 
@@ -266,12 +244,10 @@ public class Utilities {
 
     public static boolean isJavaDocsDir(File docDir) {
         docDir = findDocDir(docDir);
-        File overviewFile = new File(docDir.getAbsoluteFile() + File.separator + "overview-summary.html");
         File indexFile = new File(docDir.getAbsoluteFile() + File.separator + "index.html");
         File classFile = new File(docDir.getAbsoluteFile() + File.separator + "allclasses-noframe.html");
         if ( !indexFile.exists()
-               || !classFile.exists()
-               || !overviewFile.exists()) {
+               || !classFile.exists()) {
             return false;
         }
 
@@ -292,6 +268,36 @@ public class Utilities {
         }
         return false;
     }
+    
+    public static String getHomePage(String docDirPath) {
+        File docDir = new File(docDirPath);
+        HashMap<String, File> files = new HashMap<String, File>();
+        File[] filesArr = docDir.listFiles();
+
+        String homePath = "";
+
+        for ( File file : filesArr ) {
+            files.put(file.getName(), file);
+        }
+
+        if(files.containsKey("overview-summary.html")) {
+            homePath = "overview-summary.html";
+
+        } else if(files.containsKey("allclasses-noframe.html")) {
+            homePath = "allclasses-noframe.html";
+
+        } else if (files.containsKey("index.html")) {
+            homePath = "index.html";
+        }
+
+        return homePath;
+    }
+
+    public static boolean isWebAddress(String path) {
+        return path.startsWith("http:/")
+                || path.startsWith("www.")
+                || path.startsWith("https:/") ;
+    }
 
     public static File findDocDir(File rootDir) {
         File[] files = rootDir.listFiles();
@@ -306,8 +312,7 @@ public class Utilities {
     }
 
 
-    public static void deleteDirectoryAndContents(File file)
-            throws IOException {
+    public static void deleteDirectoryAndContents(File file) {
         if ( file.isDirectory() ) {
             if ( file.list().length == 0 ) {
                 file.delete();
