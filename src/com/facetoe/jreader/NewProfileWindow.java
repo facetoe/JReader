@@ -16,6 +16,10 @@ import java.io.File;
  * Date: 18/10/13
  * Time: 11:55 AM
  */
+
+/**
+ * Provides a window where users can enter the details of a new profile.
+ */
 public class NewProfileWindow extends JDialog {
     private JPanel parentPanel;
     private JPanel pnlName;
@@ -28,9 +32,12 @@ public class NewProfileWindow extends JDialog {
     private JButton btnOK;
     private JButton btnCancel;
     private JTextField txtSrc;
+    private JProgressBar progressBar;
+    private JLabel lblStatus;
 
-    private File srcDir;
-
+    /**
+     * Constructor for NewProfileWindow. No need to call any methods, this does everything.
+     */
     public NewProfileWindow() {
         btnDocs.addActionListener(new ActionListener() {
             @Override
@@ -38,6 +45,8 @@ public class NewProfileWindow extends JDialog {
                 File chosenDir = showFileDialog();
                 if ( chosenDir != null ) {
                     chosenDir = Utilities.findDocDir(chosenDir);
+
+                    /* Make sure we have a documentation directory or big problem later. */
                     if ( !Utilities.isJavaDocsDir(chosenDir) ) {
                         JOptionPane.showMessageDialog(parentPanel,
                                 "Invalid directory. Please choose the top level directory that contains the index.html file.",
@@ -50,13 +59,13 @@ public class NewProfileWindow extends JDialog {
             }
         });
 
+        //TODO Write a method that confirms this is actually the source directory for the chosen docs.
         btnSrc.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 File chosenDir = showFileDialog();
                 if ( chosenDir != null ) {
-                    srcDir = chosenDir;
-                    txtSrc.setText(srcDir.getAbsolutePath());
+                    txtSrc.setText(chosenDir.getAbsolutePath());
                 }
             }
         });
@@ -68,15 +77,49 @@ public class NewProfileWindow extends JDialog {
                     JOptionPane.showMessageDialog(null, "You need to fill in all the fields");
                     return;
                 }
-                ProfileManager manager = ProfileManager.getInstance();
-                String name = txtName.getText();
-                manager.newProfile(name,
-                        txtDocs.getText() + File.separator,
-                        txtSrc.getText() + File.separator);
-                manager.setCurrentProfile(name);
 
-                setVisible(false);
-                dispose();
+                /* Run this in a SwingWorker or the UI hangs. */
+                SwingWorker worker = new SwingWorker() {
+                    @Override
+                    protected Object doInBackground() throws Exception {
+
+                        /* If we don't hide these then when the progress bar and label
+                         * become visible the buttons get pushed off the bottom of the frame.
+                         * There is probably a better way to do it...*/
+                        pnlName.setVisible(false);
+                        pnlDocs.setVisible(false);
+                        pnlSrc.setVisible(false);
+
+                        progressBar.setVisible(true);
+                        progressBar.setStringPainted(true);
+                        lblStatus.setVisible(true);
+
+                        ProfileManager manager = ProfileManager.getInstance();
+                        String name = txtName.getText();
+
+                        /** Add a listener to <code>ProfileManager</code>  that will end up in <code>JavaDocParser</code> so we can monitor progress. */
+                        manager.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                progressBar.setValue(( int ) e.getWhen());
+                                progressBar.setString(e.getWhen() + "%");
+                                lblStatus.setText("Parsing: " + e.getActionCommand());
+                            }
+                        });
+
+                        /* Create the profile. It will be saved in the newProfile method. */
+                        manager.newProfile(name,
+                                txtDocs.getText() + File.separator,
+                                txtSrc.getText() + File.separator);
+                        manager.setCurrentProfile(name);
+
+                        setVisible(false);
+                        dispose();
+                        return null;
+                    }
+                };
+                worker.execute();
+
             }
         });
 
@@ -187,11 +230,20 @@ public class NewProfileWindow extends JDialog {
         btnCancel.setText("Cancel");
         panel1.add(btnCancel, cc.xy(3, 1));
         final JPanel panel2 = new JPanel();
-        panel2.setLayout(new FormLayout("fill:d:grow", "center:d:grow,top:4dlu:noGrow,center:max(d;4px):noGrow"));
+        panel2.setLayout(new FormLayout("fill:d:grow", "center:d:grow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow"));
         parentPanel.add(panel2, cc.xy(1, 1, CellConstraints.LEFT, CellConstraints.DEFAULT));
         final JLabel label4 = new JLabel();
+        label4.setFont(new Font(label4.getFont().getName(), Font.BOLD, label4.getFont().getSize()));
         label4.setText("Select a name, source and documentation directory for this profile.");
         panel2.add(label4, cc.xy(1, 3));
+        progressBar = new JProgressBar();
+        progressBar.setVerifyInputWhenFocusTarget(true);
+        progressBar.setVisible(false);
+        panel2.add(progressBar, cc.xy(1, 5, CellConstraints.FILL, CellConstraints.DEFAULT));
+        lblStatus = new JLabel();
+        lblStatus.setText("Preparing to parse...");
+        lblStatus.setVisible(false);
+        panel2.add(lblStatus, cc.xy(1, 7));
         final Spacer spacer2 = new Spacer();
         parentPanel.add(spacer2, cc.xy(1, 3, CellConstraints.DEFAULT, CellConstraints.FILL));
     }

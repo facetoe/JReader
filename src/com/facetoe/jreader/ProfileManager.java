@@ -3,6 +3,7 @@ package com.facetoe.jreader;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +30,8 @@ public class ProfileManager implements Serializable {
 
     /* Singlton instance of ProfileManager. */
     private static final ProfileManager instance = new ProfileManager();
+
+    private static final ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
 
 
     private ProfileManager() {
@@ -75,6 +78,11 @@ public class ProfileManager implements Serializable {
 
             /* Parse the class data and save it. */
             JavaDocParser parser = new JavaDocParser();
+
+            for ( ActionListener listener : listeners ) {
+                parser.addActionListener(listener);
+            }
+
             HashMap<String, String> classData = parser.parse(getDocDir() +
                     Config.ALL_CLASSSES_DOC_FILE);
             Utilities.writeCLassData(getPath() + Config.CLASS_DATA_FILE_NAME, classData);
@@ -182,10 +190,6 @@ public class ProfileManager implements Serializable {
         return profile;
     }
 
-    public ArrayList<String> getProfileNames() {
-        return new ArrayList<String>(profiles.keySet());
-    }
-
     /**
      * Sets <code>profileName</code> as the current profile.
      *
@@ -214,6 +218,14 @@ public class ProfileManager implements Serializable {
         profiles.remove(profileName);
         setCurrentProfile("Default");
         log.debug("Deleted: " + profile.name);
+    }
+
+    public ArrayList<String> getProfileNames() {
+        return new ArrayList<String>(profiles.keySet());
+    }
+
+    public void addActionListener(ActionListener listener) {
+        listeners.add(listener);
     }
 
     public String getPath() {
