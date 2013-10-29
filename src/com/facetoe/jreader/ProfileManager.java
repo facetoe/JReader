@@ -14,6 +14,9 @@ import java.util.HashMap;
  * Time: 4:23 PM
  */
 
+/**
+ * This class is responsible for creating, deleting and querying profiles.
+ */
 public class ProfileManager implements Serializable {
     private static final Logger log = Logger.getLogger(ProfileManager.class);
     private static final long serialVersionUID = 1L;
@@ -57,7 +60,7 @@ public class ProfileManager implements Serializable {
     /**
      * Create a new Profile.
      *
-     * @param name The name of this profile.
+     * @param name   The name of this profile.
      * @param docDir Where the Documentation is located.
      * @param srcDir Where the source code is located.
      */
@@ -89,6 +92,7 @@ public class ProfileManager implements Serializable {
 
     /**
      * Loads all the profiles.
+     *
      * @throws IOException
      * @throws ClassNotFoundException
      */
@@ -118,6 +122,7 @@ public class ProfileManager implements Serializable {
 
     /**
      * Saves all the profiles.
+     *
      * @throws IOException
      */
     public void saveProfiles() throws IOException {
@@ -129,6 +134,7 @@ public class ProfileManager implements Serializable {
 
     /**
      * Writes a profile to disk. If the direcory doesn't exist this method will try to create it.
+     *
      * @param profile The profile to save.
      * @throws IOException
      */
@@ -161,6 +167,7 @@ public class ProfileManager implements Serializable {
 
     /**
      * Reads a profile and returns a Profile object.
+     *
      * @param filePath Path to the profile.
      * @return Profile object.
      * @throws IOException
@@ -181,6 +188,7 @@ public class ProfileManager implements Serializable {
 
     /**
      * Sets <code>profileName</code> as the current profile.
+     *
      * @param profileName The name of the profile to be set.
      */
     public void setCurrentProfile(String profileName) {
@@ -196,19 +204,16 @@ public class ProfileManager implements Serializable {
     /**
      * Deletes a profile and the enclosing directory.
      * If there are sub directories they will be deleted also.
+     *
      * @param profileName The profile to be deleted.
      */
     public void deleteProfile(String profileName) {
         Profile profile = profiles.get(profileName);
         File profileDir = new File(Config.getString(Config.PROFILE_DIR) + File.separator + profile.profileDirName);
-        try {
-            Utilities.deleteDirectoryAndContents(profileDir);
-            profiles.remove(profileName);
-            setCurrentProfile("Default");
-            log.debug("Deleted: " + profile.name);
-        } catch ( IOException e ) {
-            log.error(e.getMessage(), e);
-        }
+        Utilities.deleteDirectoryAndContents(profileDir);
+        profiles.remove(profileName);
+        setCurrentProfile("Default");
+        log.debug("Deleted: " + profile.name);
     }
 
     public String getPath() {
@@ -228,6 +233,10 @@ public class ProfileManager implements Serializable {
 
     public String getSrcDir() {
         return currentProfile.srcDir;
+    }
+
+    public String getHome() {
+        return getDocDir() + File.separator + currentProfile.home;
     }
 
     public boolean regexpIsEnabled() {
@@ -271,7 +280,8 @@ public class ProfileManager implements Serializable {
 
         /* The name of the class data file. */
         private final String classDataFileName;
-        //private String home;
+
+        private String home;
 
         private final String name;
 
@@ -292,6 +302,7 @@ public class ProfileManager implements Serializable {
             this.regexpIsEnabled = false;
             this.wholeWordIsEnabled = false;
             this.matchCaseIsEnabled = false;
+            home = Utilities.getHomePage(docDir);
         }
     }
 }
