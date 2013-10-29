@@ -15,9 +15,8 @@ public class JReaderSetup {
     public static boolean isSetup() {
         return hasDataDir()
                 && hasConfigFile()
-                && Config.getBool(Config.HAS_DEFAULT_PROFILE)
+                && hasDefaultProfile()
                 && hasDataDir()
-                && Config.getBool(Config.HAS_DEFAULT_PROFILE)
                 && Config.getBool(Config.HAS_JAVALANG_SOURCE)
                 && Config.getBool(Config.HAS_PARSED_DOCS)
                 && !Config.getString(Config.CURRENT_PROFILE).isEmpty()
@@ -111,5 +110,14 @@ public class JReaderSetup {
 
     public static boolean hasConfigFile() {
         return new File(Config.propertiesFilePath).exists();
+    }
+
+    public static boolean hasDefaultProfile() {
+        if(!new File(Config.dataDirectory).exists()) {
+            return false;
+        }
+        File defaultProfile = new File(Config.getString(Config.PROFILE_DIR)
+                + File.separator + Config.DEFAULT_PROFILE_NAME);
+        return defaultProfile.exists();
     }
 }

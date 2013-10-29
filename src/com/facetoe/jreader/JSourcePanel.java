@@ -4,9 +4,6 @@ import org.apache.log4j.Logger;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.Theme;
-import org.fife.ui.rsyntaxtextarea.folding.FoldCollapser;
-import org.fife.ui.rsyntaxtextarea.folding.FoldManager;
-import org.fife.ui.rsyntaxtextarea.folding.FoldType;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
@@ -26,8 +23,7 @@ import java.nio.file.Paths;
 public class JSourcePanel extends JPanel {
     private final Logger log = Logger.getLogger(this.getClass());
 
-    RSyntaxTextArea textArea;
-    RTextScrollPane scrollPane;
+    private final RSyntaxTextArea textArea;
 
     /**
      * Creates a new instance of JSourcePanel and displays the contents of filePath.
@@ -50,7 +46,7 @@ public class JSourcePanel extends JPanel {
             log.error(e.getMessage(), e);
         }
 
-        scrollPane = new RTextScrollPane(textArea);
+        RTextScrollPane scrollPane = new RTextScrollPane(textArea);
         scrollPane.setFoldIndicatorEnabled(true);
         setLayout(new BorderLayout());
         add(scrollPane);
@@ -61,15 +57,6 @@ public class JSourcePanel extends JPanel {
         } catch ( IOException e ) {
             log.error(e.getMessage(), e);
         }
-    }
-
-    /**
-     * Collapses all the comments.
-     */
-    public void collapseAllComments() {
-        FoldManager foldManager = textArea.getFoldManager();
-        FoldCollapser foldCollapser = new FoldCollapser(FoldType.COMMENT);
-        foldCollapser.collapseFolds(foldManager);
     }
 
     /**

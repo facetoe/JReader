@@ -28,11 +28,10 @@ public class JReaderPanel extends JPanel {
     private WebView view;
     private JFXPanel jfxPanel;
     private JProgressBar progressBar;
-    private CountDownLatch latch;
+    private final CountDownLatch latch;
     private final ProfileManager profileManager = ProfileManager.getInstance();
 
     private String currentPage;
-    private String initialURL;
 
     /**
      * Create a new JReaderPanel instance with the specified URL.
@@ -52,7 +51,7 @@ public class JReaderPanel extends JPanel {
      */
     public JReaderPanel(JProgressBar jProgressBar, CountDownLatch latch) {
         this.latch = latch;
-        init(profileManager.getDocDir() + File.separator + "overview-summary.html", jProgressBar);
+        init(profileManager.getHome(), jProgressBar);
     }
 
     /**
@@ -62,12 +61,11 @@ public class JReaderPanel extends JPanel {
      * @param jProgressBar reference to of the main JReader progress bar so we can display progress.
      */
     private void init(String url, JProgressBar jProgressBar) {
-        initialURL = url;
         progressBar = jProgressBar;
         jfxPanel = new JFXPanel();
         setLayout(new BorderLayout());
         createScene();
-        loadURL(initialURL);
+        loadURL(url);
         log.debug("Finished loading JReaderPanel");
     }
 
@@ -174,11 +172,11 @@ public class JReaderPanel extends JPanel {
      * Navigate to the home page
      */
     public void home() {
-        File overviewFile = new File(profileManager.getDocDir() +  File.separator +  "overview-summary.html");
-        if(overviewFile == null) {
-            System.err.println("Failed to load overview file at: " + overviewFile.getAbsolutePath());
-        } else {
+        File overviewFile = new File(profileManager.getHome());
+        if(overviewFile != null) {
             loadURL(overviewFile.getAbsolutePath());
+        } else {
+            log.error("Couldn't locate home file.");
         }
     }
 
@@ -203,6 +201,7 @@ public class JReaderPanel extends JPanel {
                     try {
                         path = Paths.get(url).toUri().toString();
                     } catch ( InvalidPathException ex ) {
+                        log.error(ex.getMessage(), ex);
                     }
                     engine.load(path);
                 }

@@ -17,8 +17,6 @@ import java.io.File;
  * Time: 11:55 AM
  */
 public class NewProfileWindow extends JDialog {
-    private static JFrame frame = new JFrame("New Profile");
-
     private JPanel parentPanel;
     private JPanel pnlName;
     private JTextField txtName;
@@ -31,9 +29,7 @@ public class NewProfileWindow extends JDialog {
     private JButton btnCancel;
     private JTextField txtSrc;
 
-    private File docDir;
     private File srcDir;
-    private String profileName;
 
     public NewProfileWindow() {
         btnDocs.addActionListener(new ActionListener() {
@@ -49,7 +45,6 @@ public class NewProfileWindow extends JDialog {
                                 JOptionPane.ERROR_MESSAGE);
                     } else {
                         txtDocs.setText(chosenDir.getAbsolutePath());
-                        docDir = chosenDir;
                     }
                 }
             }
