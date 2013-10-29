@@ -249,11 +249,11 @@ public class SetupWindow extends JDialog {
 
             ProfileManager profileManager = ProfileManager.getInstance();
             String javaDocsPath = docDir.getAbsolutePath() + File.separator;
-            profileManager.newProfile("Default", javaDocsPath, srcPath);
+            profileManager.newProfile(Config.DEFAULT_PROFILE_NAME, javaDocsPath, srcPath);
 
             profileManager.saveProfiles();
             Config.setBool(Config.HAS_DEFAULT_PROFILE, true);
-            Config.setString(Config.CURRENT_PROFILE, "Default");
+            Config.setString(Config.CURRENT_PROFILE, Config.DEFAULT_PROFILE_NAME);
         }
 
         private void parseDocs(File docDir) throws Exception {

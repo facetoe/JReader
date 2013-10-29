@@ -133,7 +133,7 @@ public class JReaderMenuBar extends JMenuBar {
                     JMenuItem item = new JMenuItem(profile);
 
                     /* Don't allow the user to delete the default profile or we will have problems. */
-                    if(profile.equals("Default")) {
+                    if(profile.equals(Config.DEFAULT_PROFILE_NAME)) {
                         item.setEnabled(false);
 
                     } else {
