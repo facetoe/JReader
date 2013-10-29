@@ -169,7 +169,7 @@ public class ProfileManager implements Serializable {
             }
         }
 
-        File classDataFile = new File(profileDirPath + File.separator + profile.classDataFileName);
+        File classDataFile = new File(profileDirPath + File.separator + profile.profileFileName);
 
         if ( !classDataFile.exists() ) {
             boolean wasSuccess = classDataFile.createNewFile();
@@ -228,7 +228,7 @@ public class ProfileManager implements Serializable {
         File profileDir = new File(Config.getString(Config.PROFILE_DIR) + File.separator + profile.profileDirName);
         Utilities.deleteDirectoryAndContents(profileDir);
         profiles.remove(profileName);
-        setCurrentProfile("Default");
+        setCurrentProfile(Config.DEFAULT_PROFILE_NAME);
         log.debug("Deleted: " + profile.name);
     }
 
@@ -247,8 +247,12 @@ public class ProfileManager implements Serializable {
                 + File.separator;
     }
 
-    public String getClassDataFilePath() {
-        return getPath() + Config.CLASS_DATA_FILE_NAME;
+    public ArrayList<String> getClassNames() {
+        return new ArrayList<String>(getClassData().keySet());
+    }
+
+    public HashMap<String, String> getClassData() {
+        return currentProfile.getClassData();
     }
 
     public String getDocDir() {
@@ -303,7 +307,9 @@ public class ProfileManager implements Serializable {
         private final String srcDir;
 
         /* The name of the class data file. */
-        private final String classDataFileName;
+        private final String profileFileName;
+
+        private HashMap<String, String> classData;
 
         private String home;
 
@@ -317,7 +323,7 @@ public class ProfileManager implements Serializable {
             this.name = name;
 
             /* Don't want funny characters and spaces in the data file name */
-            this.classDataFileName = name.replaceAll("[^A-Za-z0-9]", "_") + ".ser";
+            this.profileFileName = name.replaceAll("[^A-Za-z0-9]", "_") + ".ser";
 
             /* Don't want funny characters and spaces in the directory name */
             this.profileDirName = name.replaceAll("[^a-zA-Z0-9.-]", "_");
@@ -327,6 +333,30 @@ public class ProfileManager implements Serializable {
             this.wholeWordIsEnabled = false;
             this.matchCaseIsEnabled = false;
             home = Utilities.getHomePage(docDir);
+        }
+
+        HashMap<String, String> getClassData() {
+            if(classData == null) {
+                log.debug("Loading classData for: " + name);
+
+                File classDataFile = new File(Config.getString(Config.PROFILE_DIR)
+                        + File.separator + profileDirName + File.separator + Config.CLASS_DATA_FILE_NAME);
+                try {
+                    classData = Utilities.readClassData(classDataFile);
+                } catch ( IOException e ) {
+                    log.error(e.toString(), e);
+                    handleLoadError(e);
+                } catch ( ClassNotFoundException e ) {
+                    log.error(e.toString(), e);
+                    handleLoadError(e);
+                }
+            }
+            return classData;
+        }
+
+        private void handleLoadError(Exception e) {
+            classData = new HashMap<String, String>();
+            JOptionPane.showMessageDialog(null, "Failed to load class data: " + e.toString());
         }
     }
 }

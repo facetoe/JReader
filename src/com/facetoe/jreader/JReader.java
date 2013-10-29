@@ -1,6 +1,5 @@
 package com.facetoe.jreader;
 
-import japa.parser.ParseException;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -10,13 +9,15 @@ import org.fife.ui.rtextarea.SearchContext;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import java.awt.*;
-import java.awt.event.*;
-import java.io.File;
-import java.io.FileInputStream;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
+
+
 
 
 public class JReader extends JFrame {
@@ -38,17 +39,11 @@ public class JReader extends JFrame {
     /* Keeps track of which profile we are using and provides access to the settings for that profile. */
     private final ProfileManager profileManager;
 
-    /* Class names for auto-completion in JReaderPanel. */
-    private HashMap<String, String> classNames;
-
-    //TODO Figure out how to deal with multiple tabs of JSourcePanel.
-    private JavaSourceFile currentSourceFile;
-
     /* Tabbed pane for displaying JReaderPanels and JSourcePanel. */
     private final JTabbedPane tabbedPane = new JTabbedPane();
 
     /* The currently visible tab. */
-    private JPanel currentTab;
+    private AbstractPanel currentTab;
 
     public JReader() {
 
@@ -57,7 +52,6 @@ public class JReader extends JFrame {
         }
 
         profileManager = ProfileManager.getInstance();
-        loadJavaClassNames();
         newJReaderTab("JReader", false);
 
         setJMenuBar(new JReaderMenuBar(this));
@@ -148,24 +142,10 @@ public class JReader extends JFrame {
             }
         });
 
-
         tabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                if ( tabbedPane.getComponentAt(tabbedPane.getSelectedIndex()) instanceof JSourcePanel ) {
-                    disableBrowserButtons();
-                    disableNewSourceOption();
-                    topPanel.getSearchBar().removeWordsFromTrie(new ArrayList<String>(classNames.keySet()));
-                } else if ( tabbedPane.getComponentAt(tabbedPane.getSelectedIndex()) instanceof JReaderPanel ) {
-                    enableBrowserButtons();
-                    enableNewSourceOption();
-                    if ( currentSourceFile != null ) {
-                        topPanel.getSearchBar().removeWordsFromTrie(currentSourceFile.getAllDeclarations());
-                    }
-
-                    topPanel.getSearchBar().addWordsToTrie(new ArrayList<String>(classNames.keySet()));
-                }
-                currentTab = ( JPanel ) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
+                handleTabChange();
             }
         });
     }
@@ -177,54 +157,32 @@ public class JReader extends JFrame {
         tabbedPane.setTabComponentAt(index, tabButton);
     }
 
-    public void newSourceTab(String path) {
-        String title;
-        String filePath;
-        if ( currentTab instanceof JReaderPanel ) {
-            if ( path != null && path.endsWith(".java") ) {
-                filePath = path;
-                title = Utilities.extractFileName(filePath);
-            } else {
-                JReaderPanel panel = ( JReaderPanel ) currentTab;
-                path = panel.getCurrentPage();
-                filePath = Utilities.docPathToSourcePath(panel.getCurrentPage());
-                title = Utilities.extractFileName(filePath);
-            }
-
-            log.debug("newSourceTab called with: " + path);
-
-        } else {
-            log.warn("newSourceTab not called from ReaderPanel");
-            return;
-        }
+    public void newSourceTab() {
+        JReaderPanel panel = ( JReaderPanel ) currentTab;
+        String filePath = Utilities.docPathToSourcePath(panel.getCurrentPage());
+        String title = Utilities.extractFileName(filePath);
 
         if ( !Utilities.isGoodSourcePath(filePath) ) {
             log.error("Bad file path: " + filePath);
             return;
         }
 
-        try {
-            currentSourceFile = JavaSourceFileParser.parse(new FileInputStream(filePath));
-        } catch ( ParseException e ) {
-            log.error(e.getMessage(), e);
-        } catch ( IOException e ) {
-            log.error(e.getMessage(), e);
-        }
+        log.debug("newSourceTab called with: " + filePath);
 
         JSourcePanel newTab = new JSourcePanel(filePath);
         addCloseButtonToTab(newTab, title);
         disableBrowserButtons();
         disableNewSourceOption();
 
-        addAutoCompleteDeclarations();
-        JavaClassOrInterface obj = currentSourceFile.getEnclosingClass();
-        newTab.highlightDeclaration(obj.getBeginLine(), obj.getEndLine(), obj.beginColumn);
-
         resetSearchBar();
         tabbedPane.setSelectedComponent(newTab);
+
+        /* You need to do this here or the pane won't scroll to the highlighted text. */
+        newTab.highlightEnclosingObject();
     }
 
     public void newJReaderTab(final String title, final boolean hasButton) {
+        final JReader thisReaderInstance = this;
 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -253,71 +211,20 @@ public class JReader extends JFrame {
                                 SwingUtilities.invokeLater(new Runnable() {
                                     @Override
                                     public void run() {
-                                        if ( newURL.endsWith(".java") ) {
-                                            newSourceTab(newURL.replace("file://", ""));
-                                        } else if ( currentTab instanceof JReaderPanel ) {
+                                        System.out.println("Called with: " + newURL);
                                             String systemPath = Utilities.browserPathToSystemPath(newURL);
                                             bottomPanel.getLblStatus().setText(systemPath);
 
                                             String tabTitle = Utilities.extractTitle(systemPath);
                                             tabbedPane.setTitleAt(tabbedPane.getSelectedIndex(), tabTitle);
 
-                                            String srcPath = Utilities.docPathToSourcePath(newURL);
-                                            if ( !newURL.startsWith("http")
-                                                    && !newURL.startsWith("www.")
-                                                    && Utilities.isGoodSourcePath(srcPath) ) {
-                                                enableNewSourceOption();
-                                            } else {
-                                                disableNewSourceOption();
-                                            }
+                                            handleSourceButton(newURL);
                                         }
-                                    }
                                 });
                             }
                         });
 
-                        readerPanel.getJFXPanel().addMouseListener(new MouseListener() {
-                            @Override
-                            public void mouseClicked(MouseEvent e) {
-                                if ( e.isPopupTrigger() )
-                                    doPop(e);
-                            }
-
-                            @Override
-                            public void mousePressed(MouseEvent e) {
-                                if ( e.isPopupTrigger() )
-                                    doPop(e);
-                            }
-
-                            @Override
-                            public void mouseReleased(MouseEvent e) {
-                                if ( e.isPopupTrigger() )
-                                    doPop(e);
-                            }
-
-                            @Override
-                            public void mouseEntered(MouseEvent e) {
-                            }
-
-                            @Override
-                            public void mouseExited(MouseEvent e) {
-
-                            }
-
-                            private void doPop(MouseEvent e) {
-                                JPopupMenu menu = new JPopupMenu();
-                                JMenuItem newTab = new JMenuItem("New Tab");
-                                newTab.addActionListener(new ActionListener() {
-                                    @Override
-                                    public void actionPerformed(ActionEvent e) {
-                                        newJReaderTab("JReader", true);
-                                    }
-                                });
-
-                                menu.add(newTab);
-                                menu.show(e.getComponent(), e.getX(), e.getY());
-                            }
-                        });
+                        readerPanel.getJFXPanel().addMouseListener(new JReaderPopUpListener(thisReaderInstance));
                     }
                 });
 
@@ -327,67 +234,43 @@ public class JReader extends JFrame {
         });
     }
 
-    private void handleSearch() {
-        if ( currentTab instanceof JReaderPanel ) {
-            String relativePath = classNames.get(topPanel.getSearchBar().getText());
-            if ( relativePath != null ) {
-                String path = profileManager.getDocDir() + relativePath;
-                JReaderPanel panel = (JReaderPanel) currentTab;
-                panel.loadURL(path);
-            }
+    private void handleTabChange() {
+
+        /* If the current tab is null then we are starting up.
+         * Add the get the classs names from the profileManager this time. */
+        if(currentTab == null) {
+            topPanel.getSearchBar().addWordsToTrie(profileManager.getClassNames());
+            currentTab = (AbstractPanel) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
+            return;
+        }
+
+        /* We want to remove the previous panels words so they don't pollute the new panels auto complete. */
+        ArrayList<String> prevWords = currentTab.getAutoCompleteWords();
+
+        currentTab = (AbstractPanel) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
+        if(currentTab instanceof JReaderPanel) {
+            handleSourceButton((( JReaderPanel ) currentTab).getCurrentPage());
+            enableBrowserButtons();
+            topPanel.getSearchBar().removeWordsFromTrie(prevWords);
+            topPanel.getSearchBar().addWordsToTrie(currentTab.getAutoCompleteWords());
+
         } else {
-            JSourcePanel sourcePanel = ( JSourcePanel ) currentTab;
-            JavaObject method = currentSourceFile.getItem(topPanel.getSearchBar().getText());
-            if ( method != null ) {
-                sourcePanel.highlightDeclaration(method.getBeginLine(), method.getEndLine(),
-                        method.beginColumn);
-            } else {
-                sourcePanel.findString(topPanel.getSearchBar().getText(), searchContext);
-            }
+            disableBrowserButtons();
+            topPanel.getSearchBar().removeWordsFromTrie(prevWords);
+            topPanel.getSearchBar().addWordsToTrie(currentTab.getAutoCompleteWords());
         }
     }
 
-    public void loadJavaClassNames() {
-        try {
-            File classDataFile = new File(profileManager.getClassDataFilePath());
-            classNames = Utilities.readClassData(classDataFile);
-            addJavaDocClassNames();
-        } catch ( IOException e ) {
-            log.error(e.getMessage(), e);
-            JOptionPane.showMessageDialog(this, "Failed to load class data at"
-                    + profileManager.getClassDataFilePath(),
-                    "Fatal Error",
-                    JOptionPane.ERROR_MESSAGE);
-            System.exit(1);
-
-        } catch ( ClassNotFoundException e ) {
-            log.error(e.getMessage(), e);
-            JOptionPane.showMessageDialog(this, "Failed to load class data at"
-                    + profileManager.getClassDataFilePath(),
-                    "Fatal Error",
-                    JOptionPane.ERROR_MESSAGE);
-            System.exit(1);
-        }
+    private void handleSearch() {
+        currentTab.handleAutoComplete(topPanel.getSearchBar().getText());
     }
 
     public void addJavaDocClassNames() {
-        topPanel.getSearchBar().addWordsToTrie(new ArrayList<String>(classNames.keySet()));
+        topPanel.getSearchBar().addWordsToTrie(profileManager.getClassNames());
     }
 
     public void removeJavaDocClassNames() {
-        topPanel.getSearchBar().removeWordsFromTrie(new ArrayList<String>(classNames.keySet()));
-    }
-
-    private void addAutoCompleteDeclarations() {
-        if ( currentSourceFile != null ) {
-            topPanel.getSearchBar().addWordsToTrie(currentSourceFile.getAllDeclarations());
-        }
-    }
-
-    private void removeAutoCompleteDeclarations() {
-        if ( currentSourceFile != null ) {
-            topPanel.getSearchBar().removeWordsFromTrie(currentSourceFile.getAllDeclarations());
-        }
+        topPanel.getSearchBar().removeWordsFromTrie(profileManager.getClassNames());
     }
 
     private void enableBrowserButtons() {
@@ -400,6 +283,15 @@ public class JReader extends JFrame {
         topPanel.getBtnBack().setEnabled(false);
         topPanel.getBtnNext().setEnabled(false);
         topPanel.getBtnHome().setEnabled(false);
+    }
+
+    private void handleSourceButton(String newPath) {
+        String srcPath = Utilities.docPathToSourcePath(newPath);
+        if ( Utilities.isGoodSourcePath(srcPath) ) {
+            enableNewSourceOption();
+        } else {
+            disableNewSourceOption();
+        }
     }
 
     private void enableNewSourceOption() {

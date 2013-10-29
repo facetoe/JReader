@@ -14,6 +14,8 @@ import java.awt.*;
 import java.io.File;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 
 import static javafx.concurrent.Worker.State.FAILED;
@@ -21,7 +23,7 @@ import static javafx.concurrent.Worker.State.FAILED;
 /**
  * Displays the Java documentation.
  */
-public class JReaderPanel extends JPanel {
+public class JReaderPanel extends AbstractPanel {
     private final Logger log = Logger.getLogger(this.getClass());
 
     private WebEngine engine;
@@ -136,12 +138,25 @@ public class JReaderPanel extends JPanel {
 
                 jfxPanel.setScene(new Scene(view));
                 add(jfxPanel);
-                log.debug("Counted down latch");
 
                 /* Release the latch on the Swing thread. */
                 latch.countDown();
             }
         });
+    }
+
+    @Override
+    ArrayList<String> getAutoCompleteWords() {
+        return profileManager.getClassNames();
+    }
+
+    @Override
+    void handleAutoComplete(String key) {
+        HashMap<String, String> classData = profileManager.getClassData();
+        if(classData.containsKey(key)) {
+            String relativePath = classData.get(key);
+            loadURL(profileManager.getDocDir() + relativePath);
+        }
     }
 
     /**
