@@ -64,7 +64,7 @@ public class Utilities {
          String fileName = Paths.get(path).getFileName().toString();
         if ( fileName.split("\\.").length > 2 ) {
             String objectName = fileName.substring(0, fileName.indexOf("."));
-            path = path.substring(0, path.lastIndexOf("/") + 1) + objectName + ".java";
+            path = path.substring(0, path.lastIndexOf(File.separator) + 1) + objectName + ".java";
          }
 
         return path.replace(".html", ".java");
