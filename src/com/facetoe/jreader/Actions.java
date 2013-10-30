@@ -11,7 +11,7 @@ import java.awt.event.KeyEvent;
  * Time: 3:42 PM
  */
 class ViewSourceAction extends AbstractAction {
-    JReader jReader;
+    private final JReader jReader;
 
     public ViewSourceAction(JReader jReader) {
         super("View Source");
@@ -33,8 +33,8 @@ class ViewSourceAction extends AbstractAction {
 }
 
 class CloseTabAction extends AbstractAction {
-    JTabbedPane tabbedPane;
-    JReader jReader;
+    private final JTabbedPane tabbedPane;
+    private final JReader jReader;
 
     public CloseTabAction(JTabbedPane tabbedPane, JReader jReader) {
         this.tabbedPane = tabbedPane;
@@ -54,7 +54,7 @@ class CloseTabAction extends AbstractAction {
 }
 
 class NewReaderTabAction extends AbstractAction {
-    JReader reader;
+    private final JReader reader;
 
     public NewReaderTabAction(JReader reader) {
         super("New Reader Tab");
@@ -68,7 +68,7 @@ class NewReaderTabAction extends AbstractAction {
 }
 
 class QuitAction extends AbstractAction {
-        JReader jReader;
+        private final JReader jReader;
     public QuitAction(JReader jReader) {
         super("Quit");
         this.jReader = jReader;

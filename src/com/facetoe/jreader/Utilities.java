@@ -21,10 +21,6 @@ import java.util.Scanner;
 public class Utilities {
     private static final Logger log = Logger.getLogger(Utilities.class);
 
-
-    public static void main(String[] args) {
-    }
-
     /**
      * Reads a file and returns a String.
      *
@@ -103,6 +99,9 @@ public class Utilities {
          * Remove it   */
         if (path.contains("?overview-summary.html")) {
             path = path.replace("?overview-summary.html", "");
+
+        } else if(path.contains("index.html?")) {
+            path = path.replace("index.html?", "");
         }
         return path;
     }
@@ -193,12 +192,7 @@ public class Utilities {
             path = parts[0];
         }
 
-        File file = new File(path);
-
-        if ( !file.isFile() ) {
-            return false;
-        }
-        return true;
+        return new File(path).isFile();
     }
 
     /**
@@ -272,12 +266,14 @@ public class Utilities {
     public static String getHomePage(String docDirPath) {
         File docDir = new File(docDirPath);
         HashMap<String, File> files = new HashMap<String, File>();
-        File[] filesArr = docDir.listFiles();
-
         String homePath = "";
 
-        for ( File file : filesArr ) {
-            files.put(file.getName(), file);
+        File[] filesArr = docDir.listFiles();
+
+        if(filesArr != null) {
+            for ( File file : filesArr ) {
+                files.put(file.getName(), file);
+            }
         }
 
         if(files.containsKey("overview-summary.html")) {
@@ -293,7 +289,7 @@ public class Utilities {
         return homePath;
     }
 
-    public static boolean isWebAddress(String path) {
+    private static boolean isWebAddress(String path) {
         return path.startsWith("http:/")
                 || path.startsWith("www.")
                 || path.startsWith("https:/") ;

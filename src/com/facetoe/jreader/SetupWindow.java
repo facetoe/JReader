@@ -59,10 +59,9 @@ public class SetupWindow extends JDialog {
         btnCancel.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                worker.cancel(true);
                 setVisible(false);
-                dispose();
-                System.exit(0);
+                worker.wasCanceled = true;
+                worker.cancel(true);
             }
         });
 
@@ -164,17 +163,18 @@ public class SetupWindow extends JDialog {
 
     class SetupWorker extends SwingWorker<Boolean, String> {
 
+        boolean wasCanceled = false;
 
         @Override
         protected Boolean doInBackground() throws Exception {
 
             JReaderSetup.createDirectoriesAndConfig();
 
-
             File docDir = JReaderSetup.chooseDocs();
             if ( docDir == null ) {
-                setTickIcon(icnLocate);
+                wasCanceled = true;
                 cancel(true);
+                return false;
             } else {
                 setTickIcon(icnLocate);
             }
@@ -185,14 +185,13 @@ public class SetupWindow extends JDialog {
             if ( !Config.getBool(Config.HAS_EXTRACTED_SOURCE) )
                 extractSource();
 
-            if ( !Config.getBool(Config.HAS_DEFAULT_PROFILE) )
+            if ( !JReaderSetup.hasDefaultProfile() ) {
                 setUpDefaultProfile(docDir);
+            }
 
             if ( !Config.getBool(Config.HAS_PARSED_DOCS) )
                 parseDocs(docDir);
 
-            setVisible(false);
-            dispose();
             return true;
         }
 
@@ -207,7 +206,7 @@ public class SetupWindow extends JDialog {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     progressBar.setValue(( int ) e.getWhen());
-                    lblStatus.setText("Downloaded " + e.getActionCommand());
+                    lblStatus.setText(e.getActionCommand());
                 }
             });
 
@@ -216,6 +215,7 @@ public class SetupWindow extends JDialog {
             Config.setBool(Config.HAS_JAVALANG_SOURCE, true);
             setTickIcon(icnDownload);
             lblStatus.setText("Complete");
+            log.debug("Downloaded source");
         }
 
         private void extractSource() throws Exception {
@@ -239,7 +239,7 @@ public class SetupWindow extends JDialog {
             Config.setBool(Config.HAS_EXTRACTED_SOURCE, true);
             lblStatus.setText("Complete");
             setTickIcon(icnExtract);
-
+            log.debug("Extracted source");
         }
 
         private void setUpDefaultProfile(File docDir) throws IOException {
@@ -254,6 +254,7 @@ public class SetupWindow extends JDialog {
             profileManager.saveProfiles();
             Config.setBool(Config.HAS_DEFAULT_PROFILE, true);
             Config.setString(Config.CURRENT_PROFILE, Config.DEFAULT_PROFILE_NAME);
+            log.debug("Created default profile");
         }
 
         private void parseDocs(File docDir) throws Exception {
@@ -283,34 +284,36 @@ public class SetupWindow extends JDialog {
             Config.setBool(Config.HAS_PARSED_DOCS, true);
             lblStatus.setText("Complete");
             setTickIcon(icnParse);
+            log.debug("Parsed docs");
         }
 
         @Override
         protected void done() {
             try {
                 get();
+                log.debug("Setup complete.");
             } catch ( InterruptedException e ) {
+                wasCanceled = true;
                 log.error(e.getMessage(), e);
                 JOptionPane.showMessageDialog(null, e.getMessage());
 
             } catch ( ExecutionException e ) {
                 log.error(e.getMessage(), e);
-                JOptionPane.showMessageDialog(null, e.getMessage());
 
             } catch ( CancellationException e ) {
-                JOptionPane.showMessageDialog(null, "User canceled.");
+                wasCanceled = true;
+                log.error(e.getMessage(), e);
+
+            } finally {
+                setVisible(false);
+                dispose();
+
+                if ( wasCanceled ) {
+                    Config.setBool(Config.HAS_JAVALANG_SOURCE, false);
+                    JOptionPane.showMessageDialog(null, "Goobye.");
+                    System.exit(0);
+                }
             }
         }
     }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new SetupWindow();
-            }
-        });
-    }
-
-
 }

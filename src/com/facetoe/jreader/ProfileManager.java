@@ -1,6 +1,7 @@
 package com.facetoe.jreader;
 
 import org.apache.log4j.Logger;
+import org.fife.ui.rtextarea.SearchContext;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
@@ -47,15 +48,13 @@ public class ProfileManager implements Serializable {
         if ( !currentProfileName.isEmpty() ) {
             currentProfile = profiles.get(currentProfileName);
 
-            /* If it doesn't exist */
+            /* If it doesn't exist, try and load the default profile.*/
             if(currentProfile == null) {
                 if(JReaderSetup.hasDefaultProfile()) {
                     setCurrentProfile(Config.DEFAULT_PROFILE_NAME);
                 } else {
                     log.error("No profile or default profile.");
-                    JOptionPane.showMessageDialog(null, "No default profile found.", "Fatal Error", JOptionPane.ERROR_MESSAGE);
                     Config.setBool(Config.HAS_DEFAULT_PROFILE, false);
-                    System.exit(1);
                 }
             }
         } else {
@@ -130,6 +129,10 @@ public class ProfileManager implements Serializable {
                                     .equalsIgnoreCase(Config.CLASS_DATA_FILE_NAME) ) {
 
                                 Profile profile = readProfile(profFile.getAbsolutePath());
+
+                                /* SearchContext isnt't serializable so we need to create it on load. */
+                                profile.searchContext = new SearchContext();
+
                                 log.debug("Loaded profile: " + profile.name);
                                 profiles.put(profile.name, profile);
                             }
@@ -210,6 +213,7 @@ public class ProfileManager implements Serializable {
     public void setCurrentProfile(String profileName) {
         if ( profiles.containsKey(profileName) ) {
             currentProfile = profiles.get(profileName);
+            currentProfile.searchContext = new SearchContext();
             Config.setString(Config.CURRENT_PROFILE, profileName);
             log.debug("Profile set to: " + Config.getString(Config.CURRENT_PROFILE));
         } else {
@@ -267,6 +271,11 @@ public class ProfileManager implements Serializable {
         return getDocDir() + File.separator + currentProfile.home;
     }
 
+    public SearchContext getSearchContext() {
+        currentProfile.updateSearchContext();
+        return currentProfile.searchContext;
+    }
+
     public boolean regexpIsEnabled() {
         return currentProfile.regexpIsEnabled;
     }
@@ -309,11 +318,17 @@ public class ProfileManager implements Serializable {
         /* The name of the class data file. */
         private final String profileFileName;
 
+        /* All the class names and relative paths. */
         private HashMap<String, String> classData;
 
+        /* The documentation HTML file that is set as home. */
         private String home;
 
+        /* This profiles name. */
         private final String name;
+
+        /* The search context for this profile. */
+        private transient SearchContext searchContext;
 
         private boolean regexpIsEnabled;
         private boolean wholeWordIsEnabled;
@@ -352,6 +367,12 @@ public class ProfileManager implements Serializable {
                 }
             }
             return classData;
+        }
+
+        private void updateSearchContext() {
+            searchContext.setMatchCase(matchCaseIsEnabled);
+            searchContext.setRegularExpression(regexpIsEnabled);
+            searchContext.setWholeWord(wholeWordIsEnabled);
         }
 
         private void handleLoadError(Exception e) {

@@ -187,37 +187,53 @@ public class JReaderMenuBar extends JMenuBar {
             @Override
             public void menuSelected(MenuEvent e) {
                 mnuFind.removeAll();
+
                 final JCheckBoxMenuItem chkWholeWord = new JCheckBoxMenuItem("Whole Word");
-                chkWholeWord.setState(profileManager.wholeWordIsEnabled());
-                chkWholeWord.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        jReader.getSearchContext().setWholeWord(chkWholeWord.getState());
-                        profileManager.setWholeWordEnabled(chkWholeWord.getState());
-                    }
-                });
+                if(profileManager.regexpIsEnabled()) {
+                    chkWholeWord.setEnabled(false);
+                } else {
+
+                    chkWholeWord.setState(profileManager.wholeWordIsEnabled());
+                    chkWholeWord.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            profileManager.getSearchContext().setWholeWord(chkWholeWord.getState());
+                            profileManager.setWholeWordEnabled(chkWholeWord.getState());
+                        }
+                    });
+                }
                 mnuFind.add(chkWholeWord);
 
                 final JCheckBoxMenuItem chkMatchCase = new JCheckBoxMenuItem("Match Case");
-                chkMatchCase.setState(profileManager.matchCaseIsEnabled());
-                chkMatchCase.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        jReader.getSearchContext().setMatchCase(chkMatchCase.getState());
-                        profileManager.setMatchCaseEnabled(chkMatchCase.getState());
-                    }
-                });
+                if(profileManager.matchCaseIsEnabled()) {
+                    chkMatchCase.setEnabled(false);
+                } else {
+                    chkMatchCase.setState(profileManager.matchCaseIsEnabled());
+                    chkMatchCase.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            profileManager.getSearchContext().setMatchCase(true);
+                            profileManager.setMatchCaseEnabled(true);
+                        }
+                    });
+                }
                 mnuFind.add(chkMatchCase);
 
+
                 final JCheckBoxMenuItem chkRegexp = new JCheckBoxMenuItem("Regular Expression");
-                chkRegexp.setState(profileManager.regexpIsEnabled());
-                chkRegexp.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        jReader.getSearchContext().setRegularExpression(chkRegexp.getState());
-                        profileManager.setRegexpEnabled(chkRegexp.getState());
-                    }
-                });
+                if(profileManager.matchCaseIsEnabled() || profileManager.wholeWordIsEnabled()) {
+                    chkRegexp.setEnabled(false);
+                } else {
+
+                    chkRegexp.setState(profileManager.regexpIsEnabled());
+                    chkRegexp.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            profileManager.getSearchContext().setRegularExpression(chkRegexp.getState());
+                            profileManager.setRegexpEnabled(chkRegexp.getState());
+                        }
+                    });
+                }
                 mnuFind.add(chkRegexp);
             }
 

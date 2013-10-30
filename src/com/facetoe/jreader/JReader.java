@@ -24,12 +24,9 @@ public class JReader extends JFrame {
     private final Logger log = Logger.getLogger(this.getClass());
 
     /* User interface panels. */
-    private final JReaderMenuBar menuBar = new JReaderMenuBar(this);
-    private final JReaderTopPanel topPanel = new JReaderTopPanel(this);
-    private final JReaderBottomPanel bottomPanel = new JReaderBottomPanel(this);
-
-    /* SearchContext for the JSourcePanel. */
-    private final SearchContext searchContext = new SearchContext();
+    private JReaderMenuBar menuBar;
+    private JReaderTopPanel topPanel;
+    private JReaderBottomPanel bottomPanel;
 
     /* This is necessary to make the Swing thread wait until the javafx content is loaded on startup.
      * If it's not set then the Swing components are displayed before there is any content in them. */
@@ -55,7 +52,9 @@ public class JReader extends JFrame {
         newJReaderTab("JReader", false);
 
         setJMenuBar(new JReaderMenuBar(this));
+        topPanel = new JReaderTopPanel(this);
         add(topPanel, BorderLayout.NORTH);
+        bottomPanel = new JReaderBottomPanel(this);
         add(bottomPanel, BorderLayout.SOUTH);
 
         initActions();
@@ -79,6 +78,7 @@ public class JReader extends JFrame {
         log.debug("Setting visible");
         pack();
         setVisible(true);
+        menuBar = new JReaderMenuBar(this);
     }
 
 
@@ -153,7 +153,7 @@ public class JReader extends JFrame {
     private void addCloseButtonToTab(JPanel tab, String title) {
         tabbedPane.add(title, tab);
         int index = tabbedPane.indexOfComponent(tab);
-        ButtonTabComponent tabButton = new ButtonTabComponent(title, tabbedPane);
+        ButtonTabComponent tabButton = new ButtonTabComponent(tabbedPane);
         tabbedPane.setTabComponentAt(index, tabButton);
     }
 
@@ -314,7 +314,7 @@ public class JReader extends JFrame {
     }
 
     public SearchContext getSearchContext() {
-        return searchContext;
+        return profileManager.getSearchContext();
     }
 
     public void handleQuit() {
@@ -342,13 +342,13 @@ public class JReader extends JFrame {
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             } catch ( ClassNotFoundException e1 ) {
-                log.error(e1.getMessage(), e1);  //To change body of catch statement use File | Settings | File Templates.
+                log.error(e1.getMessage(), e1);
             } catch ( InstantiationException e1 ) {
-                log.error(e1.getMessage(), e1);  //To change body of catch statement use File | Settings | File Templates.
+                log.error(e1.getMessage(), e1);
             } catch ( IllegalAccessException e1 ) {
-                log.error(e1.getMessage(), e1);  //To change body of catch statement use File | Settings | File Templates.
+                log.error(e1.getMessage(), e1);
             } catch ( UnsupportedLookAndFeelException e1 ) {
-                log.error(e1.getMessage(), e1);  //To change body of catch statement use File | Settings | File Templates.
+                log.error(e1.getMessage(), e1);
             }
         }
 

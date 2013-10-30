@@ -29,14 +29,14 @@ public class Config {
     public static final String DATA_DIR_NAME = ".jreader";
     public static final String CONFIG_FILE_NAME = "config.properties";
 
-    private static Properties properties = new Properties();
+    private static final Properties properties = new Properties();
 
-    static String dataDirectory = System.getProperty("user.home") +
+    static final String dataDirectory = System.getProperty("user.home") +
             File.separator +
             DATA_DIR_NAME +
             File.separator;
 
-    public static String propertiesFilePath = dataDirectory +
+    public static final String propertiesFilePath = dataDirectory +
             CONFIG_FILE_NAME +
             File.separator;
 

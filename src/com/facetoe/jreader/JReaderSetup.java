@@ -16,7 +16,6 @@ public class JReaderSetup {
         return hasDataDir()
                 && hasConfigFile()
                 && hasDefaultProfile()
-                && hasDataDir()
                 && Config.getBool(Config.HAS_JAVALANG_SOURCE)
                 && Config.getBool(Config.HAS_PARSED_DOCS)
                 && !Config.getString(Config.CURRENT_PROFILE).isEmpty()
@@ -26,18 +25,11 @@ public class JReaderSetup {
 
     public static void createDirectoriesAndConfig() throws IOException {
         boolean wasSuccess;
+
         File dataDir = new File(System.getProperty("user.home")
                 + File.separator
                 + Config.DATA_DIR_NAME
                 + File.separator);
-        File configFile = new File(Config.propertiesFilePath);
-
-        String profileDirPath = dataDir.getAbsolutePath()
-                + File.separator
-                + Config.PROFILE_DIR_NAME
-                + File.separator;
-
-        File profileDir = new File(profileDirPath);
 
         if ( !dataDir.exists() ) {
             wasSuccess = dataDir.mkdirs();
@@ -49,6 +41,7 @@ public class JReaderSetup {
             System.err.println("Data Directory already exists.");
         }
 
+        File configFile = new File(Config.propertiesFilePath);
         if ( !configFile.exists() ) {
             wasSuccess = configFile.createNewFile();
             if(wasSuccess) {
@@ -64,6 +57,13 @@ public class JReaderSetup {
         } else {
             System.err.println("Config already exists.");
         }
+
+        String profileDirPath = dataDir.getAbsolutePath()
+                + File.separator
+                + Config.PROFILE_DIR_NAME
+                + File.separator;
+
+        File profileDir = new File(profileDirPath);
 
         if ( !profileDir.exists() ) {
             wasSuccess = profileDir.mkdirs();

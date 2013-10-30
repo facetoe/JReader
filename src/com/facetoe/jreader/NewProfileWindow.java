@@ -97,7 +97,8 @@ public class NewProfileWindow extends JDialog {
                         ProfileManager manager = ProfileManager.getInstance();
                         String name = txtName.getText();
 
-                        /** Add a listener to <code>ProfileManager</code>  that will end up in <code>JavaDocParser</code> so we can monitor progress. */
+                        /** Add a listener to <code>ProfileManager</code>  that will end up in <code>JavaDocParser</code>
+                         * so we can monitor progress. */
                         manager.addActionListener(new ActionListener() {
                             @Override
                             public void actionPerformed(ActionEvent e) {

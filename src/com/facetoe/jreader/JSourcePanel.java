@@ -111,8 +111,10 @@ public class JSourcePanel extends AbstractPanel {
     @Override
     void handleAutoComplete(String key) {
         JavaObject obj = javaSourceFile.getItem(key);
-        highlightDeclaration(obj.getBeginLine(), obj.getEndLine(),
-                obj.beginColumn);
+        if(obj != null) {
+            highlightDeclaration(obj.getBeginLine(), obj.getEndLine(),
+                    obj.beginColumn);
+        }
     }
 
     /**

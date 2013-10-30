@@ -35,11 +35,9 @@ interface RBCWrapperDelegate {
 class FileDownloader implements RBCWrapperDelegate {
     private final Logger log = Logger.getLogger(this.getClass());
 
-    String localPath;
-    String remoteURL;
-    ReadableByteChannel rbc;
-    HttpURLConnection connection;
-    ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
+    private final String localPath;
+    private final String remoteURL;
+    private final ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
 
     public FileDownloader(String localPath, String remoteURL) {
 
@@ -48,44 +46,22 @@ class FileDownloader implements RBCWrapperDelegate {
     }
 
     public void download() throws IOException, CancellationException {
+        fireEvent(ActionEvent.ACTION_FIRST, "Connecting...", 0);
         FileOutputStream fos;
         URL url;
 
         url = new URL(remoteURL);
-        rbc = new RBCWrapper(Channels.newChannel(url.openStream()), contentLength(url), this);
+        ReadableByteChannel rbc = new RBCWrapper(Channels.newChannel(url.openStream()), contentLength(url), this);
         fos = new FileOutputStream(localPath);
         fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
     }
 
-    public void cancel() {
-        /**
-         * If cancel() is called immediately after download() is called the rbc and connection won't be initialized.
-         * Wait until the connection begins and then cancel it.
-         */
-        while ( true ) {
-            if ( rbc == null || connection == null ) {
-                try {
-                    Thread.sleep(1000);
-                } catch ( InterruptedException ex ) {
-                    log.error(ex.getMessage(), ex);
-
-                }
-            } else if ( rbc.isOpen() ) {
-                break;
-            }
-        }
-
-        try {
-            connection.disconnect();
-            rbc.close();
-
-        } catch ( IOException e1 ) {
-            log.error(e1.getMessage(), e1);
-        }
-    }
-
     public void rbcProgressCallback(RBCWrapper rbc, double progress) {
-        fireEvent(ActionEvent.ACTION_PERFORMED, Utilities.humanReadableByteCount(rbc.getReadSoFar(), true), ( long ) progress);
+        String message = String.format("Downloaded %s of %s",
+                Utilities.humanReadableByteCount(rbc.getReadSoFar(), true),
+                Utilities.humanReadableByteCount(rbc.getExpectedSize(), true));
+
+        fireEvent(ActionEvent.ACTION_PERFORMED, message, ( long ) progress);
     }
 
     private long contentLength(URL url) {
@@ -95,7 +71,7 @@ class FileDownloader implements RBCWrapperDelegate {
 
             HttpURLConnection.setFollowRedirects(true);
 
-            connection = ( HttpURLConnection ) url.openConnection();
+            HttpURLConnection connection = ( HttpURLConnection ) url.openConnection();
             connection.setConnectTimeout(15 * 1000);
             connection.setRequestMethod("HEAD");
 
@@ -125,7 +101,7 @@ class FileDownloader implements RBCWrapperDelegate {
         listeners.add(listener);
     }
 
-    public void fireEvent(int eventType, String message, long progress) {
+    void fireEvent(int eventType, String message, long progress) {
         ActionEvent event = new ActionEvent(this, eventType, message, progress, 0);
         for ( ActionListener listener : listeners ) {
             listener.actionPerformed(event);
@@ -134,9 +110,9 @@ class FileDownloader implements RBCWrapperDelegate {
 }
 
 class RBCWrapper implements ReadableByteChannel {
-    private RBCWrapperDelegate delegate;
-    private long expectedSize;
-    private ReadableByteChannel rbc;
+    private final RBCWrapperDelegate delegate;
+    private final long expectedSize;
+    private final ReadableByteChannel rbc;
     private long readSoFar;
 
     RBCWrapper(ReadableByteChannel rbc, long expectedSize, RBCWrapperDelegate delegate) {
@@ -151,6 +127,10 @@ class RBCWrapper implements ReadableByteChannel {
 
     public long getReadSoFar() {
         return readSoFar;
+    }
+
+    public long getExpectedSize() {
+        return expectedSize;
     }
 
     public boolean isOpen() {

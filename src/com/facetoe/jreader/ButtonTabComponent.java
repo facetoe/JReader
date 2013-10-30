@@ -48,17 +48,15 @@ public class ButtonTabComponent extends JPanel {
 
     private final JTabbedPane pane;
     private UUID id;
-    private String title;
-    TabButton button;
+    private TabButton button;
 
-    public ButtonTabComponent(String title, final JTabbedPane pane) {
+    public ButtonTabComponent(final JTabbedPane pane) {
         //unset default FlowLayout' gaps
         super(new FlowLayout(FlowLayout.LEFT, 0, 0));
         if ( pane == null ) {
             throw new NullPointerException("TabbedPane is null");
         }
         this.pane = pane;
-        this.title = title;
         setOpaque(false);
         id = UUID.randomUUID();
 
@@ -87,12 +85,12 @@ public class ButtonTabComponent extends JPanel {
         button.removeTab();
     }
 
-    public UUID getId() {
+    UUID getId() {
         return id;
     }
 
     class TabButton extends JButton implements ActionListener {
-        UUID id;
+        final UUID id;
 
         public TabButton(UUID tabID) {
             id = tabID;
