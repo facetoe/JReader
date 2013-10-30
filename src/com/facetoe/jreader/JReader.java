@@ -234,9 +234,9 @@ public class JReader extends JFrame {
     private void handleTabChange() {
 
         /* If the current tab is null then we are starting up.
-         * Add the get the classs names from the profileManager this time. */
+         * Add the classs names from the profileManager this time. */
         if(currentTab == null) {
-            topPanel.getSearchBar().addWordsToTrie(profileManager.getClassNames());
+            topPanel.addAutoCompleteWords(profileManager.getClassNames());
             currentTab = (AbstractPanel) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
             return;
         }
@@ -248,26 +248,29 @@ public class JReader extends JFrame {
         if(currentTab instanceof JReaderPanel) {
             handleSourceButton((( JReaderPanel ) currentTab).getCurrentPage());
             enableBrowserButtons();
-            topPanel.getSearchBar().removeWordsFromTrie(prevWords);
-            topPanel.getSearchBar().addWordsToTrie(currentTab.getAutoCompleteWords());
+            topPanel.removeAutoCompleteWords(prevWords);
+            topPanel.addAutoCompleteWords(currentTab.getAutoCompleteWords());
 
         } else {
             disableBrowserButtons();
-            topPanel.getSearchBar().removeWordsFromTrie(prevWords);
-            topPanel.getSearchBar().addWordsToTrie(currentTab.getAutoCompleteWords());
+            topPanel.removeAutoCompleteWords(prevWords);
+            topPanel.addAutoCompleteWords(currentTab.getAutoCompleteWords());
         }
+
+        /* Remove whatever text is there becuase it's annoying always having to delete it. */
+        topPanel.setSearchBarText("");
     }
 
     private void handleSearch() {
-        currentTab.handleAutoComplete(topPanel.getSearchBar().getText());
+        currentTab.handleAutoComplete(topPanel.getSearchBarText());
     }
 
     public void addJavaDocClassNames() {
-        topPanel.getSearchBar().addWordsToTrie(profileManager.getClassNames());
+        topPanel.addAutoCompleteWords(profileManager.getClassNames());
     }
 
     public void removeJavaDocClassNames() {
-        topPanel.getSearchBar().removeWordsFromTrie(profileManager.getClassNames());
+        topPanel.removeAutoCompleteWords(profileManager.getClassNames());
     }
 
     private void enableBrowserButtons() {
@@ -302,7 +305,7 @@ public class JReader extends JFrame {
     }
 
     public void resetSearchBar() {
-        topPanel.getSearchBar().setText("");
+        topPanel.setSearchBarText("");
         topPanel.getSearchBar().requestFocus();
     }
 

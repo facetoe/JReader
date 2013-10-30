@@ -130,7 +130,7 @@ public class JSourcePanel extends AbstractPanel {
     }
 
     private void parseSourceFile() {
-        long startTime = System.currentTimeMillis();
+        long startTime = System.nanoTime();
         fireEvent(new ActionEvent(this, 0, "Parsing: " + fileName));
         try {
             javaSourceFile = JavaSourceFileParser.parse(new FileInputStream(sourceFilePath));
@@ -139,9 +139,9 @@ public class JSourcePanel extends AbstractPanel {
         } catch ( IOException e ) {
             log.error(e.toString(), e);
         } finally {
-            long elapsedTime = System.currentTimeMillis() - startTime;
+            long elapsedTime = System.nanoTime() - startTime;
             fireEvent(new ActionEvent(this, 0, String.format(
-                    "Parsed %s in %.2f %s", fileName, (double)elapsedTime/1000, "seconds")));
+                    "Parsed %s in %.2f %s", fileName, (double)elapsedTime/1000000000, "seconds")));
         }
     }
 
@@ -180,7 +180,13 @@ public class JSourcePanel extends AbstractPanel {
                 /* If we didn't find anything, reset the caret position or it ends up
                  * jumping to the end or beginning of the file.. */
                 textArea.setCaretPosition(caretPos);
+                fireEvent(new ActionEvent(this, 0, "Nothing found for: " + text));
             }
+        }
+
+        /* Reset the status label if we were successful. */
+        if(found) {
+            fireEvent(new ActionEvent(this, 0, ""));
         }
     }
 

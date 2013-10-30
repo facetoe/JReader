@@ -2,6 +2,7 @@ package com.facetoe.jreader;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 /**
  * Created with IntelliJ IDEA.
@@ -92,5 +93,21 @@ public class JReaderTopPanel extends JPanel {
 
     public AutoCompleteTextField getSearchBar() {
         return searchBar;
+    }
+
+    public void addAutoCompleteWords(ArrayList<String> words) {
+        searchBar.addWordsToTrie(words);
+    }
+
+    public void removeAutoCompleteWords(ArrayList<String> words) {
+        searchBar.removeWordsFromTrie(words);
+    }
+
+    public void setSearchBarText(String text) {
+        searchBar.setText(text);
+    }
+
+    public String getSearchBarText() {
+        return searchBar.getText();
     }
 }
