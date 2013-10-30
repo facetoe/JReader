@@ -17,9 +17,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
-
-
-
 public class JReader extends JFrame {
     private final Logger log = Logger.getLogger(this.getClass());
 
@@ -169,7 +166,7 @@ public class JReader extends JFrame {
 
         log.debug("newSourceTab called with: " + filePath);
 
-        JSourcePanel newTab = new JSourcePanel(filePath);
+        JSourcePanel newTab = new JSourcePanel(filePath, bottomPanel);
         addCloseButtonToTab(newTab, title);
         disableBrowserButtons();
         disableNewSourceOption();

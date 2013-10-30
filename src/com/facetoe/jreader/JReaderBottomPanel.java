@@ -2,6 +2,8 @@ package com.facetoe.jreader;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Created with IntelliJ IDEA.
@@ -9,11 +11,12 @@ import java.awt.*;
  * Date: 28/10/13
  * Time: 12:53 PM
  */
-public class JReaderBottomPanel extends JPanel {
+public class JReaderBottomPanel extends JPanel implements ActionListener {
 
     JReader jReader;
     JProgressBar progressBar = new JProgressBar();
     JLabel lblStatus = new JLabel();
+    JLabel gif;
 
     JReaderBottomPanel(JReader jReader) {
         this.jReader = jReader;
@@ -23,6 +26,7 @@ public class JReaderBottomPanel extends JPanel {
     private void initBottomPanel() {
         setLayout(new BorderLayout(5, 0));
         setBorder(BorderFactory.createEmptyBorder(3, 5, 3, 5));
+
         add(lblStatus, BorderLayout.CENTER);
 
         progressBar.setPreferredSize(new Dimension(150, 18));
@@ -36,5 +40,10 @@ public class JReaderBottomPanel extends JPanel {
 
     public JLabel getLblStatus() {
         return lblStatus;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+         lblStatus.setText(e.getActionCommand());
     }
 }

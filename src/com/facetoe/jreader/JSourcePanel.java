@@ -9,21 +9,17 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
 
-import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-
-abstract class AbstractPanel extends JPanel {
-
-    abstract void handleAutoComplete(String key);
-    abstract ArrayList<String> getAutoCompleteWords();
-}
 
 
 /**
@@ -32,21 +28,57 @@ abstract class AbstractPanel extends JPanel {
 public class JSourcePanel extends AbstractPanel {
     private final Logger log = Logger.getLogger(this.getClass());
 
-    private final RSyntaxTextArea textArea;
+    /**
+     * The text area to display the source code.
+     */
+    private RSyntaxTextArea textArea;
+
+    /**
+     * The object that contains all the definitions for this source file.
+     */
     private JavaSourceFile javaSourceFile;
+
+    /**
+     * Where this file is located on the file system.
+     */
     private String sourceFilePath;
 
+    /**
+     * The top level object for this source file. It could be a class or interface,
+     * and there can be any number of nested classes or interfaces within it.
+     */
     private JavaObject enclosingObject;
+
+    /**
+     * Profile manager instance for this panel.
+     */
+    private ProfileManager profileManager;
+
+    /**
+     * Listeners that will be notified of parsing progress.
+     */
+    private final ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
+
+    String fileName;
 
     /**
      * Creates a new instance of JSourcePanel and displays the contents of filePath.
      *
      * @param filePath of the file containing the code to be displayed.
      */
-    public JSourcePanel(String filePath) {
+    public JSourcePanel(String filePath, ActionListener listener) {
+        fireEvent(new ActionEvent(this, 0, "Intitializing... " + fileName));
+
+        /* We only really need this for the SearchContext. */
+        profileManager = ProfileManager.getInstance();
 
         this.sourceFilePath = filePath;
+        fileName =  new File(sourceFilePath).getName();
 
+
+        addActionListener(listener);
+
+        /* Set up our text area. */
         textArea = new RSyntaxTextArea();
         textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
         textArea.setCodeFoldingEnabled(true);
@@ -54,6 +86,8 @@ public class JSourcePanel extends AbstractPanel {
         textArea.setEditable(false);
 
         //TODO Figure out a way for the user to set themes.
+        /* Read in the theme for this text area. */
+        fireEvent(new ActionEvent(this, 0, "Loading file: " + fileName));
         try {
             InputStream in = getClass().getResourceAsStream("/com/facetoe/jreader/resources/themes/ideaTheme.xml");
             Theme theme = Theme.load(in);
@@ -73,6 +107,8 @@ public class JSourcePanel extends AbstractPanel {
         } catch ( IOException e ) {
             log.error(e.getMessage(), e);
         }
+
+        /* Parse the source file and extract all the definitions. */
         parseSourceFile();
 
         if(javaSourceFile != null) {
@@ -94,12 +130,18 @@ public class JSourcePanel extends AbstractPanel {
     }
 
     private void parseSourceFile() {
+        long startTime = System.currentTimeMillis();
+        fireEvent(new ActionEvent(this, 0, "Parsing: " + fileName));
         try {
             javaSourceFile = JavaSourceFileParser.parse(new FileInputStream(sourceFilePath));
         } catch ( ParseException e ) {
             log.error(e.toString(), e);
         } catch ( IOException e ) {
             log.error(e.toString(), e);
+        } finally {
+            long elapsedTime = System.currentTimeMillis() - startTime;
+            fireEvent(new ActionEvent(this, 0, String.format(
+                    "Parsed %s in %.2f %s", fileName, (double)elapsedTime/1000, "seconds")));
         }
     }
 
@@ -114,6 +156,8 @@ public class JSourcePanel extends AbstractPanel {
         if(obj != null) {
             highlightDeclaration(obj.getBeginLine(), obj.getEndLine(),
                     obj.beginColumn);
+        } else {
+            findString(key, profileManager.getSearchContext());
         }
     }
 
@@ -122,7 +166,7 @@ public class JSourcePanel extends AbstractPanel {
      * @param context The search context for this search.
      * @return whether or not anything was found.
      */
-    private boolean findString(String text, SearchContext context) {
+    private void findString(String text, SearchContext context) {
         boolean found;
         int caretPos = textArea.getCaretPosition();
         context.setSearchFor(text);
@@ -133,10 +177,11 @@ public class JSourcePanel extends AbstractPanel {
             textArea.setCaretPosition(0);
             found = SearchEngine.find(textArea, context);
             if ( !found ) {
+                /* If we didn't find anything, reset the caret position or it ends up
+                 * jumping to the end or beginning of the file.. */
                 textArea.setCaretPosition(caretPos);
             }
         }
-        return found;
     }
 
     /**
@@ -176,6 +221,16 @@ public class JSourcePanel extends AbstractPanel {
 
         } catch ( BadLocationException ex ) {
             log.error("Bad location in highlightDeclaration:", ex);
+        }
+    }
+
+    public void addActionListener(ActionListener listener) {
+        listeners.add(listener);
+    }
+
+    private void fireEvent(ActionEvent event) {
+        for ( ActionListener listener : listeners ) {
+            listener.actionPerformed(event);
         }
     }
 }
