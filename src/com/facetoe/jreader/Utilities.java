@@ -62,7 +62,7 @@ public class Utilities {
         /* If there are more than 2 periods it's probably a nested class like: /dir/dir/SomeClass.SomeNestedClass.html.
          * Extract the class name. */
          String fileName = Paths.get(path).getFileName().toString();
-         if ( fileName.split("\\.").length >= 2 ) {
+        if ( fileName.split("\\.").length > 2 ) {
             String objectName = fileName.substring(0, fileName.indexOf("."));
             path = path.substring(0, path.lastIndexOf("/") + 1) + objectName + ".java";
          }
@@ -149,16 +149,15 @@ public class Utilities {
     }
 
     public static String extractFileName(String path) {
-        int nameBegin = path.lastIndexOf("/") + 1;
+        String title = new File(path).getName();
         int nameEnd;
 
-        if ( path.contains("#") ) {
-            nameEnd = path.indexOf("#");
+        if ( title.contains("#") ) {
+            nameEnd = title.indexOf("#");
         } else {
-            nameEnd = path.length();
+            nameEnd = title.length();
         }
-
-        return path.substring(nameBegin, nameEnd);
+        return title.substring(0, nameEnd);
     }
 
     /**
