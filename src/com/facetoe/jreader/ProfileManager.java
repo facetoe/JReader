@@ -375,6 +375,7 @@ public class ProfileManager implements Serializable {
             searchContext.setWholeWord(wholeWordIsEnabled);
         }
 
+        /* Return an empty hashmap so the program doesn't crash. */
         private void handleLoadError(Exception e) {
             classData = new HashMap<String, String>();
             JOptionPane.showMessageDialog(null, "Failed to load class data: " + e.toString());

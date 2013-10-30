@@ -250,8 +250,8 @@ public class SetupWindow extends JDialog {
             ProfileManager profileManager = ProfileManager.getInstance();
             String javaDocsPath = docDir.getAbsolutePath() + File.separator;
             profileManager.newProfile(Config.DEFAULT_PROFILE_NAME, javaDocsPath, srcPath);
+            profileManager.setCurrentProfile(Config.DEFAULT_PROFILE_NAME);
 
-            profileManager.saveProfiles();
             Config.setBool(Config.HAS_DEFAULT_PROFILE, true);
             Config.setString(Config.CURRENT_PROFILE, Config.DEFAULT_PROFILE_NAME);
             log.debug("Created default profile");
