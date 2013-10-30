@@ -189,6 +189,7 @@ public class JReaderMenuBar extends JMenuBar {
                 mnuFind.removeAll();
 
                 final JCheckBoxMenuItem chkWholeWord = new JCheckBoxMenuItem("Whole Word");
+                /* Whole word doesn't make sense with regexp. */
                 if(profileManager.regexpIsEnabled()) {
                     chkWholeWord.setEnabled(false);
                 } else {
@@ -205,15 +206,16 @@ public class JReaderMenuBar extends JMenuBar {
                 mnuFind.add(chkWholeWord);
 
                 final JCheckBoxMenuItem chkMatchCase = new JCheckBoxMenuItem("Match Case");
-                if(profileManager.matchCaseIsEnabled()) {
+                /* Match case doesn't make sense with regexp. */
+                if(profileManager.regexpIsEnabled()) {
                     chkMatchCase.setEnabled(false);
                 } else {
                     chkMatchCase.setState(profileManager.matchCaseIsEnabled());
                     chkMatchCase.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            profileManager.getSearchContext().setMatchCase(true);
-                            profileManager.setMatchCaseEnabled(true);
+                            profileManager.getSearchContext().setWholeWord(chkMatchCase.getState());
+                            profileManager.setMatchCaseEnabled(chkMatchCase.getState());
                         }
                     });
                 }
@@ -221,6 +223,7 @@ public class JReaderMenuBar extends JMenuBar {
 
 
                 final JCheckBoxMenuItem chkRegexp = new JCheckBoxMenuItem("Regular Expression");
+                /* Don't enable regexp if matchCase or wholeWord is enabled. */
                 if(profileManager.matchCaseIsEnabled() || profileManager.wholeWordIsEnabled()) {
                     chkRegexp.setEnabled(false);
                 } else {
