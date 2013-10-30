@@ -17,13 +17,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
+/**
+ * This is the main class of the application. It is responsible for building the UI and
+ * responding to user input.
+ */
 public class JReader extends JFrame {
     private final Logger log = Logger.getLogger(this.getClass());
 
     /* User interface panels. */
-    private JReaderMenuBar menuBar;
-    private JReaderTopPanel topPanel;
-    private JReaderBottomPanel bottomPanel;
+    private final JReaderMenuBar menuBar;
+    private final JReaderTopPanel topPanel;
+    private final JReaderBottomPanel bottomPanel;
 
     /* This is necessary to make the Swing thread wait until the javafx content is loaded on startup.
      * If it's not set then the Swing components are displayed before there is any content in them. */
@@ -39,47 +43,44 @@ public class JReader extends JFrame {
     /* The currently visible tab. */
     private AbstractPanel currentTab;
 
+    /**
+     * Constructor.
+     */
     public JReader() {
 
-        if(!JReaderSetup.isSetup()) {
+        if ( !JReaderSetup.isSetup() ) {
             new SetupWindow();
         }
 
         profileManager = ProfileManager.getInstance();
         newJReaderTab("JReader", false);
 
+        /* Setup the UI. */
         setJMenuBar(new JReaderMenuBar(this));
+        menuBar = new JReaderMenuBar(this);
         topPanel = new JReaderTopPanel(this);
         add(topPanel, BorderLayout.NORTH);
         bottomPanel = new JReaderBottomPanel(this);
         add(bottomPanel, BorderLayout.SOUTH);
+        add(tabbedPane, BorderLayout.CENTER);
 
+        /* Setup listeners and actions.*/
         initActions();
         initListeners();
 
-        add(tabbedPane, BorderLayout.CENTER);
         setTitle("JReader");
         setPreferredSize(new Dimension(1024, 600));
         setSize(1024, 600);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-        /* Make sure we save the profile state when the user clicks the close button */
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                handleQuit();
-                System.exit(0);
-            }
-        });
-
-        log.debug("Setting visible");
         pack();
         setVisible(true);
-        menuBar = new JReaderMenuBar(this);
+        log.debug("Setting visible");
     }
 
 
-
+    /**
+     * Set up all the actions.
+     */
     private void initActions() {
         Action action = new CloseTabAction(tabbedPane, this);
         String keyStrokeAndKey = "control C";
@@ -100,7 +101,20 @@ public class JReader extends JFrame {
         getRootPane().getActionMap().put(keyStrokeAndKey, action);
     }
 
+    /**
+     * Set up all the listeners.
+     */
     private void initListeners() {
+
+        /* Make sure we save the profile state when the user clicks the close button */
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                handleQuit();
+                System.exit(0);
+            }
+        });
+
         topPanel.getBtnBack().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -147,6 +161,12 @@ public class JReader extends JFrame {
         });
     }
 
+    /**
+     * Adds a close button to a tab.
+     *
+     * @param tab   The tab to add a button to.
+     * @param title The title to tab should display.
+     */
     private void addCloseButtonToTab(JPanel tab, String title) {
         tabbedPane.add(title, tab);
         int index = tabbedPane.indexOfComponent(tab);
@@ -154,6 +174,9 @@ public class JReader extends JFrame {
         tabbedPane.setTabComponentAt(index, tabButton);
     }
 
+    /**
+     * Creates a new source tab and sets it as the currently selected tab.
+     */
     public void newSourceTab() {
         JReaderPanel panel = ( JReaderPanel ) currentTab;
         String filePath = Utilities.docPathToSourcePath(panel.getCurrentPage());
@@ -168,25 +191,39 @@ public class JReader extends JFrame {
 
         JSourcePanel newTab = new JSourcePanel(filePath, bottomPanel);
         addCloseButtonToTab(newTab, title);
+
+        /* These buttons don't make sense in JSourcePanel. */
         disableBrowserButtons();
         disableNewSourceOption();
 
-        resetSearchBar();
         tabbedPane.setSelectedComponent(newTab);
+        resetSearchBar();
 
         /* You need to do this here or the pane won't scroll to the highlighted text. */
         newTab.highlightEnclosingObject();
     }
 
+    /**
+     * Create and show a new JReaderPanel.
+     *
+     * @param title     The initial title for this JReaderPanel.
+     * @param hasButton Whether or not it should have a button.
+     */
     public void newJReaderTab(final String title, final boolean hasButton) {
+
+        /* This is so we can parse the current instance into the PopUpListener. */
         final JReader thisReaderInstance = this;
 
+        /* Wrap everything in an invokeLater so the UI doesn't hang. */
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 final JReaderPanel readerPanel = new JReaderPanel(bottomPanel.getProgressBar(), javafxLoadLatch);
                 try {
                     log.debug("Waiting for countdown latch");
+
+                    /* If this isn't present the panel loads before the UI components have been initialized,
+                     * and when JReader starts up it just has a blank panel until it is clicked.  */
                     javafxLoadLatch.await();
                     log.debug("Latch released");
                 } catch ( InterruptedException e ) {
@@ -199,28 +236,37 @@ public class JReader extends JFrame {
                     tabbedPane.add(title, readerPanel);
                 }
 
+                /* Becuase we are modifying JavaFX components from Swing we need to do it in a JavaFX thread. */
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
+
+                        /* This is called when the user clicks a link. */
                         readerPanel.getEngine().locationProperty().addListener(new ChangeListener<String>() {
                             @Override
                             public void changed(ObservableValue<? extends String> observableValue, final String oldURL, final String newURL) {
+
+                                /* Now we are interacting with Swing components again, so it needs to be done in a Swing thread. */
                                 SwingUtilities.invokeLater(new Runnable() {
                                     @Override
                                     public void run() {
-                                        System.out.println("Called with: " + newURL);
-                                            String systemPath = Utilities.browserPathToSystemPath(newURL);
-                                            bottomPanel.getLblStatus().setText(systemPath);
 
-                                            String tabTitle = Utilities.extractTitle(systemPath);
-                                            tabbedPane.setTitleAt(tabbedPane.getSelectedIndex(), tabTitle);
+                                        /* Update the label in the JReaderPanel. */
+                                        String systemPath = Utilities.browserPathToSystemPath(newURL);
+                                        bottomPanel.getLblStatus().setText(systemPath);
 
-                                            handleSourceButton(newURL);
-                                        }
+                                        /* Set the title of the tab. */
+                                        String tabTitle = Utilities.extractTitle(systemPath);
+                                        tabbedPane.setTitleAt(tabbedPane.getSelectedIndex(), tabTitle);
+
+                                        /* Determine whether or not we should show the source button. */
+                                        handleSourceButton(newURL);
+                                    }
                                 });
                             }
                         });
 
+                        /* Add the listener for the pop up menu. */
                         readerPanel.getJFXPanel().addMouseListener(new JReaderPopUpListener(thisReaderInstance));
                     }
                 });
@@ -231,21 +277,24 @@ public class JReader extends JFrame {
         });
     }
 
+    /**
+     * Handle changing tabs. Remove and add autocomplete words, enable/disable buttons.
+     */
     private void handleTabChange() {
 
         /* If the current tab is null then we are starting up.
          * Add the classs names from the profileManager this time. */
-        if(currentTab == null) {
+        if ( currentTab == null ) {
             topPanel.addAutoCompleteWords(profileManager.getClassNames());
-            currentTab = (AbstractPanel) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
+            currentTab = ( AbstractPanel ) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
             return;
         }
 
         /* We want to remove the previous panels words so they don't pollute the new panels auto complete. */
         ArrayList<String> prevWords = currentTab.getAutoCompleteWords();
 
-        currentTab = (AbstractPanel) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
-        if(currentTab instanceof JReaderPanel) {
+        currentTab = ( AbstractPanel ) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
+        if ( currentTab instanceof JReaderPanel ) {
             handleSourceButton((( JReaderPanel ) currentTab).getCurrentPage());
             enableBrowserButtons();
             topPanel.removeAutoCompleteWords(prevWords);
@@ -253,6 +302,7 @@ public class JReader extends JFrame {
 
         } else {
             disableBrowserButtons();
+            disableNewSourceOption();
             topPanel.removeAutoCompleteWords(prevWords);
             topPanel.addAutoCompleteWords(currentTab.getAutoCompleteWords());
         }
@@ -261,30 +311,36 @@ public class JReader extends JFrame {
         topPanel.setSearchBarText("");
     }
 
+    /** Handle search */
     private void handleSearch() {
         currentTab.handleAutoComplete(topPanel.getSearchBarText());
     }
 
+    /** Add the Java class names for autocompletion. */
     public void addJavaDocClassNames() {
         topPanel.addAutoCompleteWords(profileManager.getClassNames());
     }
 
+    /** Remove the Java class names for autocompletion. */
     public void removeJavaDocClassNames() {
         topPanel.removeAutoCompleteWords(profileManager.getClassNames());
     }
 
+    /** Enable the browser buttons. */
     private void enableBrowserButtons() {
         topPanel.getBtnBack().setEnabled(true);
         topPanel.getBtnNext().setEnabled(true);
         topPanel.getBtnHome().setEnabled(true);
     }
 
+    /** Disable the browser buttons. */
     private void disableBrowserButtons() {
         topPanel.getBtnBack().setEnabled(false);
         topPanel.getBtnNext().setEnabled(false);
         topPanel.getBtnHome().setEnabled(false);
     }
 
+    /** Decide whether or not to show the New Source option. */
     private void handleSourceButton(String newPath) {
         String srcPath = Utilities.docPathToSourcePath(newPath);
         if ( Utilities.isGoodSourcePath(srcPath) ) {
@@ -294,29 +350,43 @@ public class JReader extends JFrame {
         }
     }
 
+    /** Enable the New Source option. */
     private void enableNewSourceOption() {
         topPanel.getBtnSource().setEnabled(true);
         menuBar.enableNewSourceOption();
     }
 
+    /** Disable the New Source option.*/
     private void disableNewSourceOption() {
         topPanel.getBtnSource().setEnabled(false);
         menuBar.disableNewSourceOption();
     }
 
+    /** Clear the search bar. */
     public void resetSearchBar() {
         topPanel.setSearchBarText("");
         topPanel.getSearchBar().requestFocus();
     }
 
+    /**
+     * Returns the currently visible tab.
+     * @return The currently visible tab.
+     */
     public JPanel getCurrentTab() {
         return currentTab;
     }
 
+    /**
+     * Get the SearchContext associated with the current profile.
+     * @return The SearchContext.
+     */
     public SearchContext getSearchContext() {
         return profileManager.getSearchContext();
     }
 
+    /**
+     * Handle Quit. Saves all the profiles.
+     */
     public void handleQuit() {
         try {
             log.debug("Saving profiles..");

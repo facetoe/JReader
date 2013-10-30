@@ -41,7 +41,7 @@ public class JReaderTopPanel extends JPanel {
         btnHome = new JButton(Utilities.readIcon(this.getClass().getResourceAsStream
                 ("/com/facetoe/jreader/resources/icons/home.png"), 20, 20));
 
-        btnSource = new JButton(new ViewSourceAction(this.jReader));
+        btnSource = new JButton(new NewSourceTabAction(this.jReader));
         btnSource.setIcon(Utilities.readIcon(this.getClass().getResourceAsStream
                 ("/com/facetoe/jreader/resources/icons/javaSource.png"), 20, 20));
 

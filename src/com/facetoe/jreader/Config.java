@@ -9,9 +9,16 @@ import java.io.IOException;
 import java.util.Properties;
 
 
+/**
+ * This class manages the storing and retrieval of config data.
+ * It supports both Strings and Boolean values.
+ */
 public class Config {
     private static final Logger log = Logger.getLogger(Config.class);
 
+    /**
+     * Where our data directory is.
+     */
     public static final String DATA_DIR = "dataDir";
     public static final String PROFILE_DIR = "profileDir";
     public static final String CURRENT_PROFILE = "currentProfile";

@@ -1,25 +1,47 @@
 package com.facetoe.jreader;
 
 import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.progress.ProgressMonitor;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+/**
+ * Unzips a file and provides feedback on progress.
+ */
 public class UnZipper {
-    String srcFile;
-    String destFile;
 
-    ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
+    /**
+     * The zip file to extract.
+     */
+    private final String srcFile;
 
+    /**
+     * Where to extract it to.
+     */
+    private final String destFile;
+
+    /**
+     * Listeners to notfy of progress.
+     */
+    private final ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
+
+    /**
+     * Constructor.
+     * @param sourceFile The file to be unzipped.
+     * @param destinationFile The location to unzip it to.
+     */
     public UnZipper(String sourceFile, String destinationFile) {
         srcFile = sourceFile;
         destFile = destinationFile;
     }
 
-    public void unzip() throws ZipException, Exception {
+    /**
+     * Unizp the file.
+     * @throws Exception
+     */
+    public void unzip() throws Exception {
         ZipFile zipFile = new ZipFile(srcFile);
 
         // Set runInThread variable of ZipFile to true.
@@ -37,17 +59,26 @@ public class UnZipper {
         }
 
         if ( pm.getResult() == ProgressMonitor.RESULT_ERROR ) {
-            throw new Exception(pm.getException().getMessage(), pm.getException().getCause());
+            throw new Exception(pm.getException());
         }
     }
 
-    public void fireEvent(int eventType, String message, long progress) {
-        ActionEvent event = new ActionEvent(this, eventType, message, progress, 0);
+    /**
+     * Notify the listers of progress.
+     * @param eventType The type of event.
+     * @param message The message.
+     * @param progress How far we have progressed.
+     */
+    void fireEvent(int eventType, String message, long progress) {
         for ( ActionListener listener : listeners ) {
-            listener.actionPerformed(event);
+            listener.actionPerformed(new ActionEvent(this, eventType, message, progress, 0));
         }
     }
 
+    /**
+     * Add an action listener.
+     * @param listener The action listener to add.
+     */
     public void addActionListener(ActionListener listener) {
         listeners.add(listener);
     }

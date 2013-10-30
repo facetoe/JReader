@@ -11,7 +11,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 
 /**
- * This is the class that both JReaderPanel and JSourcePanel inerit from.
+ * This is the class that both JReaderPanel and JSourcePanel inherit from.
  * Although there is not much here it makes life a lot easier in JReader
  * as it negates the need for endless if (instance of) checks. For example,
  * it allows the currentTab to be a AbstractPanel which is known to have these

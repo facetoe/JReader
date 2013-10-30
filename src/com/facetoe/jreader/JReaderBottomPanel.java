@@ -11,12 +11,15 @@ import java.awt.event.ActionListener;
  * Date: 28/10/13
  * Time: 12:53 PM
  */
+
+/**
+ * The bottom panel for the JReader window.
+ */
 public class JReaderBottomPanel extends JPanel implements ActionListener {
 
     JReader jReader;
     JProgressBar progressBar = new JProgressBar();
     JLabel lblStatus = new JLabel();
-    JLabel gif;
 
     JReaderBottomPanel(JReader jReader) {
         this.jReader = jReader;

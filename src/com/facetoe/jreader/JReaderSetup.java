@@ -10,8 +10,16 @@ import java.io.IOException;
  * Date: 5/10/13
  * Time: 5:59 PM
  */
+
+/**
+ * Responsible for setting up JReader the first time it is loaded. This involves locating the Java documentation,
+ * parsing the docs, downloading the Java source, extracting the source, and creating a default profile.
+ */
 public class JReaderSetup {
 
+    /**
+     * @return Whether or not setup has been completed.
+     */
     public static boolean isSetup() {
         return hasDataDir()
                 && hasConfigFile()
@@ -23,6 +31,10 @@ public class JReaderSetup {
                 && !Config.getString(Config.PROFILE_DIR).isEmpty();
     }
 
+    /**
+     * Creates the data directory and config file in the users home.
+     * @throws IOException
+     */
     public static void createDirectoriesAndConfig() throws IOException {
         boolean wasSuccess;
 
@@ -76,6 +88,10 @@ public class JReaderSetup {
     }
 
 
+    /**
+     * Provides a FileChooser window for the user to select the documentation.
+     * @return The documentation directory.
+     */
     public static File chooseDocs() {
         JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -104,14 +120,18 @@ public class JReaderSetup {
         } while ( true );
     }
 
-    public static boolean hasDataDir() {
+    private static boolean hasDataDir() {
         return new File(Config.dataDirectory).exists();
     }
 
-    public static boolean hasConfigFile() {
+    private static boolean hasConfigFile() {
         return new File(Config.propertiesFilePath).exists();
     }
 
+    /**
+     * Checks that a default profile exists.
+     * @return boolean indicating the default profiles existance.
+     */
     public static boolean hasDefaultProfile() {
         if(!new File(Config.dataDirectory).exists()) {
             return false;

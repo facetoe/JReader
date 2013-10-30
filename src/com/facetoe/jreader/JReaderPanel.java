@@ -26,13 +26,39 @@ import static javafx.concurrent.Worker.State.FAILED;
 public class JReaderPanel extends AbstractPanel {
     private final Logger log = Logger.getLogger(this.getClass());
 
+    /**
+     * The WebEngine to handle displaying and navigating HTML files.
+     */
     private WebEngine engine;
+
+    /**
+     * The view that contains the engine.
+     */
     private WebView view;
+
+    /**
+     * The JavaFXPanel that contains the view.
+     */
     private JFXPanel jfxPanel;
+
+    /**
+     * Display page loading progress.
+     */
     private JProgressBar progressBar;
+
+    /**
+     * Countdown latch to ensure JavaFX components have time to be initialized.
+     */
     private final CountDownLatch latch;
+
+    /**
+     * Profile manager to access current profiles settings.
+     */
     private final ProfileManager profileManager = ProfileManager.getInstance();
 
+    /**
+     * Path of the current page.
+     */
     private String currentPage;
 
     /**
@@ -188,7 +214,7 @@ public class JReaderPanel extends AbstractPanel {
      */
     public void home() {
         File overviewFile = new File(profileManager.getHome());
-        if(overviewFile != null) {
+        if(overviewFile.exists()) {
             loadURL(overviewFile.getAbsolutePath());
         } else {
             log.error("Couldn't locate home file.");
@@ -201,7 +227,7 @@ public class JReaderPanel extends AbstractPanel {
      *
      * @param url to load.
      */
-    public void loadURL(final String url) {
+    void loadURL(final String url) {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -244,7 +270,7 @@ public class JReaderPanel extends AbstractPanel {
     }
 
     /**
-     * Return the current page.
+     * Return the path of the current page.
      *
      * @return the current page.
      */

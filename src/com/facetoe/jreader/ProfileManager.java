@@ -34,7 +34,9 @@ public class ProfileManager implements Serializable {
 
     private static final ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
 
-
+    /**
+     * Private constructor for Singleton class.
+     */
     private ProfileManager() {
         try {
             loadProfiles();

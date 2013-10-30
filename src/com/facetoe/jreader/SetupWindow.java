@@ -22,6 +22,10 @@ import java.util.concurrent.ExecutionException;
  * Date: 20/10/13
  * Time: 10:34 AM
  */
+
+/**
+ * Provides an installation window for setting up JReader on the first run.
+ */
 public class SetupWindow extends JDialog {
     private final Logger log = Logger.getLogger(this.getClass());
 

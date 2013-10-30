@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.concurrent.CancellationException;
 
 
+/**
+ * Interface to report progress. This is from stack overflow.
+ */
 interface RBCWrapperDelegate {
     // The RBCWrapperDelegate receives rbcProgressCallback() messages
     // from the read loop.  It is passed the progress as a percentage
@@ -32,19 +35,44 @@ interface RBCWrapperDelegate {
     public void rbcProgressCallback(RBCWrapper rbc, double progress);
 }
 
+
+/**
+ * Downloads a file and provides progress information.
+ */
 class FileDownloader implements RBCWrapperDelegate {
     private final Logger log = Logger.getLogger(this.getClass());
 
+    /**
+     * Where we want to download the file to.
+     */
     private final String localPath;
+
+    /**
+     * The remote url of the file to download.
+     */
     private final String remoteURL;
+
+    /**
+     * Listeners to inform of progress.
+     */
     private final ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
 
+    /**
+     * Constructor.
+     * @param localPath to download the file to.
+     * @param remoteURL of the file to download.
+     */
     public FileDownloader(String localPath, String remoteURL) {
 
         this.localPath = localPath;
         this.remoteURL = remoteURL;
     }
 
+    /**
+     * Download the file.
+     * @throws IOException
+     * @throws CancellationException
+     */
     public void download() throws IOException, CancellationException {
         fireEvent(ActionEvent.ACTION_FIRST, "Connecting...", 0);
         FileOutputStream fos;
@@ -56,6 +84,11 @@ class FileDownloader implements RBCWrapperDelegate {
         fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
     }
 
+    /**
+     * This allows us to update the progress.
+     * @param rbc Wrapper class that contains useful information.
+     * @param progress How far we have progressed.
+     */
     public void rbcProgressCallback(RBCWrapper rbc, double progress) {
         String message = String.format("Downloaded %s of %s",
                 Utilities.humanReadableByteCount(rbc.getReadSoFar(), true),
@@ -64,6 +97,14 @@ class FileDownloader implements RBCWrapperDelegate {
         fireEvent(ActionEvent.ACTION_PERFORMED, message, ( long ) progress);
     }
 
+    /**
+     * How big the file to download is.
+     *
+     * Note: This always returns -1 for the Java source code zip file.
+     * To get around this the file size is hardcoded.
+     * @param url
+     * @return
+     */
     private long contentLength(URL url) {
         long contentLength = -1;
 
@@ -109,6 +150,9 @@ class FileDownloader implements RBCWrapperDelegate {
     }
 }
 
+/**
+ * Wrapper class to hold useful information. This is from stackoverflow.
+ */
 class RBCWrapper implements ReadableByteChannel {
     private final RBCWrapperDelegate delegate;
     private final long expectedSize;

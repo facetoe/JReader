@@ -10,10 +10,14 @@ import java.awt.event.KeyEvent;
  * Date: 26/10/13
  * Time: 3:42 PM
  */
-class ViewSourceAction extends AbstractAction {
+
+/**
+ * Action to view the source code in a JSourcePanel.
+ */
+class NewSourceTabAction extends AbstractAction {
     private final JReader jReader;
 
-    public ViewSourceAction(JReader jReader) {
+    public NewSourceTabAction(JReader jReader) {
         super("View Source");
         putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_S));
         this.jReader = jReader;
@@ -21,17 +25,26 @@ class ViewSourceAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        SwingWorker worker = new SwingWorker() {
+        SwingUtilities.invokeLater(new Runnable() {
             @Override
-            protected Object doInBackground() throws Exception {
-                jReader.newSourceTab();
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+            public void run() {
+                SwingWorker worker = new SwingWorker() {
+                    @Override
+                    protected Object doInBackground() throws Exception {
+                        jReader.newSourceTab();
+                        return null;
+                    }
+                };
+                worker.execute();
             }
-        };
-        worker.execute();
+        });
+
     }
 }
 
+/**
+ * Action to close a tab.
+ */
 class CloseTabAction extends AbstractAction {
     private final JTabbedPane tabbedPane;
     private final JReader jReader;
@@ -53,6 +66,9 @@ class CloseTabAction extends AbstractAction {
     }
 }
 
+/**
+ * Action to create a new JReaderPanel tab.
+ */
 class NewReaderTabAction extends AbstractAction {
     private final JReader reader;
 
@@ -63,10 +79,18 @@ class NewReaderTabAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        reader.newJReaderTab("Jreader", true);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                reader.newJReaderTab("Jreader", true);
+            }
+        });
     }
 }
 
+/**
+ * Action to quit the application.
+ */
 class QuitAction extends AbstractAction {
         private final JReader jReader;
     public QuitAction(JReader jReader) {

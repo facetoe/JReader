@@ -11,20 +11,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * This class parses a Java source file and extracts all the classes, interfaces, methods, constructors and fields.
+ */
 public class JavaSourceFileParser {
     private static final Logger log = Logger.getLogger(JavaSourceFileParser.class);
-
-//    public static void main(String[] args) {
-//        try {
-//            JavaSourceFile file = parse(new FileInputStream("/home/facetoe/.jreader/src-jdk/java/awt/Container.java"));
-//        } catch ( FileNotFoundException ex ) {
-//            log.error(ex.getMessage(), ex);
-//        } catch ( IOException ex ) {
-//            log.error(ex.getMessage(), ex);
-//        } catch ( ParseException ex ) {
-//            log.error(ex.getMessage(), ex);
-//        }
-//    }
 
     /**
      * Parses a Java source file and extracts constructor, method, field and enum declarations.
@@ -42,6 +33,7 @@ public class JavaSourceFileParser {
         } finally {
             inputStream.close();
         }
+        log.debug("Parsing complete.");
         return ( JavaSourceFile ) new SourceFileVisitor().visit(cu, null);
     }
 
@@ -99,7 +91,7 @@ public class JavaSourceFileParser {
 
 
                     /* If we have a nested class, recurse through it and each nested class that it contains
-                     * gathering data.  */
+                     * gathering the data.  */
                 }else if (declaration instanceof ClassOrInterfaceDeclaration) {
                     JavaClassOrInterface classOrInterface = (JavaClassOrInterface)visit((ClassOrInterfaceDeclaration) declaration, null);
                     javaObj.addNestedClassOrInterface(classOrInterface);

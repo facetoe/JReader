@@ -14,18 +14,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Parses the Java documentation and packages it in a HashMap with the class name as key and a JavaObjectOld as the value.
+ * Parses the Java documentation and packages it in a HashMap with the class name as key and the relative path as the value.
  */
 public class JavaDocParser {
     private static final Logger log = Logger.getLogger(JavaDocParser.class);
 
 
     /* Action listeners for this parser */
-    private ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
+    private final ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
 
     /**
-     * Parses the Java docs by extracting the class names from the index file and
-     * then visiting each class HTML file and extracting method information.
+     * Parses the Java docs by extracting the class names and relative URL's from the
+     * allclasses-noframe.html file.
      *
      * @param filePath should point to allclasses-noframe.html
      */
@@ -42,6 +42,11 @@ public class JavaDocParser {
         return classNames;
     }
 
+    /**
+     * This parses the new style javadocs that came out with Java7.
+     * @param filePath the file to parse.
+     * @return the extracted class names and relative paths.
+     */
     private HashMap<String, String> parseNewJavadoc(String filePath) {
         File inFile = new File(filePath);
         Document doc = null;
@@ -71,73 +76,41 @@ public class JavaDocParser {
         for ( Element link : links ) {
             fireEvent(ActionEvent.ACTION_PERFORMED, link.text(), ( long ) ((count * 100.0f) / numLinks));
             count++;
-            String relativePath = link.attr("href");
-            classNames.put(link.text(), relativePath);
+            classNames.put(link.text(), link.attr("href"));
         }
         fireEvent(ActionEvent.ACTION_LAST, "Complete", 100);
         return classNames;
     }
 
+    /**
+     * Parses the old style javadocs.
+     * @param filePath The file to parse.
+     * @return the extracted class names and relative paths.
+     */
     private HashMap<String, String> parseOldJavadoc(String filePath) {
         HashMap<String, String> classNames = new HashMap<String, String>();
         try {
             Document doc = Jsoup.parse(new File(filePath), "UTF-8");
             Elements classes = doc.select("html body table tbody tr td font.FrameItemFont a");
 
+            int numLinks;
+            int count = 0;
             if ( classes.size() == 0 ) {
                 return null;
+            } else {
+                numLinks = classes.size();
             }
 
-            for ( Element aClass : classes ) {
-                classNames.put(aClass.text(), aClass.attr("href"));
+            for ( Element link : classes ) {
+                fireEvent(ActionEvent.ACTION_PERFORMED, link.text(), ( long ) ((count * 100.0f) / numLinks));
+                count++;
+                classNames.put(link.text(), link.attr("href"));
             }
 
         } catch ( IOException e ) {
             log.error(e.getMessage(), e);
         }
         return classNames;
-    }
-
-    public static String extractPackage(String filePath) {
-        String packageName = extractNewJavadocPackage(filePath);
-        if ( packageName != null ) {
-            return packageName;
-        } else {
-            return extractOldJavadocPackage(filePath);
-        }
-    }
-
-    private static String extractNewJavadocPackage(String filePath) {
-        Document doc;
-        Elements packageName = null;
-        try {
-            doc = Jsoup.parse(new File(filePath), "UTF-8");
-            packageName = doc.select("html body div.contentContainer ul.inheritance li ul.inheritance li ul.inheritance li ul.inheritance li ul.inheritance li");
-        } catch ( IOException e ) {
-            log.error(e.getMessage(), e);
-        }
-
-        if ( packageName.size() == 0 ) {
-            return null;
-        } else {
-            return packageName.get(0).text();
-        }
-    }
-
-    private static String extractOldJavadocPackage(String filePath) {
-        Document doc;
-        Elements packageName = null;
-        try {
-            doc = Jsoup.parse(new File(filePath), "UTF-8");
-            packageName = doc.select("html body pre b");
-        } catch ( IOException e ) {
-            log.error(e.getMessage(), e);
-        }
-        if ( packageName.size() == 0 ) {
-            return null;
-        } else {
-            return packageName.get(0).text();
-        }
     }
 
     /**
@@ -147,7 +120,7 @@ public class JavaDocParser {
      * @param message   the message
      * @param progress  how far we have got
      */
-    public void fireEvent(int eventType, String message, long progress) {
+    void fireEvent(int eventType, String message, long progress) {
         ActionEvent event = new ActionEvent(this, eventType, message, progress, 0);
         for ( ActionListener listener : listeners ) {
             listener.actionPerformed(event);

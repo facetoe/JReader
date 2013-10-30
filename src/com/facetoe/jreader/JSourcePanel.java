@@ -9,6 +9,7 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
 
+import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -20,6 +21,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.regex.PatternSyntaxException;
 
 
 /**
@@ -31,7 +33,7 @@ public class JSourcePanel extends AbstractPanel {
     /**
      * The text area to display the source code.
      */
-    private RSyntaxTextArea textArea;
+    private final RSyntaxTextArea textArea;
 
     /**
      * The object that contains all the definitions for this source file.
@@ -41,7 +43,7 @@ public class JSourcePanel extends AbstractPanel {
     /**
      * Where this file is located on the file system.
      */
-    private String sourceFilePath;
+    private final String sourceFilePath;
 
     /**
      * The top level object for this source file. It could be a class or interface,
@@ -52,14 +54,22 @@ public class JSourcePanel extends AbstractPanel {
     /**
      * Profile manager instance for this panel.
      */
-    private ProfileManager profileManager;
+    private final ProfileManager profileManager;
 
     /**
-     * Listeners that will be notified of parsing progress.
+     * Listeners that will be notified of parsing progress and search errors.
      */
     private final ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
 
-    String fileName;
+    /**
+     * This source files name.
+     */
+    private String fileName;
+
+    /**
+     * Whether or not we are already waiting for the status information to be cleared.
+     */
+    private boolean waitingOnLabelReset = false;
 
     /**
      * Creates a new instance of JSourcePanel and displays the contents of filePath.
@@ -73,7 +83,7 @@ public class JSourcePanel extends AbstractPanel {
         profileManager = ProfileManager.getInstance();
 
         this.sourceFilePath = filePath;
-        fileName =  new File(sourceFilePath).getName();
+        fileName = new File(sourceFilePath).getName();
 
 
         addActionListener(listener);
@@ -94,6 +104,8 @@ public class JSourcePanel extends AbstractPanel {
             theme.apply(textArea);
         } catch ( IOException e ) {
             log.error(e.toString(), e);
+        } catch ( Exception ex ) {
+            System.err.println("Something happened: " + ex.toString());
         }
 
         RTextScrollPane scrollPane = new RTextScrollPane(textArea);
@@ -111,7 +123,7 @@ public class JSourcePanel extends AbstractPanel {
         /* Parse the source file and extract all the definitions. */
         parseSourceFile();
 
-        if(javaSourceFile != null) {
+        if ( javaSourceFile != null ) {
             enclosingObject = javaSourceFile.getEnclosingClass();
         } else {
             log.error("Source file was null: " + filePath);
@@ -129,6 +141,9 @@ public class JSourcePanel extends AbstractPanel {
                 enclosingObject.beginColumn);
     }
 
+    /**
+     * Parse the source file and provide feedback to any listeners.
+     */
     private void parseSourceFile() {
         long startTime = System.nanoTime();
         fireEvent(new ActionEvent(this, 0, "Parsing: " + fileName));
@@ -141,7 +156,7 @@ public class JSourcePanel extends AbstractPanel {
         } finally {
             long elapsedTime = System.nanoTime() - startTime;
             fireEvent(new ActionEvent(this, 0, String.format(
-                    "Parsed %s in %.2f %s", fileName, (double)elapsedTime/1000000000, "seconds")));
+                    "Parsed %s in %.2f %s", fileName, ( double ) elapsedTime / 1000000000, "seconds")));
         }
     }
 
@@ -150,10 +165,16 @@ public class JSourcePanel extends AbstractPanel {
         return javaSourceFile.getAllDeclarations();
     }
 
+    /**
+     * This method first attempts to highlight the declaration. If nothing is found for the key,
+     * it then attmepts to search for it.
+     * @param key The declaration that we want to highlight.
+     */
     @Override
     void handleAutoComplete(String key) {
-        JavaObject obj = javaSourceFile.getItem(key);
-        if(obj != null) {
+        JavaObject obj = javaSourceFile.getObject(key);
+
+         if ( obj != null ) {
             highlightDeclaration(obj.getBeginLine(), obj.getEndLine(),
                     obj.beginColumn);
         } else {
@@ -161,32 +182,54 @@ public class JSourcePanel extends AbstractPanel {
         }
     }
 
-    /**
+    /** This method attempts to find a string or regexp in the source file.
+     *  It first searches from the current position to the end of the file,
+     *  if that doesn't succeed it searches from the end of the file to the
+     *  beginning.
+     *
+     *  It fires an ActionEvent if nothing is found or if there is a Regexp error.
      * @param text    to search for
      * @param context The search context for this search.
-     * @return whether or not anything was found.
      */
     private void findString(String text, SearchContext context) {
-        boolean found;
+        boolean found = false;
         int caretPos = textArea.getCaretPosition();
         context.setSearchFor(text);
         context.setSearchForward(true);
 
-        found = SearchEngine.find(textArea, context);
-        if ( !found ) {
-            textArea.setCaretPosition(0);
+        try {
             found = SearchEngine.find(textArea, context);
             if ( !found ) {
+                textArea.setCaretPosition(0);
+                found = SearchEngine.find(textArea, context);
+                if ( !found ) {
                 /* If we didn't find anything, reset the caret position or it ends up
                  * jumping to the end or beginning of the file.. */
-                textArea.setCaretPosition(caretPos);
-                fireEvent(new ActionEvent(this, 0, "Nothing found for: " + text));
+                    textArea.setCaretPosition(caretPos);
+                    fireEvent(new ActionEvent(this, 0, "Nothing found for: " + "\"" + text + "\""));
+                }
             }
+        } catch ( PatternSyntaxException ex ) {
+            fireEvent(new ActionEvent(this, 0, "Regex Error: " + ex.getMessage()));
         }
 
-        /* Reset the status label if we were successful. */
-        if(found) {
-            fireEvent(new ActionEvent(this, 0, ""));
+        /* Reset the status label if we were successful. This is in a seperate thread for two reasons,
+         * First, when the initial call succeeds in highlightEnclosingObject() the text would otherwise be deleted.
+         * Doing it this way lets it hang around for a bit. Second, I think it looks better this way when a search
+         * succeeds after an error.*/
+         if ( found && !waitingOnLabelReset ) {
+            SwingWorker worker = new SwingWorker() {
+                @Override
+                protected Object doInBackground() throws Exception {
+                    waitingOnLabelReset = true;
+                    Thread.sleep(5000);
+                    fireEvent(new ActionEvent(this, 0, ""));
+                    waitingOnLabelReset = false;
+                    return null;
+                }
+            };
+            worker.execute();
+
         }
     }
 
@@ -203,7 +246,7 @@ public class JSourcePanel extends AbstractPanel {
      * @param endLine   The end of the entire block if it's a method or constructor.
      * @param beginCol  The column in which this selection begins.
      */
-    public void highlightDeclaration(int beginLine, int endLine, int beginCol) {
+    void highlightDeclaration(int beginLine, int endLine, int beginCol) {
         try {
             int start = textArea.getLineStartOffset(beginLine - 1);
             int end = textArea.getLineEndOffset(endLine - 1);
@@ -230,10 +273,18 @@ public class JSourcePanel extends AbstractPanel {
         }
     }
 
-    public void addActionListener(ActionListener listener) {
+    /**
+     * Add an action listener.
+     * @param listener The listener to add.
+     */
+    void addActionListener(ActionListener listener) {
         listeners.add(listener);
     }
 
+    /**
+     * Notify listeners of progress.
+     * @param event The progress information.
+     */
     private void fireEvent(ActionEvent event) {
         for ( ActionListener listener : listeners ) {
             listener.actionPerformed(event);

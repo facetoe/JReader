@@ -45,7 +45,7 @@ public class JReaderMenuBar extends JMenuBar {
     private void initWindowMenu() {
         JMenu windowMenu = new JMenu("Window");
         mnuNewSource = new JMenuItem();
-        mnuNewSource.setAction(new ViewSourceAction(jReader));
+        mnuNewSource.setAction(new NewSourceTabAction(jReader));
         windowMenu.add(mnuNewSource);
 
         JMenuItem mnuNewTab = new JMenuItem();
