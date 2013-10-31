@@ -64,8 +64,10 @@ public class JReaderMenuBar extends JMenuBar {
             @Override
             public void actionPerformed(ActionEvent e) {
 
+                jReader.removeJavaDocClassNames();
                 /* Select the new profile */
                 new NewProfileWindow();
+                jReader.addJavaDocClassNames();
 
                 /* Change to the new profile's home so the user can tell something happened */
                 if ( jReader.getCurrentTab() instanceof JReaderPanel ) {
@@ -148,6 +150,7 @@ public class JReaderMenuBar extends JMenuBar {
 
                                     /* profileManager.deleteProfile sets the profile to Default. */
                                     profileManager.deleteProfile(profileName);
+                                    jReader.removeJavaDocClassNames();
                                     if(jReader.getCurrentTab() instanceof JReaderPanel) {
                                         JReaderPanel panel = (JReaderPanel) jReader.getCurrentTab();
                                         panel.home();

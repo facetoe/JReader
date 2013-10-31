@@ -113,7 +113,6 @@ public class NewProfileWindow extends JDialog {
                                 txtDocs.getText() + File.separator,
                                 txtSrc.getText() + File.separator);
                         manager.setCurrentProfile(name);
-
                         setVisible(false);
                         dispose();
                         return null;

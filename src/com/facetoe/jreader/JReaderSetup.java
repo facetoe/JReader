@@ -12,8 +12,8 @@ import java.io.IOException;
  */
 
 /**
- * Responsible for setting up JReader the first time it is loaded. This involves locating the Java documentation,
- * parsing the docs, downloading the Java source, extracting the source, and creating a default profile.
+ *
+ * A collection of methods to assist with setting up JReader the first time it is run.
  */
 public class JReaderSetup {
 

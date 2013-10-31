@@ -31,7 +31,7 @@ public class JReader extends JFrame {
 
     /* This is necessary to make the Swing thread wait until the javafx content is loaded on startup.
      * If it's not set then the Swing components are displayed before there is any content in them. */
-    private final CountDownLatch javafxLoadLatch = new CountDownLatch(1);
+    private CountDownLatch javafxLoadLatch;
 
 
     /* Keeps track of which profile we are using and provides access to the settings for that profile. */
@@ -156,7 +156,11 @@ public class JReader extends JFrame {
         tabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
+                try {
                 handleTabChange();
+                } catch ( NullPointerException ex ) {
+                    log.error("Null pointer exception in tabbedPane listener.");
+                }
             }
         });
     }
@@ -210,7 +214,7 @@ public class JReader extends JFrame {
      * @param hasButton Whether or not it should have a button.
      */
     public void newJReaderTab(final String title, final boolean hasButton) {
-
+        javafxLoadLatch = new CountDownLatch(1);
         /* This is so we can parse the current instance into the PopUpListener. */
         final JReader thisReaderInstance = this;
 
@@ -219,6 +223,13 @@ public class JReader extends JFrame {
             @Override
             public void run() {
                 final JReaderPanel readerPanel = new JReaderPanel(bottomPanel.getProgressBar(), javafxLoadLatch);
+
+                if ( hasButton ) {
+                    addCloseButtonToTab(readerPanel, title);
+                } else {
+                    tabbedPane.add(title, readerPanel);
+                }
+
                 try {
                     log.debug("Waiting for countdown latch");
 
@@ -228,12 +239,6 @@ public class JReader extends JFrame {
                     log.debug("Latch released");
                 } catch ( InterruptedException e ) {
                     log.error(e.getMessage(), e);
-                }
-
-                if ( hasButton ) {
-                    addCloseButtonToTab(readerPanel, title);
-                } else {
-                    tabbedPane.add(title, readerPanel);
                 }
 
                 /* Becuase we are modifying JavaFX components from Swing we need to do it in a JavaFX thread. */
