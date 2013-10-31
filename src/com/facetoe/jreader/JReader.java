@@ -87,7 +87,13 @@ public class JReader extends JFrame {
         Action action = new CloseTabAction(tabbedPane, this);
         String keyStrokeAndKey = "control C";
         KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
-        getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(keyStroke, keyStrokeAndKey);
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, keyStrokeAndKey);
+        getRootPane().getActionMap().put(keyStrokeAndKey, action);
+
+        action = new NewSourceTabAction(this);
+        keyStrokeAndKey = "control S";
+        keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, keyStrokeAndKey);
         getRootPane().getActionMap().put(keyStrokeAndKey, action);
 
         action = new NewReaderTabAction(this);
@@ -180,29 +186,34 @@ public class JReader extends JFrame {
      * Creates a new source tab and sets it as the currently selected tab.
      */
     public void newSourceTab() {
-        JReaderPanel panel = ( JReaderPanel ) currentTab;
-        String filePath = Utilities.docPathToSourcePath(panel.getCurrentPage());
-        String title = Utilities.extractFileName(filePath);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                JReaderPanel panel = ( JReaderPanel ) currentTab;
+                String filePath = Utilities.docPathToSourcePath(panel.getCurrentPage());
+                String title = Utilities.extractFileName(filePath);
 
-        if ( !Utilities.isGoodSourcePath(filePath) ) {
-            log.error("Bad file path: " + filePath);
-            return;
-        }
+                if ( !Utilities.isGoodSourcePath(filePath) ) {
+                    log.error("Bad file path: " + filePath);
+                    return;
+                }
 
-        log.debug("newSourceTab called with: " + filePath);
+                log.debug("newSourceTab called with: " + filePath);
 
-        JSourcePanel newTab = new JSourcePanel(filePath, bottomPanel);
-        addCloseButtonToTab(newTab, title);
+                JSourcePanel newTab = new JSourcePanel(filePath, bottomPanel);
+                addCloseButtonToTab(newTab, title);
 
-        /* These buttons don't make sense in JSourcePanel. */
-        disableBrowserButtons();
-        disableNewSourceOption();
+                /* These buttons don't make sense in JSourcePanel. */
+                disableBrowserButtons();
+                disableNewSourceOption();
 
-        tabbedPane.setSelectedComponent(newTab);
-        resetSearchBar();
+                tabbedPane.setSelectedComponent(newTab);
+                resetSearchBar();
 
-        /* You need to do this here or the pane won't scroll to the highlighted text. */
-        newTab.highlightEnclosingObject();
+                /* You need to do this here or the pane won't scroll to the highlighted text. */
+                newTab.highlightEnclosingObject();
+            }
+        });
     }
 
     /**
