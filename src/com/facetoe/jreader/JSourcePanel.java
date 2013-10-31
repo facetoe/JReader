@@ -216,13 +216,13 @@ public class JSourcePanel extends AbstractPanel {
         /* Reset the status label if we were successful. This is in a seperate thread for two reasons,
          * First, when the initial call succeeds in highlightEnclosingObject() the text would otherwise be deleted.
          * Doing it this way lets it hang around for a bit. Second, I think it looks better this way when a search
-         * succeeds after an error if it doesn't dissapear straight away.*/
+         * succeeds after an error.*/
          if ( found && !waitingOnLabelReset ) {
             SwingWorker worker = new SwingWorker() {
                 @Override
                 protected Object doInBackground() throws Exception {
                     waitingOnLabelReset = true;
-                    Thread.sleep(3000);
+                    Thread.sleep(5000);
                     fireEvent(new ActionEvent(this, 0, ""));
                     waitingOnLabelReset = false;
                     return null;

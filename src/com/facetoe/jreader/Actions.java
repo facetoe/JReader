@@ -79,12 +79,7 @@ class NewReaderTabAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                reader.newJReaderTab("Jreader", true);
-            }
-        });
+        reader.newJReaderTab("Jreader", true);
     }
 }
 

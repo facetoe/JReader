@@ -54,7 +54,7 @@ public class SetupWindow extends JDialog {
                 try {
                     btnOK.setEnabled(false);
                     worker.execute();
-                } catch ( Exception e1 ) {
+                } catch (Exception e1) {
                     log.error(e1.getMessage(), e1);
                 }
             }
@@ -175,7 +175,7 @@ public class SetupWindow extends JDialog {
             JReaderSetup.createDirectoriesAndConfig();
 
             File docDir = JReaderSetup.chooseDocs();
-            if ( docDir == null ) {
+            if (docDir == null) {
                 wasCanceled = true;
                 cancel(true);
                 return false;
@@ -183,17 +183,17 @@ public class SetupWindow extends JDialog {
                 setTickIcon(icnLocate);
             }
 
-            if ( !Config.getBool(Config.HAS_JAVALANG_SOURCE) )
+            if (!Config.getBool(Config.HAS_JAVALANG_SOURCE))
                 downloadSource();
 
-            if ( !Config.getBool(Config.HAS_EXTRACTED_SOURCE) )
+            if (!Config.getBool(Config.HAS_EXTRACTED_SOURCE))
                 extractSource();
 
-            if ( !JReaderSetup.hasDefaultProfile() ) {
+            if (!JReaderSetup.hasDefaultProfile()) {
                 setUpDefaultProfile(docDir);
             }
 
-            if ( !Config.getBool(Config.HAS_PARSED_DOCS) )
+            if (!Config.getBool(Config.HAS_PARSED_DOCS))
                 parseDocs(docDir);
 
             return true;
@@ -209,7 +209,7 @@ public class SetupWindow extends JDialog {
             downloader.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    progressBar.setValue(( int ) e.getWhen());
+                    progressBar.setValue((int) e.getWhen());
                     lblStatus.setText(e.getActionCommand());
                 }
             });
@@ -234,7 +234,7 @@ public class SetupWindow extends JDialog {
             unZipper.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    progressBar.setValue(( int ) e.getWhen());
+                    progressBar.setValue((int) e.getWhen());
                     lblStatus.setText(e.getActionCommand());
                 }
             });
@@ -296,15 +296,15 @@ public class SetupWindow extends JDialog {
             try {
                 get();
                 log.debug("Setup complete.");
-            } catch ( InterruptedException e ) {
+            } catch (InterruptedException e) {
                 wasCanceled = true;
                 log.error(e.getMessage(), e);
                 JOptionPane.showMessageDialog(null, e.getMessage());
 
-            } catch ( ExecutionException e ) {
+            } catch (ExecutionException e) {
                 log.error(e.getMessage(), e);
 
-            } catch ( CancellationException e ) {
+            } catch (CancellationException e) {
                 wasCanceled = true;
                 log.error(e.getMessage(), e);
 
@@ -312,7 +312,7 @@ public class SetupWindow extends JDialog {
                 setVisible(false);
                 dispose();
 
-                if ( wasCanceled ) {
+                if (wasCanceled) {
                     Config.setBool(Config.HAS_JAVALANG_SOURCE, false);
                     JOptionPane.showMessageDialog(null, "Goobye.");
                     System.exit(0);

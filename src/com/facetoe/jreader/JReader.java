@@ -53,7 +53,7 @@ public class JReader extends JFrame {
         }
 
         profileManager = ProfileManager.getInstance();
-        newJReaderTab("JReader", false);
+
 
         /* Setup the UI. */
         setJMenuBar(new JReaderMenuBar(this));
@@ -63,6 +63,8 @@ public class JReader extends JFrame {
         bottomPanel = new JReaderBottomPanel(this);
         add(bottomPanel, BorderLayout.SOUTH);
         add(tabbedPane, BorderLayout.CENTER);
+
+        newJReaderTab("JReader", false);
 
         /* Setup listeners and actions.*/
         initActions();
@@ -156,11 +158,7 @@ public class JReader extends JFrame {
         tabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                try {
                 handleTabChange();
-                } catch ( NullPointerException ex ) {
-                    log.error("Null pointer exception in tabbedPane listener.");
-                }
             }
         });
     }
@@ -214,22 +212,16 @@ public class JReader extends JFrame {
      * @param hasButton Whether or not it should have a button.
      */
     public void newJReaderTab(final String title, final boolean hasButton) {
-        javafxLoadLatch = new CountDownLatch(1);
+
         /* This is so we can parse the current instance into the PopUpListener. */
         final JReader thisReaderInstance = this;
+        javafxLoadLatch = new CountDownLatch(1);
 
         /* Wrap everything in an invokeLater so the UI doesn't hang. */
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 final JReaderPanel readerPanel = new JReaderPanel(bottomPanel.getProgressBar(), javafxLoadLatch);
-
-                if ( hasButton ) {
-                    addCloseButtonToTab(readerPanel, title);
-                } else {
-                    tabbedPane.add(title, readerPanel);
-                }
-
                 try {
                     log.debug("Waiting for countdown latch");
 
@@ -239,6 +231,12 @@ public class JReader extends JFrame {
                     log.debug("Latch released");
                 } catch ( InterruptedException e ) {
                     log.error(e.getMessage(), e);
+                }
+
+                if ( hasButton ) {
+                    addCloseButtonToTab(readerPanel, title);
+                } else {
+                    tabbedPane.add(title, readerPanel);
                 }
 
                 /* Becuase we are modifying JavaFX components from Swing we need to do it in a JavaFX thread. */
