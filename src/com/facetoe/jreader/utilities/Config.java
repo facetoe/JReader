@@ -11,7 +11,7 @@ import java.util.Properties;
 
 /**
  * This class manages the storing and retrieval of config data.
- * It supports both Strings and Boolean values.
+ * It supports both String and Boolean values.
  */
 public class Config {
     private static final Logger log = Logger.getLogger(Config.class);
