@@ -166,7 +166,7 @@ public class JSourcePanel extends AbstractPanel {
     }
 
     @Override
-    ArrayList<String> getAutoCompleteWords() {
+    public ArrayList<String> getAutoCompleteWords() {
         return javaSourceFile.getAllDeclarations();
     }
 
@@ -176,7 +176,7 @@ public class JSourcePanel extends AbstractPanel {
      * @param key The declaration that we want to highlight.
      */
     @Override
-    void handleAutoComplete(String key) {
+    public void handleAutoComplete(String key) {
         JavaObject obj = javaSourceFile.getObject(key);
 
          if ( obj != null ) {

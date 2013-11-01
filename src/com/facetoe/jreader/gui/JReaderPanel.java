@@ -174,12 +174,12 @@ public class JReaderPanel extends AbstractPanel {
     }
 
     @Override
-    ArrayList<String> getAutoCompleteWords() {
+    public ArrayList<String> getAutoCompleteWords() {
         return profileManager.getClassNames();
     }
 
     @Override
-    void handleAutoComplete(String key) {
+    public void handleAutoComplete(String key) {
         HashMap<String, String> classData = profileManager.getClassData();
         if(classData.containsKey(key)) {
             String relativePath = classData.get(key);

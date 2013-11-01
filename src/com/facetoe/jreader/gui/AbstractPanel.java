@@ -17,14 +17,14 @@ import java.util.ArrayList;
  * it allows the currentTab to be a AbstractPanel which is known to have these
  * methods as opposed to having it as a JPanel and constantly checking.
  */
-abstract class AbstractPanel extends JPanel {
+public abstract class AbstractPanel extends JPanel {
 
     /**
      * This is implemented in the subclasses to define the action to take on auto complete.
      * Basically, JReaderPanel will navigate to the class page and JSourcePanel will do a search.
      * @param key
      */
-    abstract void handleAutoComplete(String key);
+    public abstract void handleAutoComplete(String key);
 
     /**
      * Returns the autocomplete words for this panel. This makes it possible to easily add
@@ -32,5 +32,5 @@ abstract class AbstractPanel extends JPanel {
      * so that only that panel's words are present.
      * @return ArrayList of autocomplete words.
      */
-    abstract ArrayList<String> getAutoCompleteWords();
+    public abstract ArrayList<String> getAutoCompleteWords();
 }

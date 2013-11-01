@@ -53,7 +53,7 @@ public class JReaderSetup {
             System.err.println("Data Directory already exists.");
         }
 
-        File configFile = new File(Config.propertiesFilePath);
+        File configFile = new File(Config.configFilePath);
         if ( !configFile.exists() ) {
             wasSuccess = configFile.createNewFile();
             if(wasSuccess) {
@@ -125,7 +125,7 @@ public class JReaderSetup {
     }
 
     private static boolean hasConfigFile() {
-        return new File(Config.propertiesFilePath).exists();
+        return new File(Config.configFilePath).exists();
     }
 
     /**
