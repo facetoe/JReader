@@ -1,4 +1,8 @@
-package com.facetoe.jreader;
+package com.facetoe.jreader.gui;
+
+import com.facetoe.jreader.NewProfileWindow;
+import com.facetoe.jreader.ProfileManager;
+import com.facetoe.jreader.utilities.Config;
 
 import javax.swing.*;
 import javax.swing.event.MenuEvent;
@@ -64,8 +68,11 @@ public class JReaderMenuBar extends JMenuBar {
             @Override
             public void actionPerformed(ActionEvent e) {
 
+                jReader.removeJavaDocClassNames();
                 /* Select the new profile */
                 new NewProfileWindow();
+                jReader.addJavaDocClassNames();
+
 
                 /* Change to the new profile's home so the user can tell something happened */
                 if ( jReader.getCurrentTab() instanceof JReaderPanel ) {

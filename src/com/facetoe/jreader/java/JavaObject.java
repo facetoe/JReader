@@ -1,4 +1,4 @@
-package com.facetoe.jreader;
+package com.facetoe.jreader.java;
 
 import japa.parser.ast.body.*;
 import japa.parser.ast.stmt.BlockStmt;
@@ -25,39 +25,39 @@ public abstract class JavaObject<T> {
     /**
      * Full declaration including modifiers
      */
-    String fullDeclaration;
+    public String fullDeclaration;
 
     /**
      * Just the name and parameters
      */
-    String declaration;
+    public String declaration;
 
     /**
      * Line in the source file where this item begins
      */
-    int beginLine;
+    public int beginLine;
 
     /**
      * Line in the source file where this item ends
      * Note: this includes the entire block, not just declarations
      */
-    int endLine;
+    public int endLine;
 
     /**
      * Column where this declaration begins
      */
-    protected int beginColumn;
+    public int beginColumn;
 
     /**
      * Column where this declaration ends.
      */
-    int endColumn;
+    public int endColumn;
 
     /**
      * Constructor.
      * @param t The type declaration.
      */
-    JavaObject(T t) {
+    public JavaObject(T t) {
         typeDeclaration = t;
         extractDeclaration();
         extractFullDeclaration();
@@ -77,7 +77,7 @@ public abstract class JavaObject<T> {
      * Get the full declaration.
      * @return The declaration.
      */
-    String getFullDeclaration() {
+    public String getFullDeclaration() {
         return fullDeclaration;
     }
 
@@ -85,7 +85,7 @@ public abstract class JavaObject<T> {
      * Get the short declaration.
      * @return The short declaration.
      */
-    String getDeclaration() {
+    public String getDeclaration() {
         return declaration;
     }
 

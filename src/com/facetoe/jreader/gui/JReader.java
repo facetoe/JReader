@@ -1,5 +1,9 @@
-package com.facetoe.jreader;
+package com.facetoe.jreader.gui;
 
+import com.facetoe.jreader.ProfileManager;
+import com.facetoe.jreader.SetupWindow;
+import com.facetoe.jreader.utilities.JReaderSetup;
+import com.facetoe.jreader.utilities.Utilities;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -224,9 +228,9 @@ public class JReader extends JFrame {
      */
     public void newJReaderTab(final String title, final boolean hasButton) {
 
-        /* This is so we can parse the current instance into the PopUpListener. */
+        /* This is so we can pass the current instance into the PopUpListener. */
         final JReader thisReaderInstance = this;
-        javafxLoadLatch = new CountDownLatch(1);
+        javafxLoadLatch = new CountDownLatch(2);
 
         /* Wrap everything in an invokeLater so the UI doesn't hang. */
         SwingUtilities.invokeLater(new Runnable() {

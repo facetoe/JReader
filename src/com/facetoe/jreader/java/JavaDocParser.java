@@ -1,4 +1,4 @@
-package com.facetoe.jreader;
+package com.facetoe.jreader.java;
 
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;

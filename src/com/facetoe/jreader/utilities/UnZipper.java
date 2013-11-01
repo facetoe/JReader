@@ -1,4 +1,4 @@
-package com.facetoe.jreader;
+package com.facetoe.jreader.utilities;
 
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.progress.ProgressMonitor;

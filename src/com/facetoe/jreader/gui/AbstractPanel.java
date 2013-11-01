@@ -1,4 +1,4 @@
-package com.facetoe.jreader;
+package com.facetoe.jreader.gui;
 
 /**
  * Created with IntelliJ IDEA.

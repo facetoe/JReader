@@ -1,5 +1,9 @@
 package com.facetoe.jreader;
 
+import com.facetoe.jreader.java.JavaDocParser;
+import com.facetoe.jreader.utilities.Config;
+import com.facetoe.jreader.utilities.JReaderSetup;
+import com.facetoe.jreader.utilities.Utilities;
 import org.apache.log4j.Logger;
 import org.fife.ui.rtextarea.SearchContext;
 
@@ -52,7 +56,7 @@ public class ProfileManager implements Serializable {
 
             /* If it doesn't exist, try and load the default profile.*/
             if(currentProfile == null) {
-                if(JReaderSetup.hasDefaultProfile()) {
+                if( JReaderSetup.hasDefaultProfile()) {
                     setCurrentProfile(Config.DEFAULT_PROFILE_NAME);
                 } else {
                     log.error("No profile or default profile.");

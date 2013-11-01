@@ -1,5 +1,6 @@
 package com.facetoe.jreader;
 
+import com.facetoe.jreader.utilities.Utilities;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -43,11 +44,11 @@ public class NewProfileWindow extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 File chosenDir = showFileDialog();
-                if (chosenDir != null) {
+                if ( chosenDir != null ) {
                     chosenDir = Utilities.findDocDir(chosenDir);
 
                     /* Make sure we have a documentation directory or big problem later. */
-                    if (!Utilities.isJavaDocsDir(chosenDir)) {
+                    if ( !Utilities.isJavaDocsDir(chosenDir) ) {
                         JOptionPane.showMessageDialog(parentPanel,
                                 "Invalid directory. Please choose the top level directory that contains the index.html file.",
                                 "Invalid Directory",
@@ -64,7 +65,7 @@ public class NewProfileWindow extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 File chosenDir = showFileDialog();
-                if (chosenDir != null) {
+                if ( chosenDir != null ) {
                     txtSrc.setText(chosenDir.getAbsolutePath());
                 }
             }
@@ -73,7 +74,7 @@ public class NewProfileWindow extends JDialog {
         btnOK.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!hasAllFields()) {
+                if ( !hasAllFields() ) {
                     JOptionPane.showMessageDialog(null, "You need to fill in all the fields");
                     return;
                 }
@@ -102,7 +103,7 @@ public class NewProfileWindow extends JDialog {
                         manager.addActionListener(new ActionListener() {
                             @Override
                             public void actionPerformed(ActionEvent e) {
-                                progressBar.setValue((int) e.getWhen());
+                                progressBar.setValue(( int ) e.getWhen());
                                 progressBar.setString(e.getWhen() + "%");
                                 lblStatus.setText("Parsing: " + e.getActionCommand());
                             }
@@ -146,7 +147,7 @@ public class NewProfileWindow extends JDialog {
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
         int result = chooser.showOpenDialog(parentPanel);
-        if (result == JFileChooser.APPROVE_OPTION) {
+        if ( result == JFileChooser.APPROVE_OPTION ) {
             return chooser.getSelectedFile();
         }
         return null;

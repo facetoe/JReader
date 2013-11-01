@@ -1,4 +1,4 @@
-package com.facetoe.jreader;
+package com.facetoe.jreader.utilities;
 
 import java.io.File;
 import java.io.IOException;

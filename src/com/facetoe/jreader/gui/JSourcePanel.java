@@ -1,5 +1,10 @@
-package com.facetoe.jreader;
+package com.facetoe.jreader.gui;
 
+import com.facetoe.jreader.ProfileManager;
+import com.facetoe.jreader.java.JavaObject;
+import com.facetoe.jreader.java.JavaSourceFile;
+import com.facetoe.jreader.java.JavaSourceFileParser;
+import com.facetoe.jreader.utilities.Utilities;
 import japa.parser.ParseException;
 import org.apache.log4j.Logger;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;

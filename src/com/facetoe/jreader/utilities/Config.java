@@ -1,4 +1,4 @@
-package com.facetoe.jreader;
+package com.facetoe.jreader.utilities;
 
 import org.apache.log4j.Logger;
 
@@ -38,7 +38,7 @@ public class Config {
 
     private static final Properties properties = new Properties();
 
-    static final String dataDirectory = System.getProperty("user.home") +
+    public static final String dataDirectory = System.getProperty("user.home") +
             File.separator +
             DATA_DIR_NAME +
             File.separator;

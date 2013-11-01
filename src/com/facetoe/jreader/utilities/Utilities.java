@@ -1,5 +1,6 @@
-package com.facetoe.jreader;
+package com.facetoe.jreader.utilities;
 
+import com.facetoe.jreader.ProfileManager;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 

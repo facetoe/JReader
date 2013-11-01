@@ -1,4 +1,4 @@
-package com.facetoe.jreader;
+package com.facetoe.jreader.gui;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -25,20 +25,16 @@ class NewSourceTabAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                SwingWorker worker = new SwingWorker() {
-                    @Override
-                    protected Object doInBackground() throws Exception {
-                        jReader.newSourceTab();
-                        return null;
-                    }
-                };
-                worker.execute();
-            }
-        });
+        jReader.newSourceTab();
 
+
+//                SwingWorker worker = new SwingWorker() {
+//                    @Override
+//                    protected Object doInBackground() throws Exception {
+//                        return null;
+//                    }
+//                };
+//                worker.execute();
     }
 }
 

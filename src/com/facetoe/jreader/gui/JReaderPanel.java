@@ -1,5 +1,6 @@
-package com.facetoe.jreader;
+package com.facetoe.jreader.gui;
 
+import com.facetoe.jreader.ProfileManager;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -94,6 +95,7 @@ public class JReaderPanel extends AbstractPanel {
         setLayout(new BorderLayout());
         createScene();
         loadURL(url);
+        latch.countDown();
         log.debug("Finished loading JReaderPanel");
     }
 

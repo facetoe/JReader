@@ -1,4 +1,6 @@
-package com.facetoe.jreader;
+package com.facetoe.jreader.gui;
+
+import com.facetoe.jreader.utilities.Utilities;
 
 import javax.swing.*;
 import java.awt.*;

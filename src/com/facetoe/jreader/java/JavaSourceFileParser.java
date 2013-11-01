@@ -1,4 +1,4 @@
-package com.facetoe.jreader;
+package com.facetoe.jreader.java;
 
 import japa.parser.JavaParser;
 import japa.parser.ParseException;

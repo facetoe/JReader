@@ -1,4 +1,4 @@
-package com.facetoe.jreader;
+package com.facetoe.jreader.java;
 
 import java.util.ArrayList;
 import java.util.HashMap;

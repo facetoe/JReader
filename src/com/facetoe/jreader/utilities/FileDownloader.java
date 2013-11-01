@@ -1,4 +1,4 @@
-package com.facetoe.jreader;
+package com.facetoe.jreader.utilities;
 
 import org.apache.log4j.Logger;
 
@@ -39,7 +39,7 @@ interface RBCWrapperDelegate {
 /**
  * Downloads a file and provides progress information.
  */
-class FileDownloader implements RBCWrapperDelegate {
+public class FileDownloader implements RBCWrapperDelegate {
     private final Logger log = Logger.getLogger(this.getClass());
 
     /**
