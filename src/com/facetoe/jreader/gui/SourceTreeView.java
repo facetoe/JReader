@@ -1,89 +1,39 @@
-package com.facetoe.jreader;
+package com.facetoe.jreader.gui;
+
+/**
+ * Created with IntelliJ IDEA.
+ * User: facetoe
+ * Date: 2/11/13
+ * Time: 11:07 AM
+ */
 
 import com.facetoe.jreader.java.JavaClassOrInterface;
 import com.facetoe.jreader.java.JavaSourceFile;
-import com.facetoe.jreader.java.JavaSourceFileParser;
-import japa.parser.ParseException;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
- * Created with IntelliJ IDEA.
- * User: facetoe
- * Date: 1/11/13
- * Time: 11:28 AM
- */
-
-class SourceTreeSelectionListener implements TreeSelectionListener {
-    SourceTreeView sourceTreeView;
-
-    public SourceTreeSelectionListener(SourceTreeView sourceTreeView) {
-        this.sourceTreeView = sourceTreeView;
-    }
-
-    @Override
-    public void valueChanged(TreeSelectionEvent e) {
-        DefaultMutableTreeNode node = ( DefaultMutableTreeNode )
-                sourceTreeView.getLastSelectedPathComponent();
-        if ( node == null )
-            return;
-
-        Object nodeInfo = node.getUserObject();
-        System.out.println(nodeInfo);
-    }
-}
-
-/**
- * Provides a tree view of a source files contents.
+ * Provides a tree view of a source file's contents.
  */
 public class SourceTreeView extends JTree {
-
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Test");
-        JScrollPane scrollPane;
-        frame.setLayout(new BorderLayout());
-        frame.setPreferredSize(new Dimension(400, 400));
-        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-
-        JavaSourceFile file = null;
-        JavaSourceFileParser parser = new JavaSourceFileParser();
-        try {
-            file = parser.parse(new FileInputStream("/home/facetoe/tmp/src-jdk/java/awt/Component.java"));
-        } catch ( ParseException e ) {
-            e.printStackTrace();
-        } catch ( IOException e ) {
-            e.printStackTrace();
-        }
-
-        SourceTreeView tree = new SourceTreeView(file);
-        tree.addTreeSelectionListener(new SourceTreeSelectionListener(tree));
-
-        scrollPane = new JScrollPane(tree);
-        frame.add(scrollPane);
-        frame.pack();
-        frame.setVisible(true);
-    }
-
     private static final Logger log = Logger.getLogger(SourceTreeView.class);
 
+    /** Type to specify what sort of icons to use. */
     private enum ITEM_TYPE {
         Constructors, Methods, Fields, Enums, Class, Interface
     }
-
     /**
-     * Constructor to build the tree.
+     * Constructor to build the tree view.
      *
      * @param sourceFile The file to display in the tree view.
      */
@@ -103,6 +53,10 @@ public class SourceTreeView extends JTree {
         getSelectionModel().setSelectionMode
                 (TreeSelectionModel.SINGLE_TREE_SELECTION);
         setCellRenderer(new SourceViewIconRenderer());
+
+        //TODO Get the modifers in JavaSourceFileParser and display them as tooltips.
+        /* We need to register the tree to enable tooltips. */
+        //ToolTipManager.sharedInstance().registerComponent(this);
     }
 
     /**
@@ -117,70 +71,91 @@ public class SourceTreeView extends JTree {
         DefaultMutableTreeNode classNode;
 
         if ( aClass.getType() == JavaClassOrInterface.CLASS ) {
-            nodeTitle = "Class " + aClass.getDeclaration();
-            classNode = new DefaultMutableTreeNode(new SourceItemNode(nodeTitle, ITEM_TYPE.Class));
+            nodeTitle = aClass.getDeclaration();
+            classNode = new DefaultMutableTreeNode(new SourceItem(nodeTitle, ITEM_TYPE.Class));
         } else {
-            nodeTitle = "Interface " + aClass.getDeclaration();
-            classNode = new DefaultMutableTreeNode(new SourceItemNode(nodeTitle, ITEM_TYPE.Interface));
+            nodeTitle = aClass.getDeclaration();
+            classNode = new DefaultMutableTreeNode(new SourceItem(nodeTitle, ITEM_TYPE.Interface));
         }
 
+        /* Sort and add items to the tree. */
+        ArrayList<String> items;
         if ( aClass.hasConstructors() ) {
-            classNode.add(itemsToNode(
-                    new ArrayList<String>(aClass.getConstructors().keySet()),
-                    ITEM_TYPE.Constructors));
+            items = new ArrayList<String>(aClass.getConstructors().keySet());
+            classNode.add(itemsToNode(items, ITEM_TYPE.Constructors));
         }
-
         if ( aClass.hasMethods() ) {
-            classNode.add(itemsToNode(
-                    new ArrayList<String>(aClass.getMethods().keySet()),
-                    ITEM_TYPE.Methods));
+            items = new ArrayList<String>(aClass.getMethods().keySet());
+            classNode.add(itemsToNode(items, ITEM_TYPE.Methods));
         }
-
         if ( aClass.hasEnums() ) {
-            classNode.add(itemsToNode(
-                    new ArrayList<String>(aClass.getEnums().keySet()),
-                    ITEM_TYPE.Enums
-            ));
+            items = new ArrayList<String>(aClass.getEnums().keySet());
+            classNode.add(itemsToNode(items, ITEM_TYPE.Enums));
         }
-
         if ( aClass.hasFields() ) {
-            classNode.add(itemsToNode(
-                    new ArrayList<String>(aClass.getFields().keySet()),
-                    ITEM_TYPE.Fields
-            ));
+            items = new ArrayList<String>(aClass.getFields().keySet());
+            classNode.add(itemsToNode(items, ITEM_TYPE.Fields));
         }
 
         /* If we have nested classes or interfaces, add them as well. */
         if ( aClass.hasNestedClasses() ) {
-            DefaultMutableTreeNode nestedNode = new DefaultMutableTreeNode(new SourceItemNode("Nested Classes", ITEM_TYPE.Class));
+            DefaultMutableTreeNode nestedClassNode = new DefaultMutableTreeNode(new SourceItem("Nested Classes", ITEM_TYPE.Class));
+            ArrayList<DefaultMutableTreeNode> nestedClasses = new ArrayList<DefaultMutableTreeNode>();
+
             for ( JavaClassOrInterface nestedClass : aClass.getNestedClassesAsArrayList() ) {
-                nestedNode.add(parseClass(nestedClass));
-                classNode.add(nestedNode);
+                nestedClasses.add(parseClass(nestedClass));
+            }
+
+            /* Sort them alphabetically before we add them to the tree */
+            Collections.sort(nestedClasses, new Comparator<DefaultMutableTreeNode>() {
+                @Override
+                public int compare(DefaultMutableTreeNode firstObj, DefaultMutableTreeNode secondObj) {
+                    return firstObj.toString().compareTo(secondObj.toString());
+                }
+            });
+
+            for ( DefaultMutableTreeNode node : nestedClasses ) {
+                nestedClassNode.add(node);
+                classNode.add(nestedClassNode);
             }
         }
         return classNode;
     }
 
     /**
-     * Adds all the items to a DefaultMutableTreeNode. Items can be methods, fields, constructors etc.
+     * Adds all the items to a DefaultMutableTreeNode. Items can be methods, fields, constructors or enums.
      *
-     * @param items the items to add.
+     * @param items The items to add.
      * @param type  The name of the items, such as: "Methods"
      * @return DefaultMutableTreeNode containing the items.
      */
     private DefaultMutableTreeNode itemsToNode(ArrayList<String> items, ITEM_TYPE type) {
-        DefaultMutableTreeNode itemsNode = new DefaultMutableTreeNode(new SourceItemNode(type.name(), type));
+        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(new SourceItem(type.name(), type));
+        ArrayList<DefaultMutableTreeNode> itemNodes = new ArrayList<DefaultMutableTreeNode>();
         for ( String item : items ) {
-            itemsNode.add(new DefaultMutableTreeNode(new SourceItemNode(item, type)));
+            itemNodes.add(new DefaultMutableTreeNode(new SourceItem(item, type)));
         }
-        return itemsNode;
+
+        Collections.sort(itemNodes, new Comparator<DefaultMutableTreeNode>() {
+            @Override
+            public int compare(DefaultMutableTreeNode firstObj, DefaultMutableTreeNode secondObj) {
+                return firstObj.toString().compareTo(secondObj.toString());
+            }
+        });
+        for ( DefaultMutableTreeNode itemNode : itemNodes ) {
+            rootNode.add(itemNode);
+        }
+        return rootNode;
     }
 
-    private class SourceItemNode {
-        String title;
-        ITEM_TYPE type;
 
-        public SourceItemNode(String title, ITEM_TYPE type) {
+    /** Class to hold item data.*/
+    //TODO Refactor this to hold the actual object so you can add hover over tooltips.
+    private class SourceItem {
+        final String title;
+        final ITEM_TYPE type;
+
+        public SourceItem(String title, ITEM_TYPE type) {
             this.title = title;
             this.type = type;
         }
@@ -195,28 +170,26 @@ public class SourceTreeView extends JTree {
         }
     }
 
+    /**
+     * Class to render icons in the tree view. This can be improved quite a bit by
+     * adding modfiers to JavaObject during source file parsing. Then you can have different
+     * icons for private, final, protected etc.
+     */
     private class SourceViewIconRenderer extends DefaultTreeCellRenderer {
-        public Component getTreeCellRendererComponent(
-                JTree tree,
-                Object value,
-                boolean sel,
-                boolean expanded,
-                boolean leaf,
-                int row,
-                boolean hasFocus) {
+
+        /** Deterimine how this cell should be rendered.*/
+        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel,
+                                                      boolean expanded, boolean leaf, int row, boolean hasFocus) {
 
             Component component = super.getTreeCellRendererComponent(
                     tree, value, sel,
                     expanded, leaf, row,
                     hasFocus);
 
-
-            try {
             URL iconUrl = null;
             DefaultMutableTreeNode node = ( DefaultMutableTreeNode ) value;
-            SourceItemNode sourceNode = ( SourceItemNode ) node.getUserObject();
+            SourceItem sourceNode = ( SourceItem ) node.getUserObject();
             ITEM_TYPE type = sourceNode.getType();
-
 
             switch ( type ) {
                 case Class:
@@ -244,16 +217,13 @@ public class SourceTreeView extends JTree {
 
             if ( iconUrl != null ) {
                 setIcon(new ImageIcon(iconUrl));
-                //setToolTipText("This book is in the Tutorial series.");
+                //setToolTipText("");
+
             } else {
                 log.warn("Icon was null");
                 //setToolTipText(null); //no tool tip
             }
             return component;
-            }catch ( Exception ex ) {
-                System.out.println(value);
-                return component;
-            }
         }
     }
 }

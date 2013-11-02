@@ -14,6 +14,7 @@
     <orderEntry type="library" name="log4j-1.2.14" level="project" />
     <orderEntry type="library" name="forms_rt" level="project" />
     <orderEntry type="library" name="jgoodies-forms" level="project" />
+    <orderEntry type="library" name="swingx-all-1.6.4" level="project" />
   </component>
 </module>
 
