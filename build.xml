@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="jreader" default="all">
+  
+  
+  <property file="build.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="128m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/SCCS/**"/>
+    <exclude name="**/RCS/**"/>
+    <exclude name="**/rcs/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/.pyc/**"/>
+    <exclude name="**/.pyo/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/*.lib/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/.bundle/**"/>
+    <exclude name="**/*.rbc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.zip"/>
+    <include name="*.apk"/>
+    <include name="*.war"/>
+    <include name="*.egg"/>
+    <include name="*.ear"/>
+    <include name="*.ane"/>
+    <include name="*.swc"/>
+    <include name="*.jar"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.form"/>
+    <exclude name="**/?*.class"/>
+    <exclude name="**/?*.groovy"/>
+    <exclude name="**/?*.scala"/>
+    <exclude name="**/?*.flex"/>
+    <exclude name="**/?*.kt"/>
+    <exclude name="**/?*.clj"/>
+  </patternset>
+  
+  <!-- JDK definitions -->
+  
+  <property name="jdk.bin.1.7" value="${jdk.home.1.7}/bin"/>
+  <path id="jdk.classpath.1.7">
+    <fileset dir="${jdk.home.1.7}">
+      <include name="jre/lib/management-agent.jar"/>
+      <include name="jre/lib/javaws.jar"/>
+      <include name="jre/lib/resources.jar"/>
+      <include name="jre/lib/plugin.jar"/>
+      <include name="jre/lib/jfxrt.jar"/>
+      <include name="jre/lib/deploy.jar"/>
+      <include name="jre/lib/jce.jar"/>
+      <include name="jre/lib/jfr.jar"/>
+      <include name="jre/lib/rt.jar"/>
+      <include name="jre/lib/charsets.jar"/>
+      <include name="jre/lib/jsse.jar"/>
+      <include name="jre/lib/ext/sunec.jar"/>
+      <include name="jre/lib/ext/zipfs.jar"/>
+      <include name="jre/lib/ext/sunjce_provider.jar"/>
+      <include name="jre/lib/ext/dnsns.jar"/>
+      <include name="jre/lib/ext/localedata.jar"/>
+      <include name="jre/lib/ext/sunpkcs11.jar"/>
+    </fileset>
+  </path>
+  
+  <property name="project.jdk.home" value="${jdk.home.1.7}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.1.7}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.1.7"/>
+  
+  
+  <!-- Project Libraries -->
+  
+  <path id="library.forms_rt.classpath">
+    <pathelement location="${basedir}/src/com/facetoe/jreader/lib/forms_rt.jar"/>
+  </path>
+  
+  <path id="library.javaparser-1.0.11-snapshot.classpath">
+    <pathelement location="${basedir}/src/com/facetoe/jreader/lib/javaparser-1.0.11-SNAPSHOT.jar"/>
+  </path>
+  
+  <path id="library.jgoodies-forms.classpath">
+    <pathelement location="${basedir}/src/com/facetoe/jreader/lib/jgoodies-forms.jar"/>
+  </path>
+  
+  <path id="library.jsoup-1.7.2.classpath">
+    <pathelement location="${basedir}/src/com/facetoe/jreader/lib/jsoup-1.7.2.jar"/>
+  </path>
+  
+  <path id="library.log4j-1.2.14.classpath">
+    <pathelement location="${basedir}/src/com/facetoe/jreader/lib/log4j-1.2.14.jar"/>
+  </path>
+  
+  <path id="library.rsyntaxtextarea.classpath">
+    <pathelement location="${basedir}/src/com/facetoe/jreader/lib/rsyntaxtextarea.jar"/>
+  </path>
+  
+  <path id="library.zip4j_1.3.1.classpath">
+    <pathelement location="${basedir}/src/com/facetoe/jreader/lib/zip4j_1.3.1.jar"/>
+  </path>
+  
+  
+  <!-- Global Libraries -->
+  <!-- Register Custom Compiler Taskdefs -->
+  <property name="javac2.home" value="${idea.home}/lib"/>
+  <path id="javac2.classpath">
+    <pathelement location="${javac2.home}/javac2.jar"/>
+    <pathelement location="${javac2.home}/jdom.jar"/>
+    <pathelement location="${javac2.home}/asm4-all.jar"/>
+    <pathelement location="${javac2.home}/jgoodies-forms.jar"/>
+  </path>
+  <target name="register.custom.compilers">
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
+    <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions" classpathref="javac2.classpath"/>
+  </target>
+  
+  <!-- Modules -->
+  
+  
+  <!-- Module JReader -->
+  
+  <dirname property="module.jreader.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.jreader" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.jreader" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.jreader" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.jreader" value="${compiler.args}"/>
+  
+  <property name="jreader.output.dir" value="${module.jreader.basedir}/out/production/JReader"/>
+  <property name="jreader.testoutput.dir" value="${module.jreader.basedir}/out/test/JReader"/>
+  
+  <path id="jreader.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="jreader.module.production.classpath">
+    <path refid="${module.jdk.classpath.jreader}"/>
+    <path refid="library.jsoup-1.7.2.classpath"/>
+    <path refid="library.rsyntaxtextarea.classpath"/>
+    <path refid="library.zip4j_1.3.1.classpath"/>
+    <path refid="library.javaparser-1.0.11-snapshot.classpath"/>
+    <path refid="library.log4j-1.2.14.classpath"/>
+    <path refid="library.forms_rt.classpath"/>
+    <path refid="library.jgoodies-forms.classpath"/>
+  </path>
+  
+  <path id="jreader.runtime.production.module.classpath">
+    <pathelement location="${jreader.output.dir}"/>
+    <path refid="library.jsoup-1.7.2.classpath"/>
+    <path refid="library.rsyntaxtextarea.classpath"/>
+    <path refid="library.zip4j_1.3.1.classpath"/>
+    <path refid="library.javaparser-1.0.11-snapshot.classpath"/>
+    <path refid="library.log4j-1.2.14.classpath"/>
+    <path refid="library.forms_rt.classpath"/>
+    <path refid="library.jgoodies-forms.classpath"/>
+  </path>
+  
+  <path id="jreader.module.classpath">
+    <path refid="${module.jdk.classpath.jreader}"/>
+    <pathelement location="${jreader.output.dir}"/>
+    <path refid="library.jsoup-1.7.2.classpath"/>
+    <path refid="library.rsyntaxtextarea.classpath"/>
+    <path refid="library.zip4j_1.3.1.classpath"/>
+    <path refid="library.javaparser-1.0.11-snapshot.classpath"/>
+    <path refid="library.log4j-1.2.14.classpath"/>
+    <path refid="library.forms_rt.classpath"/>
+    <path refid="library.jgoodies-forms.classpath"/>
+  </path>
+  
+  <path id="jreader.runtime.module.classpath">
+    <pathelement location="${jreader.testoutput.dir}"/>
+    <pathelement location="${jreader.output.dir}"/>
+    <path refid="library.jsoup-1.7.2.classpath"/>
+    <path refid="library.rsyntaxtextarea.classpath"/>
+    <path refid="library.zip4j_1.3.1.classpath"/>
+    <path refid="library.javaparser-1.0.11-snapshot.classpath"/>
+    <path refid="library.log4j-1.2.14.classpath"/>
+    <path refid="library.forms_rt.classpath"/>
+    <path refid="library.jgoodies-forms.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.jreader">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.jreader">
+    <patternset refid="excluded.from.module.jreader"/>
+  </patternset>
+  
+  <path id="jreader.module.sourcepath">
+    <dirset dir="${module.jreader.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.jreader" depends="compile.module.jreader.production,compile.module.jreader.tests" description="Compile module JReader"/>
+  
+  <target name="compile.module.jreader.production" depends="register.custom.compilers" description="Compile module JReader; production classes">
+    <mkdir dir="${jreader.output.dir}"/>
+    <javac2 destdir="${jreader.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.jreader}/javac">
+      <compilerarg line="${compiler.args.jreader}"/>
+      <bootclasspath refid="jreader.module.bootclasspath"/>
+      <classpath refid="jreader.module.production.classpath"/>
+      <src refid="jreader.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.jreader"/>
+    </javac2>
+    
+    <copy todir="${jreader.output.dir}">
+      <fileset dir="${module.jreader.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.jreader.tests" depends="register.custom.compilers,compile.module.jreader.production" description="compile module JReader; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.jreader" description="cleanup module">
+    <delete dir="${jreader.output.dir}"/>
+    <delete dir="${jreader.testoutput.dir}"/>
+  </target>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.jreader, clean.artifact.jreader" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.jreader" description="build all modules"/>
+  
+  <target name="init.artifacts">
+    <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
+    <property name="artifact.output.jreader" value="${basedir}/out/artifacts/JReader"/>
+    <mkdir dir="${artifacts.temp.dir}"/>
+    <property name="artifact.temp.output.JReader" value="${artifacts.temp.dir}/JReader.jar"/>
+    <taskdef resource="com/sun/javafx/tools/ant/antlib.xml" uri="javafx:com.sun.javafx.tools.ant" classpath="${jdk.home.1.7}/lib/ant-javafx.jar"/>
+  </target>
+  
+  <target name="clean.artifact.jreader" description="clean JReader artifact output">
+    <delete dir="${artifact.output.jreader}"/>
+  </target>
+  
+  <target name="artifact.jreader" depends="init.artifacts, compile.module.jreader" description="Build &#39;JReader&#39; artifact" xmlns:fx="javafx:com.sun.javafx.tools.ant">
+    <mkdir dir="${artifact.output.jreader}"/>
+    <copy todir="${artifact.temp.output.JReader}">
+      <fileset dir="${jreader.output.dir}"/>
+    </copy>
+    <unzip src="${idea.home}/lib/forms_rt.jar" dest="${artifact.temp.output.JReader}"/>
+    <unzip src="${basedir}/src/com/facetoe/jreader/lib/javaparser-1.0.11-SNAPSHOT.jar" dest="${artifact.temp.output.JReader}"/>
+    <unzip src="${basedir}/src/com/facetoe/jreader/lib/jgoodies-forms.jar" dest="${artifact.temp.output.JReader}"/>
+    <unzip src="${basedir}/src/com/facetoe/jreader/lib/jsoup-1.7.2.jar" dest="${artifact.temp.output.JReader}"/>
+    <unzip src="${basedir}/src/com/facetoe/jreader/lib/log4j-1.2.14.jar" dest="${artifact.temp.output.JReader}"/>
+    <unzip src="${basedir}/src/com/facetoe/jreader/lib/rsyntaxtextarea.jar" dest="${artifact.temp.output.JReader}"/>
+    <unzip src="${basedir}/src/com/facetoe/jreader/lib/zip4j_1.3.1.jar" dest="${artifact.temp.output.JReader}"/>
+    <fx:fileset id="all_but_JReader" dir="${artifact.temp.output.JReader}" includes="**/*.jar">
+      <exclude name="JReader.jar"/>
+    </fx:fileset>
+    <fx:fileset id="all_JReader" dir="${artifact.temp.output.JReader}" includes="**/*.jar"/>
+    <fx:application id="JReader_id" name="JReader" mainClass="com.facetoe.jreader.gui.JReader"/>
+    <fx:jar destfile="${artifact.temp.output.JReader}/JReader.jar">
+      <fx:application refid="JReader_id"/>
+      <fileset dir="${artifact.temp.output.JReader}" excludes="**/*.jar"/>
+      <fx:resources>
+        <fx:fileset refid="all_but_JReader"/>
+      </fx:resources>
+    </fx:jar>
+    <fx:deploy width="600" height="400" updatemode="background" outdir="${artifact.temp.output.JReader}/deploy" outfile="JReader" nativeBundles="all">
+      <fx:application refid="JReader_id"/>
+      <fx:resources>
+        <fx:fileset refid="all_JReader"/>
+      </fx:resources>
+    </fx:deploy>
+    <copy todir="${artifact.output.jreader}">
+      <fileset dir="${artifact.temp.output.JReader}/deploy"/>
+    </copy>
+    <delete includeemptydirs="true">
+      <fileset dir="${artifact.temp.output.JReader}"/>
+    </delete>
+  </target>
+  
+  <target name="build.all.artifacts" depends="artifact.jreader" description="Build all artifacts">
+    
+    <!-- Delete temporary files -->
+    <delete dir="${artifacts.temp.dir}"/>
+  </target>
+  
+  <target name="all" depends="build.modules, build.all.artifacts" description="build all"/>
+</project>
