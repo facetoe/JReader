@@ -112,6 +112,10 @@
     <pathelement location="${basedir}/src/com/facetoe/jreader/lib/rsyntaxtextarea.jar"/>
   </path>
   
+  <path id="library.swingx-all-1.6.4.classpath">
+    <pathelement location="${basedir}/src/com/facetoe/jreader/lib/swingx-all-1.6.4.jar"/>
+  </path>
+  
   <path id="library.zip4j_1.3.1.classpath">
     <pathelement location="${basedir}/src/com/facetoe/jreader/lib/zip4j_1.3.1.jar"/>
   </path>
@@ -161,6 +165,7 @@
     <path refid="library.log4j-1.2.14.classpath"/>
     <path refid="library.forms_rt.classpath"/>
     <path refid="library.jgoodies-forms.classpath"/>
+    <path refid="library.swingx-all-1.6.4.classpath"/>
   </path>
   
   <path id="jreader.runtime.production.module.classpath">
@@ -172,6 +177,7 @@
     <path refid="library.log4j-1.2.14.classpath"/>
     <path refid="library.forms_rt.classpath"/>
     <path refid="library.jgoodies-forms.classpath"/>
+    <path refid="library.swingx-all-1.6.4.classpath"/>
   </path>
   
   <path id="jreader.module.classpath">
@@ -184,6 +190,7 @@
     <path refid="library.log4j-1.2.14.classpath"/>
     <path refid="library.forms_rt.classpath"/>
     <path refid="library.jgoodies-forms.classpath"/>
+    <path refid="library.swingx-all-1.6.4.classpath"/>
   </path>
   
   <path id="jreader.runtime.module.classpath">
@@ -196,6 +203,7 @@
     <path refid="library.log4j-1.2.14.classpath"/>
     <path refid="library.forms_rt.classpath"/>
     <path refid="library.jgoodies-forms.classpath"/>
+    <path refid="library.swingx-all-1.6.4.classpath"/>
   </path>
   
   
@@ -266,12 +274,13 @@
     <copy todir="${artifact.temp.output.JReader}">
       <fileset dir="${jreader.output.dir}"/>
     </copy>
-    <unzip src="${idea.home}/lib/forms_rt.jar" dest="${artifact.temp.output.JReader}"/>
+    <unzip src="${basedir}/src/com/facetoe/jreader/lib/forms_rt.jar" dest="${artifact.temp.output.JReader}"/>
     <unzip src="${basedir}/src/com/facetoe/jreader/lib/javaparser-1.0.11-SNAPSHOT.jar" dest="${artifact.temp.output.JReader}"/>
     <unzip src="${basedir}/src/com/facetoe/jreader/lib/jgoodies-forms.jar" dest="${artifact.temp.output.JReader}"/>
     <unzip src="${basedir}/src/com/facetoe/jreader/lib/jsoup-1.7.2.jar" dest="${artifact.temp.output.JReader}"/>
     <unzip src="${basedir}/src/com/facetoe/jreader/lib/log4j-1.2.14.jar" dest="${artifact.temp.output.JReader}"/>
     <unzip src="${basedir}/src/com/facetoe/jreader/lib/rsyntaxtextarea.jar" dest="${artifact.temp.output.JReader}"/>
+    <unzip src="${basedir}/src/com/facetoe/jreader/lib/swingx-all-1.6.4.jar" dest="${artifact.temp.output.JReader}"/>
     <unzip src="${basedir}/src/com/facetoe/jreader/lib/zip4j_1.3.1.jar" dest="${artifact.temp.output.JReader}"/>
     <fx:fileset id="all_but_JReader" dir="${artifact.temp.output.JReader}" includes="**/*.jar">
       <exclude name="JReader.jar"/>
@@ -285,7 +294,7 @@
         <fx:fileset refid="all_but_JReader"/>
       </fx:resources>
     </fx:jar>
-    <fx:deploy width="600" height="400" updatemode="background" outdir="${artifact.temp.output.JReader}/deploy" outfile="JReader" nativeBundles="all">
+    <fx:deploy width="600" height="400" updatemode="background" outdir="${artifact.temp.output.JReader}/deploy" outfile="JReader">
       <fx:application refid="JReader_id"/>
       <fx:resources>
         <fx:fileset refid="all_JReader"/>
