@@ -76,7 +76,7 @@ public class JReader extends JFrame {
 
         setTitle("JReader");
         setPreferredSize(new Dimension(1024, 600));
-        setSize(1024, 600);
+        //setExtendedState(Frame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         pack();
         setVisible(true);

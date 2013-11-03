@@ -59,6 +59,9 @@ public class JavaSourceFileParser {
                     if ( type instanceof ClassOrInterfaceDeclaration ) {
                             JavaClassOrInterface javaObj = (JavaClassOrInterface)visit((ClassOrInterfaceDeclaration)type, null);
                             classesAndInterfaces.add(javaObj);
+                    } else {
+                        System.out.println(type);
+                        System.exit(0);
                     }
                 }
             } else {
@@ -89,12 +92,14 @@ public class JavaSourceFileParser {
                     JavaConstructor constructor = ( JavaConstructor ) visit(( ConstructorDeclaration ) declaration, null);
                     javaObj.addConstructor(constructor);
 
-
                     /* If we have a nested class, recurse through it and each nested class that it contains
                      * gathering the data.  */
                 }else if (declaration instanceof ClassOrInterfaceDeclaration) {
                     JavaClassOrInterface classOrInterface = (JavaClassOrInterface)visit((ClassOrInterfaceDeclaration) declaration, null);
                     javaObj.addNestedClassOrInterface(classOrInterface);
+                } else {
+                    System.out.println(declaration);
+                    //System.exit(0);
                 }
 
             }
@@ -124,6 +129,12 @@ public class JavaSourceFileParser {
         @Override
         public Object visit(MethodDeclaration n, Object arg) {
             return new JavaMethod(n);
+        }
+
+        @Override
+        public Object visit(AnnotationDeclaration n, Object arg) {
+            System.out.println(n);
+            return super.visit(n, arg);    //To change body of overridden methods use File | Settings | File Templates.
         }
     }
 }

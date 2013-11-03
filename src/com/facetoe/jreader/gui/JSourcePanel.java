@@ -13,9 +13,12 @@ import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
+import org.jdesktop.swingx.JXCollapsiblePane;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,6 +29,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.regex.PatternSyntaxException;
 
 
@@ -38,7 +42,13 @@ public class JSourcePanel extends AbstractPanel {
     /**
      * The text area to display the source code.
      */
-    private final RSyntaxTextArea textArea;
+    private RSyntaxTextArea codeArea;
+
+
+    /**
+     * The scollpane that contains the editor
+     */
+    private RTextScrollPane codeScrollPane;
 
     /**
      * The object that contains all the definitions for this source file.
@@ -77,28 +87,54 @@ public class JSourcePanel extends AbstractPanel {
     private boolean waitingOnLabelReset = false;
 
     /**
+     * SourceTree for this panel.
+     */
+    private SourceTree tree;
+
+    /**
+     * ScrollPane for this SourceTree.
+     */
+    private JScrollPane treeScrollPane;
+
+    /**
+     * JPanel that holds the SourceTree
+     */
+    private JPanel treePanel;
+
+    /**
+     * JXCollapible pane for displaying and hiding the SourceTree
+     */
+    private JXCollapsiblePane collapsiblePane;
+
+    /**
+     * Search panel for the SourceTree
+     */
+    private JPanel searchPanel;
+
+    /**
+     * AutoCompletion field for the SourceTree.
+     */
+    private AutoCompleteTextField searchField;
+    private JButton btnSearch;
+
+    /**
      * Creates a new instance of JSourcePanel and displays the contents of filePath.
      *
      * @param filePath of the file containing the code to be displayed.
      */
     public JSourcePanel(String filePath, ActionListener listener) {
-        fireEvent(new ActionEvent(this, 0, "Intitializing... " + fileName));
-
-        /* We only really need this for the SearchContext. */
+        addActionListener(listener);
         profileManager = ProfileManager.getInstance();
-
         this.sourceFilePath = filePath;
         fileName = new File(sourceFilePath).getName();
 
 
-        addActionListener(listener);
-
         /* Set up our text area. */
-        textArea = new RSyntaxTextArea();
-        textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
-        textArea.setCodeFoldingEnabled(true);
-        textArea.setAntiAliasingEnabled(true);
-        textArea.setEditable(false);
+        codeArea = new RSyntaxTextArea();
+        codeArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
+        codeArea.setCodeFoldingEnabled(true);
+        codeArea.setAntiAliasingEnabled(true);
+        codeArea.setEditable(false);
 
         //TODO Figure out a way for the user to set themes.
         /* Read in the theme for this text area. */
@@ -106,21 +142,21 @@ public class JSourcePanel extends AbstractPanel {
         try {
             InputStream in = getClass().getResourceAsStream("/com/facetoe/jreader/resources/themes/ideaTheme.xml");
             Theme theme = Theme.load(in);
-            theme.apply(textArea);
+            theme.apply(codeArea);
         } catch ( IOException e ) {
             log.error(e.toString(), e);
         } catch ( Exception ex ) {
             System.err.println("Something happened: " + ex.toString());
         }
 
-        RTextScrollPane scrollPane = new RTextScrollPane(textArea);
-        scrollPane.setFoldIndicatorEnabled(true);
+        codeScrollPane = new RTextScrollPane(codeArea);
+        codeScrollPane.setFoldIndicatorEnabled(true);
         setLayout(new BorderLayout());
-        add(scrollPane);
+        add(codeScrollPane);
 
         try {
             String code = Utilities.readFile(Paths.get(sourceFilePath).toString(), StandardCharsets.UTF_8);
-            textArea.setText(code);
+            codeArea.setText(code);
         } catch ( IOException e ) {
             log.error(e.getMessage(), e);
         }
@@ -133,6 +169,65 @@ public class JSourcePanel extends AbstractPanel {
         } else {
             log.error("Source file was null: " + filePath);
         }
+        initTreeView();
+    }
+
+    private void initTreeView() {
+        tree = new SourceTree(javaSourceFile);
+        /* Save a click by showing the contents of the class on load. */
+        tree.expandRow(0);
+        tree.addTreeSelectionListener(new SourceTreeSelectionListener(tree, this));
+        treeScrollPane = new JScrollPane(tree);
+        treeScrollPane.setPreferredSize(new Dimension(300, 200));
+
+        collapsiblePane = new JXCollapsiblePane();
+
+        searchPanel = new JPanel(new BorderLayout());
+        searchField = new AutoCompleteTextField();
+        searchField.addWordsToTrie(javaSourceFile.getAllDeclarations());
+        btnSearch = new JButton("Filter");
+
+        btnSearch.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleTreeSearcg();
+            }
+        });
+        searchField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleTreeSearcg();
+            }
+        });
+        String keyStrokeAndKey = "control T";
+        KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, keyStrokeAndKey);
+        getActionMap().put(keyStrokeAndKey, collapsiblePane.getActionMap().get("toggle"));
+
+        searchPanel.add(searchField, BorderLayout.CENTER);
+        searchPanel.add(btnSearch, BorderLayout.EAST);
+
+        treePanel = new JPanel(new BorderLayout());
+        treePanel.add(treeScrollPane, BorderLayout.CENTER);
+        treePanel.add(searchPanel, BorderLayout.NORTH);
+
+
+        collapsiblePane.setLayout(new BorderLayout());
+        collapsiblePane.setDirection(JXCollapsiblePane.Direction.RIGHT);
+        collapsiblePane.add("Center", treePanel);
+        collapsiblePane.setCollapsed(true);
+
+        setLayout(new BorderLayout());
+        // Put the tree on the left
+        add("West", collapsiblePane);
+
+        // And the pane on the right.
+        add("Center", codeScrollPane);
+
+        // Show/hide the "Controls"
+        JButton toggle = new JButton(collapsiblePane.getActionMap().get("toggle"));
+
+        add("South", toggle);
     }
 
     /**
@@ -187,6 +282,26 @@ public class JSourcePanel extends AbstractPanel {
         }
     }
 
+    private void handleTreeSearcg() {
+        String text = searchField.getText();
+        if(text.isEmpty()) {
+            return;
+        }
+
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode)tree.getModel().getRoot();
+        for(Enumeration e = root.breadthFirstEnumeration() ; e.hasMoreElements() ;) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode)e.nextElement();
+            if(node.toString().equals(text)) {
+                TreePath treePath = new TreePath(node.getPath());
+                tree.setSelectionPath(treePath);
+                tree.scrollPathToVisible(treePath);
+                findString(text, profileManager.getSearchContext());
+                return;
+            }
+        }
+        System.out.println("No!");
+    }
+
     /** This method attempts to find a string or regexp in the source file.
      *  It first searches from the current position to the end of the file,
      *  if that doesn't succeed it searches from the end of the file to the
@@ -198,19 +313,19 @@ public class JSourcePanel extends AbstractPanel {
      */
     private void findString(String text, SearchContext context) {
         boolean found = false;
-        int caretPos = textArea.getCaretPosition();
+        int caretPos = codeArea.getCaretPosition();
         context.setSearchFor(text);
         context.setSearchForward(true);
 
         try {
-            found = SearchEngine.find(textArea, context);
+            found = SearchEngine.find(codeArea, context);
             if ( !found ) {
-                textArea.setCaretPosition(0);
-                found = SearchEngine.find(textArea, context);
+                codeArea.setCaretPosition(0);
+                found = SearchEngine.find(codeArea, context);
                 if ( !found ) {
                 /* If we didn't find anything, reset the caret position or it ends up
                  * jumping to the end or beginning of the file.. */
-                    textArea.setCaretPosition(caretPos);
+                    codeArea.setCaretPosition(caretPos);
                     fireEvent(new ActionEvent(this, 0, "Nothing found for: " + "\"" + text + "\""));
                 }
             }
@@ -253,10 +368,10 @@ public class JSourcePanel extends AbstractPanel {
      */
     void highlightDeclaration(int beginLine, int endLine, int beginCol) {
         try {
-            int start = textArea.getLineStartOffset(beginLine - 1);
-            int end = textArea.getLineEndOffset(endLine - 1);
+            int start = codeArea.getLineStartOffset(beginLine - 1);
+            int end = codeArea.getLineEndOffset(endLine - 1);
 
-            String body = textArea.getText();
+            String body = codeArea.getText();
 
             //  If you don't do -1 it chops off the first character.
             start += beginCol - 1;
@@ -292,7 +407,12 @@ public class JSourcePanel extends AbstractPanel {
      */
     private void fireEvent(ActionEvent event) {
         for ( ActionListener listener : listeners ) {
+            System.out.println("Fireing Event: " + event.getActionCommand());
             listener.actionPerformed(event);
         }
+    }
+
+    public JavaSourceFile getJavaSourceFile() {
+        return javaSourceFile;
     }
 }

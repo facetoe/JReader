@@ -58,20 +58,20 @@ public class JavaSourceFile {
     }
 
     /**
-     * Get all the declarations short.
-     * @return The declarations.
-     */
-    public ArrayList<String> getAllDeclarations() {
-        return new ArrayList<String>(allObjects.keySet());
-    }
-
-    /**
      * Get the object associated with a declaration.
      * @param itemDeclaration Short declaration of the desired object.
      * @return The Object associated with this declaration.
      */
     public JavaObject getObject(String itemDeclaration) {
         return allObjects.get(itemDeclaration);
+    }
+
+    /**
+     * Get all the declarations short.
+     * @return The declarations.
+     */
+    public ArrayList<String> getAllDeclarations() {
+        return new ArrayList<String>(allObjects.keySet());
     }
 
     /**
