@@ -1,9 +1,5 @@
 package com.facetoe.jreader.java;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -49,31 +45,6 @@ public class JavaSourceFile {
                 allObjects.put(annotation.declaration, annotation);
             }
         }
-
-        StringBuilder builder = new StringBuilder();
-
-        for ( String s : allObjects.keySet() ) {
-            JavaObject object = allObjects.get(s);
-            builder.append(String.format("%d           %s\n", object.getModifiers(), object.getFullDeclaration()));
-        }
-
-        try {
-            File file = new File("/home/facetoe/testFile");
-
-            //if file doesnt exists, then create it
-            if(!file.exists()){
-                file.createNewFile();
-            }
-
-            //true = append file
-            FileWriter fileWritter = new FileWriter(file.getAbsolutePath(),true);
-            BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
-            bufferWritter.write(builder.toString());
-            bufferWritter.close();
-        }catch(IOException e){
-            e.printStackTrace();
-        }
-
     }
 
     /**
