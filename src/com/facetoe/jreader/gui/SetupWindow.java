@@ -1,5 +1,6 @@
-package com.facetoe.jreader;
+package com.facetoe.jreader.gui;
 
+import com.facetoe.jreader.ProfileManager;
 import com.facetoe.jreader.java.JavaDocParser;
 import com.facetoe.jreader.utilities.*;
 import com.intellij.uiDesigner.core.GridConstraints;

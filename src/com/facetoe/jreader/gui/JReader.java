@@ -1,7 +1,6 @@
 package com.facetoe.jreader.gui;
 
 import com.facetoe.jreader.ProfileManager;
-import com.facetoe.jreader.SetupWindow;
 import com.facetoe.jreader.utilities.JReaderSetup;
 import com.facetoe.jreader.utilities.Utilities;
 import javafx.application.Platform;
@@ -329,36 +328,48 @@ public class JReader extends JFrame {
         topPanel.setSearchBarText("");
     }
 
-    /** Handle search */
+    /**
+     * Handle search
+     */
     private void handleSearch() {
         currentTab.handleAutoComplete(topPanel.getSearchBarText());
     }
 
-    /** Add the Java class names for autocompletion. */
+    /**
+     * Add the Java class names for autocompletion.
+     */
     public void addJavaDocClassNames() {
         topPanel.addAutoCompleteWords(profileManager.getClassNames());
     }
 
-    /** Remove the Java class names for autocompletion. */
+    /**
+     * Remove the Java class names for autocompletion.
+     */
     public void removeJavaDocClassNames() {
         topPanel.removeAutoCompleteWords(profileManager.getClassNames());
     }
 
-    /** Enable the browser buttons. */
+    /**
+     * Enable the browser buttons.
+     */
     private void enableBrowserButtons() {
         topPanel.getBtnBack().setEnabled(true);
         topPanel.getBtnNext().setEnabled(true);
         topPanel.getBtnHome().setEnabled(true);
     }
 
-    /** Disable the browser buttons. */
+    /**
+     * Disable the browser buttons.
+     */
     private void disableBrowserButtons() {
         topPanel.getBtnBack().setEnabled(false);
         topPanel.getBtnNext().setEnabled(false);
         topPanel.getBtnHome().setEnabled(false);
     }
 
-    /** Decide whether or not to show the New Source option. */
+    /**
+     * Decide whether or not to show the New Source option.
+     */
     private void handleSourceButton(String newPath) {
         String srcPath = Utilities.docPathToSourcePath(newPath);
         if ( Utilities.isGoodSourcePath(srcPath) ) {
@@ -368,19 +379,25 @@ public class JReader extends JFrame {
         }
     }
 
-    /** Enable the New Source option. */
+    /**
+     * Enable the New Source option.
+     */
     private void enableNewSourceOption() {
         topPanel.getBtnSource().setEnabled(true);
         menuBar.enableNewSourceOption();
     }
 
-    /** Disable the New Source option.*/
+    /**
+     * Disable the New Source option.
+     */
     private void disableNewSourceOption() {
         topPanel.getBtnSource().setEnabled(false);
         menuBar.disableNewSourceOption();
     }
 
-    /** Clear the search bar. */
+    /**
+     * Clear the search bar.
+     */
     public void resetSearchBar() {
         topPanel.setSearchBarText("");
         topPanel.getSearchBar().requestFocus();
@@ -388,6 +405,7 @@ public class JReader extends JFrame {
 
     /**
      * Returns the currently visible tab.
+     *
      * @return The currently visible tab.
      */
     public JPanel getCurrentTab() {
@@ -396,6 +414,7 @@ public class JReader extends JFrame {
 
     /**
      * Get the SearchContext associated with the current profile.
+     *
      * @return The SearchContext.
      */
     public SearchContext getSearchContext() {

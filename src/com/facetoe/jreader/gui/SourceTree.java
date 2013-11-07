@@ -96,8 +96,6 @@ public class SourceTree extends JTree {
             classNode = new SourceItemNode(nodeTitle, aClass);
         }
 
-        /* Sort and add items to the tree. */
-        ArrayList<String> items;
         if ( aClass.hasConstructors() ) {
             classNode.add(objectsToNode("Constructors", JavaObject.CONSTRUCTOR, aClass.getConstructors()));
         }

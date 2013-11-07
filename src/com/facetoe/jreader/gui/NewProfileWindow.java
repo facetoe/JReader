@@ -1,5 +1,6 @@
-package com.facetoe.jreader;
+package com.facetoe.jreader.gui;
 
+import com.facetoe.jreader.ProfileManager;
 import com.facetoe.jreader.utilities.Utilities;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;

@@ -1,6 +1,5 @@
 package com.facetoe.jreader.gui;
 
-import com.facetoe.jreader.NewProfileWindow;
 import com.facetoe.jreader.ProfileManager;
 import com.facetoe.jreader.utilities.Config;
 
@@ -105,8 +104,8 @@ public class JReaderMenuBar extends JMenuBar {
                             profileManager.setCurrentProfile(profileName);
 
                             /* Navigate to the new profile's home so the user knows we've changed */
-                            if(jReader.getCurrentTab() instanceof JReaderPanel) {
-                                JReaderPanel panel = (JReaderPanel)jReader.getCurrentTab();
+                            if ( jReader.getCurrentTab() instanceof JReaderPanel ) {
+                                JReaderPanel panel = ( JReaderPanel ) jReader.getCurrentTab();
                                 panel.home();
                             }
                             jReader.addJavaDocClassNames();
@@ -140,7 +139,7 @@ public class JReaderMenuBar extends JMenuBar {
                     JMenuItem item = new JMenuItem(profile);
 
                     /* Don't allow the user to delete the default profile or we will have problems. */
-                    if(profile.equals(Config.DEFAULT_PROFILE_NAME)) {
+                    if ( profile.equals(Config.DEFAULT_PROFILE_NAME) ) {
                         item.setEnabled(false);
 
                     } else {
@@ -151,12 +150,12 @@ public class JReaderMenuBar extends JMenuBar {
                                 int result = JOptionPane.showConfirmDialog(null,
                                         "Are you sure you want to delete " + profileName + "?",
                                         "Confirm Deletion", JOptionPane.YES_NO_OPTION);
-                                if(result == JOptionPane.YES_OPTION) {
+                                if ( result == JOptionPane.YES_OPTION ) {
 
                                     /* profileManager.deleteProfile sets the profile to Default. */
                                     profileManager.deleteProfile(profileName);
-                                    if(jReader.getCurrentTab() instanceof JReaderPanel) {
-                                        JReaderPanel panel = (JReaderPanel) jReader.getCurrentTab();
+                                    if ( jReader.getCurrentTab() instanceof JReaderPanel ) {
+                                        JReaderPanel panel = ( JReaderPanel ) jReader.getCurrentTab();
                                         panel.home();
                                     }
                                 }
@@ -197,7 +196,7 @@ public class JReaderMenuBar extends JMenuBar {
 
                 final JCheckBoxMenuItem chkWholeWord = new JCheckBoxMenuItem("Whole Word");
                 /* Whole word doesn't make sense with regexp. */
-                if(profileManager.regexpIsEnabled()) {
+                if ( profileManager.regexpIsEnabled() ) {
                     chkWholeWord.setEnabled(false);
                 } else {
 
@@ -214,7 +213,7 @@ public class JReaderMenuBar extends JMenuBar {
 
                 final JCheckBoxMenuItem chkMatchCase = new JCheckBoxMenuItem("Match Case");
                 /* Match case doesn't make sense with regexp. */
-                if(profileManager.regexpIsEnabled()) {
+                if ( profileManager.regexpIsEnabled() ) {
                     chkMatchCase.setEnabled(false);
                 } else {
                     chkMatchCase.setState(profileManager.matchCaseIsEnabled());
@@ -231,7 +230,7 @@ public class JReaderMenuBar extends JMenuBar {
 
                 final JCheckBoxMenuItem chkRegexp = new JCheckBoxMenuItem("Regular Expression");
                 /* Don't enable regexp if matchCase or wholeWord is enabled. */
-                if(profileManager.matchCaseIsEnabled() || profileManager.wholeWordIsEnabled()) {
+                if ( profileManager.matchCaseIsEnabled() || profileManager.wholeWordIsEnabled() ) {
                     chkRegexp.setEnabled(false);
                 } else {
 
