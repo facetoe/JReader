@@ -88,7 +88,7 @@ public class JReader extends JFrame {
      */
     private void initActions() {
         Action action = new CloseTabAction(tabbedPane, this);
-        String keyStrokeAndKey = "control C";
+        String keyStrokeAndKey = "control W";
         KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, keyStrokeAndKey);
         getRootPane().getActionMap().put(keyStrokeAndKey, action);
