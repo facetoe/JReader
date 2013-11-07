@@ -1,5 +1,9 @@
 package com.facetoe.jreader.java;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -40,8 +44,36 @@ public class JavaSourceFile {
                 extractClassOrInterfaceData((JavaClassOrInterface)object);
             } else  if (object instanceof JavaEnum) {
                 allObjects.putAll(((JavaEnum)object).getConstants());
+            } else if (object instanceof JavaAnnotation) {
+                JavaAnnotation annotation = (JavaAnnotation)object;
+                allObjects.put(annotation.declaration, annotation);
             }
         }
+
+        StringBuilder builder = new StringBuilder();
+
+        for ( String s : allObjects.keySet() ) {
+            JavaObject object = allObjects.get(s);
+            builder.append(String.format("%d           %s\n", object.getModifiers(), object.getFullDeclaration()));
+        }
+
+        try {
+            File file = new File("/home/facetoe/testFile");
+
+            //if file doesnt exists, then create it
+            if(!file.exists()){
+                file.createNewFile();
+            }
+
+            //true = append file
+            FileWriter fileWritter = new FileWriter(file.getAbsolutePath(),true);
+            BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
+            bufferWritter.write(builder.toString());
+            bufferWritter.close();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -53,11 +85,17 @@ public class JavaSourceFile {
         allObjects.putAll(classOrInterface.getConstructors());
         allObjects.putAll(classOrInterface.getMethods());
         allObjects.putAll(classOrInterface.getFields());
-        allObjects.putAll(classOrInterface.getEnums());
         allObjects.putAll(classOrInterface.getNestedClasses());
         allObjects.putAll(classOrInterface.getAnnotations());
-        HashMap<String, JavaClassOrInterface> nestedClasses = classOrInterface.getNestedClasses();
 
+        /* Add all the enums and the enum constants. */
+        HashMap<String, JavaEnum> enums = classOrInterface.getEnums();
+        for ( String enumName : enums.keySet() ) {
+            allObjects.put(enumName, enums.get(enumName));
+            allObjects.putAll(enums.get(enumName).getConstants());
+        }
+
+        HashMap<String, JavaClassOrInterface> nestedClasses = classOrInterface.getNestedClasses();
         /* For each nested class, recurse through it and each nested class it contains gathering all the declaration data */
         for ( String s : nestedClasses.keySet() ) {
             JavaClassOrInterface nestedClass = nestedClasses.get(s);

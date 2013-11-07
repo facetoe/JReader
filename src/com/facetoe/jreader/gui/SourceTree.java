@@ -56,20 +56,19 @@ public class SourceTree extends JTree {
 
     private SourceItemNode parseSourceFile(JavaSourceFile source) {
         SourceItemNode node = new SourceItemNode("Root", null);
-        source.extractAllObjectData();
         for ( JavaObject object : sourceFile.getFileContents() ) {
-            if(object instanceof JavaClassOrInterface) {
+            if ( object instanceof JavaClassOrInterface ) {
                 node.add(parseClass(( JavaClassOrInterface ) object));
 
-            } else if(object instanceof JavaEnum) {
-                JavaEnum javaEnum = (JavaEnum)object;
+            } else if ( object instanceof JavaEnum ) {
+                JavaEnum javaEnum = ( JavaEnum ) object;
                 node.add(parseEnum(javaEnum));
 
-            } else if(object instanceof JavaAnnotation) {
-                JavaAnnotation annotation = (JavaAnnotation)object;
-                node.add( new SourceItemNode(annotation.getDeclaration(), annotation) );
+            } else if ( object instanceof JavaAnnotation ) {
+                JavaAnnotation annotation = ( JavaAnnotation ) object;
+                node.add(new SourceItemNode(annotation.getDeclaration(), annotation));
 
-            }  else {
+            } else {
                 log.warn("Unknown object in parseSourceFile: " + object.getClass());
             }
         }
@@ -77,7 +76,7 @@ public class SourceTree extends JTree {
     }
 
     private SourceItemNode parseEnum(JavaEnum javaEnum) {
-        return objectsToNode("Enums", JavaObject.ENUM, javaEnum.getConstants());
+        return objectsToNode(javaEnum.getDeclaration(), JavaObject.ENUM, javaEnum.getConstants());
     }
 
     /**
@@ -105,21 +104,17 @@ public class SourceTree extends JTree {
         if ( aClass.hasMethods() ) {
             classNode.add(objectsToNode("Methods", JavaObject.METHOD, aClass.getMethods()));
         }
-//        if ( aClass.hasEnums() ) {
-//            System.out.println("YEs");
-//            for ( JavaEnum javaEnum : aClass.getEnums().values() ) {
-//                SourceItemNode enumNode = new SourceItemNode(javaEnum.getDeclaration(), ITEM_TYPE.Enums);
-//                enumNode.add(objectsToNode(javaEnum.getConstants(), ITEM_TYPE.Enums));
-//                classNode.add(enumNode);
-//                System.out.println(javaEnum.getConstants().size());
-//            }
-//
-//
-//            //classNode.add(objectsToNode(items, ITEM_TYPE.Enums));
-//
-//        }
         if ( aClass.hasFields() ) {
             classNode.add(objectsToNode("Fields", JavaObject.FIELD, aClass.getFields()));
+        }
+
+        if ( aClass.hasEnums() ) {
+            SourceItemNode enumsNode = new SourceItemNode("Enums", JavaObject.ENUM);
+            for ( String key : aClass.getEnums().keySet() ) {
+                JavaEnum anEnum = aClass.getEnums().get(key);
+                enumsNode.add(objectsToNode(anEnum.getDeclaration(), JavaObject.ENUM, anEnum.getConstants()));
+            }
+            classNode.add(enumsNode);
         }
 
         /* If we have nested classes or interfaces, add them as well. */
@@ -154,12 +149,12 @@ public class SourceTree extends JTree {
      * @param objects The objects to add.
      * @return SourceItemNode containing the items.
      */
-    private SourceItemNode objectsToNode(String nodeTitle, int type,  HashMap<String, ?> objects ) {
+    private SourceItemNode objectsToNode(String nodeTitle, int type, HashMap<String, ? extends JavaObject> objects) {
         SourceItemNode rootNode = new SourceItemNode(nodeTitle, type);
         ArrayList<String> items = new ArrayList<String>(objects.keySet());
         Collections.sort(items);
         for ( String item : items ) {
-            rootNode.add(new SourceItemNode(item, (JavaObject)objects.get(item)));
+            rootNode.add(new SourceItemNode(item, objects.get(item)));
         }
         return rootNode;
     }
@@ -171,6 +166,81 @@ public class SourceTree extends JTree {
      * icons for private, final, protected etc.
      */
     private class SourceViewIconRenderer extends DefaultTreeCellRenderer {
+        private static final int DEFAULT = 0;
+        private static final int ABSTRACT = 1024;
+        private static final int ABSTRACT_STATIC_CLASS = 1032;
+        private static final int FINAL = 16;
+        private static final int FINAL_SYNCHRONIZED = 48;
+        private static final int FINAL_TRANSIENT = 144;
+        private static final int NATIVE = 256;
+        private static final int NATIVE_SYNCHRONIZED = 288;
+        private static final int PRIVATE = 2;
+        private static final int PRIVATE_ABSTRACT_CLASS = 1026;
+        private static final int PRIVATE_ABSTRACT_STATIC_CLASS = 1034;
+        private static final int PRIVATE_FINAL = 18;
+        private static final int PRIVATE_FINAL_NATIVE = 274;
+        private static final int PRIVATE_FINAL_SYNCHRONIZED = 50;
+        private static final int PRIVATE_FINAL_TRANSIENT = 146;
+        private static final int PRIVATE_NATIVE = 258;
+        private static final int PRIVATE_NATIVE_SYNCHRONIZED = 290;
+        private static final int PRIVATE_STATIC = 10;
+        private static final int PRIVATE_STATIC_FINAL = 26;
+        private static final int PRIVATE_STATIC_FINAL_SYNCHRONIZED = 58;
+        private static final int PRIVATE_STATIC_NATIVE = 266;
+        private static final int PRIVATE_STATIC_NATIVE_SYNCHRONIZED = 298;
+        private static final int PRIVATE_STATIC_SYNCHRONIZED = 42;
+        private static final int PRIVATE_STATIC_TRANSIENT = 138;
+        private static final int PRIVATE_STATIC_VOLATILE = 74;
+        private static final int PRIVATE_SYNCHRONIZED = 34;
+        private static final int PRIVATE_TRANSIENT = 130;
+        private static final int PRIVATE_TRANSIENT_VOLATILE = 194;
+        private static final int PRIVATE_VOLATILE = 66;
+        private static final int PROTECTED = 4;
+        private static final int PROTECTED_ABSTRACT = 1028;
+        private static final int PROTECTED_ABSTRACT_STATIC_CLASS = 1036;
+        private static final int PROTECTED_FINAL = 20;
+        private static final int PROTECTED_FINAL_SYNCHRONIZED = 52;
+        private static final int PROTECTED_NATIVE = 260;
+        private static final int PROTECTED_NATIVE_SYNCHRONIZED = 292;
+        private static final int PROTECTED_STATIC = 12;
+        private static final int PROTECTED_STATIC_FINAL = 28;
+        private static final int PROTECTED_STATIC_NATIVE = 268;
+        private static final int PROTECTED_STATIC_SYNCHRONIZED = 44;
+        private static final int PROTECTED_SYNCHRONIZED = 36;
+        private static final int PROTECTED_TRANSIENT = 132;
+        private static final int PROTECTED_VOLATILE = 68;
+        private static final int PUBLIC = 1;
+        private static final int PUBLIC_STRICTFP = 2049;
+        private static final int PUBLIC_ABSTRACT = 1025;
+        private static final int PUBLIC_ABSTRACT_STATIC_CLASS = 1033;
+        private static final int PUBLIC_FINAL = 17;
+        private static final int PUBLIC_FINAL_NATIVE = 273;
+        private static final int PUBLIC_FINAL_SYNCHRONIZED = 49;
+        private static final int PUBLIC_NATIVE = 257;
+        private static final int PUBLIC_NATIVE_SYNCHRONIZED = 289;
+        private static final int PUBLIC_STATIC_STRICTFP = 2057;
+        private static final int PUBLIC_STATIC = 9;
+        private static final int PUBLIC_STATIC_FINAL = 25;
+        private static final int PUBLIC_STATIC_FINAL_SYNCHRONIZED = 57;
+        private static final int PUBLIC_STATIC_NATIVE = 265;
+        private static final int PUBLIC_STATIC_SYNCHRONIZED = 41;
+        private static final int PUBLIC_STATIC_VOLATILE = 73;
+        private static final int PUBLIC_SYNCHRONIZED = 33;
+        private static final int PUBLIC_TRANSIENT = 129;
+        private static final int PUBLIC_VOLATILE = 65;
+        private static final int STATIC = 8;
+        private static final int STATIC_FINAL = 24;
+        private static final int STATIC_FINAL_NATIVE = 280;
+        private static final int STATIC_NATIVE = 264;
+        private static final int STATIC_NATIVE_SYNCHRONIZED = 296;
+        private static final int STATIC_SYNCHRONIZED = 40;
+        private static final int STATIC_TRANSIENT = 136;
+        private static final int STATIC_VOLATILE = 72;
+        private static final int SYNCHRONIZED = 32;
+        private static final int TRANSIENT = 128;
+        private static final int TRANSIENT_VOLATILE = 192;
+        private static final int VOLATILE = 64;
+
 
         /**
          * Determine how this cell should be rendered.
@@ -183,16 +253,98 @@ public class SourceTree extends JTree {
                     expanded, leaf, row,
                     hasFocus);
 
-            URL iconUrl = null;
             SourceItemNode node = ( SourceItemNode ) value;
 
             if ( node == null ) {
                 log.warn("Type was null for: " + node);
                 return component;
             }
+            ImageIcon icon;
+            JavaObject object = node.getJavaObject();
+            if ( object == null ) {
+                icon = getTypeIcon(node.getType());
+                if ( icon != null ) ;
+                {
+                    setIcon(icon);
+                }
+            } else {
+                icon = getModifierIcon(node.getModifiers(), node.getType());
+                if ( icon != null ) {
+                    setIcon(icon);
+                }
+            }
+            return component;
+        }
 
-            int type = node.getType();
+        private ImageIcon getModifierIcon(int modifiers, int type) {
+            URL iconUrl = null;
+            int result;
+            if ( type == JavaObject.METHOD || type == JavaObject.CONSTRUCTOR ) {
+                result = simplifyModifier(modifiers);
+                switch ( result ) {
+                    case PUBLIC:
+                        iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/method_public.png");
+                        break;
 
+                    case PRIVATE:
+                        iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/method_private.png");
+                        break;
+
+                    case PROTECTED:
+                        iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/method_protected.png");
+                        break;
+
+                    case DEFAULT:
+                        iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/method_default.png");
+                        break;
+                }
+            } else if ( type == JavaObject.FIELD ) {
+                result = simplifyModifier(modifiers);
+                switch ( result ) {
+                    case PUBLIC:
+                        iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/field_public.png");
+                        break;
+
+                    case PRIVATE:
+                        iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/field_private.png");
+                        break;
+
+                    case PROTECTED:
+                        iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/field_protected.png");
+                        break;
+
+                    case DEFAULT:
+                        iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/field_default.png");
+                        break;
+                }
+            } else if ( type == JavaObject.CLASS ) {
+                result = simplifyModifier(modifiers);
+                switch ( result ) {
+                    case PUBLIC:
+                        iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/innerclass_default.png");
+                        break;
+
+                    case PRIVATE:
+                        iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/innerclass_private.png");
+                        break;
+
+                    case PROTECTED:
+                        iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/innerclass_protected.png");
+                        break;
+
+                    case DEFAULT:
+                        iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/innerclass_default.png");
+                        break;
+                }
+            } else {
+                iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/field_public.png");
+            }
+
+            return iconUrl == null ? null : new ImageIcon(iconUrl);
+        }
+
+        private ImageIcon getTypeIcon(int type) {
+            URL iconUrl = null;
             switch ( type ) {
                 case JavaObject.CLASS:
                     iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/class.png");
@@ -220,16 +372,75 @@ public class SourceTree extends JTree {
                     log.warn("Unknown type: " + type);
                     break;
             }
-
-            if ( iconUrl != null ) {
-                setIcon(new ImageIcon(iconUrl));
-                //setToolTipText("");
-
-            } else {
-                log.warn("Icon was null");
-                //setToolTipText(null); //no tool tip
-            }
-            return component;
+            return iconUrl == null ? null : new ImageIcon(iconUrl);
         }
+
+        private int simplifyModifier(int modifiers) {
+            switch ( modifiers ) {
+                case PUBLIC:
+                case PUBLIC_STRICTFP:
+                case PUBLIC_ABSTRACT:
+                case PUBLIC_ABSTRACT_STATIC_CLASS:
+                case PUBLIC_FINAL:
+                case PUBLIC_FINAL_NATIVE:
+                case PUBLIC_FINAL_SYNCHRONIZED:
+                case PUBLIC_NATIVE:
+                case PUBLIC_NATIVE_SYNCHRONIZED:
+                case PUBLIC_STATIC_STRICTFP:
+                case PUBLIC_STATIC:
+                case PUBLIC_STATIC_FINAL:
+                case PUBLIC_STATIC_FINAL_SYNCHRONIZED:
+                case PUBLIC_STATIC_NATIVE:
+                case PUBLIC_STATIC_SYNCHRONIZED:
+                case PUBLIC_STATIC_VOLATILE:
+                case PUBLIC_SYNCHRONIZED:
+                case PUBLIC_TRANSIENT:
+                case PUBLIC_VOLATILE:
+                    return PUBLIC;
+
+                case PROTECTED:
+                case PROTECTED_ABSTRACT:
+                case PROTECTED_ABSTRACT_STATIC_CLASS:
+                case PROTECTED_FINAL:
+                case PROTECTED_FINAL_SYNCHRONIZED:
+                case PROTECTED_NATIVE:
+                case PROTECTED_NATIVE_SYNCHRONIZED:
+                case PROTECTED_STATIC:
+                case PROTECTED_STATIC_FINAL:
+                case PROTECTED_STATIC_NATIVE:
+                case PROTECTED_STATIC_SYNCHRONIZED:
+                case PROTECTED_SYNCHRONIZED:
+                case PROTECTED_TRANSIENT:
+                case PROTECTED_VOLATILE:
+                    return PROTECTED;
+
+                case PRIVATE:
+                case PRIVATE_ABSTRACT_CLASS:
+                case PRIVATE_ABSTRACT_STATIC_CLASS:
+                case PRIVATE_FINAL:
+                case PRIVATE_FINAL_NATIVE:
+                case PRIVATE_FINAL_SYNCHRONIZED:
+                case PRIVATE_FINAL_TRANSIENT:
+                case PRIVATE_NATIVE:
+                case PRIVATE_NATIVE_SYNCHRONIZED:
+                case PRIVATE_STATIC:
+                case PRIVATE_STATIC_FINAL:
+                case PRIVATE_STATIC_FINAL_SYNCHRONIZED:
+                case PRIVATE_STATIC_NATIVE:
+                case PRIVATE_STATIC_NATIVE_SYNCHRONIZED:
+                case PRIVATE_STATIC_SYNCHRONIZED:
+                case PRIVATE_STATIC_TRANSIENT:
+                case PRIVATE_STATIC_VOLATILE:
+                case PRIVATE_SYNCHRONIZED:
+                case PRIVATE_TRANSIENT:
+                case PRIVATE_TRANSIENT_VOLATILE:
+                case PRIVATE_VOLATILE:
+                    return PRIVATE;
+
+                default:
+                    return DEFAULT;
+            }
+        }
+
     }
 }

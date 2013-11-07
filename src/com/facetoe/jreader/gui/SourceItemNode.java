@@ -40,6 +40,10 @@ public class SourceItemNode extends DefaultMutableTreeNode {
         return title;
     }
 
+    public JavaObject getJavaObject() {
+        return javaObject;
+    }
+
     @Override
     public String toString() {
         return javaObject == null ? title : javaObject.getDeclaration();

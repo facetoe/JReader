@@ -19,16 +19,16 @@ public class JavaSourceFileParser {
 
 
     public static void main(String[] args) {
-        try {
-            parse(new FileInputStream("/home/facetoe/.jreader/src-jdk/java/nio/file/StandardCopyOption.java"));
-        } catch ( ParseException e ) {
-            e.printStackTrace();
-        } catch ( IOException e ) {
-            e.printStackTrace();
-        }
+//        try {
+//            parse(new FileInputStream("/home/facetoe/.jreader/src-jdk/java/nio/file/StandardCopyOption.java"));
+//        } catch ( ParseException e ) {
+//            e.printStackTrace();
+//        } catch ( IOException e ) {
+//            e.printStackTrace();
+//        }
 
-//        File startDir = new File("/home/facetoe/.jreader/src-jdk/");
-//        recursiveTest(startDir);
+        File startDir = new File("/home/facetoe/.jreader/src-jdk/");
+        recursiveTest(startDir);
     }
 
     public static void recursiveTest(File dir) {
@@ -59,14 +59,14 @@ public class JavaSourceFileParser {
      * @throws IOException
      */
     public static JavaSourceFile parse(FileInputStream inputStream) throws ParseException, IOException {
-        log.debug("Parsing source file...");
+        //log.debug("Parsing source file...");
         CompilationUnit cu = null;
         try {
             cu = JavaParser.parse(inputStream);
         } finally {
             inputStream.close();
         }
-        log.debug("Parsing complete.");
+        //log.debug("Parsing complete.");
         return ( JavaSourceFile ) new SourceFileVisitor().visit(cu, null);
     }
 
@@ -94,7 +94,6 @@ public class JavaSourceFileParser {
                         sourceFile.addObject(javaObj);
 
                     } else if ( type instanceof AnnotationDeclaration ) {
-                        System.out.println("Annotation");
                         JavaAnnotation annotation = ( JavaAnnotation ) visit(( AnnotationDeclaration ) type, null);
                         sourceFile.addObject(annotation);
 
@@ -110,8 +109,11 @@ public class JavaSourceFileParser {
                     }
                 }
             } else {
-                log.debug("Class or interface was null");
+                log.debug("Class or interface was null: " + cu);
             }
+
+            /* Extract all the data here so we don't forget to later... */
+            sourceFile.extractAllObjectData();
             return sourceFile;
         }
 
@@ -157,11 +159,6 @@ public class JavaSourceFileParser {
         @Override
         public Object visit(ConstructorDeclaration n, Object arg) {
             return new JavaConstructor(n);
-        }
-
-        @Override
-        public Object visit(EnumConstantDeclaration n, Object arg) {
-            return null;
         }
 
         @Override
