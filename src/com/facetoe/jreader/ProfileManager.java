@@ -36,6 +36,7 @@ public class ProfileManager implements Serializable {
     /* Singlton instance of ProfileManager. */
     private static final ProfileManager instance = new ProfileManager();
 
+    /* Listeners to inform of parsing progress. */
     private static final ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
 
     /**
@@ -55,8 +56,8 @@ public class ProfileManager implements Serializable {
             currentProfile = profiles.get(currentProfileName);
 
             /* If it doesn't exist, try and load the default profile.*/
-            if(currentProfile == null) {
-                if( JReaderSetup.hasDefaultProfile()) {
+            if ( currentProfile == null ) {
+                if ( JReaderSetup.hasDefaultProfile() ) {
                     setCurrentProfile(Config.DEFAULT_PROFILE_NAME);
                 } else {
                     log.error("No profile or default profile.");
@@ -95,13 +96,11 @@ public class ProfileManager implements Serializable {
 
             /* Parse the class data and save it. */
             JavaDocParser parser = new JavaDocParser();
-
             for ( ActionListener listener : listeners ) {
                 parser.addActionListener(listener);
             }
-
-            HashMap<String, String> classData = parser.parse(getDocDir() +
-                    Config.ALL_CLASSSES_DOC_FILE);
+            HashMap<String, String> classData = parser.parse(getDocDir()
+                    + Config.ALL_CLASSSES_DOC_FILE);
             Utilities.writeCLassData(getPath() + Config.CLASS_DATA_FILE_NAME, classData);
 
             /* Set it to the default so we can load it straight up on next launch. */
@@ -138,9 +137,9 @@ public class ProfileManager implements Serializable {
 
                                 /* SearchContext isnt't serializable so we need to create it on load. */
                                 profile.searchContext = new SearchContext();
+                                profiles.put(profile.name, profile);
 
                                 log.debug("Loaded profile: " + profile.name);
-                                profiles.put(profile.name, profile);
                             }
                         }
                     }
@@ -221,6 +220,7 @@ public class ProfileManager implements Serializable {
             currentProfile = profiles.get(profileName);
             currentProfile.searchContext = new SearchContext();
             Config.setString(Config.CURRENT_PROFILE, profileName);
+
             log.debug("Profile set to: " + Config.getString(Config.CURRENT_PROFILE));
         } else {
             log.error("No such profile: " + profileName);
@@ -235,21 +235,37 @@ public class ProfileManager implements Serializable {
      */
     public void deleteProfile(String profileName) {
         Profile profile = profiles.get(profileName);
-        File profileDir = new File(Config.getString(Config.PROFILE_DIR) + File.separator + profile.profileDirName);
-        Utilities.deleteDirectoryAndContents(profileDir);
-        profiles.remove(profileName);
-        setCurrentProfile(Config.DEFAULT_PROFILE_NAME);
-        log.debug("Deleted: " + profile.name);
+        if ( profile != null ) {
+            File profileDir = new File(Config.getString(Config.PROFILE_DIR) + File.separator + profile.profileDirName);
+            Utilities.deleteDirectoryAndContents(profileDir);
+            profiles.remove(profileName);
+            setCurrentProfile(Config.DEFAULT_PROFILE_NAME);
+            log.debug("Deleted: " + profile.name);
+        } else {
+            log.debug("Profile doesn't exist: " + profileName);
+        }
     }
 
+    /**
+     * Get all the profile names.
+     * @return Profile names.
+     */
     public ArrayList<String> getProfileNames() {
         return new ArrayList<String>(profiles.keySet());
     }
 
+    /**
+     * Add action listeners. They will be informed of parsing progress.
+     * @param listener Listener.
+     */
     public void addActionListener(ActionListener listener) {
         listeners.add(listener);
     }
 
+    /**
+     * The full path to the current profile directory.
+     * @return The path.
+     */
     public String getPath() {
         return Config.getString(Config.PROFILE_DIR)
                 + File.separator
@@ -257,51 +273,100 @@ public class ProfileManager implements Serializable {
                 + File.separator;
     }
 
+    /**
+     * Get all the class names for this profiles class data.
+     * @return Class names.
+     */
     public ArrayList<String> getClassNames() {
         return new ArrayList<String>(getClassData().keySet());
     }
 
+    /**
+     * Get the HashMap containing class names and relative paths for
+     * this profile.
+     * @return Class data.
+     */
     public HashMap<String, String> getClassData() {
         return currentProfile.getClassData();
     }
 
+    /**
+     * Where this profiles documentation is located.
+     * @return Path to documentation.
+     */
     public String getDocDir() {
         return currentProfile.docDir;
     }
 
+    /**
+     * Where the source code for this profile is located.
+     * @return Path to the source code.
+     */
     public String getSrcDir() {
         return currentProfile.srcDir;
     }
 
+    /**
+     * Get the homepage for this profile.
+     * @return The homepage path.
+     */
     public String getHome() {
         return getDocDir() + File.separator + currentProfile.home;
     }
 
+    /**
+     * Get the search context for this profile.
+     * @return
+     */
     public SearchContext getSearchContext() {
         currentProfile.updateSearchContext();
         return currentProfile.searchContext;
     }
 
+    /**
+     *
+     * @return Whether regexp is enabled in this profiles search context.
+     */
     public boolean regexpIsEnabled() {
         return currentProfile.regexpIsEnabled;
     }
 
+    /**
+     *
+     * @return Whether whole word is enabled in this profiles search context.
+     */
     public boolean wholeWordIsEnabled() {
         return currentProfile.wholeWordIsEnabled;
     }
 
+    /**
+     *
+     * @return Whether match case is enabled in this profiles search context.
+     */
     public boolean matchCaseIsEnabled() {
         return currentProfile.matchCaseIsEnabled;
     }
 
+    /**
+     * Set regexp enabled.
+     * @param value Boolean.
+     */
     public void setRegexpEnabled(boolean value) {
         currentProfile.regexpIsEnabled = value;
     }
 
+    /**
+     * Set whole word enabled.
+     * @param value Boolean.
+     */
     public void setWholeWordEnabled(boolean value) {
         currentProfile.wholeWordIsEnabled = value;
     }
 
+    /**
+     * Set match case enabled.
+     * @param value Boolean.
+     */
     public void setMatchCaseEnabled(boolean value) {
         currentProfile.matchCaseIsEnabled = value;
     }
@@ -356,8 +421,12 @@ public class ProfileManager implements Serializable {
             home = Utilities.getHomePage(docDir);
         }
 
+        /**
+         * Loads the class data if it isn't already loaded for this profile.
+         * @return The class data.
+         */
         HashMap<String, String> getClassData() {
-            if(classData == null) {
+            if ( classData == null ) {
                 log.debug("Loading classData for: " + name);
 
                 File classDataFile = new File(Config.getString(Config.PROFILE_DIR)
@@ -375,6 +444,9 @@ public class ProfileManager implements Serializable {
             return classData;
         }
 
+        /**
+         * Make sure the search context is up to date.
+         */
         private void updateSearchContext() {
             searchContext.setMatchCase(matchCaseIsEnabled);
             searchContext.setRegularExpression(regexpIsEnabled);
