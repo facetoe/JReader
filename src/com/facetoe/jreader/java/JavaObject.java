@@ -14,39 +14,57 @@ package com.facetoe.jreader.java;
  */
 public abstract class JavaObject<T> {
 
+    public static final int CLASS = 0;
+    public static final int INTERFACE = 1;
+    public static final int CONSTRUCTOR = 2;
+    public static final int METHOD = 3;
+    public static final int FIELD = 4;
+    public static final int ENUM = 5;
+    public static final int ANNOTATION = 6;
+
+    /**
+     * What sort of object this is.
+     */
+    protected int type;
+
     // The declaration
     final T typeDeclaration;
 
     /**
      * Full declaration including modifiers
      */
-    public String fullDeclaration;
+    protected String fullDeclaration;
+
+    /**
+     * Integer representing the modifiers for this object.
+     */
+    protected int modifiers;
 
     /**
      * Just the name and parameters
      */
-    public String declaration;
+    protected String declaration;
 
     /**
      * Line in the source file where this item begins
      */
-    public int beginLine;
+    protected int beginLine;
 
     /**
      * Line in the source file where this item ends
      * Note: this includes the entire block, not just declarations
      */
-    public int endLine;
+    protected int endLine;
 
     /**
      * Column where this declaration begins
      */
-    public int beginColumn;
+    protected int beginColumn;
 
     /**
      * Column where this declaration ends.
      */
-    public int endColumn;
+    protected int endColumn;
 
     /**
      * Constructor.
@@ -68,6 +86,8 @@ public abstract class JavaObject<T> {
      */
     abstract void extractDeclaration();
 
+
+    abstract public int getModifiers();
     /**
      * Get the full declaration.
      * @return The declaration.
@@ -82,6 +102,10 @@ public abstract class JavaObject<T> {
      */
     public String getDeclaration() {
         return declaration;
+    }
+
+    public int getType() {
+        return type;
     }
 
     /**

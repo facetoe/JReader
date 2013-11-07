@@ -21,6 +21,7 @@ public class JavaConstructor extends JavaObject<ConstructorDeclaration> {
         endColumn = typeDec.getEndColumn();
         beginLine = typeDec.getBeginLine();
         endLine = typeDec.getEndLine();
+        type = CONSTRUCTOR;
     }
 
     @Override
@@ -49,5 +50,10 @@ public class JavaConstructor extends JavaObject<ConstructorDeclaration> {
                     .replace("[", "(")
                     .replace("]", ")");
         }
+    }
+
+    @Override
+    public int getModifiers() {
+        return typeDeclaration.getModifiers();
     }
 }

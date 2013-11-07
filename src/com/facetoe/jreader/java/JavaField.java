@@ -20,6 +20,7 @@ class JavaField extends JavaObject<FieldDeclaration> {
         endColumn = typeDec.getEndColumn();
         beginLine = typeDec.getBeginLine();
         endLine = typeDec.getEndLine();
+        type = FIELD;
     }
 
     @Override
@@ -39,5 +40,10 @@ class JavaField extends JavaObject<FieldDeclaration> {
 
     @Override
     void extractDeclaration() {
+    }
+
+    @Override
+    public int getModifiers() {
+        return typeDeclaration.getModifiers();
     }
 }

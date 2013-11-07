@@ -7,8 +7,7 @@ package com.facetoe.jreader.gui;
  * Time: 11:07 AM
  */
 
-import com.facetoe.jreader.java.JavaClassOrInterface;
-import com.facetoe.jreader.java.JavaSourceFile;
+import com.facetoe.jreader.java.*;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -20,16 +19,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-
-/** Type to specify what sort of icons to use. */
-enum ITEM_TYPE {
-    Constructors,
-    Methods,
-    Fields,
-    Enums,
-    Class,
-    Interface
-}
+import java.util.HashMap;
 
 /**
  * Provides a tree view of a source file's contents.
@@ -47,13 +37,7 @@ public class SourceTree extends JTree {
     public SourceTree(JavaSourceFile sourceFile) {
         this.sourceFile = sourceFile;
 
-        SourceItemNode rootNode = new SourceItemNode("Root", null);
-
-        /* Build the tree. */
-        for ( JavaClassOrInterface classOrInterface : sourceFile.getFileContents() ) {
-            SourceItemNode node = parseClass(classOrInterface);
-            rootNode.add(node);
-        }
+        SourceItemNode rootNode = parseSourceFile(sourceFile);
         DefaultTreeModel model = new DefaultTreeModel(rootNode);
         setModel(model);
 
@@ -70,6 +54,32 @@ public class SourceTree extends JTree {
         //ToolTipManager.sharedInstance().registerComponent(this);
     }
 
+    private SourceItemNode parseSourceFile(JavaSourceFile source) {
+        SourceItemNode node = new SourceItemNode("Root", null);
+        source.extractAllObjectData();
+        for ( JavaObject object : sourceFile.getFileContents() ) {
+            if(object instanceof JavaClassOrInterface) {
+                node.add(parseClass(( JavaClassOrInterface ) object));
+
+            } else if(object instanceof JavaEnum) {
+                JavaEnum javaEnum = (JavaEnum)object;
+                node.add(parseEnum(javaEnum));
+
+            } else if(object instanceof JavaAnnotation) {
+                JavaAnnotation annotation = (JavaAnnotation)object;
+                node.add( new SourceItemNode(annotation.getDeclaration(), annotation) );
+
+            }  else {
+                log.warn("Unknown object in parseSourceFile: " + object.getClass());
+            }
+        }
+        return node;
+    }
+
+    private SourceItemNode parseEnum(JavaEnum javaEnum) {
+        return objectsToNode("Enums", JavaObject.ENUM, javaEnum.getConstants());
+    }
+
     /**
      * Encapsulates all the data from a classs in a SourceItemNode. If the class contains nested classes or interfaces,
      * this method will add them as well.
@@ -78,39 +88,43 @@ public class SourceTree extends JTree {
      * @return SourceItemNode containing the parsed data.
      */
     private SourceItemNode parseClass(JavaClassOrInterface aClass) {
-        String nodeTitle;
+        String nodeTitle = aClass.getDeclaration();
         SourceItemNode classNode;
 
         if ( aClass.getType() == JavaClassOrInterface.CLASS ) {
-            nodeTitle = aClass.getDeclaration();
-            classNode = new SourceItemNode(nodeTitle, ITEM_TYPE.Class);
+            classNode = new SourceItemNode(nodeTitle, aClass);
         } else {
-            nodeTitle = aClass.getDeclaration();
-            classNode = new SourceItemNode(nodeTitle, ITEM_TYPE.Interface);
+            classNode = new SourceItemNode(nodeTitle, aClass);
         }
 
         /* Sort and add items to the tree. */
         ArrayList<String> items;
         if ( aClass.hasConstructors() ) {
-            items = new ArrayList<String>(aClass.getConstructors().keySet());
-            classNode.add(itemsToNode(items, ITEM_TYPE.Constructors));
+            classNode.add(objectsToNode("Constructors", JavaObject.CONSTRUCTOR, aClass.getConstructors()));
         }
         if ( aClass.hasMethods() ) {
-            items = new ArrayList<String>(aClass.getMethods().keySet());
-            classNode.add(itemsToNode(items, ITEM_TYPE.Methods));
+            classNode.add(objectsToNode("Methods", JavaObject.METHOD, aClass.getMethods()));
         }
-        if ( aClass.hasEnums() ) {
-            items = new ArrayList<String>(aClass.getEnums().keySet());
-            classNode.add(itemsToNode(items, ITEM_TYPE.Enums));
-        }
+//        if ( aClass.hasEnums() ) {
+//            System.out.println("YEs");
+//            for ( JavaEnum javaEnum : aClass.getEnums().values() ) {
+//                SourceItemNode enumNode = new SourceItemNode(javaEnum.getDeclaration(), ITEM_TYPE.Enums);
+//                enumNode.add(objectsToNode(javaEnum.getConstants(), ITEM_TYPE.Enums));
+//                classNode.add(enumNode);
+//                System.out.println(javaEnum.getConstants().size());
+//            }
+//
+//
+//            //classNode.add(objectsToNode(items, ITEM_TYPE.Enums));
+//
+//        }
         if ( aClass.hasFields() ) {
-            items = new ArrayList<String>(aClass.getFields().keySet());
-            classNode.add(itemsToNode(items, ITEM_TYPE.Fields));
+            classNode.add(objectsToNode("Fields", JavaObject.FIELD, aClass.getFields()));
         }
 
         /* If we have nested classes or interfaces, add them as well. */
         if ( aClass.hasNestedClasses() ) {
-            SourceItemNode nestedClassNode = new SourceItemNode("Nested Classes", ITEM_TYPE.Class);
+            SourceItemNode nestedClassNode = new SourceItemNode("Nested Classes", JavaObject.CLASS);
             ArrayList<SourceItemNode> nestedClasses = new ArrayList<SourceItemNode>();
 
             for ( JavaClassOrInterface nestedClass : aClass.getNestedClassesAsArrayList() ) {
@@ -135,32 +149,20 @@ public class SourceTree extends JTree {
     }
 
     /**
-     * Adds all the items to a SourceItemNode. Items can be methods, fields, constructors or enums.
+     * Adds all the constructors to a SourceItemNode.
      *
-     * @param items The items to add.
-     * @param type  The name of the items, such as: "Methods"
+     * @param objects The objects to add.
      * @return SourceItemNode containing the items.
      */
-    private SourceItemNode itemsToNode(ArrayList<String> items, ITEM_TYPE type) {
-        SourceItemNode rootNode = new SourceItemNode(type.name(), type);
-        ArrayList<SourceItemNode> itemNodes = new ArrayList<SourceItemNode>();
+    private SourceItemNode objectsToNode(String nodeTitle, int type,  HashMap<String, ?> objects ) {
+        SourceItemNode rootNode = new SourceItemNode(nodeTitle, type);
+        ArrayList<String> items = new ArrayList<String>(objects.keySet());
+        Collections.sort(items);
         for ( String item : items ) {
-            itemNodes.add(new SourceItemNode(item, type));
-        }
-
-        Collections.sort(itemNodes, new Comparator<SourceItemNode>() {
-            @Override
-            public int compare(SourceItemNode firstObj, SourceItemNode secondObj) {
-                return firstObj.toString().compareTo(secondObj.toString());
-            }
-        });
-        for ( SourceItemNode itemNode : itemNodes ) {
-            rootNode.add(itemNode);
+            rootNode.add(new SourceItemNode(item, (JavaObject)objects.get(item)));
         }
         return rootNode;
     }
-
-
 
 
     /**
@@ -170,7 +172,9 @@ public class SourceTree extends JTree {
      */
     private class SourceViewIconRenderer extends DefaultTreeCellRenderer {
 
-        /** Determine how this cell should be rendered.*/
+        /**
+         * Determine how this cell should be rendered.
+         */
         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel,
                                                       boolean expanded, boolean leaf, int row, boolean hasFocus) {
 
@@ -182,34 +186,38 @@ public class SourceTree extends JTree {
             URL iconUrl = null;
             SourceItemNode node = ( SourceItemNode ) value;
 
-            if(node == null) {
+            if ( node == null ) {
                 log.warn("Type was null for: " + node);
                 return component;
             }
 
-            ITEM_TYPE type = node.getType();
+            int type = node.getType();
 
             switch ( type ) {
-                case Class:
+                case JavaObject.CLASS:
                     iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/class.png");
                     break;
-                case Interface:
+                case JavaObject.INTERFACE:
                     iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/interface.png");
                     break;
-                case Constructors:
+                case JavaObject.CONSTRUCTOR:
                     iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/constructor.gif");
                     break;
-                case Methods:
+                case JavaObject.METHOD:
                     iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/method.gif");
                     break;
-                case Fields:
+                case JavaObject.FIELD:
                     iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/field.gif");
                     break;
-                case Enums:
+                case JavaObject.ENUM:
                     iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/enum.png");
                     break;
+                case JavaObject.ANNOTATION:
+                    iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/annotation.gif");
+                    break;
+
                 default:
-                    log.warn("Unknown type: " + type.name());
+                    log.warn("Unknown type: " + type);
                     break;
             }
 

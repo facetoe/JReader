@@ -33,6 +33,28 @@ import java.util.Enumeration;
 import java.util.regex.PatternSyntaxException;
 
 
+class ToggleSourceTreeAction extends AbstractAction {
+
+    JXCollapsiblePane treePane;
+    SourceTree tree;
+
+    public ToggleSourceTreeAction(JXCollapsiblePane treePane, SourceTree tree) {
+        this.treePane = treePane;
+        this.tree = tree;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(treePane.isCollapsed()) {
+            treePane.setCollapsed(false);
+        } else {
+            treePane.setCollapsed(true);
+        }
+        tree.setSelectionRow(0);
+        tree.requestFocus();
+    }
+}
+
 /**
  * Displays source code with syntax highlighting and cold folding.
  */
@@ -165,7 +187,7 @@ public class JSourcePanel extends AbstractPanel {
         parseSourceFile();
 
         if ( javaSourceFile != null ) {
-            enclosingObject = javaSourceFile.getEnclosingClass();
+            enclosingObject = javaSourceFile.getEnclosingObject();
         } else {
             log.error("Source file was null: " + filePath);
         }
@@ -202,7 +224,7 @@ public class JSourcePanel extends AbstractPanel {
         String keyStrokeAndKey = "control T";
         KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, keyStrokeAndKey);
-        getActionMap().put(keyStrokeAndKey, collapsiblePane.getActionMap().get("toggle"));
+        getActionMap().put(keyStrokeAndKey, new ToggleSourceTreeAction(collapsiblePane, tree));
 
         searchPanel.add(searchField, BorderLayout.CENTER);
         searchPanel.add(btnSearch, BorderLayout.EAST);
@@ -225,7 +247,7 @@ public class JSourcePanel extends AbstractPanel {
         add("Center", codeScrollPane);
 
         // Show/hide the "Controls"
-        JButton toggle = new JButton(collapsiblePane.getActionMap().get("toggle"));
+        JButton toggle = new JButton(new ToggleSourceTreeAction(collapsiblePane, tree));
 
         add("South", toggle);
     }
@@ -238,7 +260,7 @@ public class JSourcePanel extends AbstractPanel {
     public void highlightEnclosingObject() {
         highlightDeclaration(enclosingObject.getBeginLine(),
                 enclosingObject.getEndLine(),
-                enclosingObject.beginColumn);
+                enclosingObject.getBeginColumn());
     }
 
     /**
@@ -276,7 +298,7 @@ public class JSourcePanel extends AbstractPanel {
 
          if ( obj != null ) {
             highlightDeclaration(obj.getBeginLine(), obj.getEndLine(),
-                    obj.beginColumn);
+                    obj.getBeginColumn());
         } else {
             findString(key, profileManager.getSearchContext());
         }

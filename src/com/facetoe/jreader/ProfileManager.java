@@ -124,11 +124,11 @@ public class ProfileManager implements Serializable {
     void loadProfiles() throws IOException, ClassNotFoundException {
         File profileDir = new File(Config.getString(Config.PROFILE_DIR));
         File[] profDirs = profileDir.listFiles();
-        if ( profDirs != null ) {
+        if ( profDirs.length != 0 ) {
             for ( File profDir : profDirs ) {
                 if ( profDir.isDirectory() ) {
                     File[] profFiles = profDir.listFiles();
-                    if ( profFiles != null ) {
+                    if ( profFiles.length != 0 ) {
                         for ( File profFile : profFiles ) {
                             if ( profFile.getName().endsWith(".ser")
                                     && !profFile.getName()

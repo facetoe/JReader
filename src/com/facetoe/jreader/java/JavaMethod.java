@@ -20,6 +20,7 @@ public class JavaMethod extends JavaObject<MethodDeclaration> {
         endColumn = typeDec.getEndColumn();
         beginLine = typeDec.getBeginLine();
         endLine = typeDec.getEndLine();
+        type = METHOD;
     }
 
     @Override
@@ -42,5 +43,10 @@ public class JavaMethod extends JavaObject<MethodDeclaration> {
                     .replace("[", "(")
                     .replace("]", ")");
         }
+    }
+
+    @Override
+    public int getModifiers() {
+        return typeDeclaration.getModifiers();
     }
 }

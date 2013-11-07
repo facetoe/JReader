@@ -44,19 +44,9 @@ public class JavaClassOrInterface extends JavaObject<ClassOrInterfaceDeclaration
     private final HashMap<String, JavaField> fields = new HashMap<String, JavaField>();
 
     /**
-     * Magic number for a class.
+     * All the annotations.
      */
-    public static final int CLASS = 0;
-
-    /**
-     * Magic number for an interface.
-     */
-    public static final int INTERFACE = 1;
-
-    /**
-     * Identifies whether this instance is a class or interface.
-     */
-    private int type;
+    private final HashMap<String, JavaAnnotation> annotations = new HashMap<String, JavaAnnotation>();
 
     /**
      * Constructor.
@@ -91,6 +81,11 @@ public class JavaClassOrInterface extends JavaObject<ClassOrInterfaceDeclaration
         }
     }
 
+    @Override
+    public int getModifiers() {
+        return typeDeclaration.getModifiers();
+    }
+
     public boolean hasConstructors() {
         return constructors.size() > 0;
     }
@@ -109,6 +104,10 @@ public class JavaClassOrInterface extends JavaObject<ClassOrInterfaceDeclaration
 
     public boolean hasNestedClasses() {
         return nestedClasses.size() > 0;
+    }
+
+    public boolean hasAnnotations() {
+        return annotations.size() > 0;
     }
 
     /**
@@ -157,6 +156,14 @@ public class JavaClassOrInterface extends JavaObject<ClassOrInterfaceDeclaration
     }
 
     /**
+     * Add an annotation.
+     * @param annotation
+     */
+    public void addAnnotation(JavaAnnotation annotation) {
+        annotations.put(annotation.getDeclaration(), annotation);
+    }
+
+    /**
      * Add a nested class or interface.
      * @param classOrInterface The nested class or interface to add.
      */
@@ -194,6 +201,14 @@ public class JavaClassOrInterface extends JavaObject<ClassOrInterfaceDeclaration
      */
     public HashMap<String, JavaField> getFields() {
         return fields;
+    }
+
+    /**
+     * Return this class or interfaces annotations.
+     * @return
+     */
+    public HashMap<String, JavaAnnotation> getAnnotations() {
+        return annotations;
     }
 
     /**

@@ -16,6 +16,7 @@ import javax.swing.tree.TreePath;
 public class SourceTreeSelectionListener implements TreeSelectionListener {
     private final SourceTree sourceTreeView;
     private final JSourcePanel sourcePanel;
+    private static final Logger log = Logger.getLogger(SourceTreeSelectionListener.class);
 
     public SourceTreeSelectionListener(SourceTree sourceTreeView, JSourcePanel sourcePanel) {
         this.sourceTreeView = sourceTreeView;
@@ -27,13 +28,13 @@ public class SourceTreeSelectionListener implements TreeSelectionListener {
         SourceItemNode node = (SourceItemNode)
                 sourceTreeView.getLastSelectedPathComponent();
         if ( node == null ) {
-            Logger.getLogger(SourceTreeSelectionListener.class).warn("Null node in SourceTreeSelectionListener.");
+            log.warn("Null node in SourceTreeSelectionListener.");
             return;
         }
         /* Scroll to show the newly selected node. */
         TreePath treePath = new TreePath(node.getPath());
         sourceTreeView.scrollPathToVisible(treePath);
-        JavaObject object = sourcePanel.getJavaSourceFile().getObject(node.title);
+        JavaObject object = sourcePanel.getJavaSourceFile().getObject(node.getTitle());
         if(object != null) {
             sourcePanel.highlightDeclaration(object.getBeginLine(), object.getEndLine(), object.getBeginColumn());
         }

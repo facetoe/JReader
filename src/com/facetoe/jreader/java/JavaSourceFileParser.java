@@ -7,15 +7,48 @@ import japa.parser.ast.body.*;
 import japa.parser.ast.visitor.GenericVisitorAdapter;
 import org.apache.log4j.Logger;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * This class parses a Java source file and extracts all the classes, interfaces, methods, constructors and fields.
  */
 public class JavaSourceFileParser {
     private static final Logger log = Logger.getLogger(JavaSourceFileParser.class);
+
+
+    public static void main(String[] args) {
+        try {
+            parse(new FileInputStream("/home/facetoe/.jreader/src-jdk/java/nio/file/StandardCopyOption.java"));
+        } catch ( ParseException e ) {
+            e.printStackTrace();
+        } catch ( IOException e ) {
+            e.printStackTrace();
+        }
+
+//        File startDir = new File("/home/facetoe/.jreader/src-jdk/");
+//        recursiveTest(startDir);
+    }
+
+    public static void recursiveTest(File dir) {
+        File[] contents = dir.listFiles();
+        for ( File content : contents ) {
+            if ( content.isDirectory() ) {
+                recursiveTest(content);
+            } else {
+                if ( content.getName().endsWith(".java") ) {
+                    try {
+                        parse(new FileInputStream(content));
+                    } catch ( ParseException e ) {
+                        e.printStackTrace();
+                    } catch ( IOException e ) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * Parses a Java source file and extracts constructor, method, field and enum declarations.
@@ -51,24 +84,38 @@ public class JavaSourceFileParser {
          */
         @Override
         public Object visit(CompilationUnit cu, Object arg) {
-            ArrayList<JavaClassOrInterface> classesAndInterfaces = new ArrayList<JavaClassOrInterface>();
+            JavaSourceFile sourceFile = new JavaSourceFile();
             if ( cu != null && cu.getTypes() != null ) {
                 for ( TypeDeclaration type : cu.getTypes() ) {
 
                     // Visit each class declaration and extract all the data from it.
                     if ( type instanceof ClassOrInterfaceDeclaration ) {
-                            JavaClassOrInterface javaObj = (JavaClassOrInterface)visit((ClassOrInterfaceDeclaration)type, null);
-                            classesAndInterfaces.add(javaObj);
+                        JavaClassOrInterface javaObj = ( JavaClassOrInterface ) visit(( ClassOrInterfaceDeclaration ) type, null);
+                        sourceFile.addObject(javaObj);
+
+                    } else if ( type instanceof AnnotationDeclaration ) {
+                        System.out.println("Annotation");
+                        JavaAnnotation annotation = ( JavaAnnotation ) visit(( AnnotationDeclaration ) type, null);
+                        sourceFile.addObject(annotation);
+
+                    } else if (type instanceof EnumDeclaration) {
+                        JavaEnum javaEnum = (JavaEnum)visit((EnumDeclaration)type, null);
+                        sourceFile.addObject(javaEnum);
+
+
                     } else {
-                        System.out.println(type);
-                        System.exit(0);
+                        System.out.println(type.getName());
+                        System.out.println(type.getClass());
+                        System.out.println();
                     }
                 }
             } else {
                 log.debug("Class or interface was null");
             }
-            return new JavaSourceFile(classesAndInterfaces);
+            return sourceFile;
         }
+
+
 
         @Override
         public Object visit(ClassOrInterfaceDeclaration n, Object arg) {
@@ -94,13 +141,14 @@ public class JavaSourceFileParser {
 
                     /* If we have a nested class, recurse through it and each nested class that it contains
                      * gathering the data.  */
-                }else if (declaration instanceof ClassOrInterfaceDeclaration) {
-                    JavaClassOrInterface classOrInterface = (JavaClassOrInterface)visit((ClassOrInterfaceDeclaration) declaration, null);
+                } else if ( declaration instanceof ClassOrInterfaceDeclaration ) {
+                    JavaClassOrInterface classOrInterface = ( JavaClassOrInterface ) visit(( ClassOrInterfaceDeclaration ) declaration, null);
                     javaObj.addNestedClassOrInterface(classOrInterface);
-                } else {
-                    System.out.println(declaration);
-                    //System.exit(0);
-                }
+
+                } else if ( declaration instanceof AnnotationDeclaration ) {
+                    JavaAnnotation annotation = ( JavaAnnotation ) visit(( AnnotationDeclaration ) declaration, null);
+                    javaObj.addAnnotation(annotation);
+                } // The only other things that would be caught here are EmptyTypeDeclaration, EmptyMemberDeclaration and InitializerDeclaration
 
             }
             return javaObj;
@@ -133,8 +181,7 @@ public class JavaSourceFileParser {
 
         @Override
         public Object visit(AnnotationDeclaration n, Object arg) {
-            System.out.println(n);
-            return super.visit(n, arg);    //To change body of overridden methods use File | Settings | File Templates.
+            return new JavaAnnotation(n);
         }
     }
 }
