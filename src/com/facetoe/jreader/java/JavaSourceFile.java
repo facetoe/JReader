@@ -19,29 +19,29 @@ public class JavaSourceFile {
     /**
      * All classOrInterfaces and interfaces..
      */
-    private ArrayList<JavaObject> fileContents = new ArrayList<JavaObject>();
+    private ArrayList<AbstractJavaObject> fileContents = new ArrayList<AbstractJavaObject>();
 
     /**
      * Every declaration.
      */
-    private final HashMap<String, JavaObject> allObjects = new HashMap<String, JavaObject>();
+    private final HashMap<String, AbstractJavaObject> allObjects = new HashMap<String, AbstractJavaObject>();
 
     public JavaSourceFile() {
 
     }
 
-    public void addObject(JavaObject object) {
+    public void addObject(AbstractJavaObject object) {
         fileContents.add(object);
     }
 
     public void extractAllObjectData() {
-        for ( JavaObject object : fileContents ) {
-            if(object instanceof JavaClassOrInterface) {
-                extractClassOrInterfaceData((JavaClassOrInterface)object);
-            } else  if (object instanceof JavaEnum) {
-                allObjects.putAll(((JavaEnum)object).getConstants());
-            } else if (object instanceof JavaAnnotation) {
-                JavaAnnotation annotation = (JavaAnnotation)object;
+        for ( AbstractJavaObject object : fileContents ) {
+            if ( object instanceof JavaClassOrInterface ) {
+                extractClassOrInterfaceData(( JavaClassOrInterface ) object);
+            } else if ( object instanceof JavaEnum ) {
+                allObjects.putAll((( JavaEnum ) object).getConstants());
+            } else if ( object instanceof JavaAnnotation ) {
+                JavaAnnotation annotation = ( JavaAnnotation ) object;
                 allObjects.put(annotation.declaration, annotation);
             }
         }
@@ -80,7 +80,7 @@ public class JavaSourceFile {
      * @param itemDeclaration Short declaration of the desired object.
      * @return The Object associated with this declaration.
      */
-    public JavaObject getObject(String itemDeclaration) {
+    public AbstractJavaObject getObject(String itemDeclaration) {
         return allObjects.get(itemDeclaration);
     }
 
@@ -99,14 +99,14 @@ public class JavaSourceFile {
      *
      * @return The enclosing object.
      */
-    public JavaObject getEnclosingObject() {
-        if(fileContents.size() > 0) {
+    public AbstractJavaObject getEnclosingObject() {
+        if ( fileContents.size() > 0 ) {
             return fileContents.get(0);
         }
         return null;
     }
 
-    public ArrayList<JavaObject> getFileContents() {
+    public ArrayList<AbstractJavaObject> getFileContents() {
         return fileContents;
     }
 }

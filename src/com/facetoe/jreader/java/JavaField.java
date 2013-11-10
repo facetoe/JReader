@@ -12,7 +12,7 @@ import japa.parser.ast.body.FieldDeclaration;
 /**
  * Represents a field.
  */
-class JavaField extends JavaObject<FieldDeclaration> {
+class JavaField extends AbstractJavaObject<FieldDeclaration> {
 
     public JavaField(FieldDeclaration typeDec) {
         super(typeDec);

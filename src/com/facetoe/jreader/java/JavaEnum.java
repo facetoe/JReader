@@ -15,7 +15,7 @@ import java.util.HashMap;
 /**
  * Represents an enum.
  */
-public class JavaEnum extends JavaObject<EnumDeclaration> {
+public class JavaEnum extends AbstractJavaObject<EnumDeclaration> {
     private HashMap<String, JavaEnumConstantDeclaration> constants = new HashMap<String, JavaEnumConstantDeclaration>();
 
     public JavaEnum(EnumDeclaration typeDec) {
@@ -64,7 +64,7 @@ public class JavaEnum extends JavaObject<EnumDeclaration> {
     }
 }
 
-class JavaEnumConstantDeclaration extends JavaObject<EnumConstantDeclaration> {
+class JavaEnumConstantDeclaration extends AbstractJavaObject<EnumConstantDeclaration> {
 
     public JavaEnumConstantDeclaration(EnumConstantDeclaration typeDec) {
         super(typeDec);

@@ -1,6 +1,6 @@
 package com.facetoe.jreader.gui;
 
-import com.facetoe.jreader.java.JavaObject;
+import com.facetoe.jreader.java.AbstractJavaObject;
 import org.apache.log4j.Logger;
 
 import javax.swing.event.TreeSelectionEvent;
@@ -25,7 +25,7 @@ public class SourceTreeSelectionListener implements TreeSelectionListener {
 
     @Override
     public void valueChanged(TreeSelectionEvent e) {
-        SourceItemNode node = (SourceItemNode)
+        SourceItemNode node = ( SourceItemNode )
                 sourceTreeView.getLastSelectedPathComponent();
         if ( node == null ) {
             log.warn("Null node in SourceTreeSelectionListener.");
@@ -34,8 +34,8 @@ public class SourceTreeSelectionListener implements TreeSelectionListener {
         /* Scroll to show the newly selected node. */
         TreePath treePath = new TreePath(node.getPath());
         sourceTreeView.scrollPathToVisible(treePath);
-        JavaObject object = sourcePanel.getJavaSourceFile().getObject(node.getTitle());
-        if(object != null) {
+        AbstractJavaObject object = sourcePanel.getJavaSourceFile().getObject(node.getTitle());
+        if ( object != null ) {
             sourcePanel.highlightDeclaration(object.getBeginLine(), object.getEndLine(), object.getBeginColumn());
         }
     }

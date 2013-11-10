@@ -8,7 +8,7 @@ import japa.parser.ast.body.AnnotationDeclaration;
  * Date: 3/11/13
  * Time: 10:35 AM
  */
-public class JavaAnnotation extends JavaObject<AnnotationDeclaration>{
+public class JavaAnnotation extends AbstractJavaObject<AnnotationDeclaration> {
 
 //    private ArrayList<>
 

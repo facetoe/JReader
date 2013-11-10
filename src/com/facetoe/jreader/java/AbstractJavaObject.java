@@ -12,7 +12,7 @@ package com.facetoe.jreader.java;
  *
  * @param <T>
  */
-public abstract class JavaObject<T> {
+public abstract class AbstractJavaObject<T> {
 
     public static final int CLASS = 0;
     public static final int INTERFACE = 1;
@@ -68,9 +68,10 @@ public abstract class JavaObject<T> {
 
     /**
      * Constructor.
+     *
      * @param t The type declaration.
      */
-    public JavaObject(T t) {
+    public AbstractJavaObject(T t) {
         typeDeclaration = t;
         extractDeclaration();
         extractFullDeclaration();
@@ -88,8 +89,10 @@ public abstract class JavaObject<T> {
 
 
     abstract public int getModifiers();
+
     /**
      * Get the full declaration.
+     *
      * @return The declaration.
      */
     public String getFullDeclaration() {
@@ -98,6 +101,7 @@ public abstract class JavaObject<T> {
 
     /**
      * Get the short declaration.
+     *
      * @return The short declaration.
      */
     public String getDeclaration() {
@@ -110,6 +114,7 @@ public abstract class JavaObject<T> {
 
     /**
      * Get the line where this declaration begins
+     *
      * @return The start line.
      */
     public int getBeginLine() {
@@ -118,6 +123,7 @@ public abstract class JavaObject<T> {
 
     /**
      * Get the line where this declaration ends
+     *
      * @return The end line.
      */
     public int getEndLine() {
@@ -126,6 +132,7 @@ public abstract class JavaObject<T> {
 
     /**
      * Get the column where this declaration begins
+     *
      * @return the start column
      */
     public int getBeginColumn() {
@@ -134,6 +141,7 @@ public abstract class JavaObject<T> {
 
     /**
      * Get the column where this declaration ends
+     *
      * @return the end column.
      */
     public int getEndColumn() {

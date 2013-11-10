@@ -12,7 +12,7 @@ import japa.parser.ast.body.MethodDeclaration;
 /**
  * Represents a method.
  */
-public class JavaMethod extends JavaObject<MethodDeclaration> {
+public class JavaMethod extends AbstractJavaObject<MethodDeclaration> {
 
     public JavaMethod(MethodDeclaration typeDec) {
         super(typeDec);

@@ -1,7 +1,7 @@
 package com.facetoe.jreader.gui;
 
 import com.facetoe.jreader.ProfileManager;
-import com.facetoe.jreader.java.JavaObject;
+import com.facetoe.jreader.java.AbstractJavaObject;
 import com.facetoe.jreader.java.JavaSourceFile;
 import com.facetoe.jreader.java.JavaSourceFileParser;
 import com.facetoe.jreader.utilities.Utilities;
@@ -45,7 +45,7 @@ class ToggleSourceTreeAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(treePane.isCollapsed()) {
+        if ( treePane.isCollapsed() ) {
             treePane.setCollapsed(false);
         } else {
             treePane.setCollapsed(true);
@@ -86,7 +86,7 @@ public class JSourcePanel extends AbstractPanel {
      * The top level object for this source file. It could be a class or interface,
      * and there can be any number of nested classes or interfaces within it.
      */
-    private JavaObject enclosingObject;
+    private AbstractJavaObject enclosingObject;
 
     /**
      * Profile manager instance for this panel.
@@ -290,13 +290,14 @@ public class JSourcePanel extends AbstractPanel {
     /**
      * This method first attempts to highlight the declaration. If nothing is found for the key,
      * it then attmepts to search for it.
+     *
      * @param key The declaration that we want to highlight.
      */
     @Override
     public void handleAutoComplete(String key) {
-        JavaObject obj = javaSourceFile.getObject(key);
+        AbstractJavaObject obj = javaSourceFile.getObject(key);
 
-         if ( obj != null ) {
+        if ( obj != null ) {
             highlightDeclaration(obj.getBeginLine(), obj.getEndLine(),
                     obj.getBeginColumn());
         } else {
@@ -306,14 +307,14 @@ public class JSourcePanel extends AbstractPanel {
 
     private void handleTreeSearcg() {
         String text = searchField.getText();
-        if(text.isEmpty()) {
+        if ( text.isEmpty() ) {
             return;
         }
 
-        DefaultMutableTreeNode root = (DefaultMutableTreeNode)tree.getModel().getRoot();
-        for(Enumeration e = root.breadthFirstEnumeration() ; e.hasMoreElements() ;) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode)e.nextElement();
-            if(node.toString().equals(text)) {
+        DefaultMutableTreeNode root = ( DefaultMutableTreeNode ) tree.getModel().getRoot();
+        for ( Enumeration e = root.depthFirstEnumeration(); e.hasMoreElements(); ) {
+            DefaultMutableTreeNode node = ( DefaultMutableTreeNode ) e.nextElement();
+            if ( node.toString().equals(text) ) {
                 TreePath treePath = new TreePath(node.getPath());
                 tree.setSelectionPath(treePath);
                 tree.scrollPathToVisible(treePath);
@@ -324,12 +325,14 @@ public class JSourcePanel extends AbstractPanel {
         System.out.println("No!");
     }
 
-    /** This method attempts to find a string or regexp in the source file.
-     *  It first searches from the current position to the end of the file,
-     *  if that doesn't succeed it searches from the end of the file to the
-     *  beginning.
+    /**
+     * This method attempts to find a string or regexp in the source file.
+     * It first searches from the current position to the end of the file,
+     * if that doesn't succeed it searches from the end of the file to the
+     * beginning.
+     * <p/>
+     * It fires an ActionEvent if nothing is found or if there is a Regexp error.
      *
-     *  It fires an ActionEvent if nothing is found or if there is a Regexp error.
      * @param text    to search for
      * @param context The search context for this search.
      */
@@ -359,7 +362,7 @@ public class JSourcePanel extends AbstractPanel {
          * First, when the initial call succeeds in highlightEnclosingObject() the text would otherwise be deleted.
          * Doing it this way lets it hang around for a bit. Second, I think it looks better this way when a search
          * succeeds after an error.*/
-         if ( found && !waitingOnLabelReset ) {
+        if ( found && !waitingOnLabelReset ) {
             SwingWorker worker = new SwingWorker() {
                 @Override
                 protected Object doInBackground() throws Exception {
@@ -417,6 +420,7 @@ public class JSourcePanel extends AbstractPanel {
 
     /**
      * Add an action listener.
+     *
      * @param listener The listener to add.
      */
     void addActionListener(ActionListener listener) {
@@ -425,6 +429,7 @@ public class JSourcePanel extends AbstractPanel {
 
     /**
      * Notify listeners of progress.
+     *
      * @param event The progress information.
      */
     private void fireEvent(ActionEvent event) {

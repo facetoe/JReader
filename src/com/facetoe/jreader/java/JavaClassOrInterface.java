@@ -16,7 +16,7 @@ import java.util.HashMap;
  * Represents a class or interface. It can contain any number of methods, fields and constructors,
  * as well as multiple nested classes.
  */
-public class JavaClassOrInterface extends JavaObject<ClassOrInterfaceDeclaration> {
+public class JavaClassOrInterface extends AbstractJavaObject<ClassOrInterfaceDeclaration> {
 
     /**
      * The nested classes or interaces contained in this class or interface.
@@ -50,6 +50,7 @@ public class JavaClassOrInterface extends JavaObject<ClassOrInterfaceDeclaration
 
     /**
      * Constructor.
+     *
      * @param typeDec the ClassOrInterfaceDeclaration
      */
 
@@ -124,6 +125,7 @@ public class JavaClassOrInterface extends JavaObject<ClassOrInterfaceDeclaration
 
     /**
      * Add a constructor.
+     *
      * @param constructor The constructor to add.
      */
     public void addConstructor(JavaConstructor constructor) {
@@ -133,6 +135,7 @@ public class JavaClassOrInterface extends JavaObject<ClassOrInterfaceDeclaration
 
     /**
      * Add a field.
+     *
      * @param field The field to add.
      */
     public void addField(JavaField field) {
@@ -141,6 +144,7 @@ public class JavaClassOrInterface extends JavaObject<ClassOrInterfaceDeclaration
 
     /**
      * Add an enum.
+     *
      * @param javaEnum The enum to add.
      */
     public void addEnum(JavaEnum javaEnum) {
@@ -149,6 +153,7 @@ public class JavaClassOrInterface extends JavaObject<ClassOrInterfaceDeclaration
 
     /**
      * Add a method.
+     *
      * @param method The method to add.
      */
     public void addMethod(JavaMethod method) {
@@ -157,6 +162,7 @@ public class JavaClassOrInterface extends JavaObject<ClassOrInterfaceDeclaration
 
     /**
      * Add an annotation.
+     *
      * @param annotation
      */
     public void addAnnotation(JavaAnnotation annotation) {
@@ -165,6 +171,7 @@ public class JavaClassOrInterface extends JavaObject<ClassOrInterfaceDeclaration
 
     /**
      * Add a nested class or interface.
+     *
      * @param classOrInterface The nested class or interface to add.
      */
     public void addNestedClassOrInterface(JavaClassOrInterface classOrInterface) {
@@ -173,6 +180,7 @@ public class JavaClassOrInterface extends JavaObject<ClassOrInterfaceDeclaration
 
     /**
      * Return this class or interfaces methods.
+     *
      * @return Hash of the methods with the name as key and object as the value..
      */
     public HashMap<String, JavaMethod> getMethods() {
@@ -181,6 +189,7 @@ public class JavaClassOrInterface extends JavaObject<ClassOrInterfaceDeclaration
 
     /**
      * Return this class or interfaces constructor.
+     *
      * @return Hash of the constructor with the name as key and object as the value..
      */
     public HashMap<String, JavaConstructor> getConstructors() {
@@ -189,6 +198,7 @@ public class JavaClassOrInterface extends JavaObject<ClassOrInterfaceDeclaration
 
     /**
      * Return this class or interfaces enums.
+     *
      * @return Hash of the enums with the name as key and object as the value..
      */
     public HashMap<String, JavaEnum> getEnums() {
@@ -197,6 +207,7 @@ public class JavaClassOrInterface extends JavaObject<ClassOrInterfaceDeclaration
 
     /**
      * Return this class or interfaces fields.
+     *
      * @return Hash of the fields with the name as key and object as the value..
      */
     public HashMap<String, JavaField> getFields() {
@@ -205,6 +216,7 @@ public class JavaClassOrInterface extends JavaObject<ClassOrInterfaceDeclaration
 
     /**
      * Return this class or interfaces annotations.
+     *
      * @return
      */
     public HashMap<String, JavaAnnotation> getAnnotations() {
@@ -213,6 +225,7 @@ public class JavaClassOrInterface extends JavaObject<ClassOrInterfaceDeclaration
 
     /**
      * Return this class or interfaces nested classes.
+     *
      * @return Hash of the nested classes with the name as key and object as the value..
      */
     public HashMap<String, JavaClassOrInterface> getNestedClasses() {
@@ -225,6 +238,7 @@ public class JavaClassOrInterface extends JavaObject<ClassOrInterfaceDeclaration
 
     /**
      * Returns an int with 0 representing an class and 1 representing a interface.
+     *
      * @return the type.
      */
     public int getType() {

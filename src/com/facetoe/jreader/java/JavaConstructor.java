@@ -13,7 +13,7 @@ import japa.parser.ast.stmt.BlockStmt;
 /**
  * Represents a constructor.
  */
-public class JavaConstructor extends JavaObject<ConstructorDeclaration> {
+public class JavaConstructor extends AbstractJavaObject<ConstructorDeclaration> {
 
     public JavaConstructor(ConstructorDeclaration typeDec) {
         super(typeDec);

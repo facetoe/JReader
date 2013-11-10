@@ -7,18 +7,19 @@ package com.facetoe.jreader.gui;
  * Time: 12:30 PM
  */
 
-import com.facetoe.jreader.java.JavaObject;
+import com.facetoe.jreader.java.AbstractJavaObject;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-/** Class to hold item data.*/
-//TODO Refactor this to hold the actual object so you can add hover over tooltips.
+/**
+ * Class to hold item data.
+ */
 public class SourceItemNode extends DefaultMutableTreeNode {
-    private JavaObject javaObject;
+    private AbstractJavaObject javaObject;
     private String title;
     private int type;
 
-    public SourceItemNode(String title, JavaObject object) {
+    public SourceItemNode(String title, AbstractJavaObject object) {
         this.javaObject = object;
         this.title = title;
     }
@@ -40,7 +41,7 @@ public class SourceItemNode extends DefaultMutableTreeNode {
         return title;
     }
 
-    public JavaObject getJavaObject() {
+    public AbstractJavaObject getJavaObject() {
         return javaObject;
     }
 

@@ -56,7 +56,7 @@ public class SourceTree extends JTree {
 
     private SourceItemNode parseSourceFile(JavaSourceFile source) {
         SourceItemNode node = new SourceItemNode("Root", null);
-        for ( JavaObject object : sourceFile.getFileContents() ) {
+        for ( AbstractJavaObject object : sourceFile.getFileContents() ) {
             if ( object instanceof JavaClassOrInterface ) {
                 node.add(parseClass(( JavaClassOrInterface ) object));
 
@@ -76,7 +76,7 @@ public class SourceTree extends JTree {
     }
 
     private SourceItemNode parseEnum(JavaEnum javaEnum) {
-        return objectsToNode(javaEnum.getDeclaration(), JavaObject.ENUM, javaEnum.getConstants());
+        return objectsToNode(javaEnum.getDeclaration(), AbstractJavaObject.ENUM, javaEnum.getConstants());
     }
 
     /**
@@ -97,27 +97,27 @@ public class SourceTree extends JTree {
         }
 
         if ( aClass.hasConstructors() ) {
-            classNode.add(objectsToNode("Constructors", JavaObject.CONSTRUCTOR, aClass.getConstructors()));
+            classNode.add(objectsToNode("Constructors", AbstractJavaObject.CONSTRUCTOR, aClass.getConstructors()));
         }
         if ( aClass.hasMethods() ) {
-            classNode.add(objectsToNode("Methods", JavaObject.METHOD, aClass.getMethods()));
+            classNode.add(objectsToNode("Methods", AbstractJavaObject.METHOD, aClass.getMethods()));
         }
         if ( aClass.hasFields() ) {
-            classNode.add(objectsToNode("Fields", JavaObject.FIELD, aClass.getFields()));
+            classNode.add(objectsToNode("Fields", AbstractJavaObject.FIELD, aClass.getFields()));
         }
 
         if ( aClass.hasEnums() ) {
-            SourceItemNode enumsNode = new SourceItemNode("Enums", JavaObject.ENUM);
+            SourceItemNode enumsNode = new SourceItemNode("Enums", AbstractJavaObject.ENUM);
             for ( String key : aClass.getEnums().keySet() ) {
                 JavaEnum anEnum = aClass.getEnums().get(key);
-                enumsNode.add(objectsToNode(anEnum.getDeclaration(), JavaObject.ENUM, anEnum.getConstants()));
+                enumsNode.add(objectsToNode(anEnum.getDeclaration(), AbstractJavaObject.ENUM, anEnum.getConstants()));
             }
             classNode.add(enumsNode);
         }
 
         /* If we have nested classes or interfaces, add them as well. */
         if ( aClass.hasNestedClasses() ) {
-            SourceItemNode nestedClassNode = new SourceItemNode("Nested Classes", JavaObject.CLASS);
+            SourceItemNode nestedClassNode = new SourceItemNode("Nested Classes", AbstractJavaObject.CLASS);
             ArrayList<SourceItemNode> nestedClasses = new ArrayList<SourceItemNode>();
 
             for ( JavaClassOrInterface nestedClass : aClass.getNestedClassesAsArrayList() ) {
@@ -142,12 +142,12 @@ public class SourceTree extends JTree {
     }
 
     /**
-     * Adds all the constructors to a SourceItemNode.
+     * Adds all the objects to a SourceItemNode.
      *
      * @param objects The objects to add.
-     * @return SourceItemNode containing the items.
+     * @return SourceItemNode containing the objects.
      */
-    private SourceItemNode objectsToNode(String nodeTitle, int type, HashMap<String, ? extends JavaObject> objects) {
+    private SourceItemNode objectsToNode(String nodeTitle, int type, HashMap<String, ? extends AbstractJavaObject> objects) {
         SourceItemNode rootNode = new SourceItemNode(nodeTitle, type);
         ArrayList<String> items = new ArrayList<String>(objects.keySet());
         Collections.sort(items);
@@ -159,11 +159,11 @@ public class SourceTree extends JTree {
 
 
     /**
-     * Class to render icons in the tree view. This can be improved quite a bit by
-     * adding modfiers to JavaObject during source file parsing. Then you can have different
-     * icons for private, final, protected etc.
+     * Class to render icons in the tree view.
      */
     private class SourceViewIconRenderer extends DefaultTreeCellRenderer {
+
+        /* I generated these by  */
         private static final int DEFAULT = 0;
         private static final int ABSTRACT = 1024;
         private static final int ABSTRACT_STATIC_CLASS = 1032;
@@ -258,11 +258,10 @@ public class SourceTree extends JTree {
                 return component;
             }
             ImageIcon icon;
-            JavaObject object = node.getJavaObject();
+            AbstractJavaObject object = node.getJavaObject();
             if ( object == null ) {
                 icon = getTypeIcon(node.getType());
-                if ( icon != null ) ;
-                {
+                if ( icon != null ) {
                     setIcon(icon);
                 }
             } else {
@@ -277,7 +276,7 @@ public class SourceTree extends JTree {
         private ImageIcon getModifierIcon(int modifiers, int type) {
             URL iconUrl = null;
             int result;
-            if ( type == JavaObject.METHOD || type == JavaObject.CONSTRUCTOR ) {
+            if ( type == AbstractJavaObject.METHOD || type == AbstractJavaObject.CONSTRUCTOR ) {
                 result = simplifyModifier(modifiers);
                 switch ( result ) {
                     case PUBLIC:
@@ -296,7 +295,7 @@ public class SourceTree extends JTree {
                         iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/method_default.png");
                         break;
                 }
-            } else if ( type == JavaObject.FIELD ) {
+            } else if ( type == AbstractJavaObject.FIELD ) {
                 result = simplifyModifier(modifiers);
                 switch ( result ) {
                     case PUBLIC:
@@ -315,7 +314,7 @@ public class SourceTree extends JTree {
                         iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/field_default.png");
                         break;
                 }
-            } else if ( type == JavaObject.CLASS ) {
+            } else if ( type == AbstractJavaObject.CLASS ) {
                 result = simplifyModifier(modifiers);
                 switch ( result ) {
                     case PUBLIC:
@@ -344,25 +343,25 @@ public class SourceTree extends JTree {
         private ImageIcon getTypeIcon(int type) {
             URL iconUrl = null;
             switch ( type ) {
-                case JavaObject.CLASS:
+                case AbstractJavaObject.CLASS:
                     iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/class.png");
                     break;
-                case JavaObject.INTERFACE:
+                case AbstractJavaObject.INTERFACE:
                     iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/interface.png");
                     break;
-                case JavaObject.CONSTRUCTOR:
+                case AbstractJavaObject.CONSTRUCTOR:
                     iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/constructor.gif");
                     break;
-                case JavaObject.METHOD:
+                case AbstractJavaObject.METHOD:
                     iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/method.gif");
                     break;
-                case JavaObject.FIELD:
+                case AbstractJavaObject.FIELD:
                     iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/field.gif");
                     break;
-                case JavaObject.ENUM:
+                case AbstractJavaObject.ENUM:
                     iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/enum.png");
                     break;
-                case JavaObject.ANNOTATION:
+                case AbstractJavaObject.ANNOTATION:
                     iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/annotation.gif");
                     break;
 
