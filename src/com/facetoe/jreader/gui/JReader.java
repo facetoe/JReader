@@ -203,12 +203,11 @@ public class JReader extends JFrame {
 
                 log.debug("newSourceTab called with: " + filePath);
 
-                JSourcePanel newTab = new JSourcePanel(filePath, bottomPanel);
+                JSourcePanel newTab = new JSourcePanel(filePath, bottomPanel, topPanel);
                 addCloseButtonToTab(newTab, title);
 
                 /* These buttons don't make sense in JSourcePanel. */
                 disableBrowserButtons();
-                disableNewSourceOption();
 
                 tabbedPane.setSelectedComponent(newTab);
                 resetSearchBar();
@@ -312,14 +311,16 @@ public class JReader extends JFrame {
 
         currentTab = ( AbstractPanel ) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
         if ( currentTab instanceof JReaderPanel ) {
-            handleSourceButton((( JReaderPanel ) currentTab).getCurrentPage());
-            enableBrowserButtons();
+            /* Change from Toggle Tree button to Source button */
+            topPanel.setSourceButton(JReaderTopPanel.SOURCE_BUTTON, new NewSourceTabAction(this));
             topPanel.removeAutoCompleteWords(prevWords);
             topPanel.addAutoCompleteWords(currentTab.getAutoCompleteWords());
 
+            handleSourceButton((( JReaderPanel ) currentTab).getCurrentPage());
+            enableBrowserButtons();
+
         } else {
             disableBrowserButtons();
-            disableNewSourceOption();
             topPanel.removeAutoCompleteWords(prevWords);
             topPanel.addAutoCompleteWords(currentTab.getAutoCompleteWords());
         }

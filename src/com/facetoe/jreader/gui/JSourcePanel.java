@@ -39,6 +39,7 @@ class ToggleSourceTreeAction extends AbstractAction {
     SourceTree tree;
 
     public ToggleSourceTreeAction(JXCollapsiblePane treePane, SourceTree tree) {
+        super("Togge Tree");
         this.treePane = treePane;
         this.tree = tree;
     }
@@ -94,7 +95,7 @@ public class JSourcePanel extends AbstractPanel {
     private final ProfileManager profileManager;
 
     /**
-     * Listeners that will be notified of parsing progress and search errors.
+     * Listeners that will be notified of parsing progress and search errors. //TODO Figure out why this isn't working.
      */
     private final ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
 
@@ -137,19 +138,25 @@ public class JSourcePanel extends AbstractPanel {
      * AutoCompletion field for the SourceTree.
      */
     private AutoCompleteTextField searchField;
+
+    /**
+     * Button for search.
+     */
     private JButton btnSearch;
+
+    private JReaderTopPanel topPanel;
 
     /**
      * Creates a new instance of JSourcePanel and displays the contents of filePath.
      *
      * @param filePath of the file containing the code to be displayed.
      */
-    public JSourcePanel(String filePath, ActionListener listener) {
+    public JSourcePanel(String filePath, ActionListener listener, JReaderTopPanel topPanel) {
         addActionListener(listener);
         profileManager = ProfileManager.getInstance();
         this.sourceFilePath = filePath;
+        this.topPanel = topPanel;
         fileName = new File(sourceFilePath).getName();
-
 
         /* Set up our text area. */
         codeArea = new RSyntaxTextArea();
@@ -207,7 +214,7 @@ public class JSourcePanel extends AbstractPanel {
         searchPanel = new JPanel(new BorderLayout());
         searchField = new AutoCompleteTextField();
         searchField.addWordsToTrie(javaSourceFile.getAllDeclarations());
-        btnSearch = new JButton("Filter");
+        btnSearch = new JButton("Search");
 
         btnSearch.addActionListener(new ActionListener() {
             @Override
@@ -225,6 +232,8 @@ public class JSourcePanel extends AbstractPanel {
         KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, keyStrokeAndKey);
         getActionMap().put(keyStrokeAndKey, new ToggleSourceTreeAction(collapsiblePane, tree));
+
+        topPanel.setSourceButton(JReaderTopPanel.TREE_BUTTON, new ToggleSourceTreeAction(collapsiblePane, tree));
 
         searchPanel.add(searchField, BorderLayout.CENTER);
         searchPanel.add(btnSearch, BorderLayout.EAST);

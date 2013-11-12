@@ -14,6 +14,9 @@ import java.util.ArrayList;
  */
 public class JReaderTopPanel extends JPanel {
 
+    public static final int SOURCE_BUTTON = 0;
+    public static final int TREE_BUTTON = 1;
+
     private JButton btnBack;
     private JButton btnNext;
     private JButton btnHome;
@@ -43,12 +46,11 @@ public class JReaderTopPanel extends JPanel {
         btnHome = new JButton(Utilities.readIcon(this.getClass().getResourceAsStream
                 ("/com/facetoe/jreader/resources/icons/home.png"), 20, 20));
 
-        btnSource = new JButton(new NewSourceTabAction(this.jReader));
-        btnSource.setIcon(Utilities.readIcon(this.getClass().getResourceAsStream
-                ("/com/facetoe/jreader/resources/icons/javaSource.png"), 20, 20));
-
         btnSearch = new JButton(Utilities.readIcon(this.getClass().getResourceAsStream
                 ("/com/facetoe/jreader/resources/icons/search.png"), 20, 20));
+
+        btnSource = new JButton();
+        setSourceButton(SOURCE_BUTTON, new NewSourceTabAction(this.jReader));
     }
 
     /**
@@ -71,6 +73,20 @@ public class JReaderTopPanel extends JPanel {
         add(leftBar, BorderLayout.WEST);
         add(rightBar, BorderLayout.EAST);
         setBorder(BorderFactory.createEmptyBorder(3, 5, 3, 5));
+    }
+
+    public void setSourceButton(int type, Action action) {
+        if ( type == SOURCE_BUTTON ) {
+            btnSource.setAction(action);
+            btnSource.setIcon(Utilities.readIcon(this.getClass().getResourceAsStream
+                    ("/com/facetoe/jreader/resources/icons/javaSource.png"), 20, 20));
+        } else if ( type == TREE_BUTTON ) {
+            btnSource.setAction(action);
+            btnSource.setIcon(Utilities.readIcon(this.getClass().getResourceAsStream
+                    ("/com/facetoe/jreader/resources/icons/tree_diagramm.png"), 20, 20));
+        } else {
+            throw new IllegalArgumentException("No such type: " + type);
+        }
     }
 
     public JButton getBtnBack() {

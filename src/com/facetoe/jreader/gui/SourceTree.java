@@ -163,7 +163,11 @@ public class SourceTree extends JTree {
      */
     private class SourceViewIconRenderer extends DefaultTreeCellRenderer {
 
-        /* I generated these by  */
+        /* I generated these by parsing each Java source file and writing the full declaration and modifier
+           for every method, class etc to a file. Next I sorted the file and deleted lines with duplicate numbers.
+           Finally I wrote a Ruby script to take each line and generate these variable declarations.
+           As far as I can tell they are accurate but I'm not 100% sure.
+          */
         private static final int DEFAULT = 0;
         private static final int ABSTRACT = 1024;
         private static final int ABSTRACT_STATIC_CLASS = 1032;
