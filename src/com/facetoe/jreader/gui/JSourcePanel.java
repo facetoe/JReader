@@ -22,6 +22,7 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -40,6 +41,7 @@ class ToggleSourceTreeAction extends AbstractAction {
 
     public ToggleSourceTreeAction(JXCollapsiblePane treePane, SourceTree tree) {
         super("Togge Tree");
+        putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_T));
         this.treePane = treePane;
         this.tree = tree;
     }
@@ -164,10 +166,13 @@ public class JSourcePanel extends AbstractPanel {
         codeArea.setCodeFoldingEnabled(true);
         codeArea.setAntiAliasingEnabled(true);
         codeArea.setEditable(false);
+        codeScrollPane = new RTextScrollPane(codeArea);
+        codeScrollPane.setFoldIndicatorEnabled(true);
+        setLayout(new BorderLayout());
+        add(codeScrollPane);
 
         //TODO Figure out a way for the user to set themes.
         /* Read in the theme for this text area. */
-        fireEvent(new ActionEvent(this, 0, "Loading file: " + fileName));
         try {
             InputStream in = getClass().getResourceAsStream("/com/facetoe/jreader/resources/themes/ideaTheme.xml");
             Theme theme = Theme.load(in);
@@ -178,11 +183,7 @@ public class JSourcePanel extends AbstractPanel {
             System.err.println("Something happened: " + ex.toString());
         }
 
-        codeScrollPane = new RTextScrollPane(codeArea);
-        codeScrollPane.setFoldIndicatorEnabled(true);
-        setLayout(new BorderLayout());
-        add(codeScrollPane);
-
+        fireEvent(new ActionEvent(this, 0, "Loading file: " + fileName)); //TODO figure out why this doesn't display anymore.
         try {
             String code = Utilities.readFile(Paths.get(sourceFilePath).toString(), StandardCharsets.UTF_8);
             codeArea.setText(code);
@@ -198,6 +199,8 @@ public class JSourcePanel extends AbstractPanel {
         } else {
             log.error("Source file was null: " + filePath);
         }
+
+        /* Set up our tree view. */
         initTreeView();
     }
 
@@ -210,7 +213,6 @@ public class JSourcePanel extends AbstractPanel {
         treeScrollPane.setPreferredSize(new Dimension(300, 200));
 
         collapsiblePane = new JXCollapsiblePane();
-
         searchPanel = new JPanel(new BorderLayout());
         searchField = new AutoCompleteTextField();
         searchField.addWordsToTrie(javaSourceFile.getAllDeclarations());
@@ -219,25 +221,25 @@ public class JSourcePanel extends AbstractPanel {
         btnSearch.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                handleTreeSearcg();
+                handleTreeSearch();
             }
         });
         searchField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                handleTreeSearcg();
+                handleTreeSearch();
             }
         });
+
+        /* Set up action and button for toggling the tree view. */
         String keyStrokeAndKey = "control T";
         KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, keyStrokeAndKey);
         getActionMap().put(keyStrokeAndKey, new ToggleSourceTreeAction(collapsiblePane, tree));
-
         topPanel.setSourceButton(JReaderTopPanel.TREE_BUTTON, new ToggleSourceTreeAction(collapsiblePane, tree));
 
         searchPanel.add(searchField, BorderLayout.CENTER);
         searchPanel.add(btnSearch, BorderLayout.EAST);
-
         treePanel = new JPanel(new BorderLayout());
         treePanel.add(treeScrollPane, BorderLayout.CENTER);
         treePanel.add(searchPanel, BorderLayout.NORTH);
@@ -249,16 +251,8 @@ public class JSourcePanel extends AbstractPanel {
         collapsiblePane.setCollapsed(true);
 
         setLayout(new BorderLayout());
-        // Put the tree on the left
         add("West", collapsiblePane);
-
-        // And the pane on the right.
         add("Center", codeScrollPane);
-
-        // Show/hide the "Controls"
-        JButton toggle = new JButton(new ToggleSourceTreeAction(collapsiblePane, tree));
-
-        add("South", toggle);
     }
 
     /**
@@ -314,7 +308,7 @@ public class JSourcePanel extends AbstractPanel {
         }
     }
 
-    private void handleTreeSearcg() {
+    private void handleTreeSearch() {
         String text = searchField.getText();
         if ( text.isEmpty() ) {
             return;
