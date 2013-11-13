@@ -57,7 +57,7 @@ class ToggleSourceTreeAction extends AbstractAction {
     SourceTree tree;
 
     public ToggleSourceTreeAction(JXCollapsiblePane treePane, SourceTree tree) {
-        super("Togge Tree");
+        super("Toggle Tree");
         putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_T));
         this.treePane = treePane;
         this.tree = tree;
