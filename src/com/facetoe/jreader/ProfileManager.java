@@ -1,3 +1,20 @@
+/*   
+*    Copyright (C) 2013  facetoe - facetoe@ymail.com
+*
+*    This program is free software; you can redistribute it and/or modify
+*    it under the terms of the GNU General Public License as published by
+*    the Free Software Foundation; either version 2 of the License, or
+*    (at your option) any later version.
+*
+*    This program is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*    GNU General Public License for more details.
+*
+*    You should have received a copy of the GNU General Public License along
+*    with this program; if not, write to the Free Software Foundation, Inc.,
+*    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
 package com.facetoe.jreader;
 
 import com.facetoe.jreader.java.JavaDocParser;
@@ -248,6 +265,7 @@ public class ProfileManager implements Serializable {
 
     /**
      * Get all the profile names.
+     *
      * @return Profile names.
      */
     public ArrayList<String> getProfileNames() {
@@ -256,6 +274,7 @@ public class ProfileManager implements Serializable {
 
     /**
      * Add action listeners. They will be informed of parsing progress.
+     *
      * @param listener Listener.
      */
     public void addActionListener(ActionListener listener) {
@@ -264,6 +283,7 @@ public class ProfileManager implements Serializable {
 
     /**
      * The full path to the current profile directory.
+     *
      * @return The path.
      */
     public String getPath() {
@@ -275,6 +295,7 @@ public class ProfileManager implements Serializable {
 
     /**
      * Get all the class names for this profiles class data.
+     *
      * @return Class names.
      */
     public ArrayList<String> getClassNames() {
@@ -284,6 +305,7 @@ public class ProfileManager implements Serializable {
     /**
      * Get the HashMap containing class names and relative paths for
      * this profile.
+     *
      * @return Class data.
      */
     public HashMap<String, String> getClassData() {
@@ -292,6 +314,7 @@ public class ProfileManager implements Serializable {
 
     /**
      * Where this profiles documentation is located.
+     *
      * @return Path to documentation.
      */
     public String getDocDir() {
@@ -300,6 +323,7 @@ public class ProfileManager implements Serializable {
 
     /**
      * Where the source code for this profile is located.
+     *
      * @return Path to the source code.
      */
     public String getSrcDir() {
@@ -308,6 +332,7 @@ public class ProfileManager implements Serializable {
 
     /**
      * Get the homepage for this profile.
+     *
      * @return The homepage path.
      */
     public String getHome() {
@@ -316,6 +341,7 @@ public class ProfileManager implements Serializable {
 
     /**
      * Get the search context for this profile.
+     *
      * @return
      */
     public SearchContext getSearchContext() {
@@ -324,7 +350,6 @@ public class ProfileManager implements Serializable {
     }
 
     /**
-     *
      * @return Whether regexp is enabled in this profiles search context.
      */
     public boolean regexpIsEnabled() {
@@ -332,7 +357,6 @@ public class ProfileManager implements Serializable {
     }
 
     /**
-     *
      * @return Whether whole word is enabled in this profiles search context.
      */
     public boolean wholeWordIsEnabled() {
@@ -340,7 +364,6 @@ public class ProfileManager implements Serializable {
     }
 
     /**
-     *
      * @return Whether match case is enabled in this profiles search context.
      */
     public boolean matchCaseIsEnabled() {
@@ -349,6 +372,7 @@ public class ProfileManager implements Serializable {
 
     /**
      * Set regexp enabled.
+     *
      * @param value Boolean.
      */
     public void setRegexpEnabled(boolean value) {
@@ -357,6 +381,7 @@ public class ProfileManager implements Serializable {
 
     /**
      * Set whole word enabled.
+     *
      * @param value Boolean.
      */
     public void setWholeWordEnabled(boolean value) {
@@ -365,6 +390,7 @@ public class ProfileManager implements Serializable {
 
     /**
      * Set match case enabled.
+     *
      * @param value Boolean.
      */
     public void setMatchCaseEnabled(boolean value) {
@@ -423,6 +449,7 @@ public class ProfileManager implements Serializable {
 
         /**
          * Loads the class data if it isn't already loaded for this profile.
+         *
          * @return The class data.
          */
         HashMap<String, String> getClassData() {

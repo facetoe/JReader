@@ -1,3 +1,20 @@
+/*   
+*    Copyright (C) 2013  facetoe - facetoe@ymail.com
+*
+*    This program is free software; you can redistribute it and/or modify
+*    it under the terms of the GNU General Public License as published by
+*    the Free Software Foundation; either version 2 of the License, or
+*    (at your option) any later version.
+*
+*    This program is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*    GNU General Public License for more details.
+*
+*    You should have received a copy of the GNU General Public License along
+*    with this program; if not, write to the Free Software Foundation, Inc.,
+*    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
 package com.facetoe.jreader.utilities;
 
 import net.lingala.zip4j.core.ZipFile;
@@ -29,7 +46,8 @@ public class UnZipper {
 
     /**
      * Constructor.
-     * @param sourceFile The file to be unzipped.
+     *
+     * @param sourceFile      The file to be unzipped.
      * @param destinationFile The location to unzip it to.
      */
     public UnZipper(String sourceFile, String destinationFile) {
@@ -39,6 +57,7 @@ public class UnZipper {
 
     /**
      * Unizp the file.
+     *
      * @throws Exception
      */
     public void unzip() throws Exception {
@@ -65,9 +84,10 @@ public class UnZipper {
 
     /**
      * Notify the listers of progress.
+     *
      * @param eventType The type of event.
-     * @param message The message.
-     * @param progress How far we have progressed.
+     * @param message   The message.
+     * @param progress  How far we have progressed.
      */
     void fireEvent(int eventType, String message, long progress) {
         for ( ActionListener listener : listeners ) {
@@ -77,6 +97,7 @@ public class UnZipper {
 
     /**
      * Add an action listener.
+     *
      * @param listener The action listener to add.
      */
     public void addActionListener(ActionListener listener) {

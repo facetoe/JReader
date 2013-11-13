@@ -1,3 +1,20 @@
+/*   
+*    Copyright (C) 2013  facetoe - facetoe@ymail.com
+*
+*    This program is free software; you can redistribute it and/or modify
+*    it under the terms of the GNU General Public License as published by
+*    the Free Software Foundation; either version 2 of the License, or
+*    (at your option) any later version.
+*
+*    This program is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*    GNU General Public License for more details.
+*
+*    You should have received a copy of the GNU General Public License along
+*    with this program; if not, write to the Free Software Foundation, Inc.,
+*    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
 package com.facetoe.jreader.utilities;
 
 import org.apache.log4j.Logger;
@@ -59,6 +76,7 @@ public class FileDownloader implements RBCWrapperDelegate {
 
     /**
      * Constructor.
+     *
      * @param localPath to download the file to.
      * @param remoteURL of the file to download.
      */
@@ -70,6 +88,7 @@ public class FileDownloader implements RBCWrapperDelegate {
 
     /**
      * Download the file.
+     *
      * @throws IOException
      * @throws CancellationException
      */
@@ -86,7 +105,8 @@ public class FileDownloader implements RBCWrapperDelegate {
 
     /**
      * This allows us to update the progress.
-     * @param rbc Wrapper class that contains useful information.
+     *
+     * @param rbc      Wrapper class that contains useful information.
      * @param progress How far we have progressed.
      */
     public void rbcProgressCallback(RBCWrapper rbc, double progress) {
@@ -99,9 +119,10 @@ public class FileDownloader implements RBCWrapperDelegate {
 
     /**
      * How big the file to download is.
-     *
+     * <p/>
      * Note: This always returns -1 for the Java source code zip file.
      * To get around this the file size is hardcoded.
+     *
      * @param url
      * @return
      */
