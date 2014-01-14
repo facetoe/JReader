@@ -1,0 +1,400 @@
+/*   
+*    Copyright (C) 2013  facetoe - facetoe@ymail.com
+*
+*    This program is free software; you can redistribute it and/or modify
+*    it under the terms of the GNU General Public License as published by
+*    the Free Software Foundation; either version 2 of the License, or
+*    (at your option) any later version.
+*
+*    This program is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*    GNU General Public License for more details.
+*
+*    You should have received a copy of the GNU General Public License along
+*    with this program; if not, write to the Free Software Foundation, Inc.,
+*    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+package com.facetoe.jreader;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import org.apache.log4j.Logger;
+import org.fife.ui.rtextarea.SearchContext;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.util.ArrayList;
+
+
+/**
+ * This is the main class of the application. It is responsible for building the UI and
+ * responding to user input.
+ */
+public class JReader {
+    private final Logger log = Logger.getLogger(this.getClass());
+
+    private JFrame frame;
+    private JReaderMenuBar menuBar;
+    private JReaderTopPanel topPanel;
+    private JReaderBottomPanel bottomPanel;
+    private ProfileManager profileManager = ProfileManager.getInstance();
+    private JTabbedPane tabbedPane;
+    private AbstractPanel currentTab;
+
+    public JReader() {
+        if (!JReaderSetup.isSetup()) {
+            new SetupWindow();
+        }
+        buildAndShowUI();
+    }
+
+    private void buildAndShowUI() {
+        constructInterface();
+        initActions();
+        initListeners();
+        createAndShowNewReaderTab();
+        initAutoCompleteWords();
+        displayUI();
+    }
+
+    private void constructInterface() {
+        frame = new JFrame("Jreader");
+        frame.setPreferredSize(new Dimension(1024, 600));
+        //setExtendedState(Frame.MAXIMIZED_BOTH);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+        frame.setJMenuBar(new JReaderMenuBar(this));
+        menuBar = new JReaderMenuBar(this);
+        topPanel = new JReaderTopPanel(this);
+        frame.add(topPanel, BorderLayout.NORTH);
+        bottomPanel = new JReaderBottomPanel(this);
+        frame.add(bottomPanel, BorderLayout.SOUTH);
+        tabbedPane = new JTabbedPane();
+        frame.add(tabbedPane, BorderLayout.CENTER);
+        frame.pack();
+    }
+
+    private void initActions() {
+        addAction(new CloseTabAction(tabbedPane, this), "control W");
+        addAction(new NewReaderTabAction(this), "control N");
+        addAction(new NewSourceTabAction(this), "control S");
+        addAction(new QuitAction(this), "control Q");
+    }
+
+    void addAction(Action action, String keystroke) {
+        KeyStroke keyStroke = KeyStroke.getKeyStroke(keystroke);
+        frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, keyStroke);
+        frame.getRootPane().getActionMap().put(keyStroke, action);
+    }
+
+    /**
+     * Create and show a new JReaderPanel.
+     */
+    public void createAndShowNewReaderTab() {
+        final JReaderPanel readerPanel = createReaderPanel();
+        readerPanel.addChangeListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, final String oldURL, final String newURL) {
+                updateReaderUI(newURL);
+            }
+        });
+        readerPanel.addPopupListner(new JReaderPopUpListener(this));
+        showNewReaderTab(readerPanel);
+    }
+
+    private JReaderPanel createReaderPanel() {
+        final String title = "Jreader";
+        final JReaderPanel readerPanel = new JReaderPanel();
+
+        // If it's the first tab don't add a close button.
+        if (tabbedPane.getTabCount() == 0) {
+            tabbedPane.add(title, readerPanel);
+        } else {
+            addCloseButtonToTab(readerPanel, title);
+        }
+        return readerPanel;
+    }
+
+    private void addCloseButtonToTab(JPanel tab, String title) {
+        tabbedPane.add(title, tab);
+        int index = tabbedPane.indexOfComponent(tab);
+        ButtonTabComponent tabButton = new ButtonTabComponent(tabbedPane);
+        tabbedPane.setTabComponentAt(index, tabButton);
+    }
+
+    private void updateReaderUI(final String newURL) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                updateReaderLabel(newURL);
+                updateReaderTitle(newURL);
+                handleSourceButton(newURL);
+            }
+        });
+    }
+
+    private void updateReaderTitle(String newURL) {
+        String tabTitle = Utilities.extractTitle(newURL);
+        tabbedPane.setTitleAt(tabbedPane.getSelectedIndex(), tabTitle);
+    }
+
+    private void updateReaderLabel(String newURL) {
+        String systemPath = Utilities.browserPathToSystemPath(newURL);
+        bottomPanel.getLblStatus().setText(systemPath);
+    }
+
+    private void showNewReaderTab(JReaderPanel readerPanel) {
+        tabbedPane.setSelectedComponent(readerPanel);
+        disableNewSourceOption();
+        readerPanel.home();
+    }
+
+    private void initAutoCompleteWords() {
+        topPanel.addAutoCompleteWords(profileManager.getClassNames());
+        currentTab = (AbstractPanel) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
+    }
+
+    private void initListeners() {
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                saveProfiles();
+                System.exit(0);
+            }
+        });
+        topPanel.getBtnBack().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JReaderPanel jReaderPanel = (JReaderPanel) currentTab;
+                jReaderPanel.back();
+            }
+        });
+        topPanel.getBtnNext().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JReaderPanel jReaderPanel = (JReaderPanel) currentTab;
+                jReaderPanel.next();
+            }
+        });
+        topPanel.getBtnHome().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JReaderPanel jReaderPanel = (JReaderPanel) currentTab;
+                jReaderPanel.home();
+            }
+        });
+        topPanel.getBtnSearch().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleSearch();
+            }
+        });
+        topPanel.getSearchBar().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleSearch();
+            }
+        });
+        tabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                handleTabChange();
+            }
+        });
+    }
+
+    private void displayUI() {
+        frame.setVisible(true);
+    }
+
+    /**
+     * Creates a new source tab and sets it as the currently selected tab.
+     */
+    public void createAndShowNewSourceTab() {
+        JReaderPanel panel = (JReaderPanel) currentTab;
+        final String filePath = Utilities.docPathToSourcePath(panel.getCurrentPath());
+        final String title = Utilities.extractFileName(filePath);
+
+        if (!Utilities.isGoodSourcePath(filePath)) {
+            JOptionPane.showMessageDialog(frame,
+                    filePath + " does not exist.",
+                    "File Not Found",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        JSourcePanel newTab = createNewSourceTab(filePath, title);
+        showNewSourceTab(newTab);
+
+    }
+
+    private JSourcePanel createNewSourceTab(String filePath, String title) {
+        log.debug("createAndShowNewSourceTab called with: " + filePath);
+        JSourcePanel newTab = new JSourcePanel(filePath, bottomPanel, topPanel);
+        addCloseButtonToTab(newTab, title);
+        return newTab;
+    }
+
+    private void showNewSourceTab(JSourcePanel newTab) {
+        // These buttons don't make sense in JSourcePanel.
+        disableBrowserButtons();
+        setCurrentTab(newTab);
+        newTab.highlightEnclosingClassOrInterface();
+    }
+
+    private void setCurrentTab(AbstractPanel newTab) {
+        tabbedPane.setSelectedComponent(newTab);
+        resetSearchBar();
+    }
+
+    /**
+     * Handle changing tabs. Remove and add autocomplete words, enable/disable buttons.
+     */
+    private void handleTabChange() {
+        if (currentTab == null) return;
+
+        /* We want to remove the previous panels words so they don't pollute the new panels auto complete. */
+        ArrayList<String> prevWords = currentTab.getAutoCompleteWords();
+        currentTab = (AbstractPanel) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
+
+        if (currentTab instanceof JReaderPanel) {
+            handleReaderTabChange(prevWords);
+        } else {
+            handleSourceTabChange(prevWords);
+        }
+
+        /* Remove whatever text is there becuase it's annoying always having to delete it. */
+        topPanel.setSearchBarText("");
+    }
+
+    private void handleSourceTabChange(ArrayList<String> prevWords) {
+        disableBrowserButtons();
+        topPanel.removeAutoCompleteWords(prevWords);
+        topPanel.addAutoCompleteWords(currentTab.getAutoCompleteWords());
+    }
+
+    private void handleReaderTabChange(ArrayList<String> prevWords) {
+        topPanel.setSourceButton(JReaderTopPanel.SOURCE_BUTTON, new NewSourceTabAction(this));
+        topPanel.removeAutoCompleteWords(prevWords);
+        topPanel.addAutoCompleteWords(currentTab.getAutoCompleteWords());
+        String currentPath = ((JReaderPanel) currentTab).getCurrentPath();
+        handleSourceButton(currentPath);
+        enableBrowserButtons();
+    }
+
+    private void handleSearch() {
+        currentTab.handleAutoComplete(topPanel.getSearchBarText());
+    }
+
+    public void addJavaDocClassNames() {
+        topPanel.addAutoCompleteWords(profileManager.getClassNames());
+    }
+
+    public void removeJavaDocClassNames() {
+        topPanel.removeAutoCompleteWords(profileManager.getClassNames());
+    }
+
+    private void enableBrowserButtons() {
+        topPanel.getBtnBack().setEnabled(true);
+        topPanel.getBtnNext().setEnabled(true);
+        topPanel.getBtnHome().setEnabled(true);
+    }
+
+    private void disableBrowserButtons() {
+        topPanel.getBtnBack().setEnabled(false);
+        topPanel.getBtnNext().setEnabled(false);
+        topPanel.getBtnHome().setEnabled(false);
+    }
+
+    /**
+     * Decide whether or not to show the New Source option.
+     */
+    private void handleSourceButton(String newPath) {
+        assert newPath != null;
+        String srcPath = Utilities.docPathToSourcePath(newPath);
+        if (Utilities.isGoodSourcePath(srcPath)) {
+            enableNewSourceOption();
+        } else {
+            disableNewSourceOption();
+        }
+    }
+
+    private void enableNewSourceOption() {
+        topPanel.getBtnSource().setEnabled(true);
+        menuBar.enableNewSourceOption();
+    }
+
+    private void disableNewSourceOption() {
+        topPanel.getBtnSource().setEnabled(false);
+        menuBar.disableNewSourceOption();
+    }
+
+    public void resetSearchBar() {
+        topPanel.setSearchBarText("");
+        topPanel.getSearchBar().requestFocus();
+    }
+
+    public JPanel getCurrentTab() {
+        return currentTab;
+    }
+
+    public SearchContext getSearchContext() {
+        return profileManager.getSearchContext();
+    }
+
+    public void saveProfiles() {
+        try {
+            log.debug("Saving profiles..");
+            profileManager.saveProfiles();
+            log.debug("Success!");
+            System.exit(0);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    public static void main(String[] args) {
+        Logger log = Logger.getLogger(JReader.class);
+
+        try {
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (ClassNotFoundException e1) {
+                log.error(e1.getMessage(), e1);
+            } catch (InstantiationException e1) {
+                log.error(e1.getMessage(), e1);
+            } catch (IllegalAccessException e1) {
+                log.error(e1.getMessage(), e1);
+            } catch (UnsupportedLookAndFeelException e1) {
+                log.error(e1.getMessage(), e1);
+            }
+        }
+
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new JReader();
+            }
+        });
+    }
+}
+
+
+
+
+
+
+
