@@ -15,7 +15,7 @@
 *    with this program; if not, write to the Free Software Foundation, Inc.,
 *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-package com.facetoe.jreader.java;
+package com.facetoe.jreader;
 
 import japa.parser.JavaParser;
 import japa.parser.ParseException;
@@ -24,7 +24,6 @@ import japa.parser.ast.body.*;
 import japa.parser.ast.visitor.GenericVisitorAdapter;
 import org.apache.log4j.Logger;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
@@ -33,39 +32,6 @@ import java.io.IOException;
  */
 public class JavaSourceFileParser {
     private static final Logger log = Logger.getLogger(JavaSourceFileParser.class);
-
-
-    public static void main(String[] args) {
-//        try {
-//            parse(new FileInputStream("/home/facetoe/.jreader/src-jdk/java/nio/file/StandardCopyOption.java"));
-//        } catch ( ParseException e ) {
-//            e.printStackTrace();
-//        } catch ( IOException e ) {
-//            e.printStackTrace();
-//        }
-
-        File startDir = new File("/home/facetoe/.jreader/src-jdk/");
-        recursiveTest(startDir);
-    }
-
-    public static void recursiveTest(File dir) {
-        File[] contents = dir.listFiles();
-        for ( File content : contents ) {
-            if ( content.isDirectory() ) {
-                recursiveTest(content);
-            } else {
-                if ( content.getName().endsWith(".java") ) {
-                    try {
-                        parse(new FileInputStream(content));
-                    } catch ( ParseException e ) {
-                        e.printStackTrace();
-                    } catch ( IOException e ) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-    }
 
     /**
      * Parses a Java source file and extracts constructor, method, field and enum declarations.
@@ -76,14 +42,12 @@ public class JavaSourceFileParser {
      * @throws IOException
      */
     public static JavaSourceFile parse(FileInputStream inputStream) throws ParseException, IOException {
-        //log.debug("Parsing source file...");
         CompilationUnit cu = null;
         try {
             cu = JavaParser.parse(inputStream);
         } finally {
             inputStream.close();
         }
-        //log.debug("Parsing complete.");
         return ( JavaSourceFile ) new SourceFileVisitor().visit(cu, null);
     }
 
@@ -104,8 +68,6 @@ public class JavaSourceFileParser {
             JavaSourceFile sourceFile = new JavaSourceFile();
             if ( cu != null && cu.getTypes() != null ) {
                 for ( TypeDeclaration type : cu.getTypes() ) {
-
-                    // Visit each class declaration and extract all the data from it.
                     if ( type instanceof ClassOrInterfaceDeclaration ) {
                         JavaClassOrInterface javaObj = ( JavaClassOrInterface ) visit(( ClassOrInterfaceDeclaration ) type, null);
                         sourceFile.addObject(javaObj);
@@ -117,13 +79,8 @@ public class JavaSourceFileParser {
                     } else if (type instanceof EnumDeclaration) {
                         JavaEnum javaEnum = (JavaEnum)visit((EnumDeclaration)type, null);
                         sourceFile.addObject(javaEnum);
-
-
-                    } else {
-                        System.out.println(type.getName());
-                        System.out.println(type.getClass());
-                        System.out.println();
                     }
+
                 }
             } else {
                 log.debug("Class or interface was null: " + cu);
@@ -134,11 +91,8 @@ public class JavaSourceFileParser {
             return sourceFile;
         }
 
-
-
         @Override
         public Object visit(ClassOrInterfaceDeclaration n, Object arg) {
-            // Store each class or interface's data in this object
             JavaClassOrInterface javaObj = new JavaClassOrInterface(n);
 
             for ( BodyDeclaration declaration : n.getMembers() ) {
