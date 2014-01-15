@@ -15,9 +15,8 @@
 *    with this program; if not, write to the Free Software Foundation, Inc.,
 *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-package com.facetoe.jreader.utilities;
+package com.facetoe.jreader;
 
-import com.facetoe.jreader.ProfileManager;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 
@@ -26,7 +25,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -56,10 +54,7 @@ public class Utilities {
     /**
      * Takes a path like "file:///user/home/docPath/api/ClassName.html"
      * and returns "/user/home/srcPath/api/ClassName.java" so it can be loaded in a JSourcePanel.
-     *
      * This should work on both Windows and Unix systems...
-     * @param docPath
-     * @return the converted path
      */
     public static String docPathToSourcePath(String docPath) {
         docPath = browserPathToSystemPath(docPath);
@@ -70,20 +65,20 @@ public class Utilities {
 
         /* Here we extract the section of the path we are after,
         which is everything after the documentation directory. */
-        String subPath =  fullPath.subpath(docSection.getNameCount(),
+        String subPath = fullPath.subpath(docSection.getNameCount(),
                 fullPath.getNameCount())
                 .toString();
 
         /* And add the source directory to the beginning to get the complete path. */
-        String path =  profileManager.getSrcDir() + subPath;
+        String path = profileManager.getSrcDir() + subPath;
 
         /* If there are more than 2 periods it's probably a nested class like: /dir/dir/SomeClass.SomeNestedClass.html.
          * Extract the class name. */
-         String fileName = Paths.get(path).getFileName().toString();
-        if ( fileName.split("\\.").length > 2 ) {
+        String fileName = Paths.get(path).getFileName().toString();
+        if (fileName.split("\\.").length > 2) {
             String objectName = fileName.substring(0, fileName.indexOf("."));
             path = path.substring(0, path.lastIndexOf(File.separator) + 1) + objectName + ".java";
-         }
+        }
 
         return path.replace(".html", ".java");
     }
@@ -91,10 +86,12 @@ public class Utilities {
     /**
      * Converts a path from a URL to a system path. Trys to get rid of any crud that gets tacked on
      * such as ?overview-summary.html etc.
+     *
      * @param path
      * @return the converted path.
      */
     public static String browserPathToSystemPath(String path) {
+        assert path != null;
         path = path.replace("file://", "");
 
         try {
@@ -107,9 +104,9 @@ public class Utilities {
             log.error(e.getMessage(), e);
         }
 
-        /* Some paths are like: docs/api/java/awt/dnd/DropTarget.html#DropTarget()
+        /* Some paths look like: docs/api/java/awt/dnd/DropTarget.html#DropTarget()
          * We are only interested in the information before the '#', so remove the rest */
-        if ( path.contains("#") ) {
+        if (path.contains("#")) {
             path = path.substring(0, path.indexOf("#"));
         }
 
@@ -118,7 +115,7 @@ public class Utilities {
         if (path.contains("?overview-summary.html")) {
             path = path.replace("?overview-summary.html", "");
 
-        } else if(path.contains("index.html?")) {
+        } else if (path.contains("index.html?")) {
             path = path.replace("index.html?", "");
         }
         return path;
@@ -127,50 +124,58 @@ public class Utilities {
 
     /**
      * Extracts the title from a local HTML file or the filename for remote pages.
+     *
      * @param path
      * @return the title or an empty string if something failed.
      */
     public static String extractTitle(String path) {
-        if( isWebAddress(path) ) {
+        if (isWebAddress(path)) {
             return extractFileName(path);
         }
-
+        FileInputStream inStream;
+        Scanner scanner;
+        path = browserPathToSystemPath(path);
         try {
-            path = browserPathToSystemPath(path);
-            FileInputStream inStream = new FileInputStream(path);
-            String html;
-            Scanner scanner = new Scanner(inStream);
+            inStream = new FileInputStream(path);
+            scanner = new Scanner(inStream);
+        } catch (FileNotFoundException e) {
+            log.error(e.getMessage(), e);
+            return "";
+        }
 
-            while(scanner.hasNextLine()) {
-                html = scanner.nextLine();
+        return extractTitle(scanner);
+    }
 
-                /* This is sufficient for the Java 7 docs as the title is all in one line */
-                if(html.toLowerCase().contains("<title>") && html.toLowerCase().contains("<title/>")) {
-                    return Jsoup.parse(html, "UTF-8").select("title").text();
-                } else {
+    private static String extractTitle(Scanner scanner) {
+        String html;
+        while (scanner.hasNextLine()) {
+            html = scanner.nextLine();
+            /* This is sufficient for the Java 7 docs as the title is all in one line */
+            if (html.toLowerCase().contains("<title>") && html.toLowerCase().contains("<title/>")) {
+                return extractTitleFromHtml(html);
+            } else {
 
-                    /* The Java 6 documentation and older generated javadocs spread the title over multiple lines */
-                    while(scanner.hasNextLine())
-                    {
-                        html += scanner.nextLine();
-                        if(html.toLowerCase().contains("</title>")) {
-                            return Jsoup.parse(html, "UTF-8").select("title").text();
-                        }
+                /* The Java 6 documentation and older generated javadocs spread the title over multiple lines */
+                while (scanner.hasNextLine()) {
+                    html += scanner.nextLine();
+                    if (html.toLowerCase().contains("</title>")) {
+                        return extractTitleFromHtml(html);
                     }
                 }
             }
-        } catch ( FileNotFoundException e ) {
-            log.error(e.getMessage(), e);
         }
-
         return "";
+    }
+
+    private static String extractTitleFromHtml(String html) {
+        return Jsoup.parse(html, "UTF-8").select("title").text();
     }
 
     public static String extractFileName(String path) {
         String title = new File(path).getName();
         int nameEnd;
 
-        if ( title.contains("#") ) {
+        if (title.contains("#")) {
             nameEnd = title.indexOf("#");
         } else {
             nameEnd = title.length();
@@ -187,15 +192,15 @@ public class Utilities {
      */
     public static String humanReadableByteCount(long bytes, boolean si) {
         int unit = si ? 1000 : 1024;
-        if ( bytes < unit ) return bytes + " B";
-        int exp = ( int ) (Math.log(bytes) / Math.log(unit));
+        if (bytes < unit) return bytes + " B";
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
         String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
         return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 
     public static boolean isGoodSourcePath(String path) {
 
-        if ( path == null || isWebAddress(path) ) {
+        if (path == null || isWebAddress(path)) {
             return false;
         }
 
@@ -203,7 +208,7 @@ public class Utilities {
          * Some paths look like: src-jdk/javax/imageio/ImageReader.java#readAll(int, javax.imageio.ImageReadParam)
          * Extract the actual path to avoid an error.
          */
-        if ( path.contains("#") ) {
+        if (path.contains("#")) {
             /* Get the actual path */
             String[] parts = path.split("#");
             path = parts[0];
@@ -222,12 +227,16 @@ public class Utilities {
     public static void writeCLassData(String filePath, HashMap<String, String> data) throws IOException {
         File file = new File(filePath);
 
-        if ( !file.exists() ) {
+        if (!file.exists()) {
             boolean wasSuccess = file.createNewFile();
-            if ( !wasSuccess ) {
+            if (!wasSuccess) {
                 throw new IOException("Failed to save class data at: " + filePath);
             }
         }
+        writeClassData(filePath, data);
+    }
+
+    private static void writeClassData(String filePath, HashMap<String, String> data) throws IOException {
         FileOutputStream fileOut = new FileOutputStream(filePath);
         ObjectOutputStream outStream = new ObjectOutputStream(fileOut);
         outStream.writeObject(data);
@@ -244,9 +253,9 @@ public class Utilities {
      * @throws ClassNotFoundException
      */
     public static HashMap<String, String> readClassData(File classDataFile) throws IOException, ClassNotFoundException {
-        FileInputStream fileIn = new FileInputStream(classDataFile); //TODO change this to string to be more consistent with the write method
+        FileInputStream fileIn = new FileInputStream(classDataFile);
         ObjectInputStream in = new ObjectInputStream(fileIn);
-        @SuppressWarnings( "unchecked" ) HashMap<String, String> classData = ( HashMap<String, String> ) in.readObject();
+        HashMap<String, String> classData = (HashMap<String, String>) in.readObject();
         in.close();
         fileIn.close();
 
@@ -257,8 +266,7 @@ public class Utilities {
         docDir = findDocDir(docDir);
         File indexFile = new File(docDir.getAbsoluteFile() + File.separator + "index.html");
         File classFile = new File(docDir.getAbsoluteFile() + File.separator + "allclasses-noframe.html");
-        if ( !indexFile.exists()
-               || !classFile.exists()) {
+        if (!indexFile.exists() || !classFile.exists()) {
             return false;
         }
 
@@ -266,57 +274,57 @@ public class Utilities {
         String line;
         try {
             scanner = new Scanner(indexFile);
-            while ( scanner.hasNextLine() ) {
+            while (scanner.hasNextLine()) {
                 line = scanner.nextLine();
-                if ( (line.contains("Java") && line.contains("Documentation"))
+                if ((line.contains("Java") && line.contains("Documentation"))
                         || line.contains("Generated Documentation")
-                        || line.contains("Generated by javadoc") ) {
+                        || line.contains("Generated by javadoc")) {
                     return true;
                 }
             }
-        } catch ( FileNotFoundException e ) {
+        } catch (FileNotFoundException e) {
             log.error(e.getMessage(), e);
         }
         return false;
     }
-    
+
     public static String getHomePage(String docDirPath) {
         File docDir = new File(docDirPath);
         HashMap<String, File> files = new HashMap<String, File>();
-        String homePath = "";
+        String homeFileName = "";
 
         File[] filesArr = docDir.listFiles();
 
-        if(filesArr != null) {
-            for ( File file : filesArr ) {
+        if (filesArr != null) {
+            for (File file : filesArr) {
                 files.put(file.getName(), file);
             }
         }
 
-        if(files.containsKey("overview-summary.html")) {
-            homePath = "overview-summary.html";
+        if (files.containsKey("overview-summary.html")) {
+            homeFileName = "overview-summary.html";
 
-        } else if(files.containsKey("allclasses-noframe.html")) {
-            homePath = "allclasses-noframe.html";
+        } else if (files.containsKey("allclasses-noframe.html")) {
+            homeFileName = "allclasses-noframe.html";
 
         } else if (files.containsKey("index.html")) {
-            homePath = "index.html";
+            homeFileName = "index.html";
         }
 
-        return homePath;
+        return homeFileName;
     }
 
     private static boolean isWebAddress(String path) {
         return path.startsWith("http:/")
                 || path.startsWith("www.")
-                || path.startsWith("https:/") ;
+                || path.startsWith("https:/");
     }
 
     public static File findDocDir(File rootDir) {
         File[] files = rootDir.listFiles();
-        if(files != null) {
-            for ( File file : files ) {
-                if(file.getName().equals("api")) {
+        if (files != null) {
+            for (File file : files) {
+                if (file.getName().equals("api")) {
                     return file;
                 }
             }
@@ -326,21 +334,21 @@ public class Utilities {
 
 
     public static void deleteDirectoryAndContents(File file) {
-        if ( file.isDirectory() ) {
-            if ( file.list().length == 0 ) {
+        if (file.isDirectory()) {
+            if (file.list().length == 0) {
                 file.delete();
 
             } else {
                 String files[] = file.list();
 
                 // Recursive delete everything in here
-                for ( String temp : files ) {
+                for (String temp : files) {
                     File fileDelete = new File(file, temp);
                     deleteDirectoryAndContents(fileDelete);
                 }
 
                 // Delete enclosing file
-                if ( file.list().length == 0 ) {
+                if (file.list().length == 0) {
                     file.delete();
                 }
             }
@@ -348,21 +356,6 @@ public class Utilities {
             // It's a file, just delete it.
             file.delete();
         }
-    }
-
-    public static ImageIcon readAnimatedGif(URL imgURL, Component component) {
-        Toolkit tk = Toolkit.getDefaultToolkit();
-        Image img = null;
-        try {
-            MediaTracker m = new MediaTracker(component);
-            img = tk.getImage(imgURL);
-            m.addImage(img, 0);
-            m.waitForAll();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ImageIcon(img);
     }
 
     public static ImageIcon readIcon(InputStream inStream, int width, int height) {
@@ -376,11 +369,18 @@ public class Utilities {
         try {
             BufferedImage icon = ImageIO.read(inStream);
             return new ImageIcon(icon);
-        } catch ( IOException e ) {
+        } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
         return null;
     }
 
+    public static void showError(String message, String title) {
+        showError(null, message, title);
+    }
+
+    public static void showError(Component parent, String message, String title) {
+        JOptionPane.showMessageDialog(parent, message, title, JOptionPane.ERROR_MESSAGE);
+    }
 }
 
