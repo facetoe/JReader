@@ -15,7 +15,7 @@
 *    with this program; if not, write to the Free Software Foundation, Inc.,
 *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-package com.facetoe.jreader.gui;
+package com.facetoe.jreader;
 
 /**
  * Created with IntelliJ IDEA.
@@ -24,7 +24,6 @@ package com.facetoe.jreader.gui;
  * Time: 11:07 AM
  */
 
-import com.facetoe.jreader.java.*;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -44,7 +43,6 @@ import java.util.HashMap;
 public class SourceTree extends JTree {
 
     private static final Logger log = Logger.getLogger(SourceTree.class);
-    private JavaSourceFile sourceFile;
 
     /**
      * Constructor to build the tree view.
@@ -52,26 +50,23 @@ public class SourceTree extends JTree {
      * @param sourceFile The file to display in the tree view.
      */
     public SourceTree(JavaSourceFile sourceFile) {
-        this.sourceFile = sourceFile;
 
-        SourceItemNode rootNode = parseSourceFile(sourceFile);
-        DefaultTreeModel model = new DefaultTreeModel(rootNode);
-        setModel(model);
+        createTree(sourceFile);
 
         /* We don't want to see the root node. */
         setRootVisible(false);
-
-        /* Only allow one selection at time. */
         getSelectionModel().setSelectionMode
                 (TreeSelectionModel.SINGLE_TREE_SELECTION);
         setCellRenderer(new SourceViewIconRenderer());
-
-        //TODO Get the modifers in JavaSourceFileParser and display them as tooltips.
-        /* We need to register the tree to enable tooltips. */
-        //ToolTipManager.sharedInstance().registerComponent(this);
     }
 
-    private SourceItemNode parseSourceFile(JavaSourceFile source) {
+    private void createTree(JavaSourceFile sourceFile) {
+        SourceItemNode rootNode = parseSource(sourceFile);
+        DefaultTreeModel model = new DefaultTreeModel(rootNode);
+        setModel(model);
+    }
+
+    private SourceItemNode parseSource(JavaSourceFile sourceFile) {
         SourceItemNode node = new SourceItemNode("Root", null);
         for ( AbstractJavaObject object : sourceFile.getFileContents() ) {
             if ( object instanceof JavaClassOrInterface ) {
@@ -83,10 +78,10 @@ public class SourceTree extends JTree {
 
             } else if ( object instanceof JavaAnnotation ) {
                 JavaAnnotation annotation = ( JavaAnnotation ) object;
-                node.add(new SourceItemNode(annotation.getDeclaration(), annotation));
+                node.add(parseAnnotation(annotation));
 
             } else {
-                log.warn("Unknown object in parseSourceFile: " + object.getClass());
+                log.warn("Unknown object in parseSource(): " + object.getClass());
             }
         }
         return node;
@@ -96,13 +91,10 @@ public class SourceTree extends JTree {
         return objectsToNode(javaEnum.getDeclaration(), AbstractJavaObject.ENUM, javaEnum.getConstants());
     }
 
-    /**
-     * Encapsulates all the data from a classs in a SourceItemNode. If the class contains nested classes or interfaces,
-     * this method will add them as well.
-     *
-     * @param aClass The JavaClassOrInterface to parse.
-     * @return SourceItemNode containing the parsed data.
-     */
+    private SourceItemNode parseAnnotation(JavaAnnotation annotation) {
+        return new SourceItemNode(annotation.getDeclaration(), annotation);
+    }
+
     private SourceItemNode parseClass(JavaClassOrInterface aClass) {
         String nodeTitle = aClass.getDeclaration();
         SourceItemNode classNode;
@@ -114,48 +106,65 @@ public class SourceTree extends JTree {
         }
 
         if ( aClass.hasConstructors() ) {
-            classNode.add(objectsToNode("Constructors", AbstractJavaObject.CONSTRUCTOR, aClass.getConstructors()));
+            classNode.add(extractConstructors(aClass));
         }
         if ( aClass.hasMethods() ) {
-            classNode.add(objectsToNode("Methods", AbstractJavaObject.METHOD, aClass.getMethods()));
+            classNode.add(extractMethods(aClass));
         }
         if ( aClass.hasFields() ) {
-            classNode.add(objectsToNode("Fields", AbstractJavaObject.FIELD, aClass.getFields()));
+            classNode.add(extractFields(aClass));
         }
-
         if ( aClass.hasEnums() ) {
-            SourceItemNode enumsNode = new SourceItemNode("Enums", AbstractJavaObject.ENUM);
-            for ( String key : aClass.getEnums().keySet() ) {
-                JavaEnum anEnum = aClass.getEnums().get(key);
-                enumsNode.add(objectsToNode(anEnum.getDeclaration(), AbstractJavaObject.ENUM, anEnum.getConstants()));
-            }
-            classNode.add(enumsNode);
+            classNode.add(extractEnums(aClass));
         }
 
-        /* If we have nested classes or interfaces, add them as well. */
         if ( aClass.hasNestedClasses() ) {
+            // Sort them now so they appear sorted in the tree.
+            ArrayList<SourceItemNode> nestedClasses = sortNestedClasses(aClass);
+
             SourceItemNode nestedClassNode = new SourceItemNode("Nested Classes", AbstractJavaObject.CLASS);
-            ArrayList<SourceItemNode> nestedClasses = new ArrayList<SourceItemNode>();
-
-            for ( JavaClassOrInterface nestedClass : aClass.getNestedClassesAsArrayList() ) {
-                nestedClasses.add(parseClass(nestedClass));
-            }
-
-            /* Sort them alphabetically before we add them so
-             * they are sorted in the SourceTree. */
-            Collections.sort(nestedClasses, new Comparator<SourceItemNode>() {
-                @Override
-                public int compare(SourceItemNode firstObj, SourceItemNode secondObj) {
-                    return firstObj.toString().compareTo(secondObj.toString());
-                }
-            });
-
             for ( SourceItemNode node : nestedClasses ) {
                 nestedClassNode.add(node);
                 classNode.add(nestedClassNode);
             }
         }
         return classNode;
+    }
+
+    private SourceItemNode extractConstructors(JavaClassOrInterface aClass) {
+        return objectsToNode("Constructors", AbstractJavaObject.CONSTRUCTOR, aClass.getConstructors());
+    }
+
+    private SourceItemNode extractMethods(JavaClassOrInterface aClass) {
+        return objectsToNode("Methods", AbstractJavaObject.METHOD, aClass.getMethods());
+    }
+
+    private SourceItemNode extractFields(JavaClassOrInterface aClass) {
+        return objectsToNode("Fields", AbstractJavaObject.FIELD, aClass.getFields());
+    }
+
+    private SourceItemNode extractEnums(JavaClassOrInterface aClass) {
+        SourceItemNode enumsNode = new SourceItemNode("Enums", AbstractJavaObject.ENUM);
+        for (String key : aClass.getEnums().keySet()) {
+            JavaEnum anEnum = aClass.getEnums().get(key);
+            enumsNode.add(objectsToNode(anEnum.getDeclaration(), AbstractJavaObject.ENUM, anEnum.getConstants()));
+        }
+        return enumsNode;
+    }
+
+    private ArrayList<SourceItemNode> sortNestedClasses(JavaClassOrInterface aClass) {
+        ArrayList<SourceItemNode> nestedClasses = new ArrayList<SourceItemNode>();
+        for (JavaClassOrInterface nestedClass : aClass.getNestedClassesAsArrayList()) {
+            nestedClasses.add(parseClass(nestedClass));
+        }
+
+        Collections.sort(nestedClasses, new Comparator<SourceItemNode>() {
+            @Override
+            public int compare(SourceItemNode firstObj, SourceItemNode secondObj) {
+                return firstObj.toString().compareTo(secondObj.toString());
+            }
+        });
+        return nestedClasses;
     }
 
     /**
@@ -180,11 +189,7 @@ public class SourceTree extends JTree {
      */
     private class SourceViewIconRenderer extends DefaultTreeCellRenderer {
 
-        /* I generated these by parsing each Java source file and writing the full declaration and modifier
-           for every method, class etc to a file. Next I sorted the file and deleted lines with duplicate numbers.
-           Finally I wrote a Ruby script to take each line and generate these variable declarations.
-           As far as I can tell they are accurate but I'm not 100% sure.
-          */
+        // These were generated using a Ruby script, they may not be 100% correct.
         private static final int DEFAULT = 0;
         private static final int ABSTRACT = 1024;
         private static final int ABSTRACT_STATIC_CLASS = 1032;
@@ -262,108 +267,35 @@ public class SourceTree extends JTree {
 
 
         /**
-         * Determine how this cell should be rendered.
+         * Determine how this cell should be rendered. The icon chosen depends on the nodes type.
          */
         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel,
                                                       boolean expanded, boolean leaf, int row, boolean hasFocus) {
-
-            Component component = super.getTreeCellRendererComponent(
-                    tree, value, sel,
-                    expanded, leaf, row,
-                    hasFocus);
-
+            super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
             SourceItemNode node = ( SourceItemNode ) value;
+            setIcon(node);
+            return this;
+        }
 
-            if ( node == null ) {
-                log.warn("Type was null for: " + node);
-                return component;
-            }
+        private void setIcon(SourceItemNode node) {
             ImageIcon icon;
             AbstractJavaObject object = node.getJavaObject();
-            if ( object == null ) {
+            if (object == null) {
                 icon = getTypeIcon(node.getType());
-                if ( icon != null ) {
+                if (icon != null) {
                     setIcon(icon);
                 }
             } else {
                 icon = getModifierIcon(node.getModifiers(), node.getType());
-                if ( icon != null ) {
+                if (icon != null) {
                     setIcon(icon);
                 }
             }
-            return component;
-        }
-
-        private ImageIcon getModifierIcon(int modifiers, int type) {
-            URL iconUrl = null;
-            int result;
-            if ( type == AbstractJavaObject.METHOD || type == AbstractJavaObject.CONSTRUCTOR ) {
-                result = simplifyModifier(modifiers);
-                switch ( result ) {
-                    case PUBLIC:
-                        iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/method_public.png");
-                        break;
-
-                    case PRIVATE:
-                        iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/method_private.png");
-                        break;
-
-                    case PROTECTED:
-                        iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/method_protected.png");
-                        break;
-
-                    case DEFAULT:
-                        iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/method_default.png");
-                        break;
-                }
-            } else if ( type == AbstractJavaObject.FIELD ) {
-                result = simplifyModifier(modifiers);
-                switch ( result ) {
-                    case PUBLIC:
-                        iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/field_public.png");
-                        break;
-
-                    case PRIVATE:
-                        iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/field_private.png");
-                        break;
-
-                    case PROTECTED:
-                        iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/field_protected.png");
-                        break;
-
-                    case DEFAULT:
-                        iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/field_default.png");
-                        break;
-                }
-            } else if ( type == AbstractJavaObject.CLASS ) {
-                result = simplifyModifier(modifiers);
-                switch ( result ) {
-                    case PUBLIC:
-                        iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/innerclass_default.png");
-                        break;
-
-                    case PRIVATE:
-                        iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/innerclass_private.png");
-                        break;
-
-                    case PROTECTED:
-                        iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/innerclass_protected.png");
-                        break;
-
-                    case DEFAULT:
-                        iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/innerclass_default.png");
-                        break;
-                }
-            } else {
-                iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/field_public.png");
-            }
-
-            return iconUrl == null ? null : new ImageIcon(iconUrl);
         }
 
         private ImageIcon getTypeIcon(int type) {
-            URL iconUrl = null;
-            switch ( type ) {
+            URL iconUrl;
+            switch (type) {
                 case AbstractJavaObject.CLASS:
                     iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/class.png");
                     break;
@@ -388,9 +320,95 @@ public class SourceTree extends JTree {
 
                 default:
                     log.warn("Unknown type: " + type);
+                    return null;
+            }
+            return new ImageIcon(iconUrl);
+        }
+
+        private ImageIcon getModifierIcon(int modifiers, int type) {
+            URL iconUrl;
+            if (type == AbstractJavaObject.METHOD || type == AbstractJavaObject.CONSTRUCTOR) {
+                iconUrl = getMethodIconUrl(modifiers);
+            } else if (type == AbstractJavaObject.FIELD) {
+                iconUrl = getFieldIconUrl(modifiers);
+            } else if (type == AbstractJavaObject.CLASS) {
+                iconUrl = getClassIconUrl(modifiers);
+            } else {
+                iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/field_public.png");
+            }
+            return new ImageIcon(iconUrl);
+        }
+
+        private URL getClassIconUrl(int modifiers) {
+            URL iconUrl = null;
+            int result;
+            result = simplifyModifier(modifiers);
+            switch (result) {
+                case PUBLIC:
+                    iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/innerclass_default.png");
+                    break;
+
+                case PRIVATE:
+                    iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/innerclass_private.png");
+                    break;
+
+                case PROTECTED:
+                    iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/innerclass_protected.png");
+                    break;
+
+                case DEFAULT:
+                    iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/innerclass_default.png");
                     break;
             }
-            return iconUrl == null ? null : new ImageIcon(iconUrl);
+            return iconUrl;
+        }
+
+        private URL getFieldIconUrl(int modifiers) {
+            URL iconUrl = null;
+            int result;
+            result = simplifyModifier(modifiers);
+            switch (result) {
+                case PUBLIC:
+                    iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/field_public.png");
+                    break;
+
+                case PRIVATE:
+                    iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/field_private.png");
+                    break;
+
+                case PROTECTED:
+                    iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/field_protected.png");
+                    break;
+
+                case DEFAULT:
+                    iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/field_default.png");
+                    break;
+            }
+            return iconUrl;
+        }
+
+        private URL getMethodIconUrl(int modifiers) {
+            int result;
+            URL iconUrl = null;
+            result = simplifyModifier(modifiers);
+            switch (result) {
+                case PUBLIC:
+                    iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/method_public.png");
+                    break;
+
+                case PRIVATE:
+                    iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/method_private.png");
+                    break;
+
+                case PROTECTED:
+                    iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/method_protected.png");
+                    break;
+
+                case DEFAULT:
+                    iconUrl = SourceTree.class.getResource("/com/facetoe/jreader/resources/icons/method_default.png");
+                    break;
+            }
+            return iconUrl;
         }
 
         private int simplifyModifier(int modifiers) {
