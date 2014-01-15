@@ -15,9 +15,8 @@
 *    with this program; if not, write to the Free Software Foundation, Inc.,
 *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-package com.facetoe.jreader.gui;
+package com.facetoe.jreader;
 
-import com.facetoe.jreader.java.AbstractJavaObject;
 import org.apache.log4j.Logger;
 
 import javax.swing.event.TreeSelectionEvent;
@@ -48,12 +47,19 @@ public class SourceTreeSelectionListener implements TreeSelectionListener {
             log.warn("Null node in SourceTreeSelectionListener.");
             return;
         }
-        /* Scroll to show the newly selected node. */
-        TreePath treePath = new TreePath(node.getPath());
-        sourceTreeView.scrollPathToVisible(treePath);
+        scrollToNode(node);
+        highlightInSource(node);
+    }
+
+    private void highlightInSource(SourceItemNode node) {
         AbstractJavaObject object = sourcePanel.getJavaSourceFile().getObject(node.getTitle());
         if ( object != null ) {
             sourcePanel.highlightDeclaration(object.getBeginLine(), object.getEndLine(), object.getBeginColumn());
         }
+    }
+
+    private void scrollToNode(SourceItemNode node) {
+        TreePath treePath = new TreePath(node.getPath());
+        sourceTreeView.scrollPathToVisible(treePath);
     }
 }
