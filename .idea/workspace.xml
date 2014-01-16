@@ -9,48 +9,22 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0f725b18-1f9a-4ce0-8608-872f2385b0ad" name="Default" comment="Added some tests.">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/parsers/AbstractJavaObject.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/AutoCompleteTextField.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/helpers/Config.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/helpers/FileDownloader.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReaderPanel.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/artifacts/JReader_jar.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JSourcePanel.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/parsers/JavaAnnotation.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/parsers/JavaClassOrInterface.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/parsers/JavaConstructor.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/parsers/JavaDocParser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/parsers/JavaEnum.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/parsers/JavaField.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/parsers/JavaMethod.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/parsers/JavaSourceFile.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/parsers/JavaSourceFileParser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/helpers/UnZipper.java" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/gui/AutoCompleteTextField.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/gui/JReader.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/gui/JReaderMenuBar.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/gui/JReaderPanel.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/testFiles/src/com/facetoe/jreader/JSourcePanel.java" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/JReader.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReader.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/JReaderMenuBar.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReaderMenuBar.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ProfileManager.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/helpers/ProfileManager.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/SourceTree.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/SourceTree.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/SourceTreeSelectionListener.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/SourceTreeSelectionListener.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/Utilities.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/helpers/Utilities.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/gui/AbstractPanel.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/AbstractPanel.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/gui/Actions.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/Actions.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/gui/ButtonTabComponent.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/ButtonTabComponent.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/gui/JReaderBottomPanel.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReaderBottomPanel.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/gui/JReaderPopUpListener.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReaderPopUpListener.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/gui/JReaderTopPanel.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReaderTopPanel.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/gui/NewProfileWindow.form" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/NewProfileWindow.form" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/gui/NewProfileWindow.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/NewProfileWindow.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/gui/SetupWindow.form" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/SetupWindow.form" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/gui/SetupWindow.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/SetupWindow.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/gui/SourceItemNode.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/SourceItemNode.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/utilities/JReaderSetup.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReaderSetup.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/utilities/Trie.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/Trie.java" />
+    <list default="true" id="0f725b18-1f9a-4ce0-8608-872f2385b0ad" name="Default" comment="Reorganized code into packages.&#10;">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/JSourcePanel.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/gui/JSourcePanel.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/testFiles/src/com/facetoe/jreader/AbstractJavaObject.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/testFiles/src/com/facetoe/jreader/Config.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/testFiles/src/com/facetoe/jreader/FileDownloader.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/testFiles/src/com/facetoe/jreader/JavaAnnotation.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/testFiles/src/com/facetoe/jreader/JavaClassOrInterface.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/testFiles/src/com/facetoe/jreader/JavaConstructor.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/testFiles/src/com/facetoe/jreader/JavaDocParser.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/testFiles/src/com/facetoe/jreader/JavaEnum.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/testFiles/src/com/facetoe/jreader/JavaField.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/testFiles/src/com/facetoe/jreader/JavaMethod.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/testFiles/src/com/facetoe/jreader/JavaSourceFile.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/testFiles/src/com/facetoe/jreader/JavaSourceFileParser.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/testFiles/src/com/facetoe/jreader/UnZipper.java" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/action/AbstractActionExt.html" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/action/AbstractActionExt.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/action/class-use/AbstractActionExt.html" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/action/class-use/AbstractActionExt.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-sources/org/jdesktop/swingx/action/AbstractActionExt.java" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-sources/org/jdesktop/swingx/action/AbstractActionExt.java" />
@@ -669,7 +643,6 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/auth/JDBCLoginService.html" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/auth/JDBCLoginService.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/auth/class-use/JDBCLoginService.html" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/auth/class-use/JDBCLoginService.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-sources/org/jdesktop/swingx/auth/JDBCLoginService.java" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-sources/org/jdesktop/swingx/auth/JDBCLoginService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JReader.iml" afterPath="$PROJECT_DIR$/JReader.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/renderer/JRendererCheckBox.html" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/renderer/JRendererCheckBox.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/renderer/class-use/JRendererCheckBox.html" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/renderer/class-use/JRendererCheckBox.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-sources/org/jdesktop/swingx/renderer/JRendererCheckBox.java" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-sources/org/jdesktop/swingx/renderer/JRendererCheckBox.java" />
@@ -898,7 +871,6 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/JXTreeTable.html" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/JXTreeTable.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/class-use/JXTreeTable.html" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/class-use/JXTreeTable.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-sources/org/jdesktop/swingx/JXTreeTable.java" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-sources/org/jdesktop/swingx/JXTreeTable.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/JavaSourceFileParserTest.java" afterPath="$PROJECT_DIR$/test/JavaSourceFileParserTest.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/auth/KeyChain.html" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/auth/KeyChain.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/auth/class-use/KeyChain.html" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/auth/class-use/KeyChain.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-sources/org/jdesktop/swingx/auth/KeyChain.java" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-sources/org/jdesktop/swingx/auth/KeyChain.java" />
@@ -981,7 +953,6 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/plaf/LookAndFeelUtils.html" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/plaf/LookAndFeelUtils.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/plaf/class-use/LookAndFeelUtils.html" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/plaf/class-use/LookAndFeelUtils.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-sources/org/jdesktop/swingx/plaf/LookAndFeelUtils.java" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-sources/org/jdesktop/swingx/plaf/LookAndFeelUtils.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" afterPath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/META-INF/MANIFEST.MF" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/META-INF/MANIFEST.MF" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-sources/META-INF/MANIFEST.MF" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-sources/META-INF/MANIFEST.MF" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/plaf/macosx/MacOSXErrorPaneUI.html" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/plaf/macosx/MacOSXErrorPaneUI.html" />
@@ -1141,7 +1112,6 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/painter/PinstripePainter.html" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/painter/PinstripePainter.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/painter/class-use/PinstripePainter.html" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/painter/class-use/PinstripePainter.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-sources/org/jdesktop/swingx/painter/PinstripePainter.java" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-sources/org/jdesktop/swingx/painter/PinstripePainter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/ProfileManagerTest.java" afterPath="$PROJECT_DIR$/test/ProfileManagerTest.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/prompt/PromptSupport.FocusBehavior.html" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/prompt/PromptSupport.FocusBehavior.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/prompt/class-use/PromptSupport.FocusBehavior.html" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/prompt/class-use/PromptSupport.FocusBehavior.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/prompt/PromptSupport.html" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/org/jdesktop/swingx/prompt/PromptSupport.html" />
@@ -1560,7 +1530,6 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/help-doc.html" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/help-doc.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/index-all.html" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/index-all.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/index.html" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/overview-frame.html" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/overview-frame.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/overview-summary.html" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/overview-summary.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/overview-tree.html" afterPath="$PROJECT_DIR$/testFiles/swingx-all-1.6.4-javadoc/overview-tree.html" />
@@ -1883,7 +1852,7 @@
       <file leaf-file-name="JavaSourceFileParserTest.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test/JavaSourceFileParserTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="8" column="0" selection-start="176" selection-end="176" vertical-scroll-proportion="0.11464968" vertical-offset="0" max-vertical-offset="630">
+            <state line="24" column="24" selection-start="717" selection-end="717" vertical-scroll-proportion="0.72611463" vertical-offset="0" max-vertical-offset="630">
               <folding />
             </state>
           </provider>
@@ -2047,6 +2016,38 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="JReader" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="JReader" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="JReader" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="JReader" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="JReader" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="jreader" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -2790,7 +2791,11 @@
       <created>1389850495634</created>
       <updated>1389850495634</updated>
     </task>
-    <option name="localTasksCounter" value="101" />
+    <task id="LOCAL-00101" summary="Reorganized code into packages.">
+      <created>1389851084930</created>
+      <updated>1389851084930</updated>
+    </task>
+    <option name="localTasksCounter" value="102" />
     <servers />
   </component>
   <component name="TodoView" selected-index="0">
@@ -2815,13 +2820,13 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="3" y="22" width="1364" height="747" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Changes" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20952381" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20952381" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.11195159" sideWeight="0.73657715" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32857144" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31428573" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24960381" sideWeight="0.6224832" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3936508" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -2862,7 +2867,6 @@
     <option name="myTodoPanelSettings">
       <TodoPanelSettings />
     </option>
-    <MESSAGE value="Prevented Find menu from showing items that don't make sense." />
     <MESSAGE value="Added progress feedback when parsing source file." />
     <MESSAGE value="Added feedback for unsuccessful search in JSourcePanel." />
     <MESSAGE value="Create new Countdown latch each time newReaderTab is called." />
@@ -2887,7 +2891,8 @@
     <MESSAGE value="Added JavaSourceParserTest" />
     <MESSAGE value="Added some tests." />
     <MESSAGE value="Added test resources." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added test resources." />
+    <MESSAGE value="Reorganized code into packages." />
+    <option name="LAST_COMMIT_MESSAGE" value="Reorganized code into packages." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -3355,7 +3360,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test/JavaSourceFileParserTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="0" selection-start="176" selection-end="176" vertical-scroll-proportion="0.11464968" vertical-offset="0" max-vertical-offset="630">
+        <state line="24" column="24" selection-start="717" selection-end="717" vertical-scroll-proportion="0.72611463" vertical-offset="0" max-vertical-offset="630">
           <folding />
         </state>
       </provider>
