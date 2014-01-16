@@ -1,0 +1,17 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="JReader:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/JReader_jar</output-path>
+    <root id="archive" name="JReader.jar">
+      <element id="module-output" name="JReader" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/src/com/facetoe/jreader/lib/jsoup-1.7.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/src/com/facetoe/jreader/lib/forms_rt.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/src/com/facetoe/jreader/lib/rsyntaxtextarea.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/src/com/facetoe/jreader/lib/jgoodies-forms.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/src/com/facetoe/jreader/lib/swingx-all-1.6.4.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/src/com/facetoe/jreader/lib/zip4j_1.3.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/src/com/facetoe/jreader/lib/log4j-1.2.14.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/src/com/facetoe/jreader/lib/javaparser-1.0.11-SNAPSHOT.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="/usr/lib/jvm/java-7-oracle/jre/lib/jfxrt.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

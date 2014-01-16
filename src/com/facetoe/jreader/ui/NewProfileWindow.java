@@ -15,10 +15,10 @@
 *    with this program; if not, write to the Free Software Foundation, Inc.,
 *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-package com.facetoe.jreader.gui;
+package com.facetoe.jreader.ui;
 
-import com.facetoe.jreader.ProfileManager;
-import com.facetoe.jreader.utilities.Utilities;
+import com.facetoe.jreader.helpers.ProfileManager;
+import com.facetoe.jreader.helpers.Utilities;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -62,11 +62,11 @@ public class NewProfileWindow extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 File chosenDir = showFileDialog();
-                if ( chosenDir != null ) {
+                if (chosenDir != null) {
                     chosenDir = Utilities.findDocDir(chosenDir);
 
                     /* Make sure we have a documentation directory or big problem later. */
-                    if ( !Utilities.isJavaDocsDir(chosenDir) ) {
+                    if (!Utilities.isJavaDocsDir(chosenDir)) {
                         JOptionPane.showMessageDialog(parentPanel,
                                 "Invalid directory. Please choose the top level directory that contains the index.html file.",
                                 "Invalid Directory",
@@ -83,7 +83,7 @@ public class NewProfileWindow extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 File chosenDir = showFileDialog();
-                if ( chosenDir != null ) {
+                if (chosenDir != null) {
                     txtSrc.setText(chosenDir.getAbsolutePath());
                 }
             }
@@ -92,7 +92,7 @@ public class NewProfileWindow extends JDialog {
         btnOK.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if ( !hasAllFields() ) {
+                if (!hasAllFields()) {
                     JOptionPane.showMessageDialog(null, "You need to fill in all the fields");
                     return;
                 }
@@ -121,17 +121,17 @@ public class NewProfileWindow extends JDialog {
                         manager.addActionListener(new ActionListener() {
                             @Override
                             public void actionPerformed(ActionEvent e) {
-                                progressBar.setValue(( int ) e.getWhen());
+                                progressBar.setValue((int) e.getWhen());
                                 progressBar.setString(e.getWhen() + "%");
                                 lblStatus.setText("Parsing: " + e.getActionCommand());
                             }
                         });
 
-                        /* Create the profile. It will be saved in the newProfile method. */
                         manager.newProfile(name,
                                 txtDocs.getText() + File.separator,
                                 txtSrc.getText() + File.separator);
                         manager.setCurrentProfile(name);
+                        manager.saveProfiles();
 
                         setVisible(false);
                         dispose();
@@ -165,7 +165,7 @@ public class NewProfileWindow extends JDialog {
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
         int result = chooser.showOpenDialog(parentPanel);
-        if ( result == JFileChooser.APPROVE_OPTION ) {
+        if (result == JFileChooser.APPROVE_OPTION) {
             return chooser.getSelectedFile();
         }
         return null;
@@ -175,6 +175,10 @@ public class NewProfileWindow extends JDialog {
         return !txtDocs.getText().isEmpty()
                 && !txtSrc.getText().isEmpty()
                 && !txtName.getText().isEmpty();
+    }
+
+    public static void main(String[] args) {
+        new NewProfileWindow();
     }
 
     {
@@ -274,8 +278,4 @@ public class NewProfileWindow extends JDialog {
     public JComponent $$$getRootComponent$$$() {
         return parentPanel;
     }
-
-    //    public static void main(String[] args) {
-//        new NewProfileWindow();
-//    }
 }

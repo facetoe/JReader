@@ -15,7 +15,7 @@
 *    with this program; if not, write to the Free Software Foundation, Inc.,
 *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-package com.facetoe.jreader;
+package com.facetoe.jreader.ui;
 
 /**
  * Created with IntelliJ IDEA.
@@ -24,6 +24,7 @@ package com.facetoe.jreader;
  * Time: 11:07 AM
  */
 
+import com.facetoe.jreader.parsers.*;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -69,14 +70,14 @@ public class SourceTree extends JTree {
     private SourceItemNode parseSource(JavaSourceFile sourceFile) {
         SourceItemNode node = new SourceItemNode("Root", null);
         for ( AbstractJavaObject object : sourceFile.getFileContents() ) {
-            if ( object instanceof JavaClassOrInterface ) {
+            if ( object instanceof JavaClassOrInterface) {
                 node.add(parseClass(( JavaClassOrInterface ) object));
 
-            } else if ( object instanceof JavaEnum ) {
+            } else if ( object instanceof JavaEnum) {
                 JavaEnum javaEnum = ( JavaEnum ) object;
                 node.add(parseEnum(javaEnum));
 
-            } else if ( object instanceof JavaAnnotation ) {
+            } else if ( object instanceof JavaAnnotation) {
                 JavaAnnotation annotation = ( JavaAnnotation ) object;
                 node.add(parseAnnotation(annotation));
 

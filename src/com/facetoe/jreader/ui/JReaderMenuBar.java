@@ -15,7 +15,10 @@
 *    with this program; if not, write to the Free Software Foundation, Inc.,
 *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-package com.facetoe.jreader;
+package com.facetoe.jreader.ui;
+
+import com.facetoe.jreader.helpers.Config;
+import com.facetoe.jreader.helpers.ProfileManager;
 
 import javax.swing.*;
 import javax.swing.event.MenuEvent;
@@ -44,22 +47,19 @@ public class JReaderMenuBar extends JMenuBar {
 
     public JReaderMenuBar(JReader jReader) {
         this.jReader = jReader;
-        initMenus();
+        createMenus();
     }
 
     /**
      * Build all the menus.
      */
-    private void initMenus() {
-        initFileMenu();
-        initWindowMenu();
-        initFindMenu();
+    private void createMenus() {
+        createFileMenu();
+        createWindowMenu();
+        createFindMenu();
     }
 
-    /**
-     * Build the File menu.
-     */
-    private void initFileMenu() {
+    private void createFileMenu() {
         JMenu fileMenu = new JMenu("File");
         JMenuItem newProfileMenu = buildNewProfileItem();
         fileMenu.add(newProfileMenu);
@@ -91,6 +91,8 @@ public class JReaderMenuBar extends JMenuBar {
         // This is a blocking dialog
         new NewProfileWindow();
         jReader.addJavaDocClassNames();
+
+        // If a new profile was succesfully created, navigate home to update the screen.
         navigateHome();
     }
 
@@ -140,6 +142,8 @@ public class JReaderMenuBar extends JMenuBar {
         jReader.removeJavaDocClassNames();
         profileManager.setCurrentProfile(profileName);
         jReader.addJavaDocClassNames();
+
+        // Navigate home to refresh the screen.
         navigateHome();
     }
 
@@ -192,6 +196,8 @@ public class JReaderMenuBar extends JMenuBar {
                     if (result == JOptionPane.YES_OPTION) {
                         // profileManager.deleteProfile sets the profile to Default.
                         profileManager.deleteProfile(profileName);
+
+                        // Navigate home to refresh the screen with default profile.
                         navigateHome();
                     }
                 }
@@ -200,10 +206,7 @@ public class JReaderMenuBar extends JMenuBar {
         return item;
     }
 
-    /**
-     * Build the Window menu.
-     */
-    private void initWindowMenu() {
+    private void createWindowMenu() {
         JMenu windowMenu = new JMenu("Window");
         mnuNewSourceTab = buildSimpleMenuItem(new NewSourceTabAction(jReader));
         windowMenu.add(mnuNewSourceTab);
@@ -224,6 +227,8 @@ public class JReaderMenuBar extends JMenuBar {
         return quitItem;
     }
 
+    // TODO should all the reader panels be updated here?
+    // Navigate home if in a JReader panel.
     private void navigateHome() {
         if (jReader.getCurrentTab() instanceof JReaderPanel) {
             JReaderPanel panel = (JReaderPanel) jReader.getCurrentTab();
@@ -231,12 +236,8 @@ public class JReaderMenuBar extends JMenuBar {
         }
     }
 
-    /**
-     * Build the Find menu.
-     */
-    private void initFindMenu() {
+    private void createFindMenu() {
         final JMenu mnuFind = new JMenu("Find");
-
         mnuFind.addMenuListener(new MenuListener() {
             @Override
             public void menuSelected(MenuEvent e) {
@@ -270,11 +271,10 @@ public class JReaderMenuBar extends JMenuBar {
 
     private JCheckBoxMenuItem buildRegexpCheckBox() {
         final JCheckBoxMenuItem chkRegexp = new JCheckBoxMenuItem("Regular Expression");
-        /* Don't enable regexp if matchCase or wholeWord is enabled. */
+        // Don't enable regexp if matchCase or wholeWord is enabled.
         if (profileManager.matchCaseIsEnabled() || profileManager.wholeWordIsEnabled()) {
             chkRegexp.setEnabled(false);
         } else {
-
             chkRegexp.setState(profileManager.regexpIsEnabled());
             chkRegexp.addActionListener(new ActionListener() {
                 @Override

@@ -1,5 +1,5 @@
 
-import com.facetoe.jreader.JavaSourceFileParser;
+import com.facetoe.jreader.parsers.JavaSourceFileParser;
 import japa.parser.ParseException;
 
 import java.io.File;

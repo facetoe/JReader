@@ -15,7 +15,7 @@
 *    with this program; if not, write to the Free Software Foundation, Inc.,
 *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-package com.facetoe.jreader.gui;
+package com.facetoe.jreader.ui;
 
 /**
  * Created with IntelliJ IDEA.
@@ -24,7 +24,7 @@ package com.facetoe.jreader.gui;
  * Time: 12:30 PM
  */
 
-import com.facetoe.jreader.java.AbstractJavaObject;
+import com.facetoe.jreader.parsers.AbstractJavaObject;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 

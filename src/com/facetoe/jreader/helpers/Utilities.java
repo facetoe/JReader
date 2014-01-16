@@ -15,7 +15,7 @@
 *    with this program; if not, write to the Free Software Foundation, Inc.,
 *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-package com.facetoe.jreader;
+package com.facetoe.jreader.helpers;
 
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -217,31 +217,15 @@ public class Utilities {
         return new File(path).isFile();
     }
 
-    /**
-     * Takes a HashMap of class names and relative urls and writes to file at filePath.
-     *
-     * @param filePath to write the data to.
-     * @param data     HashMap to write
-     * @throws IOException
-     */
-    public static void writeCLassData(String filePath, HashMap<String, String> data) throws IOException {
-        File file = new File(filePath);
-
-        if (!file.exists()) {
-            boolean wasSuccess = file.createNewFile();
-            if (!wasSuccess) {
-                throw new IOException("Failed to save class data at: " + filePath);
-            }
-        }
-        writeClassData(filePath, data);
-    }
-
-    private static void writeClassData(String filePath, HashMap<String, String> data) throws IOException {
-        FileOutputStream fileOut = new FileOutputStream(filePath);
+    public static void writeObject(File outFile, Object data) throws IOException {
+        FileOutputStream fileOut = new FileOutputStream(outFile);
         ObjectOutputStream outStream = new ObjectOutputStream(fileOut);
-        outStream.writeObject(data);
-        outStream.close();
-        fileOut.close();
+        try {
+            outStream.writeObject(data);
+        } finally {
+            outStream.close();
+            fileOut.close();
+        }
     }
 
     /**
@@ -252,14 +236,52 @@ public class Utilities {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public static HashMap<String, String> readClassData(File classDataFile) throws IOException, ClassNotFoundException {
+    public static Object readObject(File classDataFile) throws IOException {
         FileInputStream fileIn = new FileInputStream(classDataFile);
         ObjectInputStream in = new ObjectInputStream(fileIn);
-        HashMap<String, String> classData = (HashMap<String, String>) in.readObject();
-        in.close();
-        fileIn.close();
+        Object object = null;
+        try {
+            object = in.readObject();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace(); //This shouldn't happen...
+        } finally {
+            in.close();
+            fileIn.close();
+        }
+        return object;
+    }
 
-        return classData;
+    public static void checkAndCreateFileIfNotPresent(File file) throws IOException {
+        if (!file.exists()) {
+            boolean wasSuccess = file.createNewFile();
+            if (!wasSuccess) {
+                throw new IOException("Failed to create file at: " + file.getAbsolutePath());
+            }
+        }
+    }
+
+    public static void checkAndCreateDirectoryIfNotPresent(File directory) throws IOException {
+        if (!directory.exists()) {
+            boolean wasSuccess = directory.mkdirs();
+            if (!wasSuccess) {
+                throw new IOException("Failed to create or directory at: " + directory.getAbsolutePath());
+            }
+        }
+    }
+
+    public static File getFile(String... pathElements) {
+        return new File(constructPath(pathElements));
+    }
+
+    public static String constructPath(String... pathElement) {
+        String outPath = "";
+        for (String element : pathElement) {
+            if(!element.endsWith(File.separator))
+                outPath += element + File.separator;
+            else
+                outPath += element;
+        }
+        return outPath;
     }
 
     public static boolean isJavaDocsDir(File docDir) {

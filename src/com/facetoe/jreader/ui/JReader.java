@@ -15,8 +15,10 @@
 *    with this program; if not, write to the Free Software Foundation, Inc.,
 *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-package com.facetoe.jreader;
+package com.facetoe.jreader.ui;
 
+import com.facetoe.jreader.helpers.ProfileManager;
+import com.facetoe.jreader.helpers.Utilities;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import org.apache.log4j.Logger;
@@ -44,7 +46,7 @@ public class JReader {
     private JReaderMenuBar menuBar;
     private JReaderTopPanel topPanel;
     private JReaderBottomPanel bottomPanel;
-    private ProfileManager profileManager = ProfileManager.getInstance();
+    private ProfileManager profileManager;
     private JTabbedPane tabbedPane;
     private AbstractPanel currentTab;
 
@@ -52,6 +54,7 @@ public class JReader {
         if (!JReaderSetup.isSetup()) {
             new SetupWindow();
         }
+        profileManager = ProfileManager.getInstance();
         buildAndShowUI();
     }
 
@@ -94,9 +97,6 @@ public class JReader {
         frame.getRootPane().getActionMap().put(keyStroke, action);
     }
 
-    /**
-     * Create and show a new JReaderPanel.
-     */
     public void createAndShowNewReaderTab() {
         final JReaderPanel readerPanel = createReaderPanel();
         readerPanel.addChangeListener(new ChangeListener<String>() {
@@ -105,7 +105,7 @@ public class JReader {
                 updateReaderUI(newURL);
             }
         });
-        readerPanel.addPopupListner(new JReaderPopUpListener(this));
+        readerPanel.addPopupListener(new JReaderPopUpListener(this));
         showNewReaderTab(readerPanel);
     }
 
@@ -129,13 +129,15 @@ public class JReader {
         tabbedPane.setTabComponentAt(index, tabButton);
     }
 
+    // Updates the bottom panel with the new path, sets the title
+    // and determines whether or not to show the Show Source button.
     private void updateReaderUI(final String newURL) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 updateReaderLabel(newURL);
                 updateReaderTitle(newURL);
-                handleSourceButton(newURL);
+                maybeEnableSourceOption(newURL);
             }
         });
     }
@@ -227,16 +229,23 @@ public class JReader {
                     filePath + " does not exist.",
                     "File Not Found",
                     JOptionPane.ERROR_MESSAGE);
+            log.error("No such file: " + filePath);
             return;
         }
-        JSourcePanel newTab = createNewSourceTab(filePath, title);
-        showNewSourceTab(newTab);
-
+        final JSourcePanel newTab = createNewSourceTab(filePath, title);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                newTab.createDisplay();
+                showNewSourceTab(newTab);
+            }
+        }).start();
     }
 
     private JSourcePanel createNewSourceTab(String filePath, String title) {
         log.debug("createAndShowNewSourceTab called with: " + filePath);
-        JSourcePanel newTab = new JSourcePanel(filePath, bottomPanel, topPanel);
+        JSourcePanel newTab = new JSourcePanel(filePath, topPanel);
+        newTab.addActionListener(bottomPanel);
         addCloseButtonToTab(newTab, title);
         return newTab;
     }
@@ -245,7 +254,6 @@ public class JReader {
         // These buttons don't make sense in JSourcePanel.
         disableBrowserButtons();
         setCurrentTab(newTab);
-        newTab.highlightEnclosingClassOrInterface();
     }
 
     private void setCurrentTab(AbstractPanel newTab) {
@@ -253,9 +261,7 @@ public class JReader {
         resetSearchBar();
     }
 
-    /**
-     * Handle changing tabs. Remove and add autocomplete words, enable/disable buttons.
-     */
+    // Handle changing tabs. Remove and add autocomplete words, enable/disable buttons.
     private void handleTabChange() {
         if (currentTab == null) return;
 
@@ -284,7 +290,7 @@ public class JReader {
         topPanel.removeAutoCompleteWords(prevWords);
         topPanel.addAutoCompleteWords(currentTab.getAutoCompleteWords());
         String currentPath = ((JReaderPanel) currentTab).getCurrentPath();
-        handleSourceButton(currentPath);
+        maybeEnableSourceOption(currentPath);
         enableBrowserButtons();
     }
 
@@ -312,10 +318,8 @@ public class JReader {
         topPanel.getBtnHome().setEnabled(false);
     }
 
-    /**
-     * Decide whether or not to show the New Source option.
-     */
-    private void handleSourceButton(String newPath) {
+    // Decide whether or not to show the New Source option.
+    private void maybeEnableSourceOption(String newPath) {
         assert newPath != null;
         String srcPath = Utilities.docPathToSourcePath(newPath);
         if (Utilities.isGoodSourcePath(srcPath)) {

@@ -15,9 +15,9 @@
 *    with this program; if not, write to the Free Software Foundation, Inc.,
 *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-package com.facetoe.jreader.gui;
+package com.facetoe.jreader.ui;
 
-import com.facetoe.jreader.utilities.Utilities;
+import com.facetoe.jreader.helpers.Utilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -46,7 +46,7 @@ public class JReaderTopPanel extends JPanel {
     public JReaderTopPanel(JReader jReader) {
         this.jReader = jReader;
         initButtons();
-        initTopPanel();
+        createTopPanel();
     }
 
 
@@ -73,31 +73,40 @@ public class JReaderTopPanel extends JPanel {
     /**
      * Put the whole panel together.
      */
-    private void initTopPanel() {
+    private void createTopPanel() {
         setLayout(new BorderLayout(5, 0));
-        JPanel leftBar = new JPanel(new FlowLayout());
-        JPanel rightBar = new JPanel(new FlowLayout());
-
         searchBar.setPreferredSize(new Dimension(500, 30));
 
-        leftBar.add(searchBar);
-        leftBar.add(btnSearch);
-        rightBar.add(btnBack);
-        rightBar.add(btnNext);
-        rightBar.add(btnHome);
-        rightBar.add(btnSource);
+        JPanel leftBar = createLeftBar();
+        JPanel rightBar = createRightBar();
 
         add(leftBar, BorderLayout.WEST);
         add(rightBar, BorderLayout.EAST);
         setBorder(BorderFactory.createEmptyBorder(3, 5, 3, 5));
     }
 
+    private JPanel createLeftBar() {
+        JPanel leftBar = new JPanel(new FlowLayout());
+        leftBar.add(searchBar);
+        leftBar.add(btnSearch);
+        return leftBar;
+    }
+
+    private JPanel createRightBar() {
+        JPanel rightBar = new JPanel(new FlowLayout());
+        rightBar.add(btnBack);
+        rightBar.add(btnNext);
+        rightBar.add(btnHome);
+        rightBar.add(btnSource);
+        return rightBar;
+    }
+
     public void setSourceButton(int type, Action action) {
-        if ( type == SOURCE_BUTTON ) {
+        if (type == SOURCE_BUTTON) {
             btnSource.setAction(action);
             btnSource.setIcon(Utilities.readIcon(this.getClass().getResourceAsStream
                     ("/com/facetoe/jreader/resources/icons/javaSource.png"), 20, 20));
-        } else if ( type == TREE_BUTTON ) {
+        } else if (type == TREE_BUTTON) {
             btnSource.setAction(action);
             btnSource.setIcon(Utilities.readIcon(this.getClass().getResourceAsStream
                     ("/com/facetoe/jreader/resources/icons/tree_diagramm.png"), 20, 20));

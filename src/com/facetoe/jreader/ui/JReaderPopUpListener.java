@@ -15,7 +15,7 @@
 *    with this program; if not, write to the Free Software Foundation, Inc.,
 *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-package com.facetoe.jreader.gui;
+package com.facetoe.jreader.ui;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -74,7 +74,7 @@ class JReaderPopUpListener implements MouseListener {
         newTab.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                reader.newJReaderTab("JReader", true);
+                reader.createAndShowNewReaderTab();
             }
         });
 

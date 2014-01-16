@@ -15,7 +15,9 @@
 *    with this program; if not, write to the Free Software Foundation, Inc.,
 *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-package com.facetoe.jreader.gui;
+package com.facetoe.jreader.ui;
+
+import com.facetoe.jreader.helpers.Utilities;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -42,16 +44,18 @@ class NewSourceTabAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        jReader.newSourceTab();
-
-
-//                SwingWorker worker = new SwingWorker() {
-//                    @Override
-//                    protected Object doInBackground() throws Exception {
-//                        return null;
-//                    }
-//                };
-//                worker.execute();
+        if (jReader.getCurrentTab() instanceof JReaderPanel) {
+            System.out.println("Reader panel");
+            JReaderPanel readerTab = (JReaderPanel) jReader.getCurrentTab();
+            String path = Utilities.browserPathToSystemPath(readerTab.getCurrentPath());
+            String systemPath = Utilities.docPathToSourcePath(path);
+            if (Utilities.isGoodSourcePath(systemPath)) {
+                System.out.println("Is good source path: " + path);
+                jReader.createAndShowNewSourceTab();
+            } else {
+                System.out.println(readerTab.getCurrentPath());
+            }
+        }
     }
 }
 
@@ -70,9 +74,9 @@ class CloseTabAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         int index = tabbedPane.getSelectedIndex();
-        ButtonTabComponent component = ( ButtonTabComponent ) tabbedPane.getTabComponentAt(index);
+        ButtonTabComponent component = (ButtonTabComponent) tabbedPane.getTabComponentAt(index);
 
-        if ( component != null ) {
+        if (component != null) {
             component.removeTab();
             jReader.resetSearchBar();
         }
@@ -83,16 +87,16 @@ class CloseTabAction extends AbstractAction {
  * Action to create a new JReaderPanel tab.
  */
 class NewReaderTabAction extends AbstractAction {
-    private final JReader reader;
+    private final JReader jreader;
 
-    public NewReaderTabAction(JReader reader) {
+    public NewReaderTabAction(JReader jreader) {
         super("New Reader Tab");
-        this.reader = reader;
+        this.jreader = jreader;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        reader.newJReaderTab("Jreader", true);
+        jreader.createAndShowNewReaderTab();
     }
 }
 
@@ -100,7 +104,8 @@ class NewReaderTabAction extends AbstractAction {
  * Action to quit the application.
  */
 class QuitAction extends AbstractAction {
-        private final JReader jReader;
+    private final JReader jReader;
+
     public QuitAction(JReader jReader) {
         super("Quit");
         this.jReader = jReader;
@@ -108,6 +113,6 @@ class QuitAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        jReader.handleQuit();
+        jReader.saveProfiles();
     }
 }

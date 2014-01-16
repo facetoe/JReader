@@ -1,7 +1,7 @@
 
-import com.facetoe.jreader.Config;
-import com.facetoe.jreader.ProfileManager;
-import com.facetoe.jreader.Utilities;
+import com.facetoe.jreader.helpers.Config;
+import com.facetoe.jreader.helpers.ProfileManager;
+import com.facetoe.jreader.helpers.Utilities;
 import org.junit.Before;
 import org.junit.Test;
 

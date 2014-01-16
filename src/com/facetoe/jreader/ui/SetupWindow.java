@@ -15,11 +15,10 @@
 *    with this program; if not, write to the Free Software Foundation, Inc.,
 *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-package com.facetoe.jreader.gui;
+package com.facetoe.jreader.ui;
 
-import com.facetoe.jreader.ProfileManager;
-import com.facetoe.jreader.java.JavaDocParser;
-import com.facetoe.jreader.utilities.*;
+import com.facetoe.jreader.helpers.*;
+import com.facetoe.jreader.parsers.JavaDocParser;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -74,7 +73,7 @@ public class SetupWindow extends JDialog {
                 try {
                     btnOK.setEnabled(false);
                     worker.execute();
-                } catch ( Exception e1 ) {
+                } catch (Exception e1) {
                     log.error(e1.getMessage(), e1);
                 }
             }
@@ -195,7 +194,7 @@ public class SetupWindow extends JDialog {
             JReaderSetup.createDirectoriesAndConfig();
 
             File docDir = JReaderSetup.chooseDocs();
-            if ( docDir == null ) {
+            if (docDir == null) {
                 wasCanceled = true;
                 cancel(true);
                 return false;
@@ -203,17 +202,17 @@ public class SetupWindow extends JDialog {
                 setTickIcon(icnLocate);
             }
 
-            if ( !Config.getBool(Config.HAS_JAVALANG_SOURCE) )
+            if (!Config.getBool(Config.HAS_JAVALANG_SOURCE))
                 downloadSource();
 
-            if ( !Config.getBool(Config.HAS_EXTRACTED_SOURCE) )
+            if (!Config.getBool(Config.HAS_EXTRACTED_SOURCE))
                 extractSource();
 
-            if ( !JReaderSetup.hasDefaultProfile() ) {
+            if (!JReaderSetup.hasDefaultProfile()) {
                 setUpDefaultProfile(docDir);
             }
 
-            if ( !Config.getBool(Config.HAS_PARSED_DOCS) )
+            if (!Config.getBool(Config.HAS_PARSED_DOCS))
                 parseDocs(docDir);
 
             return true;
@@ -229,7 +228,7 @@ public class SetupWindow extends JDialog {
             downloader.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    progressBar.setValue(( int ) e.getWhen());
+                    progressBar.setValue((int) e.getWhen());
                     lblStatus.setText(e.getActionCommand());
                 }
             });
@@ -254,7 +253,7 @@ public class SetupWindow extends JDialog {
             unZipper.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    progressBar.setValue(( int ) e.getWhen());
+                    progressBar.setValue((int) e.getWhen());
                     lblStatus.setText(e.getActionCommand());
                 }
             });
@@ -300,10 +299,10 @@ public class SetupWindow extends JDialog {
                 }
             });
 
-            HashMap<String, String> classes = parser.parse(path);
-            Utilities.writeCLassData(ProfileManager.getInstance().getPath()
+            HashMap<String, String> classes = parser.parse(new File(path));
+            Utilities.writeObject(new File(ProfileManager.getInstance().getPath()
                     + File.separator
-                    + Config.CLASS_DATA_FILE_NAME, classes);
+                    + Config.CLASS_DATA_FILE_NAME), classes);
 
             Config.setBool(Config.HAS_PARSED_DOCS, true);
             lblStatus.setText("Complete");
@@ -316,15 +315,15 @@ public class SetupWindow extends JDialog {
             try {
                 get();
                 log.debug("Setup complete.");
-            } catch ( InterruptedException e ) {
+            } catch (InterruptedException e) {
                 wasCanceled = true;
                 log.error(e.getMessage(), e);
                 JOptionPane.showMessageDialog(null, e.getMessage());
 
-            } catch ( ExecutionException e ) {
+            } catch (ExecutionException e) {
                 log.error(e.getMessage(), e);
 
-            } catch ( CancellationException e ) {
+            } catch (CancellationException e) {
                 wasCanceled = true;
                 log.error(e.getMessage(), e);
 
@@ -332,7 +331,7 @@ public class SetupWindow extends JDialog {
                 setVisible(false);
                 dispose();
 
-                if ( wasCanceled ) {
+                if (wasCanceled) {
                     Config.setBool(Config.HAS_JAVALANG_SOURCE, false);
                     JOptionPane.showMessageDialog(null, "Goobye.");
                     System.exit(0);

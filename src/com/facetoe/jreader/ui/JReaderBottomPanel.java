@@ -15,7 +15,7 @@
 *    with this program; if not, write to the Free Software Foundation, Inc.,
 *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-package com.facetoe.jreader.gui;
+package com.facetoe.jreader.ui;
 
 import javax.swing.*;
 import java.awt.*;
@@ -64,6 +64,6 @@ public class JReaderBottomPanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-         lblStatus.setText(e.getActionCommand());
+        lblStatus.setText(e.getActionCommand());
     }
 }
