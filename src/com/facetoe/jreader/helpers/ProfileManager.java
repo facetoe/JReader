@@ -81,21 +81,21 @@ public class ProfileManager implements Serializable {
      */
     public void newProfile(String name, String docDir, String srcDir) throws IOException {
         Profile profile = new Profile(name, docDir, srcDir);
-        profiles.put(profile.getName(), profile);
-        HashMap<String, String> classData = parseJavaDocs(profile.getDocDir());
+        profiles.put(profile.name, profile);
+        HashMap<String, String> classData = parseJavaDocs(profile.docDir);
         createFilesAndSaveProfile(profile, classData);
-        log.debug("Created profile: " + profile.getName());
+        log.debug("Created profile: " + profile.name);
     }
 
     private void createFilesAndSaveProfile(Profile profile, HashMap<String, String> classData) throws IOException {
         Utilities.checkAndCreateDirectoryIfNotPresent(
                 Utilities.getFile(
                         Config.getString(Config.PROFILE_DIR),
-                        profile.getProfileDirName()));
+                        profile.profileDirName));
 
         File classDataFile = Utilities.getFile(
                 Config.getString(Config.PROFILE_DIR),
-                profile.getProfileDirName(),
+                profile.profileDirName,
                 Config.CLASS_DATA_FILE_NAME);
         writeProfile(profile);
         writeClassData(classDataFile, classData);
@@ -149,9 +149,9 @@ public class ProfileManager implements Serializable {
     private void loadProfile(File profFile) throws IOException {
         Profile profile = readProfile(profFile);
         // SearchContext isn't serializable so we need to create it on load.
-        profile.setSearchContext(new SearchContext());
-        profiles.put(profile.getName(), profile);
-        log.debug("Loaded profile: " + profile.getName());
+        profile.searchContext = new SearchContext();
+        profiles.put(profile.name, profile);
+        log.debug("Loaded profile: " + profile.name);
     }
 
     /**
@@ -175,8 +175,8 @@ public class ProfileManager implements Serializable {
     private void writeProfile(Profile profile) throws IOException {
         File profileFile = Utilities.getFile(
                 Config.getString(Config.PROFILE_DIR),
-                profile.getProfileDirName(),
-                profile.getProfileFileName());
+                profile.profileDirName,
+                profile.profileFileName);
         Utilities.checkAndCreateFileIfNotPresent(profileFile);
         writeProfile(profileFile, profile);
     }
@@ -210,7 +210,7 @@ public class ProfileManager implements Serializable {
     public void setCurrentProfile(String profileName) {
         if (profiles.containsKey(profileName)) {
             currentProfile = profiles.get(profileName);
-            currentProfile.setSearchContext(new SearchContext());
+            currentProfile.searchContext = new SearchContext();
             Config.setString(Config.CURRENT_PROFILE, profileName);
             log.debug("Profile set to: " + Config.getString(Config.CURRENT_PROFILE));
         } else if(!profileName.equals(Config.DEFAULT_PROFILE_NAME)) {
@@ -232,19 +232,19 @@ public class ProfileManager implements Serializable {
         if (profile != null) {
             File profileDir = Utilities.getFile(
                     Config.getString(Config.PROFILE_DIR),
-                    profile.getProfileDirName());
+                    profile.profileDirName);
 
             Utilities.deleteDirectoryAndContents(profileDir);
             profiles.remove(profileName);
             setCurrentProfile(Config.DEFAULT_PROFILE_NAME);
-            log.debug("Deleted: " + profile.getName());
+            log.debug("Deleted: " + profile.name);
         } else {
             log.error("Profile doesn't exist: " + profileName);
         }
     }
 
     public String getCurrentProfileName() {
-        return currentProfile.getName();
+        return currentProfile.name;
     }
 
     /**
@@ -273,7 +273,7 @@ public class ProfileManager implements Serializable {
     public String getPath() {
         return Utilities.constructPath(
                 Config.getString(Config.PROFILE_DIR),
-                currentProfile.getProfileDirName());
+                currentProfile.profileDirName);
     }
 
     /**
@@ -301,7 +301,7 @@ public class ProfileManager implements Serializable {
      * @return Path to documentation.
      */
     public String getDocDir() {
-        return currentProfile.getDocDir();
+        return currentProfile.docDir;
     }
 
     /**
@@ -310,7 +310,7 @@ public class ProfileManager implements Serializable {
      * @return Path to the source code.
      */
     public String getSrcDir() {
-        return currentProfile.getSrcDir();
+        return currentProfile.srcDir;
     }
 
     /**
@@ -319,7 +319,7 @@ public class ProfileManager implements Serializable {
      * @return The homepage path.
      */
     public String getHome() {
-        return getDocDir() + File.separator + currentProfile.getHome();
+        return getDocDir() + File.separator + currentProfile.home;
     }
 
     /**
@@ -327,28 +327,28 @@ public class ProfileManager implements Serializable {
      */
     public SearchContext getSearchContext() {
         currentProfile.updateSearchContext();
-        return currentProfile.getSearchContext();
+        return currentProfile.searchContext;
     }
 
     /**
      * @return Whether regexp is enabled in this profiles search context.
      */
     public boolean regexpIsEnabled() {
-        return currentProfile.regexpIsEnabled();
+        return currentProfile.regexpIsEnabled;
     }
 
     /**
      * @return Whether whole word is enabled in this profiles search context.
      */
     public boolean wholeWordIsEnabled() {
-        return currentProfile.wholeWordIsEnabled();
+        return currentProfile.wholeWordIsEnabled;
     }
 
     /**
      * @return Whether match case is enabled in this profiles search context.
      */
     public boolean matchCaseIsEnabled() {
-        return currentProfile.matchCaseIsEnabled();
+        return currentProfile.matchCaseIsEnabled;
     }
 
     /**
@@ -357,7 +357,7 @@ public class ProfileManager implements Serializable {
      * @param value Boolean.
      */
     public void setRegexpEnabled(boolean value) {
-        currentProfile.setRegexpIsEnabled(value);
+        currentProfile.regexpIsEnabled = value;
     }
 
     /**
@@ -366,7 +366,7 @@ public class ProfileManager implements Serializable {
      * @param value Boolean.
      */
     public void setWholeWordEnabled(boolean value) {
-        currentProfile.setWholeWordIsEnabled(value);
+        currentProfile.wholeWordIsEnabled = value;
     }
 
     /**
@@ -375,8 +375,76 @@ public class ProfileManager implements Serializable {
      * @param value Boolean.
      */
     public void setMatchCaseEnabled(boolean value) {
-        currentProfile.setMatchCaseIsEnabled(value);
+        currentProfile.matchCaseIsEnabled = value;
     }
 
+    /**
+     * Class to represent a profile.
+     */
+    private class Profile implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        private final String profileDirName;
+        private final String docDir;
+        private final String srcDir;
+        private final String profileFileName;
+
+        // All the class names and relative paths.
+        private HashMap<String, String> classData;
+
+        // The documentation HTML file that is set as home.
+        private final String home;
+
+        private final String name;
+        private transient SearchContext searchContext;
+        private boolean regexpIsEnabled;
+        private boolean wholeWordIsEnabled;
+        private boolean matchCaseIsEnabled;
+
+        public Profile(String name, String docDir, String srcDir) {
+            this.name = name;
+            this.docDir = docDir;
+            this.srcDir = srcDir;
+            this.regexpIsEnabled = false;
+            this.wholeWordIsEnabled = false;
+            this.matchCaseIsEnabled = false;
+            this.home = Utilities.getHomePage(docDir);
+
+            // Don't want funny characters and spaces in the profile directory or file
+            this.profileFileName = name.replaceAll("[^A-Za-z0-9]", "_") + ".ser";
+            this.profileDirName = name.replaceAll("[^a-zA-Z0-9.-]", "_");
+        }
+
+        /**
+         * Loads the class data if it isn't already loaded for this profile.
+         *
+         * @return The class data.
+         */
+        HashMap<String, String> getClassData() {
+            if (classData == null) {
+                log.debug("Loading classData for: " + name);
+                File classDataFile = new File(Config.getString(Config.PROFILE_DIR)
+                        + File.separator + profileDirName + File.separator + Config.CLASS_DATA_FILE_NAME);
+                try {
+                    classData = (HashMap<String, String>) Utilities.readObject(classDataFile);
+                } catch (IOException e) {
+                    log.error(e);
+                    Utilities.showError("Failed to load auto-complete data for this profile.\n" +
+                            " Try deleting the it and adding it again. Sorry! ", "Error");
+                    classData = new HashMap<String, String>(); // Return an empty hashmap so we don't get a NPE
+                }
+            }
+            return classData;
+        }
+
+        /**
+         * Make sure the search context is up to date.
+         */
+        private void updateSearchContext() {
+            searchContext.setMatchCase(matchCaseIsEnabled);
+            searchContext.setRegularExpression(regexpIsEnabled);
+            searchContext.setWholeWord(wholeWordIsEnabled);
+        }
+    }
 }
 

@@ -10,10 +10,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0f725b18-1f9a-4ce0-8608-872f2385b0ad" name="Default" comment="Reorganized code into packages.&#10;">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/helpers/Profile.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/NewProfileWindow.form" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/NewProfileWindow.form" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/helpers/Profile.java" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/helpers/ProfileManager.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/helpers/ProfileManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/SetupWindow.form" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/SetupWindow.form" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="JReader.iws" />
@@ -87,7 +85,7 @@
       <file leaf-file-name="ProfileManagerTest.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test/ProfileManagerTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="29" column="42" selection-start="1183" selection-end="1183" vertical-scroll-proportion="0.0" vertical-offset="216" max-vertical-offset="2502">
+            <state line="127" column="0" selection-start="3789" selection-end="3789" vertical-scroll-proportion="0.0" vertical-offset="1839" max-vertical-offset="2502">
               <folding />
             </state>
           </provider>
@@ -116,42 +114,21 @@
       <file leaf-file-name="ProfileManager.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/helpers/ProfileManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="368" column="52" selection-start="11812" selection-end="11812" vertical-scroll-proportion="0.4874372" vertical-offset="5926" max-vertical-offset="6480">
+            <state line="383" column="11" selection-start="11979" selection-end="11979" vertical-scroll-proportion="0.31428573" vertical-offset="6258" max-vertical-offset="7704">
               <folding>
                 <element signature="e#1540#1557#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Profile.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/helpers/Profile.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="132" column="20" selection-start="3856" selection-end="3856" vertical-scroll-proportion="0.0" vertical-offset="2185" max-vertical-offset="2610">
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#2870#2871#0" expanded="true" />
-                <element signature="e#2907#2908#0" expanded="true" />
-                <element signature="e#2940#2941#0" expanded="true" />
-                <element signature="e#2969#2970#0" expanded="true" />
-                <element signature="e#3002#3003#0" expanded="true" />
-                <element signature="e#3031#3032#0" expanded="true" />
-                <element signature="e#3073#3074#0" expanded="true" />
-                <element signature="e#3111#3112#0" expanded="true" />
-                <element signature="e#3142#3143#0" expanded="true" />
-                <element signature="e#3169#3170#0" expanded="true" />
-                <element signature="e#3200#3201#0" expanded="true" />
-                <element signature="e#3227#3228#0" expanded="true" />
-                <element signature="e#3274#3275#0" expanded="true" />
-                <element signature="e#3310#3311#0" expanded="true" />
-                <element signature="e#3375#3376#0" expanded="true" />
-                <element signature="e#3425#3426#0" expanded="true" />
-                <element signature="e#3566#3567#0" expanded="true" />
-                <element signature="e#3620#3621#0" expanded="true" />
-                <element signature="e#3773#3774#0" expanded="true" />
-                <element signature="e#3833#3834#0" expanded="true" />
-                <element signature="e#3986#3987#0" expanded="true" />
-                <element signature="e#4046#4047#0" expanded="true" />
+                <element signature="e#8744#8745#0" expanded="true" />
+                <element signature="e#8786#8787#0" expanded="true" />
+                <element signature="e#10118#10119#0" expanded="true" />
+                <element signature="e#10162#10163#0" expanded="true" />
+                <element signature="e#10316#10317#0" expanded="true" />
+                <element signature="e#10360#10361#0" expanded="true" />
+                <element signature="e#11470#11471#0" expanded="true" />
+                <element signature="e#11524#11525#0" expanded="true" />
+                <element signature="e#11661#11662#0" expanded="true" />
+                <element signature="e#11718#11719#0" expanded="true" />
+                <element signature="e#11855#11856#0" expanded="true" />
+                <element signature="e#11912#11913#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -1272,6 +1249,18 @@
         <state line="78" column="11" selection-start="2802" selection-end="2802" vertical-scroll-proportion="0.0" vertical-offset="1404" max-vertical-offset="8226">
           <folding>
             <element signature="e#1540#1557#0" expanded="true" />
+            <element signature="e#8744#8745#0" expanded="true" />
+            <element signature="e#8786#8787#0" expanded="true" />
+            <element signature="e#10118#10119#0" expanded="true" />
+            <element signature="e#10162#10163#0" expanded="true" />
+            <element signature="e#10316#10317#0" expanded="true" />
+            <element signature="e#10360#10361#0" expanded="true" />
+            <element signature="e#11470#11471#0" expanded="true" />
+            <element signature="e#11524#11525#0" expanded="true" />
+            <element signature="e#11661#11662#0" expanded="true" />
+            <element signature="e#11718#11719#0" expanded="true" />
+            <element signature="e#11855#11856#0" expanded="true" />
+            <element signature="e#11912#11913#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1370,6 +1359,18 @@
         <state line="42" column="13" selection-start="1420" selection-end="1420" vertical-scroll-proportion="0.0" vertical-offset="756" max-vertical-offset="8226">
           <folding>
             <element signature="e#1540#1557#0" expanded="true" />
+            <element signature="e#8744#8745#0" expanded="true" />
+            <element signature="e#8786#8787#0" expanded="true" />
+            <element signature="e#10118#10119#0" expanded="true" />
+            <element signature="e#10162#10163#0" expanded="true" />
+            <element signature="e#10316#10317#0" expanded="true" />
+            <element signature="e#10360#10361#0" expanded="true" />
+            <element signature="e#11470#11471#0" expanded="true" />
+            <element signature="e#11524#11525#0" expanded="true" />
+            <element signature="e#11661#11662#0" expanded="true" />
+            <element signature="e#11718#11719#0" expanded="true" />
+            <element signature="e#11855#11856#0" expanded="true" />
+            <element signature="e#11912#11913#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1624,13 +1625,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/ProfileManagerTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="42" selection-start="1183" selection-end="1183" vertical-scroll-proportion="0.0" vertical-offset="216" max-vertical-offset="2502">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/parsers/JavaSourceFileParser.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="81" column="21" selection-start="3501" selection-end="3501" vertical-scroll-proportion="0.0" vertical-offset="954" max-vertical-offset="2574">
@@ -1666,42 +1660,30 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/helpers/Profile.java">
+    <entry file="file://$PROJECT_DIR$/test/ProfileManagerTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="132" column="20" selection-start="3856" selection-end="3856" vertical-scroll-proportion="0.0" vertical-offset="2185" max-vertical-offset="2610">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#2870#2871#0" expanded="true" />
-            <element signature="e#2907#2908#0" expanded="true" />
-            <element signature="e#2940#2941#0" expanded="true" />
-            <element signature="e#2969#2970#0" expanded="true" />
-            <element signature="e#3002#3003#0" expanded="true" />
-            <element signature="e#3031#3032#0" expanded="true" />
-            <element signature="e#3073#3074#0" expanded="true" />
-            <element signature="e#3111#3112#0" expanded="true" />
-            <element signature="e#3142#3143#0" expanded="true" />
-            <element signature="e#3169#3170#0" expanded="true" />
-            <element signature="e#3200#3201#0" expanded="true" />
-            <element signature="e#3227#3228#0" expanded="true" />
-            <element signature="e#3274#3275#0" expanded="true" />
-            <element signature="e#3310#3311#0" expanded="true" />
-            <element signature="e#3375#3376#0" expanded="true" />
-            <element signature="e#3425#3426#0" expanded="true" />
-            <element signature="e#3566#3567#0" expanded="true" />
-            <element signature="e#3620#3621#0" expanded="true" />
-            <element signature="e#3773#3774#0" expanded="true" />
-            <element signature="e#3833#3834#0" expanded="true" />
-            <element signature="e#3986#3987#0" expanded="true" />
-            <element signature="e#4046#4047#0" expanded="true" />
-          </folding>
+        <state line="127" column="0" selection-start="3789" selection-end="3789" vertical-scroll-proportion="0.0" vertical-offset="1839" max-vertical-offset="2502">
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/helpers/ProfileManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="368" column="52" selection-start="11812" selection-end="11812" vertical-scroll-proportion="0.4874372" vertical-offset="5926" max-vertical-offset="6480">
+        <state line="383" column="11" selection-start="11979" selection-end="11979" vertical-scroll-proportion="0.31428573" vertical-offset="6258" max-vertical-offset="7704">
           <folding>
             <element signature="e#1540#1557#0" expanded="true" />
+            <element signature="e#8744#8745#0" expanded="true" />
+            <element signature="e#8786#8787#0" expanded="true" />
+            <element signature="e#10118#10119#0" expanded="true" />
+            <element signature="e#10162#10163#0" expanded="true" />
+            <element signature="e#10316#10317#0" expanded="true" />
+            <element signature="e#10360#10361#0" expanded="true" />
+            <element signature="e#11470#11471#0" expanded="true" />
+            <element signature="e#11524#11525#0" expanded="true" />
+            <element signature="e#11661#11662#0" expanded="true" />
+            <element signature="e#11718#11719#0" expanded="true" />
+            <element signature="e#11855#11856#0" expanded="true" />
+            <element signature="e#11912#11913#0" expanded="true" />
           </folding>
         </state>
       </provider>
