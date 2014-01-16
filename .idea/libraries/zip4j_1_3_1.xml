@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="zip4j_1.3.1">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/src/com/facetoe/jreader/lib/zip4j_1.3.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/zip4j_1.3.1.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

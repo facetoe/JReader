@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="jgoodies-forms">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/src/com/facetoe/jreader/lib/jgoodies-forms.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jgoodies-forms.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
