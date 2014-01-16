@@ -116,6 +116,7 @@ public class ProfileManager implements Serializable {
      * @throws ClassNotFoundException
      */
     public void loadProfiles() throws IOException {
+        profiles.clear();
         File profileDir = new File(Config.getString(Config.PROFILE_DIR));
         File[] profileDirectories = profileDir.listFiles(new FileFilter() {
             @Override
