@@ -110,7 +110,7 @@ class JSourcePanel extends AbstractPanel {
             String code = Utilities.readFile(Paths.get(sourceFilePath).toString(), StandardCharsets.UTF_8);
             codeArea.setText(code);
         } catch (IOException e) {
-            Utilities.showError(this, e.getMessage(), "Error Loading File");
+            Utilities.showErrorDialog(this, e.getMessage(), "Error Loading File");
             log.error(e.getMessage(), e);
         }
     }

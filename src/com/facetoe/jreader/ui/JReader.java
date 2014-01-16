@@ -50,8 +50,7 @@ public class JReader {
     private AbstractPanel currentTab;
 
     public JReader() {
-        if (!JReaderSetup.isSetup()) {
-            new SetupWindow();
+        if (JReaderSetup.needsSetup()) {
             new SetupWindow();
         }
         profileManager = ProfileManager.getInstance();
@@ -160,7 +159,7 @@ public class JReader {
 
     private void initAutoCompleteWords() {
         topPanel.addAutoCompleteWords(profileManager.getClassNames());
-        currentTab = (AbstractPanel) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
+        currentTab = getCurrentTab();
     }
 
     private void initListeners() {
@@ -225,10 +224,7 @@ public class JReader {
         final String title = Utilities.extractFileName(filePath);
 
         if (!Utilities.isGoodSourcePath(filePath)) {
-            JOptionPane.showMessageDialog(frame,
-                    filePath + " does not exist.",
-                    "File Not Found",
-                    JOptionPane.ERROR_MESSAGE);
+            Utilities.showErrorDialog(frame, filePath + " does not exist.", "File Not Found");
             log.error("No such file: " + filePath);
             return;
         }
@@ -243,7 +239,6 @@ public class JReader {
     }
 
     private JSourcePanel createNewSourceTab(String filePath, String title) {
-        log.debug("createAndShowNewSourceTab called with: " + filePath);
         JSourcePanel newTab = new JSourcePanel(filePath, topPanel);
         newTab.addActionListener(bottomPanel);
         addCloseButtonToTab(newTab, title);
@@ -263,11 +258,12 @@ public class JReader {
 
     // Handle changing tabs. Remove and add autocomplete words, enable/disable buttons.
     private void handleTabChange() {
-        if (currentTab == null) return;
+        if (currentTab == null)
+            return;
 
         /* We want to remove the previous panels words so they don't pollute the new panels auto complete. */
         ArrayList<String> prevWords = currentTab.getAutoCompleteWords();
-        currentTab = (AbstractPanel) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
+        currentTab = getCurrentTab();
 
         if (currentTab instanceof JReaderPanel) {
             handleReaderTabChange(prevWords);
@@ -277,6 +273,10 @@ public class JReader {
 
         /* Remove whatever text is there becuase it's annoying always having to delete it. */
         topPanel.clearSearchBar();
+    }
+
+    public AbstractPanel getCurrentTab() {
+        return (AbstractPanel) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
     }
 
     private void handleSourceTabChange(ArrayList<String> prevWords) {
@@ -344,10 +344,6 @@ public class JReader {
         topPanel.getSearchBar().requestFocus();
     }
 
-    public JPanel getCurrentTab() {
-        return currentTab;
-    }
-
     public void saveProfiles() {
         try {
             log.debug("Saving profiles..");
@@ -355,40 +351,45 @@ public class JReader {
             log.debug("Success!");
             System.exit(0);
         } catch (IOException e) {
+            Utilities.showErrorDialog(frame, e.getMessage(), "Error Saving Profiles");
             log.error(e.getMessage(), e);
         }
     }
 
     public static void main(String[] args) {
-        Logger log = Logger.getLogger(JReader.class);
-
-        try {
-            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            try {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (ClassNotFoundException e1) {
-                log.error(e1.getMessage(), e1);
-            } catch (InstantiationException e1) {
-                log.error(e1.getMessage(), e1);
-            } catch (IllegalAccessException e1) {
-                log.error(e1.getMessage(), e1);
-            } catch (UnsupportedLookAndFeelException e1) {
-                log.error(e1.getMessage(), e1);
-            }
-        }
-
+        setLookAndFeel();
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 new JReader();
             }
         });
+    }
+
+    // If we can't use Numbus fall back to system look and feel
+    private static void setLookAndFeel() {
+        try {
+            setNimbusLookAndFeel();
+        } catch (Exception e) {
+            setSystemLookAndFeel();
+        }
+    }
+
+    private static void setSystemLookAndFeel() {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            Logger.getLogger(JReader.class).error(e);
+        }
+    }
+
+    private static void setNimbusLookAndFeel() throws Exception {
+        for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+            if ("Nimbus".equals(info.getName())) {
+                UIManager.setLookAndFeel(info.getClassName());
+                break;
+            }
+        }
     }
 }
 

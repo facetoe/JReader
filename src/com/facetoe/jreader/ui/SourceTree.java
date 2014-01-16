@@ -41,7 +41,7 @@ import java.util.HashMap;
 /**
  * Provides a tree view of a source file's contents.
  */
-public class SourceTree extends JTree {
+class SourceTree extends JTree {
 
     private static final Logger log = Logger.getLogger(SourceTree.class);
 

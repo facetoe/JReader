@@ -427,10 +427,11 @@ public class ProfileManager implements Serializable {
                 File classDataFile = new File(Config.getString(Config.PROFILE_DIR)
                         + File.separator + profileDirName + File.separator + Config.CLASS_DATA_FILE_NAME);
                 try {
+                    //noinspection unchecked
                     classData = (HashMap<String, String>) Utilities.readObject(classDataFile);
                 } catch (IOException e) {
                     log.error(e);
-                    Utilities.showError("Failed to load auto-complete data for this profile.\n" +
+                    Utilities.showErrorDialog("Failed to load auto-complete data for this profile.\n" +
                             " Try deleting the it and adding it again. Sorry! ", "Error");
                     classData = new HashMap<String, String>(); // Return an empty hashmap so we don't get a NPE
                 }

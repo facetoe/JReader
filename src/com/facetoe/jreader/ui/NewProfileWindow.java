@@ -92,7 +92,7 @@ public class NewProfileWindow extends JDialog {
         btnOK.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!hasAllFields()) {
+                if (isMissingFields()) {
                     JOptionPane.showMessageDialog(null, "You need to fill in all the fields");
                     return;
                 }
@@ -171,10 +171,10 @@ public class NewProfileWindow extends JDialog {
         return null;
     }
 
-    private boolean hasAllFields() {
-        return !txtDocs.getText().isEmpty()
-                && !txtSrc.getText().isEmpty()
-                && !txtName.getText().isEmpty();
+    private boolean isMissingFields() {
+        return txtDocs.getText().isEmpty()
+                || txtSrc.getText().isEmpty()
+                || txtName.getText().isEmpty();
     }
 
     public static void main(String[] args) {

@@ -60,7 +60,7 @@ import java.util.UUID;
  * Contains a JLabel to show the text and
  * a JButton to close the tab it belongs to
  */
-public class ButtonTabComponent extends JPanel {
+class ButtonTabComponent extends JPanel {
     private final Logger log = Logger.getLogger(this.getClass());
 
     private final JTabbedPane pane;

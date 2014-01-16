@@ -63,7 +63,7 @@ public class SetupWindow extends JDialog {
     private JLabel icnExtract;
 
 
-    SetupWorker worker = new SetupWorker();
+    private final SetupWorker worker = new SetupWorker();
 
 
     public SetupWindow() {

@@ -170,7 +170,7 @@ class JReaderPanel extends AbstractPanel {
             loadURL(homeFile.getAbsolutePath());
         } else {
             log.error("Couldn't locate home file.");
-            Utilities.showError("Couldn't locate home file", "File Not Found");
+            Utilities.showErrorDialog("Couldn't locate home file", "File Not Found");
         }
     }
 

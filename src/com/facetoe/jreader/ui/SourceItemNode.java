@@ -31,7 +31,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 /**
  * Class to hold item data.
  */
-public class SourceItemNode extends DefaultMutableTreeNode {
+class SourceItemNode extends DefaultMutableTreeNode {
     private AbstractJavaObject javaObject;
     private final String title;
     private int type;

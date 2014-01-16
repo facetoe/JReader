@@ -36,7 +36,7 @@ public class JavaSourceFile {
     /**
      * All classOrInterfaces and interfaces..
      */
-    private ArrayList<AbstractJavaObject> fileContents = new ArrayList<AbstractJavaObject>();
+    private final ArrayList<AbstractJavaObject> fileContents = new ArrayList<AbstractJavaObject>();
 
     /**
      * Every declaration.

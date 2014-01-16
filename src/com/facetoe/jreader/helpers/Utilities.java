@@ -355,20 +355,17 @@ public class Utilities {
     }
 
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void deleteDirectoryAndContents(File file) {
         if (file.isDirectory()) {
             if (file.list().length == 0) {
                 file.delete();
-
             } else {
-                String files[] = file.list();
-
                 // Recursive delete everything in here
-                for (String temp : files) {
+                for (String temp : file.list()) {
                     File fileDelete = new File(file, temp);
                     deleteDirectoryAndContents(fileDelete);
                 }
-
                 // Delete enclosing file
                 if (file.list().length == 0) {
                     file.delete();
@@ -397,11 +394,11 @@ public class Utilities {
         return null;
     }
 
-    public static void showError(String message, String title) {
-        showError(null, message, title);
+    public static void showErrorDialog(String message, String title) {
+        showErrorDialog(null, message, title);
     }
 
-    public static void showError(Component parent, String message, String title) {
+    public static void showErrorDialog(Component parent, String message, String title) {
         JOptionPane.showMessageDialog(parent, message, title, JOptionPane.ERROR_MESSAGE);
     }
 }

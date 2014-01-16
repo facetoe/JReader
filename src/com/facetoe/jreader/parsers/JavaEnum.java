@@ -33,7 +33,7 @@ import java.util.HashMap;
  * Represents an enum.
  */
 public class JavaEnum extends AbstractJavaObject<EnumDeclaration> {
-    private HashMap<String, JavaEnumConstantDeclaration> constants = new HashMap<String, JavaEnumConstantDeclaration>();
+    private final HashMap<String, JavaEnumConstantDeclaration> constants = new HashMap<String, JavaEnumConstantDeclaration>();
 
     public JavaEnum(EnumDeclaration typeDec) {
         super(typeDec);
@@ -76,9 +76,6 @@ public class JavaEnum extends AbstractJavaObject<EnumDeclaration> {
         return constants;
     }
 
-    public JavaEnumConstantDeclaration getConstant(String name) {
-        return constants.get(name);
-    }
 }
 
 class JavaEnumConstantDeclaration extends AbstractJavaObject<EnumConstantDeclaration> {

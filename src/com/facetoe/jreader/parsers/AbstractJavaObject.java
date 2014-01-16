@@ -42,7 +42,7 @@ public abstract class AbstractJavaObject<T> {
     /**
      * What sort of object this is.
      */
-    protected int type;
+    int type;
 
     // The declaration
     final T typeDeclaration;
@@ -50,7 +50,7 @@ public abstract class AbstractJavaObject<T> {
     /**
      * Full declaration including modifiers
      */
-    protected String fullDeclaration;
+    String fullDeclaration;
 
     /**
      * Integer representing the modifiers for this object.
@@ -60,35 +60,35 @@ public abstract class AbstractJavaObject<T> {
     /**
      * Just the name and parameters
      */
-    protected String declaration;
+    String declaration;
 
     /**
      * Line in the source file where this item begins
      */
-    protected int beginLine;
+    int beginLine;
 
     /**
      * Line in the source file where this item ends
      * Note: this includes the entire block, not just declarations
      */
-    protected int endLine;
+    int endLine;
 
     /**
      * Column where this declaration begins
      */
-    protected int beginColumn;
+    int beginColumn;
 
     /**
      * Column where this declaration ends.
      */
-    protected int endColumn;
+    int endColumn;
 
     /**
      * Constructor.
      *
      * @param t The type declaration.
      */
-    public AbstractJavaObject(T t) {
+    AbstractJavaObject(T t) {
         typeDeclaration = t;
         extractDeclaration();
         extractFullDeclaration();
@@ -106,15 +106,6 @@ public abstract class AbstractJavaObject<T> {
 
 
     abstract public int getModifiers();
-
-    /**
-     * Get the full declaration.
-     *
-     * @return The declaration.
-     */
-    public String getFullDeclaration() {
-        return fullDeclaration;
-    }
 
     /**
      * Get the short declaration.
@@ -154,15 +145,6 @@ public abstract class AbstractJavaObject<T> {
      */
     public int getBeginColumn() {
         return beginColumn;
-    }
-
-    /**
-     * Get the column where this declaration ends
-     *
-     * @return the end column.
-     */
-    public int getEndColumn() {
-        return endColumn;
     }
 
     @Override
