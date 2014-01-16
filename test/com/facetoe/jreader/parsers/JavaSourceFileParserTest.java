@@ -1,10 +1,12 @@
+package com.facetoe.jreader.parsers;
 
-import com.facetoe.jreader.parsers.JavaSourceFileParser;
 import japa.parser.ParseException;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by facetoe on 15/01/14.
@@ -12,20 +14,19 @@ import java.io.IOException;
 public class JavaSourceFileParserTest {
 
     @org.junit.Test
+    // This takes a while as it parses every Java source file
     public void testParse() throws Exception {
         recursiveTest(new File("/home/facetoe/.jreader/src-jdk"));
     }
 
-    public static void recursiveTest(File dir) throws ParseException, IOException {
+    private static void recursiveTest(File dir) throws ParseException, IOException {
         File[] contents = dir.listFiles();
         if (contents != null) {
             for (File content : contents) {
                 if (content.isDirectory()) {
                     recursiveTest(content);
-                } else {
-                    if (content.getName().endsWith(".java")) {
-                        JavaSourceFileParser.parse(new FileInputStream(content));
-                    }
+                } else if (content.getName().endsWith(".java")) {
+                    assertNotNull(JavaSourceFileParser.parse(new FileInputStream(content)));
                 }
             }
         }

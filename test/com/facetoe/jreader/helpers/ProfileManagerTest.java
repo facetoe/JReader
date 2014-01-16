@@ -1,12 +1,14 @@
+package com.facetoe.jreader.helpers;
 
-import com.facetoe.jreader.helpers.Config;
-import com.facetoe.jreader.helpers.ProfileManager;
-import com.facetoe.jreader.helpers.Utilities;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -15,13 +17,15 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by facetoe on 16/01/14.
  */
-public class ProfileManagerTest {
+class JReaderTest {
     static ProfileManager pm;
     static final String testProfileName = "test";
     static final String testProfileDocDir = "/home/facetoe/IdeaProjects/JReader/testFiles/swingx-all-1.6.4-javadoc";
     static final String testProfileSourceDir = "/home/facetoe/IdeaProjects/JReader/testFiles/swingx-all-1.6.4-sources";
     static final String testProfileDir = Utilities.constructPath(Config.getString(Config.PROFILE_DIR), testProfileName);
-    static final String defaultProfileName = Config.DEFAULT_PROFILE_NAME;
+}
+
+public class ProfileManagerTest extends JReaderTest {
 
     @BeforeClass
     public static void setUpClass() {
@@ -29,31 +33,26 @@ public class ProfileManagerTest {
         pm = ProfileManager.getInstance();
     }
 
+    @AfterClass
+    public static void tearDownClass() {
+        for (String profileName : pm.getProfileNames()) {
+            if (!profileName.equals(Config.DEFAULT_PROFILE_NAME))
+                pm.deleteProfile(profileName);
+        }
+    }
+
     @Test
     public void testNewProfile() throws Exception {
         pm.newProfile(testProfileName, testProfileDocDir, testProfileSourceDir);
-        pm.saveProfiles();
+        assertEquals(true, (Utilities.getFile(testProfileDir, testProfileName + ".ser")).exists());
+        assertEquals(true, (Utilities.getFile(testProfileDir)).exists());
+        assertEquals(true, (Utilities.getFile(testProfileDir, Config.CLASS_DATA_FILE_NAME)).exists());
     }
 
     @Test
     public void testSetCurrentProfile() throws Exception {
-        pm.setCurrentProfile(testProfileName);
-        assertEquals(testProfileName, pm.getCurrentProfileName());
-    }
-
-    @Test
-    public void testProfileFileCreated() throws Exception {
-        assertEquals(true, (Utilities.getFile(testProfileDir, testProfileName + ".ser")).exists());
-    }
-
-    @Test
-    public void testProfileDirCreated() throws Exception {
-        assertEquals(true, (Utilities.getFile(testProfileDir)).exists());
-    }
-
-    @Test
-    public void testClassDataFileCreated() throws Exception {
-        assertEquals(true, (Utilities.getFile(testProfileDir, Config.CLASS_DATA_FILE_NAME)).exists());
+        pm.setCurrentProfile(Config.DEFAULT_PROFILE_NAME);
+        assertEquals(Config.DEFAULT_PROFILE_NAME, pm.getCurrentProfileName());
     }
 
     @Test
@@ -64,30 +63,45 @@ public class ProfileManagerTest {
             pm.setCurrentProfile(profileName);
             assertEquals(profileName, pm.getCurrentProfileName());
         }
-        pm.setCurrentProfile(testProfileName);
     }
 
     @Test
-    public void testCurrentProfileName() throws Exception {
+    public void testCurrentProfile() throws Exception {
+        pm.newProfile(testProfileName, testProfileDocDir, testProfileSourceDir);
         pm.setCurrentProfile(testProfileName);
         assertEquals(testProfileName, pm.getCurrentProfileName());
-    }
-
-    @Test
-    public void testCurrentProfileDocDir() throws Exception {
-        pm.setCurrentProfile(testProfileName);
         assertEquals(testProfileDocDir, pm.getDocDir());
-    }
-
-    @Test
-    public void testCurrentProfileSrcDir() throws Exception {
-        pm.setCurrentProfile(testProfileName);
         assertEquals(testProfileSourceDir, pm.getSrcDir());
+        assertEquals(testProfileDir, pm.getPath());
     }
 
     @Test
     public void testSaveProfiles() throws Exception {
+        for (int i = 0; i < 10; i++) {
+            pm.newProfile(testProfileName + i, testProfileDocDir, testProfileSourceDir);
+        }
         pm.saveProfiles();
+        ArrayList<String> profiles = pm.getProfileNames();
+        File[] profileDirs = getProfileDirs();
+
+        Collections.sort(profiles);
+        Arrays.sort(profileDirs);
+        assertEquals(true, (profileDirs.length == profiles.size()));
+        int len = profiles.size();
+        for (int i = 0; i < len; i++) {
+            assertEquals(true, (profiles.get(i).equals(profileDirs[i].getName())));
+            assertEquals(2, profileDirs[i].listFiles().length); // There are two files generated for each profile.
+        }
+    }
+
+    private File[] getProfileDirs() {
+        File profileDir = new File(Config.getString(Config.PROFILE_DIR));
+        return profileDir.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File file) {
+                return file.isDirectory();
+            }
+        });
     }
 
     @Test
@@ -106,28 +120,10 @@ public class ProfileManagerTest {
     }
 
     @Test
-    public void testGetPath() throws Exception {
-        pm.setCurrentProfile(testProfileName);
-        assertEquals(testProfileDir, pm.getPath());
-    }
-
-    @Test
     public void testDeleteProfile() throws Exception {
         pm.deleteProfile(testProfileName);
-    }
-
-    @Test
-    public void testProfileFileDeleted() throws Exception {
         assertEquals(false, (Utilities.getFile(testProfileDir, testProfileName + ".ser")).exists());
-    }
-
-    @Test
-    public void testClassDataFileDeleted() throws Exception {
         assertEquals(false, (Utilities.getFile(testProfileDir, Config.CLASS_DATA_FILE_NAME)).exists());
-    }
-
-    @Test
-    public void testProfileDirDeleted() throws Exception {
         assertEquals(false, (Utilities.getFile(testProfileDir)).exists());
     }
 }
