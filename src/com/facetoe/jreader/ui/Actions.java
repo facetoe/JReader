@@ -18,6 +18,7 @@
 package com.facetoe.jreader.ui;
 
 import com.facetoe.jreader.helpers.Utilities;
+import org.jdesktop.swingx.JXCollapsiblePane;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -29,6 +30,33 @@ import java.awt.event.KeyEvent;
  * Date: 26/10/13
  * Time: 3:42 PM
  */
+
+/**
+ * Action to expand and collapse the SourceTree.
+ */
+class ToggleSourceTreeAction extends AbstractAction {
+
+    private final JXCollapsiblePane treePane;
+    private final SourceTree tree;
+
+    public ToggleSourceTreeAction(JXCollapsiblePane treePane, SourceTree tree) {
+        super("Toggle Tree");
+        putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_T));
+        this.treePane = treePane;
+        this.tree = tree;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (treePane.isCollapsed()) {
+            treePane.setCollapsed(false);
+        } else {
+            treePane.setCollapsed(true);
+        }
+        tree.setSelectionRow(0);
+        tree.requestFocus();
+    }
+}
 
 /**
  * Action to view the source code in a JSourcePanel.

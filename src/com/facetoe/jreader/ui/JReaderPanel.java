@@ -38,18 +38,13 @@ import java.util.HashMap;
 
 import static javafx.concurrent.Worker.State.FAILED;
 
-interface LoadingCompleteListener {
-    void loadingComplete();
-}
-
 /**
  * Displays the Java documentation.
  */
-public class JReaderPanel extends AbstractPanel {
+class JReaderPanel extends AbstractPanel {
     private final Logger log = Logger.getLogger(this.getClass());
 
     private WebEngine engine;
-    private WebView view;
     private JFXPanel jfxPanel;
     private JProgressBar progressBar;
 
@@ -60,10 +55,10 @@ public class JReaderPanel extends AbstractPanel {
      * Create a new JReaderPanel instance. Sets the initial URL to the index of the Java documentation.
      */
     public JReaderPanel() {
-        init(profileManager.getHome());
+        init();
     }
 
-    private void init(final String url) {
+    private void init() {
         progressBar = new JProgressBar(); //TODO !
         jfxPanel = new JFXPanel();
         setLayout(new BorderLayout());
@@ -77,7 +72,7 @@ public class JReaderPanel extends AbstractPanel {
     }
 
     private void createScene() {
-        view = new WebView();
+        WebView view = new WebView();
         view.setContextMenuEnabled(false); // Need for popup
         engine = view.getEngine();
         addProgressChangeListener();
@@ -201,11 +196,11 @@ public class JReaderPanel extends AbstractPanel {
         });
     }
 
-    public WebEngine getEngine() {
+    WebEngine getEngine() {
         return engine;
     }
 
-    public JFXPanel getJFXPanel() {
+    JFXPanel getJFXPanel() {
         return jfxPanel;
     }
 
@@ -214,7 +209,7 @@ public class JReaderPanel extends AbstractPanel {
     }
 
     // This is called when the user clicks a link and succesfully navigates to it.
-    public void addChangeListener(final ChangeListener listener) {
+    public void addChangeListener(final ChangeListener<String> listener) {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -223,7 +218,7 @@ public class JReaderPanel extends AbstractPanel {
         });
     }
 
-    public void addPopupListener(final JReaderPopUpListener listener) {
+    public void addPopupListener(final PopUpListener listener) {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {

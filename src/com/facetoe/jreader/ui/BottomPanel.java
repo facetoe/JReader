@@ -32,14 +32,12 @@ import java.awt.event.ActionListener;
 /**
  * The bottom panel for the JReader window.
  */
-public class JReaderBottomPanel extends JPanel implements ActionListener {
+class BottomPanel extends JPanel implements ActionListener {
 
-    JReader jReader;
-    JProgressBar progressBar = new JProgressBar();
-    JLabel lblStatus = new JLabel();
+    private final JProgressBar progressBar = new JProgressBar();
+    private final JLabel lblStatus = new JLabel();
 
-    JReaderBottomPanel(JReader jReader) {
-        this.jReader = jReader;
+    BottomPanel() {
         initBottomPanel();
     }
 

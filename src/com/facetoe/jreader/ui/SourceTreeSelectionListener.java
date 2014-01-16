@@ -30,7 +30,7 @@ import javax.swing.tree.TreePath;
  * Date: 3/11/13
  * Time: 10:04 AM
  */
-public class SourceTreeSelectionListener implements TreeSelectionListener {
+class SourceTreeSelectionListener implements TreeSelectionListener {
     private final SourceTree sourceTreeView;
     private final JSourcePanel sourcePanel;
     private static final Logger log = Logger.getLogger(SourceTreeSelectionListener.class);
@@ -49,13 +49,13 @@ public class SourceTreeSelectionListener implements TreeSelectionListener {
             return;
         }
         scrollToNode(node);
-        highlightInSource(node);
+        highlightDeclaration(node);
     }
 
-    private void highlightInSource(SourceItemNode node) {
+    private void highlightDeclaration(SourceItemNode node) {
         AbstractJavaObject object = sourcePanel.getJavaSourceFile().getObject(node.getTitle());
         if ( object != null ) {
-            sourcePanel.highlightDeclaration(object.getBeginLine(), object.getEndLine(), object.getBeginColumn());
+            sourcePanel.highlightDeclaration(object);
         }
     }
 

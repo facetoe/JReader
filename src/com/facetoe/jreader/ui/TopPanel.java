@@ -29,7 +29,7 @@ import java.util.ArrayList;
  * Date: 28/10/13
  * Time: 11:36 AM
  */
-public class JReaderTopPanel extends JPanel {
+class TopPanel extends JPanel {
 
     public static final int SOURCE_BUTTON = 0;
     public static final int TREE_BUTTON = 1;
@@ -43,7 +43,7 @@ public class JReaderTopPanel extends JPanel {
 
     private final JReader jReader;
 
-    public JReaderTopPanel(JReader jReader) {
+    public TopPanel(JReader jReader) {
         this.jReader = jReader;
         initButtons();
         createTopPanel();
@@ -147,8 +147,8 @@ public class JReaderTopPanel extends JPanel {
         searchBar.removeWordsFromTrie(words);
     }
 
-    public void setSearchBarText(String text) {
-        searchBar.setText(text);
+    public void clearSearchBar() {
+        searchBar.setText("");
     }
 
     public String getSearchBarText() {

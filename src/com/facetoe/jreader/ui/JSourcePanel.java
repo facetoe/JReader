@@ -39,7 +39,6 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -50,43 +49,17 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.regex.PatternSyntaxException;
 
-
-class ToggleSourceTreeAction extends AbstractAction {
-
-    JXCollapsiblePane treePane;
-    SourceTree tree;
-
-    public ToggleSourceTreeAction(JXCollapsiblePane treePane, SourceTree tree) {
-        super("Toggle Tree");
-        putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_T));
-        this.treePane = treePane;
-        this.tree = tree;
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (treePane.isCollapsed()) {
-            treePane.setCollapsed(false);
-        } else {
-            treePane.setCollapsed(true);
-        }
-        tree.setSelectionRow(0);
-        tree.requestFocus();
-    }
-}
-
 /**
  * Displays source code with syntax highlighting and cold folding.
  */
-public class JSourcePanel extends AbstractPanel {
+class JSourcePanel extends AbstractPanel {
     private final Logger log = Logger.getLogger(this.getClass());
     private final static String DEFAULT_THEME = "/com/facetoe/jreader/resources/themes/ideaTheme.xml";
 
     private RSyntaxTextArea codeArea;
-    private RTextScrollPane codeScrollPane;
+    private final RTextScrollPane codeScrollPane;
     private JavaSourceFile javaSourceFile;
     private final String sourceFilePath;
-    private AbstractJavaObject enclosingObject;
     private final ProfileManager profileManager;
 
     /**
@@ -95,23 +68,22 @@ public class JSourcePanel extends AbstractPanel {
     private final ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
 
 
-    private String sourceFileName;
+    private final String sourceFileName;
     private SourceTree tree;
     private JScrollPane treeScrollPane;
-    private JPanel treePanel;
     private JXCollapsiblePane collapsiblePane;
     private JPanel searchPanel;
     private AutoCompleteTextField searchField;
     private JButton btnSearch;
 
-    private JReaderTopPanel topPanel;
+    private final TopPanel topPanel;
 
     /**
      * Creates a new instance of JSourcePanel and displays the contents of filePath.
      *
      * @param filePath of the file containing the code to be displayed.
      */
-    public JSourcePanel(final String filePath, JReaderTopPanel topPanel) {
+    public JSourcePanel(final String filePath, TopPanel topPanel) {
         profileManager = ProfileManager.getInstance();
         this.sourceFilePath = filePath;
         this.topPanel = topPanel;
@@ -129,7 +101,7 @@ public class JSourcePanel extends AbstractPanel {
         setCodeAreaText();
         parseSourceFile();
         initTreeView();
-        highlightEnclosingClassOrInterface();
+        highlightDeclaration(javaSourceFile.getEnclosingObject());
     }
 
     private void setCodeAreaText() {
@@ -168,7 +140,7 @@ public class JSourcePanel extends AbstractPanel {
 
     private void initTreeView() {
         createTree();
-        createTreelideoutPane();
+        createTreeSlideoutPane();
         configureTreeToggleAction();
         constructTreePane();
     }
@@ -176,7 +148,7 @@ public class JSourcePanel extends AbstractPanel {
     private void constructTreePane() {
         searchPanel.add(searchField, BorderLayout.CENTER);
         searchPanel.add(btnSearch, BorderLayout.EAST);
-        treePanel = new JPanel(new BorderLayout());
+        JPanel treePanel = new JPanel(new BorderLayout());
         treePanel.add(treeScrollPane, BorderLayout.CENTER);
         treePanel.add(searchPanel, BorderLayout.NORTH);
         collapsiblePane.setLayout(new BorderLayout());
@@ -194,10 +166,10 @@ public class JSourcePanel extends AbstractPanel {
         KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
         getInputMap(WHEN_IN_FOCUSED_WINDOW).put(keyStroke, keyStrokeAndKey);
         getActionMap().put(keyStrokeAndKey, new ToggleSourceTreeAction(collapsiblePane, tree));
-        topPanel.setSourceButton(JReaderTopPanel.TREE_BUTTON, new ToggleSourceTreeAction(collapsiblePane, tree));
+        topPanel.setSourceButton(TopPanel.TREE_BUTTON, new ToggleSourceTreeAction(collapsiblePane, tree));
     }
 
-    private void createTreelideoutPane() {
+    private void createTreeSlideoutPane() {
         collapsiblePane = new JXCollapsiblePane();
         searchPanel = new JPanel(new BorderLayout());
         searchField = new AutoCompleteTextField();
@@ -217,6 +189,97 @@ public class JSourcePanel extends AbstractPanel {
         });
     }
 
+    private void handleTreeSearch() {
+        String text = searchField.getText();
+        if (text.isEmpty()) {
+            return;
+        }
+
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
+        for (Enumeration e = root.depthFirstEnumeration(); e.hasMoreElements(); ) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.nextElement();
+            if (node.toString().equals(text)) {
+                scrollToNode(node);
+                highlightDeclaration((AbstractJavaObject) node.getUserObject());
+                return;
+            }
+        }
+    }
+
+    private void scrollToNode(DefaultMutableTreeNode node) {
+        TreePath treePath = new TreePath(node.getPath());
+        tree.setSelectionPath(treePath);
+        tree.scrollPathToVisible(treePath);
+    }
+
+    public void highlightDeclaration(AbstractJavaObject object) {
+        highlightDeclaration(object.getBeginLine(), object.getEndLine(), object.getBeginColumn());
+    }
+
+    /**
+     * Highlights and scrolls to a method, constructor, field or enum declaration.
+     * This method is necessary because long method or function declarations are
+     * split across multiple lines in the source but not in the declaration returned
+     * by the JavaSourceFileParser.
+     */
+    private void highlightDeclaration(int beginLine, int endLine, int beginCol) {
+        String selectText = extractDeclaration(beginLine, endLine, beginCol);
+        findString(selectText, new SearchContext(selectText));
+    }
+
+    private String extractDeclaration(int beginLine, int endLine, int beginCol) {
+        int start = 0;
+        int end = 0;
+        try {
+            start = codeArea.getLineStartOffset(beginLine - 1);
+            end = codeArea.getLineEndOffset(endLine - 1);
+        } catch (BadLocationException ex) {
+            // Shouldn't happen...
+        }
+        String body = codeArea.getText();
+        //  If you don't do -1 it chops off the first character.
+        start += beginCol - 1;
+        String selectText = "";
+
+        for (int i = start; i < end; i++) {
+            if (body.charAt(i) == '{' || body.charAt(i) == ';') {
+                break;
+            }
+            selectText += body.charAt(i);
+        }
+        return selectText;
+    }
+
+    /**
+     * This method attempts to find a string or regexp in the source file.
+     * It first searches from the current position to the end of the file,
+     * if that doesn't succeed it searches from the beginning of the file to the
+     * end.
+     * It fires an ActionEvent if nothing is found or if there is a Regexp error.
+     */
+    private void findString(String text, SearchContext context) {
+        boolean found;
+        int caretPos = codeArea.getCaretPosition();
+        context.setSearchFor(text);
+
+        try {
+            found = SearchEngine.find(codeArea, context);
+            if (!found) {
+                codeArea.setCaretPosition(0);
+                found = SearchEngine.find(codeArea, context);
+                if (!found) {
+                    // If we didn't find anything, reset the caret position to its origional position
+                    codeArea.setCaretPosition(caretPos);
+                    fireEvent(new ActionEvent(this, 0, "Nothing found for: " + "\"" + text + "\""));
+                }
+            }
+        } catch (PatternSyntaxException ex) {
+            fireEvent(new ActionEvent(this, 0, "Regex Error: " + ex.getMessage()));
+        } catch (Exception e) { //Sometimes RSyntaxArea barfs randomly
+            log.error(e);
+        }
+    }
+
     private void createTree() {
         tree = new SourceTree(javaSourceFile);
         /* Save a click by showing the contents of the class on load. */
@@ -224,12 +287,6 @@ public class JSourcePanel extends AbstractPanel {
         tree.addTreeSelectionListener(new SourceTreeSelectionListener(tree, this));
         treeScrollPane = new JScrollPane(tree);
         treeScrollPane.setPreferredSize(new Dimension(300, 200));
-    }
-
-    private void highlightEnclosingClassOrInterface() {
-        highlightDeclaration(enclosingObject.getBeginLine(),
-                enclosingObject.getEndLine(),
-                enclosingObject.getBeginColumn());
     }
 
     /**
@@ -240,11 +297,10 @@ public class JSourcePanel extends AbstractPanel {
         fireEvent(new ActionEvent(this, 0, "Parsing: " + sourceFileName));
         try {
             javaSourceFile = JavaSourceFileParser.parse(new FileInputStream(sourceFilePath));
-            enclosingObject = javaSourceFile.getEnclosingObject();
         } catch (ParseException e) {
-            log.error(e.toString(), e);
+            log.error(e);
         } catch (IOException e) {
-            log.error(e.toString(), e);
+            log.error(e);
         } finally {
             long elapsedTime = System.nanoTime() - startTime;
             fireEvent(new ActionEvent(this, 0, String.format(
@@ -266,93 +322,10 @@ public class JSourcePanel extends AbstractPanel {
     @Override
     public void handleAutoComplete(String key) {
         AbstractJavaObject obj = javaSourceFile.getObject(key);
-
         if (obj != null) {
-            highlightDeclaration(obj.getBeginLine(), obj.getEndLine(),
-                    obj.getBeginColumn());
+            highlightDeclaration(obj);
         } else {
             findString(key, profileManager.getSearchContext());
-        }
-    }
-
-    private void handleTreeSearch() {
-        String text = searchField.getText();
-        if (text.isEmpty()) {
-            return;
-        }
-
-        DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
-        for (Enumeration e = root.depthFirstEnumeration(); e.hasMoreElements(); ) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.nextElement();
-            if (node.toString().equals(text)) {
-                TreePath treePath = new TreePath(node.getPath());
-                tree.setSelectionPath(treePath);
-                tree.scrollPathToVisible(treePath);
-                findString(text, profileManager.getSearchContext()); // Locate in the source also
-                return;
-            }
-        }
-    }
-
-    /**
-     * This method attempts to find a string or regexp in the source file.
-     * It first searches from the current position to the end of the file,
-     * if that doesn't succeed it searches from the beginning of the file to the
-     * end.
-     * It fires an ActionEvent if nothing is found or if there is a Regexp error.
-     */
-    private void findString(String text, SearchContext context) {
-        boolean found = false;
-        int caretPos = codeArea.getCaretPosition();
-        context.setSearchFor(text);
-
-        try {
-            found = SearchEngine.find(codeArea, context);
-            if (!found) {
-                codeArea.setCaretPosition(0);
-                found = SearchEngine.find(codeArea, context);
-                if (!found) {
-                    // If we didn't find anything, reset the caret position to its origional position
-                    codeArea.setCaretPosition(caretPos);
-                    fireEvent(new ActionEvent(this, 0, "Nothing found for: " + "\"" + text + "\""));
-                }
-            }
-        } catch (PatternSyntaxException ex) {
-            fireEvent(new ActionEvent(this, 0, "Regex Error: " + ex.getMessage()));
-        }
-    }
-
-    /**
-     * Highlights and scrolls to a method, constructor, field or enum declaration.
-     * This method is necessary because long method or function declarations are
-     * split across multiple lines in the source, but not in the declaration returned
-     * by the JavaSourceFileParser.
-     *
-     * @param beginLine Where this selection starts.
-     * @param endLine   The end of the entire block if it's a method or constructor.
-     * @param beginCol  The column in which this selection begins.
-     */
-    void highlightDeclaration(int beginLine, int endLine, int beginCol) {
-        try {
-            int start = codeArea.getLineStartOffset(beginLine - 1);
-            int end = codeArea.getLineEndOffset(endLine - 1);
-
-            String body = codeArea.getText();
-
-            //  If you don't do -1 it chops off the first character.
-            start += beginCol - 1;
-            String selectText = "";
-
-            for (int i = start; i < end; i++) {
-                if (body.charAt(i) == '{' || body.charAt(i) == ';') {
-                    break;
-                }
-                selectText += body.charAt(i);
-            }
-            findString(selectText, new SearchContext(selectText));
-
-        } catch (BadLocationException ex) {
-            log.error("Bad location in highlightDeclaration:", ex);
         }
     }
 

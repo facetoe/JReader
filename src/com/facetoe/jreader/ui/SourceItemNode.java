@@ -33,12 +33,13 @@ import javax.swing.tree.DefaultMutableTreeNode;
  */
 public class SourceItemNode extends DefaultMutableTreeNode {
     private AbstractJavaObject javaObject;
-    private String title;
+    private final String title;
     private int type;
 
     public SourceItemNode(String title, AbstractJavaObject object) {
         this.javaObject = object;
         this.title = title;
+        setUserObject(object);
     }
 
     public SourceItemNode(String title, int type) {

@@ -26,14 +26,12 @@ import java.util.Scanner;
 
 
 /**
- * My implementation of the Trie data structure
+ * My implementation of the Trie data structure. This is used for efficient auto-completion.
  */
 public class Trie {
     private final Map<Character, TrieNode> root = new HashMap<Character, TrieNode>();
 
-    public Trie() {
-
-    }
+    public Trie(){}
 
     public Trie(File wordList) throws IOException {
         Scanner s;
@@ -50,9 +48,7 @@ public class Trie {
     }
 
     public Trie(ArrayList<String> words) {
-        for ( String word : words ) {
-            addWord(word);
-        }
+        addWords(words);
     }
 
     /**
@@ -60,7 +56,7 @@ public class Trie {
      *
      * @param word
      */
-    public void addWord(String word) {
+    void addWord(String word) {
         if ( !word.isEmpty() ) {
             addWord(word.toCharArray());
         }
@@ -94,8 +90,7 @@ public class Trie {
                 currentNode = currentNode.getNode(word[i]);
             }
         }
-
-        /* We are at the end of the word */
+        /* Mark the last character as the word end */
         currentNode.isWord = true;
     }
 
@@ -122,11 +117,11 @@ public class Trie {
     }
 
     /**
-     * Removes a word from the com.myAdventureGame.Trie. Note, it isn't actually removed, the word flag is just set to false.
+     * Removes a word from the Trie. Note, it isn't actually removed, the word flag is just set to false.
      *
      * @param word to be removed
      */
-    public void removeWord(String word) {
+    void removeWord(String word) {
         if ( word.isEmpty() ) {
             return;
         }
@@ -144,29 +139,24 @@ public class Trie {
      * @return ArrayList containing the found words
      */
     public ArrayList<String> getWordsForPrefix(String prefix) {
-        ArrayList<String> words = new ArrayList<String>();
-
-        /* Can't do much with an empty string */
-        if ( prefix.length() == 0 ) {
-            return words;
+        if ( prefix.isEmpty() ) {
+            return new ArrayList<String>();
         }
-
         TrieNode root = getNodeByPrefix(prefix);
 
         /* If root is null there are no words with this prefix, return empty ArrayList */
         if ( root == null ) {
-            return words;
+            return new ArrayList<String>();
         }
-
-        getWordsForPrefix(prefix, "", root, words);
-        return words;
+        return getWordsForPrefix(prefix, "", root);
     }
 
     /**
      * Return all words that have prefix
      * Internal method for returning words with prefix
      */
-    private ArrayList<String> getWordsForPrefix(String prefix, String word, TrieNode root, ArrayList<String> foundWords) {
+    private ArrayList<String> getWordsForPrefix(String prefix, String word, TrieNode root) {
+        ArrayList<String> foundWords = new ArrayList<String>();
         /* If we've got a word, add it to the list */
         if ( root.isWord ) {
             foundWords.add(prefix + word);
@@ -177,7 +167,7 @@ public class Trie {
 
         /* Recurse through each child gathering all the words */
         for ( TrieNode child : children ) {
-            getWordsForPrefix(prefix, word + child.getChar(), child, foundWords);
+            foundWords.addAll(getWordsForPrefix(prefix, word + child.getChar(), child));
         }
         return foundWords;
     }
@@ -215,69 +205,69 @@ public class Trie {
         return currentNode;
     }
 
-}
-
-/**
- * This class defines a node for the Trie
- */
-class TrieNode {
-    private final Map<Character, TrieNode> children = new HashMap<Character, TrieNode>();
-    public boolean isWord = false;
-    private final Character ch;
-
-    public TrieNode(char character) {
-        ch = character;
-    }
-
     /**
-     * Add a child to this node
-     *
-     * @param character
+     * This class defines a node for the Trie
      */
-    public void addChild(char character) {
-        TrieNode node = new TrieNode(character);
-        children.put(character, node);
-    }
+    class TrieNode {
+        private final Map<Character, TrieNode> children = new HashMap<Character, TrieNode>();
+        public boolean isWord = false;
+        private final Character ch;
 
-    /**
-     * Return a child node by character
-     *
-     * @param character
-     * @return TrieNode or null if no node has this character
-     */
-    public TrieNode getNode(char character) {
-        return children.get(character);
-    }
-
-    /**
-     * Whether this node's children contain character
-     *
-     * @param character
-     * @return Boolean
-     */
-    public boolean containsChar(char character) {
-        return children.containsKey(character);
-    }
-
-    /**
-     * Return all the children for this node
-     *
-     * @return Returns an ArrayList containing all the children for this node
-     */
-    public ArrayList<TrieNode> getChildren() {
-        ArrayList<TrieNode> trieNodes = new ArrayList<TrieNode>();
-        for ( TrieNode node : children.values() ) {
-            trieNodes.add(node);
+        public TrieNode(char character) {
+            ch = character;
         }
-        return trieNodes;
-    }
 
-    /**
-     * Return this node's character
-     *
-     * @return char
-     */
-    public Character getChar() {
-        return ch;
+        /**
+         * Add a child to this node
+         *
+         * @param character
+         */
+        public void addChild(char character) {
+            TrieNode node = new TrieNode(character);
+            children.put(character, node);
+        }
+
+        /**
+         * Return a child node by character
+         *
+         * @param character
+         * @return TrieNode or null if no node has this character
+         */
+        public TrieNode getNode(char character) {
+            return children.get(character);
+        }
+
+        /**
+         * Whether this node's children contain character
+         *
+         * @param character
+         * @return Boolean
+         */
+        public boolean containsChar(char character) {
+            return children.containsKey(character);
+        }
+
+        /**
+         * Return all the children for this node
+         *
+         * @return Returns an ArrayList containing all the children for this node
+         */
+        public ArrayList<TrieNode> getChildren() {
+            ArrayList<TrieNode> trieNodes = new ArrayList<TrieNode>();
+            for ( TrieNode node : children.values() ) {
+                trieNodes.add(node);
+            }
+            return trieNodes;
+        }
+
+        /**
+         * Return this node's character
+         *
+         * @return char
+         */
+        public Character getChar() {
+            return ch;
+        }
     }
 }
+

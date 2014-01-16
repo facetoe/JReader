@@ -37,7 +37,7 @@ import java.util.ArrayList;
 /**
  * This class creates the menu bar along the top of JReader
  */
-public class JReaderMenuBar extends JMenuBar {
+class MenuBar extends JMenuBar {
 
     private final JReader jReader;
     private JMenuItem mnuNewSourceTab;
@@ -45,7 +45,7 @@ public class JReaderMenuBar extends JMenuBar {
     private JMenu subMenuDeleteProfile;
     private final ProfileManager profileManager = ProfileManager.getInstance();
 
-    public JReaderMenuBar(JReader jReader) {
+    public MenuBar(JReader jReader) {
         this.jReader = jReader;
         createMenus();
     }
@@ -223,8 +223,7 @@ public class JReaderMenuBar extends JMenuBar {
     }
 
     private JMenuItem buildQuitItem() {
-        JMenuItem quitItem = new JMenuItem(new QuitAction(jReader));
-        return quitItem;
+        return new JMenuItem(new QuitAction(jReader));
     }
 
     // TODO should all the reader panels be updated here?

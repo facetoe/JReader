@@ -33,11 +33,11 @@ import java.awt.event.MouseListener;
 /**
  * Displays a popup menu when the user right clicks a JReaderPanel.
  */
-class JReaderPopUpListener implements MouseListener {
+class PopUpListener implements MouseListener {
 
-    JReader reader;
+    private final JReader reader;
 
-    public JReaderPopUpListener(JReader reader) {
+    public PopUpListener(JReader reader) {
         this.reader = reader;
     }
 

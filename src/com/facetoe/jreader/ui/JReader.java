@@ -22,7 +22,6 @@ import com.facetoe.jreader.helpers.Utilities;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import org.apache.log4j.Logger;
-import org.fife.ui.rtextarea.SearchContext;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -43,10 +42,10 @@ public class JReader {
     private final Logger log = Logger.getLogger(this.getClass());
 
     private JFrame frame;
-    private JReaderMenuBar menuBar;
-    private JReaderTopPanel topPanel;
-    private JReaderBottomPanel bottomPanel;
-    private ProfileManager profileManager;
+    private MenuBar menuBar;
+    private TopPanel topPanel;
+    private BottomPanel bottomPanel;
+    private final ProfileManager profileManager;
     private JTabbedPane tabbedPane;
     private AbstractPanel currentTab;
 
@@ -70,14 +69,14 @@ public class JReader {
     private void constructInterface() {
         frame = new JFrame("Jreader");
         frame.setPreferredSize(new Dimension(1024, 600));
-        //setExtendedState(Frame.MAXIMIZED_BOTH);
+        //frame.setExtendedState(Frame.MAXIMIZED_BOTH);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        frame.setJMenuBar(new JReaderMenuBar(this));
-        menuBar = new JReaderMenuBar(this);
-        topPanel = new JReaderTopPanel(this);
+        frame.setJMenuBar(new MenuBar(this));
+        menuBar = new MenuBar(this);
+        topPanel = new TopPanel(this);
         frame.add(topPanel, BorderLayout.NORTH);
-        bottomPanel = new JReaderBottomPanel(this);
+        bottomPanel = new BottomPanel();
         frame.add(bottomPanel, BorderLayout.SOUTH);
         tabbedPane = new JTabbedPane();
         frame.add(tabbedPane, BorderLayout.CENTER);
@@ -105,7 +104,7 @@ public class JReader {
                 updateReaderUI(newURL);
             }
         });
-        readerPanel.addPopupListener(new JReaderPopUpListener(this));
+        readerPanel.addPopupListener(new PopUpListener(this));
         showNewReaderTab(readerPanel);
     }
 
@@ -276,7 +275,7 @@ public class JReader {
         }
 
         /* Remove whatever text is there becuase it's annoying always having to delete it. */
-        topPanel.setSearchBarText("");
+        topPanel.clearSearchBar();
     }
 
     private void handleSourceTabChange(ArrayList<String> prevWords) {
@@ -286,7 +285,7 @@ public class JReader {
     }
 
     private void handleReaderTabChange(ArrayList<String> prevWords) {
-        topPanel.setSourceButton(JReaderTopPanel.SOURCE_BUTTON, new NewSourceTabAction(this));
+        topPanel.setSourceButton(TopPanel.SOURCE_BUTTON, new NewSourceTabAction(this));
         topPanel.removeAutoCompleteWords(prevWords);
         topPanel.addAutoCompleteWords(currentTab.getAutoCompleteWords());
         String currentPath = ((JReaderPanel) currentTab).getCurrentPath();
@@ -294,16 +293,15 @@ public class JReader {
         enableBrowserButtons();
     }
 
-    private void handleSearch() {
-        currentTab.handleAutoComplete(topPanel.getSearchBarText());
-    }
-
-    public void addJavaDocClassNames() {
-        topPanel.addAutoCompleteWords(profileManager.getClassNames());
-    }
-
-    public void removeJavaDocClassNames() {
-        topPanel.removeAutoCompleteWords(profileManager.getClassNames());
+    // Decide whether or not to show the New Source option.
+    private void maybeEnableSourceOption(String newPath) {
+        assert newPath != null;
+        String srcPath = Utilities.docPathToSourcePath(newPath);
+        if (Utilities.isGoodSourcePath(srcPath)) {
+            enableNewSourceOption();
+        } else {
+            disableNewSourceOption();
+        }
     }
 
     private void enableBrowserButtons() {
@@ -318,17 +316,6 @@ public class JReader {
         topPanel.getBtnHome().setEnabled(false);
     }
 
-    // Decide whether or not to show the New Source option.
-    private void maybeEnableSourceOption(String newPath) {
-        assert newPath != null;
-        String srcPath = Utilities.docPathToSourcePath(newPath);
-        if (Utilities.isGoodSourcePath(srcPath)) {
-            enableNewSourceOption();
-        } else {
-            disableNewSourceOption();
-        }
-    }
-
     private void enableNewSourceOption() {
         topPanel.getBtnSource().setEnabled(true);
         menuBar.enableNewSourceOption();
@@ -339,17 +326,25 @@ public class JReader {
         menuBar.disableNewSourceOption();
     }
 
+    private void handleSearch() {
+        currentTab.handleAutoComplete(topPanel.getSearchBarText());
+    }
+
+    public void addJavaDocClassNames() {
+        topPanel.addAutoCompleteWords(profileManager.getClassNames());
+    }
+
+    public void removeJavaDocClassNames() {
+        topPanel.removeAutoCompleteWords(profileManager.getClassNames());
+    }
+
     public void resetSearchBar() {
-        topPanel.setSearchBarText("");
+        topPanel.clearSearchBar();
         topPanel.getSearchBar().requestFocus();
     }
 
     public JPanel getCurrentTab() {
         return currentTab;
-    }
-
-    public SearchContext getSearchContext() {
-        return profileManager.getSearchContext();
     }
 
     public void saveProfiles() {
