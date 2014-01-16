@@ -52,6 +52,7 @@ public class JReader {
     public JReader() {
         if (!JReaderSetup.isSetup()) {
             new SetupWindow();
+            new SetupWindow();
         }
         profileManager = ProfileManager.getInstance();
         buildAndShowUI();

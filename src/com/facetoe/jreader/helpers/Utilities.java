@@ -70,7 +70,7 @@ public class Utilities {
                 .toString();
 
         /* And add the source directory to the beginning to get the complete path. */
-        String path = profileManager.getSrcDir() + subPath;
+        String path = constructPath(profileManager.getSrcDir(), subPath);
 
         /* If there are more than 2 periods it's probably a nested class like: /dir/dir/SomeClass.SomeNestedClass.html.
          * Extract the class name. */
@@ -276,8 +276,8 @@ public class Utilities {
     public static String constructPath(String... pathElement) {
         String outPath = "";
         for (String element : pathElement) {
-            if(!element.endsWith(File.separator))
-                outPath += element + File.separator;
+            if(!element.startsWith(File.separator))
+                outPath += File.separator + element;
             else
                 outPath += element;
         }

@@ -99,11 +99,7 @@ public class Config {
      */
     public static final String DATA_DIR_NAME = ".jreader";
 
-    /**
-     * The name of the config file.
-     */
-    public static final String CONFIG_FILE_NAME = "config.properties";
-
+    private static final String CONFIG_FILE_NAME = "config.properties";
     private static final Properties properties = new Properties();
 
     /**
@@ -115,7 +111,7 @@ public class Config {
             File.separator;
 
     /**
-     * Full patht to the config file.
+     * Full path to the config file.
      */
     public static final String configFilePath = dataDirectory +
             CONFIG_FILE_NAME +
