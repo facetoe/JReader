@@ -63,7 +63,7 @@ class JSourcePanel extends AbstractPanel {
     private final ProfileManager profileManager;
 
     /**
-     * Listeners that will be notified of parsing progress and search errors. //TODO Figure out why this isn't working.
+     * Listeners that will be notified of parsing progress and search errors.
      */
     private final ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
 
@@ -145,28 +145,13 @@ class JSourcePanel extends AbstractPanel {
         constructTreePane();
     }
 
-    private void constructTreePane() {
-        searchPanel.add(searchField, BorderLayout.CENTER);
-        searchPanel.add(btnSearch, BorderLayout.EAST);
-        JPanel treePanel = new JPanel(new BorderLayout());
-        treePanel.add(treeScrollPane, BorderLayout.CENTER);
-        treePanel.add(searchPanel, BorderLayout.NORTH);
-        collapsiblePane.setLayout(new BorderLayout());
-        collapsiblePane.setDirection(JXCollapsiblePane.Direction.RIGHT);
-        collapsiblePane.add("Center", treePanel);
-        collapsiblePane.setCollapsed(true);
-
-        setLayout(new BorderLayout());
-        add("West", collapsiblePane);
-        add("Center", codeScrollPane);
-    }
-
-    private void configureTreeToggleAction() {
-        String keyStrokeAndKey = "control T";
-        KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
-        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(keyStroke, keyStrokeAndKey);
-        getActionMap().put(keyStrokeAndKey, new ToggleSourceTreeAction(collapsiblePane, tree));
-        topPanel.setSourceButton(TopPanel.TREE_BUTTON, new ToggleSourceTreeAction(collapsiblePane, tree));
+    private void createTree() {
+        tree = new SourceTree(javaSourceFile);
+        /* Save a click by showing the contents of the class on load. */
+        tree.expandRow(0);
+        tree.addTreeSelectionListener(new SourceTreeSelectionListener(tree, this));
+        treeScrollPane = new JScrollPane(tree);
+        treeScrollPane.setPreferredSize(new Dimension(300, 200));
     }
 
     private void createTreeSlideoutPane() {
@@ -187,6 +172,30 @@ class JSourcePanel extends AbstractPanel {
                 handleTreeSearch();
             }
         });
+    }
+
+    private void configureTreeToggleAction() {
+        String keyStrokeAndKey = "control T";
+        KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(keyStroke, keyStrokeAndKey);
+        getActionMap().put(keyStrokeAndKey, new ToggleSourceTreeAction(collapsiblePane, tree));
+        topPanel.setSourceButton(TopPanel.TREE_BUTTON, new ToggleSourceTreeAction(collapsiblePane, tree));
+    }
+
+    private void constructTreePane() {
+        searchPanel.add(searchField, BorderLayout.CENTER);
+        searchPanel.add(btnSearch, BorderLayout.EAST);
+        JPanel treePanel = new JPanel(new BorderLayout());
+        treePanel.add(treeScrollPane, BorderLayout.CENTER);
+        treePanel.add(searchPanel, BorderLayout.NORTH);
+        collapsiblePane.setLayout(new BorderLayout());
+        collapsiblePane.setDirection(JXCollapsiblePane.Direction.RIGHT);
+        collapsiblePane.add("Center", treePanel);
+        collapsiblePane.setCollapsed(true);
+
+        setLayout(new BorderLayout());
+        add("West", collapsiblePane);
+        add("Center", codeScrollPane);
     }
 
     private void handleTreeSearch() {
@@ -239,15 +248,15 @@ class JSourcePanel extends AbstractPanel {
         String body = codeArea.getText();
         //  If you don't do -1 it chops off the first character.
         start += beginCol - 1;
-        String selectText = "";
+        String declaration = "";
 
         for (int i = start; i < end; i++) {
             if (body.charAt(i) == '{' || body.charAt(i) == ';') {
                 break;
             }
-            selectText += body.charAt(i);
+            declaration += body.charAt(i);
         }
-        return selectText;
+        return declaration;
     }
 
     /**
@@ -278,15 +287,6 @@ class JSourcePanel extends AbstractPanel {
         } catch (Exception e) { //Sometimes RSyntaxArea barfs randomly
             log.error(e);
         }
-    }
-
-    private void createTree() {
-        tree = new SourceTree(javaSourceFile);
-        /* Save a click by showing the contents of the class on load. */
-        tree.expandRow(0);
-        tree.addTreeSelectionListener(new SourceTreeSelectionListener(tree, this));
-        treeScrollPane = new JScrollPane(tree);
-        treeScrollPane.setPreferredSize(new Dimension(300, 200));
     }
 
     /**

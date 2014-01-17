@@ -47,8 +47,13 @@ public class JavaDocParser {
      * @param docFile should point to allclasses-noframe.html
      */
     public HashMap<String, String> parse(File docFile) {
+        assert docFile.getName().equals("allclasses-noframe.html");
+        return parseInternal(docFile);
+    }
+
+    private HashMap<String, String> parseInternal(File docFile) {
         HashMap<String, String> classNames = parseNewJavadoc(docFile);
-        if ( classNames == null ) {
+        if (classNames == null) {
             classNames = parseOldJavadoc(docFile);
         }
         return classNames;
@@ -63,7 +68,7 @@ public class JavaDocParser {
         Document doc = null;
         try {
             doc = Jsoup.parse(docFile, "UTF-8");
-        } catch ( IOException ex ) {
+        } catch (IOException ex) {
             log.error(ex.getMessage(), ex);
         }
 
@@ -72,20 +77,19 @@ public class JavaDocParser {
         assert doc != null;
         container = doc.select("div.indexContainer");
 
-        if ( container.size() == 0 ) {
+        if (container.size() == 0) {
             return null;
         }
 
         /* Extract all the links */
         Elements links = container.select("a");
         int numLinks = links.size();
-        int count = 0;
-
         HashMap<String, String> classNames = new HashMap<String, String>();
 
+        int count = 0;
         /* Loop over all the links, extracting the name and link */
-        for ( Element link : links ) {
-            fireEvent(ActionEvent.ACTION_PERFORMED, link.text(), ( long ) ((count * 100.0f) / numLinks));
+        for (Element link : links) {
+            fireEvent(ActionEvent.ACTION_PERFORMED, link.text(), (long) ((count * 100.0f) / numLinks));
             count++;
             classNames.put(link.text(), link.attr("href"));
         }
@@ -103,22 +107,19 @@ public class JavaDocParser {
         try {
             Document doc = Jsoup.parse(docFile, "UTF-8");
             Elements classes = doc.select("html body table tbody tr td font.FrameItemFont a");
-
+            if (classes.size() == 0) {
+                return null;
+            }
             int numLinks;
             int count = 0;
-            if ( classes.size() == 0 ) {
-                return null;
-            } else {
-                numLinks = classes.size();
-            }
-
-            for ( Element link : classes ) {
-                fireEvent(ActionEvent.ACTION_PERFORMED, link.text(), ( long ) ((count * 100.0f) / numLinks));
+            numLinks = classes.size();
+            for (Element link : classes) {
+                fireEvent(ActionEvent.ACTION_PERFORMED, link.text(), (long) ((count * 100.0f) / numLinks));
                 count++;
                 classNames.put(link.text(), link.attr("href"));
             }
 
-        } catch ( IOException e ) {
+        } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
         return classNames;
@@ -133,7 +134,7 @@ public class JavaDocParser {
      */
     void fireEvent(int eventType, String message, long progress) {
         ActionEvent event = new ActionEvent(this, eventType, message, progress, 0);
-        for ( ActionListener listener : listeners ) {
+        for (ActionListener listener : listeners) {
             listener.actionPerformed(event);
         }
     }

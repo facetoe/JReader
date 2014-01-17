@@ -32,6 +32,8 @@ import java.awt.event.ActionListener;
 /**
  * The bottom panel for the JReader window.
  */
+
+
 class BottomPanel extends JPanel implements ActionListener {
 
     private final JProgressBar progressBar = new JProgressBar();

@@ -78,7 +78,7 @@ public class NewProfileWindow extends JDialog {
             }
         });
 
-        //TODO Write a method that confirms this is actually the source directory for the chosen docs.
+        // TODO Write a method that confirms this is actually the source directory for the chosen docs.
         btnSrc.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

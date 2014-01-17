@@ -200,7 +200,7 @@ public class Utilities {
 
     public static boolean isGoodSourcePath(String path) {
 
-        if (path == null || isWebAddress(path)) {
+        if (path == null || isWebAddress(path) || !path.endsWith(".java")) {
             return false;
         }
 
@@ -276,7 +276,7 @@ public class Utilities {
     public static String constructPath(String... pathElement) {
         String outPath = "";
         for (String element : pathElement) {
-            if(!element.startsWith(File.separator))
+            if (!element.startsWith(File.separator))
                 outPath += File.separator + element;
             else
                 outPath += element;
@@ -312,27 +312,36 @@ public class Utilities {
 
     public static String getHomePage(String docDirPath) {
         File docDir = new File(docDirPath);
+        File[] filesArr = docDir.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File file) {
+                String fileName = file.getName();
+                return fileName.equals("overview-summary.html")
+                        || fileName.equals("allclasses-noframe.html")
+                        || fileName.equals("index.html");
+            }
+
+        });
+        return findHomePage(filesArr);
+    }
+
+    private static String findHomePage(File[] filesArr) {
         HashMap<String, File> files = new HashMap<String, File>();
         String homeFileName = "";
+        if (filesArr == null)
+            return "";
 
-        File[] filesArr = docDir.listFiles();
-
-        if (filesArr != null) {
-            for (File file : filesArr) {
-                files.put(file.getName(), file);
-            }
+        for (File file : filesArr) {
+            files.put(file.getName(), file);
         }
 
         if (files.containsKey("overview-summary.html")) {
             homeFileName = "overview-summary.html";
-
         } else if (files.containsKey("allclasses-noframe.html")) {
             homeFileName = "allclasses-noframe.html";
-
         } else if (files.containsKey("index.html")) {
             homeFileName = "index.html";
         }
-
         return homeFileName;
     }
 
@@ -342,13 +351,19 @@ public class Utilities {
                 || path.startsWith("https:/");
     }
 
+    /**
+     * This method looks for the api directory in the Java documentation docs directory.
+     * If it doesn't find anything then this docmentation is probably a library, so
+     * it just returns the directory it was passed.
+     */
     public static File findDocDir(File rootDir) {
         File[] files = rootDir.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                if (file.getName().equals("api")) {
-                    return file;
-                }
+        if (files == null)
+            return rootDir;
+
+        for (File file : files) {
+            if (file.getName().equals("api")) {
+                return file;
             }
         }
         return rootDir;
