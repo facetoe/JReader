@@ -214,7 +214,7 @@ public class ProfileManager implements Serializable {
             currentProfile.searchContext = new SearchContext();
             Config.setString(Config.CURRENT_PROFILE, profileName);
             log.debug("Profile set to: " + Config.getString(Config.CURRENT_PROFILE));
-        } else if(!profileName.equals(Config.DEFAULT_PROFILE_NAME)) {
+        } else if (!profileName.equals(Config.DEFAULT_PROFILE_NAME)) {
             setCurrentProfile(Config.DEFAULT_PROFILE_NAME);
             log.error("No such profile: " + profileName);
         } else {

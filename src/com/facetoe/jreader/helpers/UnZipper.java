@@ -71,13 +71,13 @@ public class UnZipper {
         zipFile.extractAll(destFile);
         ProgressMonitor pm = zipFile.getProgressMonitor();
 
-        while ( pm.getState() == ProgressMonitor.STATE_BUSY ) {
-            if ( pm.getCurrentOperation() == ProgressMonitor.OPERATION_EXTRACT ) {
+        while (pm.getState() == ProgressMonitor.STATE_BUSY) {
+            if (pm.getCurrentOperation() == ProgressMonitor.OPERATION_EXTRACT) {
                 fireEvent(ActionEvent.ACTION_PERFORMED, pm.getFileName(), pm.getWorkCompleted());
             }
         }
 
-        if ( pm.getResult() == ProgressMonitor.RESULT_ERROR ) {
+        if (pm.getResult() == ProgressMonitor.RESULT_ERROR) {
             throw new Exception(pm.getException());
         }
     }
@@ -90,7 +90,7 @@ public class UnZipper {
      * @param progress  How far we have progressed.
      */
     void fireEvent(int eventType, String message, long progress) {
-        for ( ActionListener listener : listeners ) {
+        for (ActionListener listener : listeners) {
             listener.actionPerformed(new ActionEvent(this, eventType, message, progress, 0));
         }
     }

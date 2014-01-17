@@ -53,6 +53,7 @@ class JReaderSetup {
 
     /**
      * Creates the data directory and config file in the users home.
+     *
      * @throws IOException
      */
     public static void createDirectoriesAndConfig() throws IOException {
@@ -63,9 +64,9 @@ class JReaderSetup {
                 + Config.DATA_DIR_NAME
                 + File.separator);
 
-        if ( !dataDir.exists() ) {
+        if (!dataDir.exists()) {
             wasSuccess = dataDir.mkdirs();
-            if ( !wasSuccess ) {
+            if (!wasSuccess) {
                 throw new IOException("Failed to create data directory at: "
                         + dataDir.getAbsolutePath());
             }
@@ -74,9 +75,9 @@ class JReaderSetup {
         }
 
         File configFile = new File(Config.configFilePath);
-        if ( !configFile.exists() ) {
+        if (!configFile.exists()) {
             wasSuccess = configFile.createNewFile();
-            if(wasSuccess) {
+            if (wasSuccess) {
                 Config.setString(Config.DATA_DIR, dataDir.getAbsolutePath() + File.separator);
                 Config.setString(Config.CURRENT_PROFILE, "");
                 Config.setBool(Config.HAS_DEFAULT_PROFILE, false);
@@ -97,9 +98,9 @@ class JReaderSetup {
 
         File profileDir = new File(profileDirPath);
 
-        if ( !profileDir.exists() ) {
+        if (!profileDir.exists()) {
             wasSuccess = profileDir.mkdirs();
-            if ( wasSuccess ) {
+            if (wasSuccess) {
                 Config.setString(Config.PROFILE_DIR, profileDirPath);
             } else {
                 throw new IOException("Failed to create profile directory at: " + profileDirPath);
@@ -110,6 +111,7 @@ class JReaderSetup {
 
     /**
      * Provides a FileChooser window for the user to select the documentation.
+     *
      * @return The documentation directory.
      */
     public static File chooseDocs() {
@@ -118,10 +120,10 @@ class JReaderSetup {
 
         do {
             int result = chooser.showOpenDialog(null);
-            if ( result == JFileChooser.APPROVE_OPTION ) {
+            if (result == JFileChooser.APPROVE_OPTION) {
                 File chosenDir = chooser.getSelectedFile();
                 chosenDir = Utilities.findDocDir(chosenDir);
-                if ( Utilities.isJavaDocsDir(chosenDir) ) {
+                if (Utilities.isJavaDocsDir(chosenDir)) {
                     return chosenDir;
                 } else {
                     result = JOptionPane.showConfirmDialog(null,
@@ -130,14 +132,14 @@ class JReaderSetup {
                                     "Would you like to try again?",
                             "Setup", JOptionPane.OK_CANCEL_OPTION);
 
-                    if ( result == JOptionPane.CANCEL_OPTION ) {
+                    if (result == JOptionPane.CANCEL_OPTION) {
                         return null;
                     }
                 }
             } else {
                 return null;
             }
-        } while ( true );
+        } while (true);
     }
 
     private static boolean hasDataDir() {
@@ -150,10 +152,11 @@ class JReaderSetup {
 
     /**
      * Checks that a default profile exists.
+     *
      * @return boolean indicating the default profiles existance.
      */
     public static boolean hasDefaultProfile() {
-        if(!new File(Config.dataDirectory).exists()) {
+        if (!new File(Config.dataDirectory).exists()) {
             return false;
         }
         File defaultProfile = new File(Config.getString(Config.PROFILE_DIR)

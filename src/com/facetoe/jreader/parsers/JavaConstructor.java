@@ -59,7 +59,7 @@ public class JavaConstructor extends AbstractJavaObject<ConstructorDeclaration> 
 
     @Override
     void extractDeclaration() {
-        if ( typeDeclaration.getParameters() == null ) {
+        if (typeDeclaration.getParameters() == null) {
             declaration = typeDeclaration.getName() + "()";
         } else {
             declaration = (typeDeclaration.getName()

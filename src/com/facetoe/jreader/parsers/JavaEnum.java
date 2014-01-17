@@ -48,7 +48,7 @@ public class JavaEnum extends AbstractJavaObject<EnumDeclaration> {
     }
 
     private void extractConstants() {
-        for ( EnumConstantDeclaration constant : typeDeclaration.getEntries() ) {
+        for (EnumConstantDeclaration constant : typeDeclaration.getEntries()) {
             constants.put(constant.getName(), new JavaEnumConstantDeclaration(constant));
         }
     }

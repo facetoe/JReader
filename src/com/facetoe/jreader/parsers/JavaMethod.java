@@ -52,7 +52,7 @@ public class JavaMethod extends AbstractJavaObject<MethodDeclaration> {
 
     @Override
     void extractDeclaration() {
-        if ( typeDeclaration.getParameters() == null ) {
+        if (typeDeclaration.getParameters() == null) {
             declaration = typeDeclaration.getName() + "()";
         } else {
             declaration = (typeDeclaration.getName()

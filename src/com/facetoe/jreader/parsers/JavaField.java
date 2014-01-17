@@ -48,7 +48,7 @@ class JavaField extends AbstractJavaObject<FieldDeclaration> {
                 .toString()
                 .replace(";", "");
 
-        if ( field.contains("=") ) {
+        if (field.contains("=")) {
             field = field.substring(0, field.indexOf(" ="));
         }
         fullDeclaration = field.trim();

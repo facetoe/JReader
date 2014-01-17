@@ -42,9 +42,9 @@ class SourceTreeSelectionListener implements TreeSelectionListener {
 
     @Override
     public void valueChanged(TreeSelectionEvent e) {
-        SourceItemNode node = ( SourceItemNode )
+        SourceItemNode node = (SourceItemNode)
                 sourceTreeView.getLastSelectedPathComponent();
-        if ( node == null ) {
+        if (node == null) {
             log.warn("Null node in SourceTreeSelectionListener.");
             return;
         }
@@ -54,7 +54,7 @@ class SourceTreeSelectionListener implements TreeSelectionListener {
 
     private void highlightDeclaration(SourceItemNode node) {
         AbstractJavaObject object = sourcePanel.getJavaSourceFile().getObject(node.getTitle());
-        if ( object != null ) {
+        if (object != null) {
             sourcePanel.highlightDeclaration(object);
         }
     }

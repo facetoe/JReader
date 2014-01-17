@@ -77,7 +77,7 @@ public class JavaDocParser {
         while ((line = reader.readLine()) != null) {
             if (line.contains("<head>")) {
                 return true;
-            } else if(line.contains("<SCRIPT")) { // If we this far into the file then it's the oldstyle.
+            } else if (line.contains("<SCRIPT")) { // If we this far into the file then it's the oldstyle.
                 return false;
             }
         }
@@ -94,8 +94,8 @@ public class JavaDocParser {
 
     // Parses the old style javadocs.
     private HashMap<String, String> parseOldJavadoc(Document doc) {
-        Elements classes = doc.select("html body table tbody tr td font.FrameItemFont a");
-        return processLinks(classes);
+        Elements links = doc.select("html body table tbody tr td font.FrameItemFont a");
+        return processLinks(links);
     }
 
     private HashMap<String, String> processLinks(Elements links) {

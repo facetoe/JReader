@@ -114,7 +114,7 @@ public class FileDownloader implements RBCWrapperDelegate {
                 Utilities.humanReadableByteCount(rbc.getReadSoFar(), true),
                 Utilities.humanReadableByteCount(rbc.getExpectedSize(), true));
 
-        fireEvent(ActionEvent.ACTION_PERFORMED, message, ( long ) progress);
+        fireEvent(ActionEvent.ACTION_PERFORMED, message, (long) progress);
     }
 
     /**
@@ -133,7 +133,7 @@ public class FileDownloader implements RBCWrapperDelegate {
 
             HttpURLConnection.setFollowRedirects(true);
 
-            HttpURLConnection connection = ( HttpURLConnection ) url.openConnection();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setConnectTimeout(15 * 1000);
             connection.setRequestMethod("HEAD");
 
@@ -143,16 +143,16 @@ public class FileDownloader implements RBCWrapperDelegate {
              * For some reason the content length isn't being returned correctly.
              * I'm hardcoding the java source zipfile size so the progress bar works.
              */
-            if ( contentLength == -1 ) {
+            if (contentLength == -1) {
                 contentLength = 36689314;
             }
 
 
-        } catch ( ProtocolException ex ) {
+        } catch (ProtocolException ex) {
             log.error(ex.getMessage(), ex);
-        } catch ( IOException ex ) {
+        } catch (IOException ex) {
             log.error(ex.getMessage(), ex);
-        } catch ( Exception ex ) {
+        } catch (Exception ex) {
             log.error(ex.getMessage(), ex);
         }
 
@@ -165,7 +165,7 @@ public class FileDownloader implements RBCWrapperDelegate {
 
     void fireEvent(int eventType, String message, long progress) {
         ActionEvent event = new ActionEvent(this, eventType, message, progress, 0);
-        for ( ActionListener listener : listeners ) {
+        for (ActionListener listener : listeners) {
             listener.actionPerformed(event);
         }
     }
@@ -206,9 +206,9 @@ class RBCWrapper implements ReadableByteChannel {
         int n;
         double progress;
 
-        if ( (n = rbc.read(bb)) > 0 ) {
+        if ((n = rbc.read(bb)) > 0) {
             readSoFar += n;
-            progress = expectedSize > 0 ? ( double ) readSoFar / ( double ) expectedSize * 100.0 : -1.0;
+            progress = expectedSize > 0 ? (double) readSoFar / (double) expectedSize * 100.0 : -1.0;
             delegate.rbcProgressCallback(this, progress);
         }
         return n;

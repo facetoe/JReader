@@ -48,15 +48,15 @@ public class JavaSourceFile {
     }
 
     public void extractAllObjectData() {
-        for ( AbstractJavaObject object : fileContents ) {
-            if ( object instanceof JavaClassOrInterface ) {
-                extractClassOrInterfaceData(( JavaClassOrInterface ) object);
+        for (AbstractJavaObject object : fileContents) {
+            if (object instanceof JavaClassOrInterface) {
+                extractClassOrInterfaceData((JavaClassOrInterface) object);
 
-            } else if ( object instanceof JavaEnum ) {
-                allObjects.putAll((( JavaEnum ) object).getConstants());
+            } else if (object instanceof JavaEnum) {
+                allObjects.putAll(((JavaEnum) object).getConstants());
 
-            } else if ( object instanceof JavaAnnotation ) {
-                JavaAnnotation annotation = ( JavaAnnotation ) object;
+            } else if (object instanceof JavaAnnotation) {
+                JavaAnnotation annotation = (JavaAnnotation) object;
                 allObjects.put(annotation.declaration, annotation);
             }
         }
@@ -76,14 +76,14 @@ public class JavaSourceFile {
 
         /* Add all the enums and the enum constants. */
         HashMap<String, JavaEnum> enums = classOrInterface.getEnums();
-        for ( String enumName : enums.keySet() ) {
+        for (String enumName : enums.keySet()) {
             allObjects.put(enumName, enums.get(enumName));
             allObjects.putAll(enums.get(enumName).getConstants());
         }
 
         HashMap<String, JavaClassOrInterface> nestedClasses = classOrInterface.getNestedClasses();
         /* For each nested class, recurse through it and each nested class it contains gathering all the declaration data */
-        for ( String className : nestedClasses.keySet() ) {
+        for (String className : nestedClasses.keySet()) {
             JavaClassOrInterface nestedClass = nestedClasses.get(className);
             extractClassOrInterfaceData(nestedClass);
         }

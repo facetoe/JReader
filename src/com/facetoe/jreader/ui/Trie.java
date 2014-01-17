@@ -31,17 +31,18 @@ import java.util.Scanner;
 public class Trie {
     private final Map<Character, TrieNode> root = new HashMap<Character, TrieNode>();
 
-    public Trie(){}
+    public Trie() {
+    }
 
     public Trie(File wordList) throws IOException {
         Scanner s;
         try {
             s = new Scanner(wordList);
-        } catch ( IOException ex ) {
+        } catch (IOException ex) {
             throw new IOException("Unable to locate file: " + wordList.toString());
         }
 
-        while ( s.hasNext() ) {
+        while (s.hasNext()) {
             addWord(s.next());
         }
         s.close();
@@ -57,7 +58,7 @@ public class Trie {
      * @param word
      */
     void addWord(String word) {
-        if ( !word.isEmpty() ) {
+        if (!word.isEmpty()) {
             addWord(word.toCharArray());
         }
     }
@@ -71,7 +72,7 @@ public class Trie {
         TrieNode currentNode;
 
         /* If we don't already have a word that starts with this char, add the char */
-        if ( !root.containsKey(word[0]) ) {
+        if (!root.containsKey(word[0])) {
             currentNode = new TrieNode(word[0]);
             root.put(word[0], currentNode);
 
@@ -80,9 +81,9 @@ public class Trie {
             currentNode = root.get(word[0]);
         }
 
-        for ( int i = 1; i < word.length; i++ ) {
+        for (int i = 1; i < word.length; i++) {
             /* If a child has this char, walk down to the next level */
-            if ( currentNode.containsChar(word[i]) ) {
+            if (currentNode.containsChar(word[i])) {
                 currentNode = currentNode.getNode(word[i]);
             } else {
                 /* Otherwise add the char */
@@ -100,7 +101,7 @@ public class Trie {
      * @param words
      */
     public void removeWords(ArrayList<String> words) {
-        for ( String word : words ) {
+        for (String word : words) {
             removeWord(word);
         }
     }
@@ -111,7 +112,7 @@ public class Trie {
      * @param words
      */
     public void addWords(ArrayList<String> words) {
-        for ( String word : words ) {
+        for (String word : words) {
             addWord(word);
         }
     }
@@ -122,12 +123,12 @@ public class Trie {
      * @param word to be removed
      */
     void removeWord(String word) {
-        if ( word.isEmpty() ) {
+        if (word.isEmpty()) {
             return;
         }
 
         TrieNode node = getNodeByPrefix(word);
-        if ( node != null ) {
+        if (node != null) {
             node.isWord = false;
         }
     }
@@ -139,13 +140,13 @@ public class Trie {
      * @return ArrayList containing the found words
      */
     public ArrayList<String> getWordsForPrefix(String prefix) {
-        if ( prefix.isEmpty() ) {
+        if (prefix.isEmpty()) {
             return new ArrayList<String>();
         }
         TrieNode root = getNodeByPrefix(prefix);
 
         /* If root is null there are no words with this prefix, return empty ArrayList */
-        if ( root == null ) {
+        if (root == null) {
             return new ArrayList<String>();
         }
         return getWordsForPrefix(prefix, "", root);
@@ -158,7 +159,7 @@ public class Trie {
     private ArrayList<String> getWordsForPrefix(String prefix, String word, TrieNode root) {
         ArrayList<String> foundWords = new ArrayList<String>();
         /* If we've got a word, add it to the list */
-        if ( root.isWord ) {
+        if (root.isWord) {
             foundWords.add(prefix + word);
         }
 
@@ -166,7 +167,7 @@ public class Trie {
         ArrayList<TrieNode> children = root.getChildren();
 
         /* Recurse through each child gathering all the words */
-        for ( TrieNode child : children ) {
+        for (TrieNode child : children) {
             foundWords.addAll(getWordsForPrefix(prefix, word + child.getChar(), child));
         }
         return foundWords;
@@ -183,7 +184,7 @@ public class Trie {
         TrieNode currentNode;
 
         /* If root doesn't have the char, return null */
-        if ( root.get(pre[0]) == null ) {
+        if (root.get(pre[0]) == null) {
             return null;
         } else {
 
@@ -191,9 +192,9 @@ public class Trie {
             currentNode = root.get(pre[0]);
         }
 
-        for ( int i = 1; i < pre.length; i++ ) {
+        for (int i = 1; i < pre.length; i++) {
             /* If we don't have the char, return null */
-            if ( !currentNode.containsChar(pre[i]) ) {
+            if (!currentNode.containsChar(pre[i])) {
                 return null;
             } else {
                 /* Otherwise keep walking the trie */
@@ -254,7 +255,7 @@ public class Trie {
          */
         public ArrayList<TrieNode> getChildren() {
             ArrayList<TrieNode> trieNodes = new ArrayList<TrieNode>();
-            for ( TrieNode node : children.values() ) {
+            for (TrieNode node : children.values()) {
                 trieNodes.add(node);
             }
             return trieNodes;

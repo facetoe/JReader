@@ -43,19 +43,19 @@ class PopUpListener implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if ( e.isPopupTrigger() )
+        if (e.isPopupTrigger())
             doPop(e);
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if ( e.isPopupTrigger() )
+        if (e.isPopupTrigger())
             doPop(e);
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if ( e.isPopupTrigger() )
+        if (e.isPopupTrigger())
             doPop(e);
     }
 

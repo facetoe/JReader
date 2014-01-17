@@ -92,7 +92,7 @@ public class JavaClassOrInterface extends AbstractJavaObject<ClassOrInterfaceDec
                 .replace("}", "")
                 .replaceAll("\\n", "");
 
-        if ( fullDeclaration.contains("class") ) {
+        if (fullDeclaration.contains("class")) {
             type = CLASS;
         } else {
             type = INTERFACE;

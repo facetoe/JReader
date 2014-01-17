@@ -28,75 +28,47 @@ import java.util.Properties;
 
 /**
  * This class manages the storing and retrieval of config data.
- * It supports both String and Boolean values.
  */
 public class Config {
     private static final Logger log = Logger.getLogger(Config.class);
 
-    /**
-     * Where our data directory is located.
-     */
+    // Where our data directory is located.
     public static final String DATA_DIR = "dataDir";
 
-    /**
-     * Where our profile direcories are located.
-     */
+    // Where our profile direcories are located.
     public static final String PROFILE_DIR = "profileDir";
 
-    /**
-     * The current profiles name.
-     */
+    // The current profiles name.
     public static final String CURRENT_PROFILE = "currentProfile";
 
-    /**
-     * Whether or not we have setup a defaut profile
-     */
+    // Whether or not we have setup a default profile
     public static final String HAS_DEFAULT_PROFILE = "hasDefaultProfile";
 
-    /**
-     * Whether or not we have downloaded the Java source code.
-     */
+    // Whether or not we have downloaded the Java source code.
     public static final String HAS_JAVALANG_SOURCE = "hasJavaSrc";
 
-    /**
-     * Whether or not we have extracted the Java source code.
-     */
+    // Whether or not we have extracted the Java source code.
     public static final String HAS_EXTRACTED_SOURCE = "hasExtractedSrc";
 
-    /**
-     * Whether or not we have parsed the Java docs.
-     */
+    // Whether or not we have parsed the Java docs.
     public static final String HAS_PARSED_DOCS = "hasParsedDocs";
 
-
-    /**
-     * The profile directorys name.
-     */
+    // The profile directorys name.
     public static final String PROFILE_DIR_NAME = "profiles";
 
-    /**
-     * The default profiles name.
-     */
+    // The default profiles name.
     public static final String DEFAULT_PROFILE_NAME = "Default";
 
-    /**
-     * The name of the Java source zip file.
-     */
+    // The name of the Java source zip file.
     public static final String JAVA_LANG_ZIP = "src-jdk.zip";
 
-    /**
-     * The name of the profile class data files.
-     */
+    // The name of the profile class data files.
     public static final String CLASS_DATA_FILE_NAME = "classData.ser";
 
-    /**
-     * The target file for JavaDocParser.
-     */
+    // The target file for JavaDocParser.
     public static final String ALL_CLASSSES_DOC_FILE = "allclasses-noframe.html";
 
-    /**
-     * The name of our data directory.
-     */
+    // The name of our data directory.
     public static final String DATA_DIR_NAME = ".jreader";
 
     private static final String CONFIG_FILE_NAME = "config.properties";
@@ -148,21 +120,18 @@ public class Config {
     private static void setEntry(String key, String value) {
         try {
             properties.load(new FileInputStream(configFilePath));
-
             properties.setProperty(key, value);
-
             properties.store(new FileOutputStream(configFilePath), null);
-
-        } catch ( IOException ex ) {
-            log.error(ex.getMessage(), ex);
+        } catch (IOException ex) {
+            log.error(ex);
         }
     }
 
     private static String getEntry(String key) {
         try {
             properties.load(new FileInputStream(configFilePath));
-        } catch ( IOException ex ) {
-            log.error(ex.getMessage(), ex);
+        } catch (IOException ex) {
+            log.error(ex);
         }
         return properties.getProperty(key);
     }

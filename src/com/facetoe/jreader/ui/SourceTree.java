@@ -69,16 +69,16 @@ class SourceTree extends JTree {
 
     private SourceItemNode parseSource(JavaSourceFile sourceFile) {
         SourceItemNode node = new SourceItemNode("Root", null);
-        for ( AbstractJavaObject object : sourceFile.getFileContents() ) {
-            if ( object instanceof JavaClassOrInterface) {
-                node.add(parseClass(( JavaClassOrInterface ) object));
+        for (AbstractJavaObject object : sourceFile.getFileContents()) {
+            if (object instanceof JavaClassOrInterface) {
+                node.add(parseClass((JavaClassOrInterface) object));
 
-            } else if ( object instanceof JavaEnum) {
-                JavaEnum javaEnum = ( JavaEnum ) object;
+            } else if (object instanceof JavaEnum) {
+                JavaEnum javaEnum = (JavaEnum) object;
                 node.add(parseEnum(javaEnum));
 
-            } else if ( object instanceof JavaAnnotation) {
-                JavaAnnotation annotation = ( JavaAnnotation ) object;
+            } else if (object instanceof JavaAnnotation) {
+                JavaAnnotation annotation = (JavaAnnotation) object;
                 node.add(parseAnnotation(annotation));
 
             } else {
@@ -100,31 +100,31 @@ class SourceTree extends JTree {
         String nodeTitle = aClass.getDeclaration();
         SourceItemNode classNode;
 
-        if ( aClass.getType() == JavaClassOrInterface.CLASS ) {
+        if (aClass.getType() == JavaClassOrInterface.CLASS) {
             classNode = new SourceItemNode(nodeTitle, aClass);
         } else {
             classNode = new SourceItemNode(nodeTitle, aClass);
         }
 
-        if ( aClass.hasConstructors() ) {
+        if (aClass.hasConstructors()) {
             classNode.add(extractConstructors(aClass));
         }
-        if ( aClass.hasMethods() ) {
+        if (aClass.hasMethods()) {
             classNode.add(extractMethods(aClass));
         }
-        if ( aClass.hasFields() ) {
+        if (aClass.hasFields()) {
             classNode.add(extractFields(aClass));
         }
-        if ( aClass.hasEnums() ) {
+        if (aClass.hasEnums()) {
             classNode.add(extractEnums(aClass));
         }
 
-        if ( aClass.hasNestedClasses() ) {
+        if (aClass.hasNestedClasses()) {
             // Sort them now so they appear sorted in the tree.
             ArrayList<SourceItemNode> nestedClasses = sortNestedClasses(aClass);
 
             SourceItemNode nestedClassNode = new SourceItemNode("Nested Classes", AbstractJavaObject.CLASS);
-            for ( SourceItemNode node : nestedClasses ) {
+            for (SourceItemNode node : nestedClasses) {
                 nestedClassNode.add(node);
                 classNode.add(nestedClassNode);
             }
@@ -178,7 +178,7 @@ class SourceTree extends JTree {
         SourceItemNode rootNode = new SourceItemNode(nodeTitle, type);
         ArrayList<String> items = new ArrayList<String>(objects.keySet());
         Collections.sort(items);
-        for ( String item : items ) {
+        for (String item : items) {
             rootNode.add(new SourceItemNode(item, objects.get(item)));
         }
         return rootNode;
@@ -273,7 +273,7 @@ class SourceTree extends JTree {
         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel,
                                                       boolean expanded, boolean leaf, int row, boolean hasFocus) {
             super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
-            SourceItemNode node = ( SourceItemNode ) value;
+            SourceItemNode node = (SourceItemNode) value;
             setIcon(node);
             return this;
         }
@@ -413,7 +413,7 @@ class SourceTree extends JTree {
         }
 
         private int simplifyModifier(int modifiers) {
-            switch ( modifiers ) {
+            switch (modifiers) {
                 case PUBLIC:
                 case PUBLIC_STRICTFP:
                 case PUBLIC_ABSTRACT:

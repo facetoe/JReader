@@ -8,7 +8,7 @@ import com.facetoe.jreader.helpers.Utilities;
  * Created by facetoe on 17/01/14.
  */
 public class JReaderTest {
-    public static ProfileManager pm;
+    public static ProfileManager pm = ProfileManager.getInstance();
     public static final String BASE_PATH = "/home/facetoe/IdeaProjects/JReader/";
     public static final String TEST_FILE_DIR = BASE_PATH + "testFiles";
     public static final String TEST_PROFILE_NAME = "test";

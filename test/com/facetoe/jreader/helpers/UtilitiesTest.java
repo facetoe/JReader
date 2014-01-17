@@ -31,7 +31,6 @@ public class UtilitiesTest extends JReaderTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        pm = ProfileManager.getInstance();
         pm.newProfile(TEST_PROFILE_NAME, TEST_PROFILE_DOC_DIR, TEST_PROFILE_SOURCE_DIR);
         pm.setCurrentProfile(TEST_PROFILE_NAME);
         JavaDocParser parser = new JavaDocParser();
@@ -50,7 +49,7 @@ public class UtilitiesTest extends JReaderTest {
     }
 
     @Test
-    public void testReadFile() throws Exception { // TODO this is dumb, choose a better test file
+    public void testReadFile() throws Exception {
         String fileText = Utilities.readFile(TEST_TEXT_FILE_PATH, Charset.forName("UTF-8"));
         assertEquals("This is a text file.", fileText);
     }
@@ -80,7 +79,7 @@ public class UtilitiesTest extends JReaderTest {
         for (String className : links.keySet()) {
             String htmlPath = Utilities.browserPathToSystemPath("file://" + TEST_DOC_DIR + links.get(className));
             String title = Utilities.extractTitle(htmlPath);
-            assertEquals(true, title.toLowerCase().contains(className.toLowerCase()));
+            assertEquals(true, title.contains(className));
         }
     }
 

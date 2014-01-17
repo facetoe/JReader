@@ -48,7 +48,7 @@ public class JavaSourceFileParser {
         } finally {
             inputStream.close();
         }
-        return ( JavaSourceFile ) new SourceFileVisitor().visit(cu, null);
+        return (JavaSourceFile) new SourceFileVisitor().visit(cu, null);
     }
 
     /**
@@ -66,18 +66,18 @@ public class JavaSourceFileParser {
         @Override
         public Object visit(CompilationUnit cu, Object arg) {
             JavaSourceFile sourceFile = new JavaSourceFile();
-            if ( cu != null && cu.getTypes() != null ) {
-                for ( TypeDeclaration type : cu.getTypes() ) {
-                    if ( type instanceof ClassOrInterfaceDeclaration ) {
-                        JavaClassOrInterface javaObj = ( JavaClassOrInterface ) visit(( ClassOrInterfaceDeclaration ) type, null);
+            if (cu != null && cu.getTypes() != null) {
+                for (TypeDeclaration type : cu.getTypes()) {
+                    if (type instanceof ClassOrInterfaceDeclaration) {
+                        JavaClassOrInterface javaObj = (JavaClassOrInterface) visit((ClassOrInterfaceDeclaration) type, null);
                         sourceFile.addObject(javaObj);
 
-                    } else if ( type instanceof AnnotationDeclaration ) {
-                        JavaAnnotation annotation = ( JavaAnnotation ) visit(( AnnotationDeclaration ) type, null);
+                    } else if (type instanceof AnnotationDeclaration) {
+                        JavaAnnotation annotation = (JavaAnnotation) visit((AnnotationDeclaration) type, null);
                         sourceFile.addObject(annotation);
 
                     } else if (type instanceof EnumDeclaration) {
-                        JavaEnum javaEnum = (JavaEnum)visit((EnumDeclaration)type, null);
+                        JavaEnum javaEnum = (JavaEnum) visit((EnumDeclaration) type, null);
                         sourceFile.addObject(javaEnum);
                     }
                 }
@@ -92,31 +92,31 @@ public class JavaSourceFileParser {
         public Object visit(ClassOrInterfaceDeclaration n, Object arg) {
             JavaClassOrInterface javaObj = new JavaClassOrInterface(n);
 
-            for ( BodyDeclaration declaration : n.getMembers() ) {
-                if ( declaration instanceof MethodDeclaration ) {
-                    JavaMethod method = ( JavaMethod ) visit(( MethodDeclaration ) declaration, null);
+            for (BodyDeclaration declaration : n.getMembers()) {
+                if (declaration instanceof MethodDeclaration) {
+                    JavaMethod method = (JavaMethod) visit((MethodDeclaration) declaration, null);
                     javaObj.addMethod(method);
 
-                } else if ( declaration instanceof FieldDeclaration ) {
-                    JavaField field = ( JavaField ) visit(( FieldDeclaration ) declaration, null);
+                } else if (declaration instanceof FieldDeclaration) {
+                    JavaField field = (JavaField) visit((FieldDeclaration) declaration, null);
                     javaObj.addField(field);
 
-                } else if ( declaration instanceof EnumDeclaration ) {
-                    JavaEnum javaEnum = ( JavaEnum ) visit(( EnumDeclaration ) declaration, null);
+                } else if (declaration instanceof EnumDeclaration) {
+                    JavaEnum javaEnum = (JavaEnum) visit((EnumDeclaration) declaration, null);
                     javaObj.addEnum(javaEnum);
 
-                } else if ( declaration instanceof ConstructorDeclaration ) {
-                    JavaConstructor constructor = ( JavaConstructor ) visit(( ConstructorDeclaration ) declaration, null);
+                } else if (declaration instanceof ConstructorDeclaration) {
+                    JavaConstructor constructor = (JavaConstructor) visit((ConstructorDeclaration) declaration, null);
                     javaObj.addConstructor(constructor);
 
                     /* If we have a nested class, recurse through it and each nested class that it contains
                      * gathering the data.  */
-                } else if ( declaration instanceof ClassOrInterfaceDeclaration ) {
-                    JavaClassOrInterface classOrInterface = ( JavaClassOrInterface ) visit(( ClassOrInterfaceDeclaration ) declaration, null);
+                } else if (declaration instanceof ClassOrInterfaceDeclaration) {
+                    JavaClassOrInterface classOrInterface = (JavaClassOrInterface) visit((ClassOrInterfaceDeclaration) declaration, null);
                     javaObj.addNestedClassOrInterface(classOrInterface);
 
-                } else if ( declaration instanceof AnnotationDeclaration ) {
-                    JavaAnnotation annotation = ( JavaAnnotation ) visit(( AnnotationDeclaration ) declaration, null);
+                } else if (declaration instanceof AnnotationDeclaration) {
+                    JavaAnnotation annotation = (JavaAnnotation) visit((AnnotationDeclaration) declaration, null);
                     javaObj.addAnnotation(annotation);
                 } // The only other things that would be caught here are EmptyTypeDeclaration, EmptyMemberDeclaration and InitializerDeclaration
 
