@@ -1,7 +1,6 @@
 package com.facetoe.jreader.parsers;
 
 import com.facetoe.jreader.JReaderTest;
-import com.sun.java_cup.internal.runtime.lr_parser;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
