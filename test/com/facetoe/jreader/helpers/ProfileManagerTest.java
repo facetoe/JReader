@@ -64,8 +64,6 @@ public class ProfileManagerTest extends JReaderTest {
         pm.newProfile(TEST_PROFILE_NAME, new File(TEST_PROFILE_DOC_DIR), new File(TEST_PROFILE_SOURCE_DIR));
         pm.setCurrentProfile(TEST_PROFILE_NAME);
         assertEquals(TEST_PROFILE_NAME, pm.getCurrentProfileName());
-        assertEquals(TEST_PROFILE_DOC_DIR, pm.getDocDir());
-        assertEquals(TEST_PROFILE_SOURCE_DIR, pm.getSrcDir());
         assertEquals(TEST_PROFILE_DIR, pm.getPath());
     }
 

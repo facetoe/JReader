@@ -72,7 +72,6 @@ public class Utilities {
 
         /* And add the source directory to the beginning to get the complete path. */
         String path = constructPath(profileManager.getSrcDir(), subPath);
-
         /* If there are more than 2 periods it's probably a nested class like: /dir/dir/SomeClass.SomeNestedClass.html.
          * Extract the class name. */
         String fileName = Paths.get(path).getFileName().toString();
@@ -94,16 +93,7 @@ public class Utilities {
     public static String browserPathToSystemPath(String path) {
         assert path != null;
         path = path.replace("file://", "");
-
-        try {
-            /* On Windows the above replace operation will leave the path as "/c:/path/path. */
-            /* We create a path object, convert it to a file object and get the path as "C:/path/path.
-             * There must be a better way to do this... */
-            path = URLDecoder.decode(path, "utf-8");
-            path = new File(path).getPath();
-        } catch (UnsupportedEncodingException e) {
-            log.error(e.getMessage(), e);
-        }
+        path = fixWindowsPath(path);
 
         /* Some paths look like: docs/api/java/awt/dnd/DropTarget.html#DropTarget()
          * We are only interested in the information before the '#', so remove the rest */
@@ -121,7 +111,6 @@ public class Utilities {
         }
         return path;
     }
-
 
     /**
      * Extracts the title from a local HTML file or the filename for remote pages.
@@ -267,7 +256,17 @@ public class Utilities {
             else
                 outPath += element;
         }
-        return outPath;
+        return fixWindowsPath(outPath);
+    }
+
+    private static String fixWindowsPath(String path) {
+        String outPath = "";
+        try {
+            outPath = URLDecoder.decode(path, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            log.error(e);
+        }
+        return new File(outPath).getPath();
     }
 
     public static boolean isJavaDocsDir(File docDir) {

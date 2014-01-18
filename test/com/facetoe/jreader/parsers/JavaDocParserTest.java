@@ -1,6 +1,7 @@
 package com.facetoe.jreader.parsers;
 
 import com.facetoe.jreader.JReaderTest;
+import com.facetoe.jreader.helpers.Config;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -14,7 +15,6 @@ import static org.junit.Assert.assertEquals;
  */
 public class JavaDocParserTest extends JReaderTest {
     int JAVA7_CLASSES_NUM = 3891;
-    int JAVA6_CLASSES_NUM = 3663;
     int SWINGX_CLASSES_NUM = 477;
     public static JavaDocParser parser;
 
@@ -25,7 +25,8 @@ public class JavaDocParserTest extends JReaderTest {
 
     @Test
     public void testParseJava7Docs() throws Exception {
-        HashMap<String, String> classData = parser.parse(new File(JAVA7_DOC_DIR + "allclasses-noframe.html"));
+        pm.setCurrentProfile(Config.DEFAULT_PROFILE_NAME);
+        HashMap<String, String> classData = parser.parse(new File(pm.getDocDir() + "allclasses-noframe.html"));
         assertEquals(JAVA7_CLASSES_NUM, classData.size());
     }
 

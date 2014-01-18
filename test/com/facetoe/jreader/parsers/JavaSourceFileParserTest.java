@@ -1,6 +1,7 @@
 package com.facetoe.jreader.parsers;
 
 import com.facetoe.jreader.JReaderTest;
+import com.facetoe.jreader.helpers.Config;
 import japa.parser.ParseException;
 
 import java.io.File;
@@ -17,7 +18,8 @@ public class JavaSourceFileParserTest extends JReaderTest {
     //This takes a while as it parses every Java source file
     @org.junit.Test
     public void testParse() throws Exception {
-        recursiveTest(new File(TEST_PROFILE_SOURCE_DIR));
+        pm.setCurrentProfile(Config.DEFAULT_PROFILE_NAME);
+        recursiveTest(new File(pm.getSrcDir()));
     }
 
     private static void recursiveTest(File dir) throws ParseException, IOException {
@@ -32,5 +34,4 @@ public class JavaSourceFileParserTest extends JReaderTest {
             }
         }
     }
-
 }
