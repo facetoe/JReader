@@ -37,7 +37,7 @@ public class ProfileManagerTest extends JReaderTest {
 
     @Test
     public void testNewProfile() throws Exception {
-        pm.newProfile(TEST_PROFILE_NAME, TEST_PROFILE_DOC_DIR, TEST_PROFILE_SOURCE_DIR);
+        pm.newProfile(TEST_PROFILE_NAME, new File(TEST_PROFILE_DOC_DIR), new File(TEST_PROFILE_SOURCE_DIR));
         assertEquals(true, (Utilities.getFile(TEST_PROFILE_DIR, TEST_PROFILE_NAME + ".ser")).exists());
         assertEquals(true, (Utilities.getFile(TEST_PROFILE_DIR)).exists());
         assertEquals(true, (Utilities.getFile(TEST_PROFILE_DIR, Config.CLASS_DATA_FILE_NAME)).exists());
@@ -61,7 +61,7 @@ public class ProfileManagerTest extends JReaderTest {
 
     @Test
     public void testCurrentProfile() throws Exception {
-        pm.newProfile(TEST_PROFILE_NAME, TEST_PROFILE_DOC_DIR, TEST_PROFILE_SOURCE_DIR);
+        pm.newProfile(TEST_PROFILE_NAME, new File(TEST_PROFILE_DOC_DIR), new File(TEST_PROFILE_SOURCE_DIR));
         pm.setCurrentProfile(TEST_PROFILE_NAME);
         assertEquals(TEST_PROFILE_NAME, pm.getCurrentProfileName());
         assertEquals(TEST_PROFILE_DOC_DIR, pm.getDocDir());
@@ -72,7 +72,7 @@ public class ProfileManagerTest extends JReaderTest {
     @Test
     public void testSaveProfiles() throws Exception {
         for (int i = 0; i < 10; i++) {
-            pm.newProfile(TEST_PROFILE_NAME + i, TEST_PROFILE_DOC_DIR, TEST_PROFILE_SOURCE_DIR);
+            pm.newProfile(TEST_PROFILE_NAME, new File(TEST_PROFILE_DOC_DIR), new File(TEST_PROFILE_SOURCE_DIR));
         }
         pm.saveProfiles();
         ArrayList<String> profiles = pm.getProfileNames();

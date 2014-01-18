@@ -75,12 +75,13 @@ public class ProfileManager implements Serializable {
     /**
      * Creates and saves a new Profile.
      *
-     * @param name   The name of this profile.
-     * @param docDir Where the Documentation is located.
-     * @param srcDir Where the source code is located.
+     * @param name    The name of this profile.
+     * @param docRoot Where the Documentation is located.
+     * @param srcDir  Where the source code is located.
      */
-    public void newProfile(String name, String docDir, String srcDir) throws IOException {
-        Profile profile = new Profile(name, docDir, srcDir);
+    public void newProfile(String name, File docRoot, File srcDir) throws IOException {
+        File docDir = Utilities.findDocDir(docRoot);
+        Profile profile = new Profile(name, docDir.getAbsolutePath(), srcDir.getAbsolutePath());
         profiles.put(profile.name, profile);
         HashMap<String, String> classData = parseJavaDocs(profile.docDir);
         createFilesAndSaveProfile(profile, classData);
@@ -404,8 +405,8 @@ public class ProfileManager implements Serializable {
 
         public Profile(String name, String docDir, String srcDir) {
             this.name = name;
-            this.docDir = docDir;
-            this.srcDir = srcDir;
+            this.docDir = docDir + File.separator;
+            this.srcDir = srcDir + File.separator;
             this.regexpIsEnabled = false;
             this.wholeWordIsEnabled = false;
             this.matchCaseIsEnabled = false;

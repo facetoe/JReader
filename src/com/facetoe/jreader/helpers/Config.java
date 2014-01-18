@@ -44,15 +44,6 @@ public class Config {
     // Whether or not we have setup a default profile
     public static final String HAS_DEFAULT_PROFILE = "hasDefaultProfile";
 
-    // Whether or not we have downloaded the Java source code.
-    public static final String HAS_JAVALANG_SOURCE = "hasJavaSrc";
-
-    // Whether or not we have extracted the Java source code.
-    public static final String HAS_EXTRACTED_SOURCE = "hasExtractedSrc";
-
-    // Whether or not we have parsed the Java docs.
-    public static final String HAS_PARSED_DOCS = "hasParsedDocs";
-
     // The profile directorys name.
     public static final String PROFILE_DIR_NAME = "profiles";
 
@@ -60,7 +51,8 @@ public class Config {
     public static final String DEFAULT_PROFILE_NAME = "Default";
 
     // The name of the Java source zip file.
-    public static final String JAVA_LANG_ZIP = "src-jdk.zip";
+    public static final String JAVA_LANG_ZIP_FILE_NAME = "src-jdk";
+    public static final String JAVA_DOCS_ZIP_FILE_NAME = "jdk-7u51-apidocs";
 
     // The name of the profile class data files.
     public static final String CLASS_DATA_FILE_NAME = "classData.ser";
@@ -75,7 +67,7 @@ public class Config {
     private static final Properties properties = new Properties();
 
     /**
-     * The full path to out data directory.
+     * The full path to our data directory.
      */
     public static final String dataDirectory = System.getProperty("user.home") +
             File.separator +

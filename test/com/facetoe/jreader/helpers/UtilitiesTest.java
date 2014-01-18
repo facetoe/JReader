@@ -31,7 +31,7 @@ public class UtilitiesTest extends JReaderTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        pm.newProfile(TEST_PROFILE_NAME, TEST_PROFILE_DOC_DIR, TEST_PROFILE_SOURCE_DIR);
+        pm.newProfile(TEST_PROFILE_NAME, new File(TEST_PROFILE_DOC_DIR), new File(TEST_PROFILE_SOURCE_DIR));
         pm.setCurrentProfile(TEST_PROFILE_NAME);
         JavaDocParser parser = new JavaDocParser();
         links = parser.parse(new File(ALL_CLASSES_DOCFILE));

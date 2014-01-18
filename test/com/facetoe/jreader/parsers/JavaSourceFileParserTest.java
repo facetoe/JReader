@@ -1,5 +1,6 @@
 package com.facetoe.jreader.parsers;
 
+import com.facetoe.jreader.JReaderTest;
 import japa.parser.ParseException;
 
 import java.io.File;
@@ -11,12 +12,12 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by facetoe on 15/01/14.
  */
-public class JavaSourceFileParserTest {
+public class JavaSourceFileParserTest extends JReaderTest {
 
+    //This takes a while as it parses every Java source file
     @org.junit.Test
-    // This takes a while as it parses every Java source file
     public void testParse() throws Exception {
-        recursiveTest(new File("/home/facetoe/.jreader/src-jdk"));
+        recursiveTest(new File(TEST_PROFILE_SOURCE_DIR));
     }
 
     private static void recursiveTest(File dir) throws ParseException, IOException {

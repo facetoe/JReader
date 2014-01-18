@@ -25,6 +25,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -132,29 +133,29 @@ public class Utilities {
         if (isWebAddress(path)) {
             return extractFileName(path);
         }
-        FileInputStream inStream;
-        Scanner scanner;
         path = browserPathToSystemPath(path);
+        String title = "";
         try {
-            inStream = new FileInputStream(path);
-            scanner = new Scanner(inStream);
+            title = extractHtmlTitle(path);
         } catch (FileNotFoundException e) {
-            log.error(e.getMessage(), e);
-            return "";
+            log.error(e);
         }
-
-        return extractTitle(scanner);
+        return title;
     }
 
-    private static String extractTitle(Scanner scanner) {
+    private static String extractHtmlTitle(String path) throws FileNotFoundException {
         String html;
+        FileInputStream inStream;
+        Scanner scanner;
+        inStream = new FileInputStream(path);
+        scanner = new Scanner(inStream);
+
         while (scanner.hasNextLine()) {
             html = scanner.nextLine();
             /* This is sufficient for the Java 7 docs as the title is all in one line */
             if (html.toLowerCase().contains("<title>") && html.toLowerCase().contains("<title/>")) {
                 return extractTitleFromHtml(html);
             } else {
-
                 /* The Java 6 documentation and older generated javadocs spread the title over multiple lines */
                 while (scanner.hasNextLine()) {
                     html += scanner.nextLine();
@@ -181,21 +182,6 @@ public class Utilities {
             nameEnd = title.length();
         }
         return title.substring(0, nameEnd);
-    }
-
-    /**
-     * Takes bytes and returns a human readable string like "35KB"
-     *
-     * @param bytes to convert.
-     * @param si
-     * @return The human readable string
-     */
-    public static String humanReadableByteCount(long bytes, boolean si) {
-        int unit = si ? 1000 : 1024;
-        if (bytes < unit) return bytes + " B";
-        int exp = (int) (Math.log(bytes) / Math.log(unit));
-        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
-        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 
     public static boolean isGoodSourcePath(String path) {
@@ -407,6 +393,10 @@ public class Utilities {
             log.error(e.getMessage(), e);
         }
         return null;
+    }
+
+    public static File getResourceAsFile(Class sourceClass, String reference) throws URISyntaxException {
+        return new File(sourceClass.getResource(reference).toURI());
     }
 
     public static void showErrorDialog(String message, String title) {

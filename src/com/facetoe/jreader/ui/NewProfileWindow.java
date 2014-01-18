@@ -103,7 +103,7 @@ public class NewProfileWindow extends JDialog {
                     protected Object doInBackground() throws Exception {
 
                         /* If we don't hide these then when the progress bar and label
-                         * become visible the buttons get pushed off the bottom of the frame.
+                         * become visible the buttons get pushed off the bottom of the dialog.
                          * There is probably a better way to do it...*/
                         pnlName.setVisible(false);
                         pnlDocs.setVisible(false);
@@ -127,9 +127,7 @@ public class NewProfileWindow extends JDialog {
                             }
                         });
 
-                        manager.newProfile(name,
-                                txtDocs.getText() + File.separator,
-                                txtSrc.getText() + File.separator);
+                        manager.newProfile(name, new File(txtDocs.getText()), new File(txtSrc.getText()));
                         manager.setCurrentProfile(name);
                         manager.saveProfiles();
 
