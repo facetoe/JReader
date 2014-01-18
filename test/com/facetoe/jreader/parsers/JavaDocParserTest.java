@@ -30,12 +30,6 @@ public class JavaDocParserTest extends JReaderTest {
     }
 
     @Test
-    public void testParseJava6Docs() throws Exception {
-        HashMap<String, String> classData = parser.parse(new File(JAVA6_DOC_DIR + "allclasses-noframe.html"));
-        assertEquals(JAVA6_CLASSES_NUM, classData.size());
-    }
-
-    @Test
     public void testParseSwingXDocs() throws Exception {
         HashMap<String, String> classData = parser.parse(new File(TEST_PROFILE_DOC_DIR + File.separator + "allclasses-noframe.html"));
         assertEquals(SWINGX_CLASSES_NUM, classData.size());
