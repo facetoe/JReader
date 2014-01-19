@@ -28,6 +28,7 @@ class GitHubHttpsConnection {
 
     private void sendRequest(URL url) throws IOException {
         con = (HttpsURLConnection) url.openConnection();
+        con.setRequestProperty("Accept", "application/vnd.github.v3.text-match+json");
         con.setRequestMethod("GET");
         con.setRequestProperty("User-Agent", USER_AGENT);
         getResult();
@@ -42,7 +43,6 @@ class GitHubHttpsConnection {
     }
 
     private boolean responseOK() throws IOException {
-        System.out.println(con.getResponseCode());
         return con.getResponseCode() == HttpURLConnection.HTTP_OK;
     }
 

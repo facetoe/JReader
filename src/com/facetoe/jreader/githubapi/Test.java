@@ -24,7 +24,7 @@ public class Test {
             GitHubResponse response = connection.getResponse();
             System.out.println(response);
             for (Item item : response.getItems()) {
-                System.out.println(item.getName());
+                System.out.println(item);
             }
         }
     }
