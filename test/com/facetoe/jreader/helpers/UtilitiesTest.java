@@ -136,7 +136,7 @@ public class UtilitiesTest extends JReaderTest {
 
     @Test
     public void testGetFile() throws Exception {
-        File testTextFile = Utilities.getFile(BASE_PATH, "testFiles", "testTextFile.txt");
+        File testTextFile = Utilities.getFileFromPathElements(BASE_PATH, "testFiles", "testTextFile.txt");
         assertEquals(true, testTextFile.exists());
     }
 

@@ -72,6 +72,7 @@ public class Utilities {
 
         /* And add the source directory to the beginning to get the complete path. */
         String path = constructPath(profileManager.getSrcDir(), subPath);
+
         /* If there are more than 2 periods it's probably a nested class like: /dir/dir/SomeClass.SomeNestedClass.html.
          * Extract the class name. */
         String fileName = Paths.get(path).getFileName().toString();
@@ -97,8 +98,8 @@ public class Utilities {
 
         /* Some paths look like: docs/api/java/awt/dnd/DropTarget.html#DropTarget()
          * We are only interested in the information before the '#', so remove the rest */
-        if (path.contains("#")) {
-            path = path.substring(0, path.indexOf("#"));
+        if (!path.endsWith(".html")) {
+            path = path.substring(0, path.indexOf(".html") + 4);
         }
 
         /* If the user is browsing with frames then this will be present.
@@ -174,21 +175,9 @@ public class Utilities {
     }
 
     public static boolean isGoodSourcePath(String path) {
-
         if (path == null || isWebAddress(path) || !path.endsWith(".java")) {
             return false;
         }
-
-        /**
-         * Some paths look like: src-jdk/javax/imageio/ImageReader.java#readAll(int, javax.imageio.ImageReadParam)
-         * Extract the actual path to avoid an error.
-         */
-        if (path.contains("#")) {
-            /* Get the actual path */
-            String[] parts = path.split("#");
-            path = parts[0];
-        }
-
         return new File(path).isFile();
     }
 
@@ -218,7 +207,7 @@ public class Utilities {
         try {
             object = in.readObject();
         } catch (ClassNotFoundException e) {
-            e.printStackTrace(); //This shouldn't happen...
+            log.error(e);
         } finally {
             in.close();
             fileIn.close();
@@ -244,7 +233,7 @@ public class Utilities {
         }
     }
 
-    public static File getFile(String... pathElements) {
+    public static File getFileFromPathElements(String... pathElements) {
         return new File(constructPath(pathElements));
     }
 
@@ -259,6 +248,11 @@ public class Utilities {
         return fixWindowsPath(outPath);
     }
 
+
+    /* Windows paths need a bit more coaxing to be correct. Removing the "file://" prefix results
+     * in something like "/c:/path/path, which will fail. To get around this we create a path object,
+     * convert it to a file object and get the path as "C:/path/path.
+     * There must be a better way to do this... */
     private static String fixWindowsPath(String path) {
         String outPath = "";
         try {
@@ -271,8 +265,8 @@ public class Utilities {
 
     public static boolean isJavaDocsDir(File docDir) {
         docDir = findDocDir(docDir);
-        File indexFile = new File(docDir.getAbsoluteFile() + File.separator + "index.html");
-        File classFile = new File(docDir.getAbsoluteFile() + File.separator + "allclasses-noframe.html");
+        File indexFile = new File(docDir.getAbsolutePath() + File.separator + "index.html");
+        File classFile = new File(docDir.getAbsolutePath() + File.separator + "allclasses-noframe.html");
         if (!indexFile.exists() || !classFile.exists()) {
             return false;
         }
@@ -311,20 +305,22 @@ public class Utilities {
     }
 
     private static String findHomePage(File[] filesArr) {
+        if (filesArr == null) {
+            return "";
+        }
+
         HashMap<String, File> files = new HashMap<String, File>();
         String homeFileName = "";
-        if (filesArr == null)
-            return "";
 
         for (File file : filesArr) {
             files.put(file.getName(), file);
         }
 
-        if (files.containsKey("overview-summary.html")) {
+        if (files.containsKey("overview-summary.html")) { // This is the nicest looking option
             homeFileName = "overview-summary.html";
-        } else if (files.containsKey("allclasses-noframe.html")) {
+        } else if (files.containsKey("allclasses-noframe.html")) { // Not too bad
             homeFileName = "allclasses-noframe.html";
-        } else if (files.containsKey("index.html")) {
+        } else if (files.containsKey("index.html")) { // Horrible but better than nothing
             homeFileName = "index.html";
         }
         return homeFileName;

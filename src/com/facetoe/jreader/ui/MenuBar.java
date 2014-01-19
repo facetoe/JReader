@@ -88,11 +88,8 @@ class MenuBar extends JMenuBar {
 
     private void handleNewProfileOption() {
         jReader.removeJavaDocClassNames();
-        // This is a blocking dialog
-        new NewProfileWindow();
+        new NewProfileWindow().display(); // This is a blocking dialog
         jReader.addJavaDocClassNames();
-
-        // If a new profile was succesfully created, navigate home to update the screen.
         navigateHome();
     }
 
@@ -142,8 +139,6 @@ class MenuBar extends JMenuBar {
         jReader.removeJavaDocClassNames();
         profileManager.setCurrentProfile(profileName);
         jReader.addJavaDocClassNames();
-
-        // Navigate home to refresh the screen.
         navigateHome();
     }
 
@@ -194,10 +189,8 @@ class MenuBar extends JMenuBar {
                             "Are you sure you want to delete " + profileName + "?",
                             "Confirm Deletion", JOptionPane.YES_NO_OPTION);
                     if (result == JOptionPane.YES_OPTION) {
-                        // profileManager.deleteProfile sets the profile to Default.
+                        // ProfileManager.deleteProfile() sets the profile to Default.
                         profileManager.deleteProfile(profileName);
-
-                        // Navigate home to refresh the screen with default profile.
                         navigateHome();
                     }
                 }

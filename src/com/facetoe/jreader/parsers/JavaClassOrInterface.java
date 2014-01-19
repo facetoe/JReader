@@ -36,7 +36,7 @@ import java.util.HashMap;
 public class JavaClassOrInterface extends AbstractJavaObject<ClassOrInterfaceDeclaration> {
 
     /**
-     * The nested classes or interaces contained in this class or interface.
+     * The nested classes or interfaces contained in this class or interface.
      */
     private final HashMap<String, JavaClassOrInterface> nestedClasses = new HashMap<String, JavaClassOrInterface>();
 
@@ -264,10 +264,13 @@ public class JavaClassOrInterface extends AbstractJavaObject<ClassOrInterfaceDec
 
     @Override
     public String toString() {
-        return String.format("Name: %s\nMethods: %d\nFields: %d\nEnums: %d\nConstructors: %d\n\n", fullDeclaration,
-                methods.size(),
-                fields.size(),
-                enums.size(),
-                constructors.size());
+        return "JavaClassOrInterface{" +
+                "nestedClasses=" + nestedClasses +
+                ", methods=" + methods +
+                ", constructors=" + constructors +
+                ", enums=" + enums +
+                ", fields=" + fields +
+                ", annotations=" + annotations +
+                '}';
     }
 }

@@ -58,26 +58,42 @@ public class NewProfileWindow extends JDialog {
      * Constructor for NewProfileWindow. No need to call any methods, this does everything.
      */
     public NewProfileWindow() {
+        constructUI();
+        initButtons();
+    }
+
+    private void constructUI() {
+        setContentPane(parentPanel);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setModalityType(ModalityType.APPLICATION_MODAL);
+        pack();
+        setLocationRelativeTo(null);
+    }
+
+    private void initButtons() {
+        initDocsButton();
+        initSrcButton();
+        initOkButton();
+        initCancelButton();
+    }
+
+    private void initDocsButton() {
         btnDocs.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 File chosenDir = showFileDialog();
                 if (chosenDir != null) {
-                    chosenDir = Utilities.findDocDir(chosenDir);
-
-                    /* Make sure we have a documentation directory or big problem later. */
                     if (!Utilities.isJavaDocsDir(chosenDir)) {
-                        JOptionPane.showMessageDialog(parentPanel,
-                                "Invalid directory. Please choose the top level directory that contains the index.html file.",
-                                "Invalid Directory",
-                                JOptionPane.ERROR_MESSAGE);
+                        Utilities.showErrorDialog(parentPanel, "Invalid documentation directory", "Error");
                     } else {
                         txtDocs.setText(chosenDir.getAbsolutePath());
                     }
                 }
             }
         });
+    }
 
+    private void initSrcButton() {
         // TODO Write a method that confirms this is actually the source directory for the chosen docs.
         btnSrc.addActionListener(new ActionListener() {
             @Override
@@ -88,7 +104,9 @@ public class NewProfileWindow extends JDialog {
                 }
             }
         });
+    }
 
+    private void initOkButton() {
         btnOK.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -97,11 +115,9 @@ public class NewProfileWindow extends JDialog {
                     return;
                 }
 
-                /* Run this in a SwingWorker or the UI hangs. */
                 SwingWorker worker = new SwingWorker() {
                     @Override
                     protected Object doInBackground() throws Exception {
-
                         /* If we don't hide these then when the progress bar and label
                          * become visible the buttons get pushed off the bottom of the dialog.
                          * There is probably a better way to do it...*/
@@ -140,7 +156,9 @@ public class NewProfileWindow extends JDialog {
 
             }
         });
+    }
 
+    private void initCancelButton() {
         btnCancel.addActionListener(
                 new ActionListener() {
                     @Override
@@ -149,12 +167,9 @@ public class NewProfileWindow extends JDialog {
                         dispose();
                     }
                 });
+    }
 
-        setContentPane(parentPanel);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setModalityType(ModalityType.APPLICATION_MODAL);
-        pack();
-        setLocationRelativeTo(null);
+    public void display() {
         setVisible(true);
     }
 
@@ -176,7 +191,7 @@ public class NewProfileWindow extends JDialog {
     }
 
     public static void main(String[] args) {
-        new NewProfileWindow();
+        new NewProfileWindow().display();
     }
 
     {

@@ -81,7 +81,7 @@ public class ProfileManager implements Serializable {
      */
     public void newProfile(String name, File docRoot, File srcDir) throws IOException {
         File docDir = Utilities.findDocDir(docRoot);
-        Profile profile = new Profile(name, docDir.getAbsolutePath(), srcDir.getAbsolutePath());
+        Profile profile = new Profile(name, docDir, srcDir);
         profiles.put(profile.name, profile);
         HashMap<String, String> classData = parseJavaDocs(profile.docDir);
         createFilesAndSaveProfile(profile, classData);
@@ -90,11 +90,11 @@ public class ProfileManager implements Serializable {
 
     private void createFilesAndSaveProfile(Profile profile, HashMap<String, String> classData) throws IOException {
         Utilities.checkAndCreateDirectoryIfNotPresent(
-                Utilities.getFile(
+                Utilities.getFileFromPathElements(
                         Config.getString(Config.PROFILE_DIR),
                         profile.profileDirName));
 
-        File classDataFile = Utilities.getFile(
+        File classDataFile = Utilities.getFileFromPathElements(
                 Config.getString(Config.PROFILE_DIR),
                 profile.profileDirName,
                 Config.CLASS_DATA_FILE_NAME);
@@ -107,7 +107,7 @@ public class ProfileManager implements Serializable {
         for (ActionListener listener : listeners) {
             parser.addActionListener(listener);
         }
-        return parser.parse(Utilities.getFile(docPath, Config.ALL_CLASSSES_DOC_FILE));
+        return parser.parse(Utilities.getFileFromPathElements(docPath, Config.ALL_CLASSSES_DOC_FILE));
     }
 
     /**
@@ -145,7 +145,7 @@ public class ProfileManager implements Serializable {
     // classData.ser and <profileName>.ser
     private boolean isProfileFile(File profFile) {
         return profFile.getName().endsWith(".ser")
-                && !profFile.getName().equalsIgnoreCase(Config.CLASS_DATA_FILE_NAME);
+                && !profFile.getName().equals(Config.CLASS_DATA_FILE_NAME);
     }
 
     private void loadProfile(File profFile) throws IOException {
@@ -175,22 +175,22 @@ public class ProfileManager implements Serializable {
      * @throws IOException
      */
     private void writeProfile(Profile profile) throws IOException {
-        File profileFile = Utilities.getFile(
+        File outFile = Utilities.getFileFromPathElements(
                 Config.getString(Config.PROFILE_DIR),
                 profile.profileDirName,
                 profile.profileFileName);
-        Utilities.checkAndCreateFileIfNotPresent(profileFile);
-        writeProfile(profileFile, profile);
-    }
-
-    private void writeClassData(File classDataFile, HashMap<String, String> classData) throws IOException {
-        Utilities.checkAndCreateFileIfNotPresent(classDataFile);
-        Utilities.writeObject(classDataFile, classData);
+        Utilities.checkAndCreateFileIfNotPresent(outFile);
+        writeProfile(outFile, profile);
     }
 
     private void writeProfile(File outFile, Profile profile) throws IOException {
         Utilities.checkAndCreateFileIfNotPresent(outFile);
         Utilities.writeObject(outFile, profile);
+    }
+
+    private void writeClassData(File classDataFile, HashMap<String, String> classData) throws IOException {
+        Utilities.checkAndCreateFileIfNotPresent(classDataFile);
+        Utilities.writeObject(classDataFile, classData);
     }
 
     /**
@@ -215,11 +215,8 @@ public class ProfileManager implements Serializable {
             currentProfile.searchContext = new SearchContext();
             Config.setString(Config.CURRENT_PROFILE, profileName);
             log.debug("Profile set to: " + Config.getString(Config.CURRENT_PROFILE));
-        } else if (!profileName.equals(Config.DEFAULT_PROFILE_NAME)) {
-            setCurrentProfile(Config.DEFAULT_PROFILE_NAME);
-            log.error("No such profile: " + profileName);
         } else {
-            log.error("Failed to load default profile");
+            log.error("Failed to load profile: " + profileName);
         }
     }
 
@@ -230,9 +227,9 @@ public class ProfileManager implements Serializable {
      * @param profileName The profile to be deleted.
      */
     public void deleteProfile(String profileName) {
-        Profile profile = profiles.get(profileName);
-        if (profile != null) {
-            File profileDir = Utilities.getFile(
+        if (profiles.containsKey(profileName)) {
+            Profile profile = profiles.get(profileName);
+            File profileDir = Utilities.getFileFromPathElements(
                     Config.getString(Config.PROFILE_DIR),
                     profile.profileDirName);
 
@@ -321,7 +318,7 @@ public class ProfileManager implements Serializable {
      * @return The homepage path.
      */
     public String getHome() {
-        return getDocDir() + File.separator + currentProfile.home;
+        return Utilities.constructPath(getDocDir(), currentProfile.home);
     }
 
     /**
@@ -403,14 +400,14 @@ public class ProfileManager implements Serializable {
         private boolean wholeWordIsEnabled;
         private boolean matchCaseIsEnabled;
 
-        public Profile(String name, String docDir, String srcDir) {
+        public Profile(String name, File docDir, File srcDir) {
             this.name = name;
-            this.docDir = docDir + File.separator;
-            this.srcDir = srcDir + File.separator;
+            this.docDir = docDir.getAbsolutePath() + File.separator;
+            this.srcDir = srcDir.getAbsolutePath() + File.separator;
             this.regexpIsEnabled = false;
             this.wholeWordIsEnabled = false;
             this.matchCaseIsEnabled = false;
-            this.home = Utilities.getHomePage(docDir);
+            this.home = Utilities.getHomePage(docDir.getAbsolutePath());
 
             // Don't want funny characters and spaces in the profile directory or file
             this.profileFileName = name.replaceAll("[^A-Za-z0-9]", "_") + ".ser";
@@ -425,8 +422,10 @@ public class ProfileManager implements Serializable {
         HashMap<String, String> getClassData() {
             if (classData == null) {
                 log.debug("Loading classData for: " + name);
-                File classDataFile = new File(Config.getString(Config.PROFILE_DIR)
-                        + File.separator + profileDirName + File.separator + Config.CLASS_DATA_FILE_NAME);
+                File classDataFile = Utilities.getFileFromPathElements(
+                        Config.getString(Config.PROFILE_DIR),
+                        profileDirName,
+                        Config.CLASS_DATA_FILE_NAME);
                 try {
                     //noinspection unchecked
                     classData = (HashMap<String, String>) Utilities.readObject(classDataFile);

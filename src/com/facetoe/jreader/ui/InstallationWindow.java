@@ -58,14 +58,18 @@ public class InstallationWindow implements ZipProgressListener {
         btnCancel.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (unZipper != null)
-                    unZipper.cancel();
-                if (installWorker != null)
-                    installWorker.cancel(true);
-
-                dialog.dispose();
+                cancel();
             }
         });
+    }
+
+    private void cancel() {
+        if (unZipper != null)
+            unZipper.cancel();
+        if (installWorker != null)
+            installWorker.cancel(true);
+
+        dialog.dispose();
     }
 
     private void install() {
@@ -105,11 +109,11 @@ public class InstallationWindow implements ZipProgressListener {
 
     private void createDefaultProfile() throws IOException {
         ProfileManager profileManager = ProfileManager.getInstance();
-        File docDir = Utilities.getFile(
+        File docDir = Utilities.getFileFromPathElements(
                 Config.getString(Config.DATA_DIR),
                 Config.JAVA_DOCS_ZIP_FILE_NAME,
                 "docs");
-        File srcDir = Utilities.getFile(
+        File srcDir = Utilities.getFileFromPathElements(
                 Config.getString(Config.DATA_DIR),
                 Config.JAVA_LANG_ZIP_FILE_NAME);
 

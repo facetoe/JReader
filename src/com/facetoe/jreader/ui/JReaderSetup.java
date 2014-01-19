@@ -18,6 +18,8 @@
 package com.facetoe.jreader.ui;
 
 import com.facetoe.jreader.helpers.Config;
+import com.facetoe.jreader.helpers.Utilities;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +32,7 @@ import java.io.IOException;
  */
 
 class JReaderSetup {
+    private static final Logger log = Logger.getLogger(JReaderSetup.class);
 
     /**
      * @return Whether or not setup has been completed.
@@ -45,11 +48,10 @@ class JReaderSetup {
      * @throws IOException
      */
     public static void createDirectoriesAndConfig() throws IOException {
-        File dataDir = new File(System.getProperty("user.home")
-                + File.separator
-                + Config.DATA_DIR_NAME
-                + File.separator);
-
+        File dataDir = Utilities.getFileFromPathElements(
+                System.getProperty("user.home"),
+                Config.DATA_DIR_NAME,
+                File.separator);
         maybeCreateDataDir(dataDir);
         maybeCreateConfigFile(dataDir);
         maybeCreateProfileDir(dataDir);
@@ -57,17 +59,13 @@ class JReaderSetup {
 
     private static void maybeCreateProfileDir(File dataDir) throws IOException {
         boolean wasSuccess;
-        String profileDirPath = dataDir.getAbsolutePath()
-                + File.separator
-                + Config.PROFILE_DIR_NAME
-                + File.separator;
-        File profileDir = new File(profileDirPath);
+        File profileDir = Utilities.getFileFromPathElements(dataDir.getAbsolutePath(), Config.PROFILE_DIR_NAME);
         if (!profileDir.exists()) {
             wasSuccess = profileDir.mkdirs();
             if (wasSuccess) {
-                Config.setString(Config.PROFILE_DIR, profileDirPath);
+                Config.setString(Config.PROFILE_DIR, profileDir.getAbsolutePath());
             } else {
-                throw new IOException("Failed to create profile directory at: " + profileDirPath);
+                throw new IOException("Failed to create profile directory at: " + profileDir.getAbsolutePath());
             }
         }
     }
@@ -82,10 +80,12 @@ class JReaderSetup {
                 Config.setString(Config.CURRENT_PROFILE, "");
                 Config.setBool(Config.HAS_DEFAULT_PROFILE, false);
             } else {
-                throw new IOException("Failed to create config file at:" + configFile.getAbsolutePath());
+                String errMsg = "Failed to create config file at:" + configFile.getAbsolutePath();
+                log.error(errMsg);
+                throw new IOException(errMsg);
             }
         } else {
-            System.err.println("Config already exists.");
+            log.warn("Config already exists.");
         }
     }
 
@@ -94,11 +94,12 @@ class JReaderSetup {
         if (!dataDir.exists()) {
             wasSuccess = dataDir.mkdirs();
             if (!wasSuccess) {
-                throw new IOException("Failed to create data directory at: "
-                        + dataDir.getAbsolutePath());
+                String errMsg = "Failed to create data directory at: " + dataDir.getAbsolutePath();
+                log.error(errMsg);
+                throw new IOException(errMsg);
             }
         } else {
-            System.err.println("Data Directory already exists.");
+            log.warn("Data Directory already exists.");
         }
     }
 }
