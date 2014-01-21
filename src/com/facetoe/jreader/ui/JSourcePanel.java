@@ -42,9 +42,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.regex.PatternSyntaxException;
@@ -54,7 +52,6 @@ import java.util.regex.PatternSyntaxException;
  */
 class JSourcePanel extends AbstractPanel {
     private final Logger log = Logger.getLogger(this.getClass());
-    private final static String DEFAULT_THEME = "/com/facetoe/jreader/resources/themes/ideaTheme.xml";
 
     private RSyntaxTextArea codeArea;
     private RTextScrollPane codeScrollPane;
@@ -67,14 +64,8 @@ class JSourcePanel extends AbstractPanel {
      */
     private final ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
     private String sourceFileName;
-    private SourceTree tree;
-    private JScrollPane treeScrollPane;
-    private JXCollapsiblePane collapsiblePane;
-    private JPanel searchPanel;
-    private AutoCompleteTextField searchField;
-    private JButton btnSearch;
 
-    private TopPanel topPanel;
+    private TopPanel topPanel; // TODO figure out how to set the button without passing this in here.
 
     /**
      * Creates a new instance of JSourcePanel and displays the contents of filePath.
@@ -83,6 +74,7 @@ class JSourcePanel extends AbstractPanel {
      */
     public JSourcePanel(File sourceFile, TopPanel topPanel) {
         this.sourceFile = sourceFile;
+        this.topPanel = topPanel;
         sourceFileName = sourceFile.getName();
         initPanel(topPanel);
     }
@@ -93,16 +85,15 @@ class JSourcePanel extends AbstractPanel {
         setLayout(new BorderLayout());
 
         /* Set up our text area. */
-        codeScrollPane = createCodeArea();
-        add(codeScrollPane);
+        createCodeArea();
     }
 
     public void createDisplay() {
         loadTheme();
-        fireEvent(new ActionEvent(this, 0, "Loading: " + sourceFileName));
         setCodeAreaText();
         parseSourceFile();
-        initTreeView();
+        add("West", new SlideOutSourceTree(this));
+        add("Center", codeScrollPane);
         highlightDeclaration(javaSourceFile.getEnclosingObject());
     }
 
@@ -118,18 +109,11 @@ class JSourcePanel extends AbstractPanel {
     }
 
     private void loadTheme() {
-        try {
-            InputStream in = getClass().getResourceAsStream(DEFAULT_THEME);
-            Theme theme = Theme.load(in);
-            theme.apply(codeArea);
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-        } catch (Exception ex) {
-            log.error(ex.getMessage(), ex);
-        }
+        Theme theme = Utilities.loadTheme();
+        theme.apply(codeArea);
     }
 
-    private RTextScrollPane createCodeArea() {
+    private void createCodeArea() {
         codeArea = new RSyntaxTextArea();
         codeArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
         codeArea.setCodeFoldingEnabled(true);
@@ -137,96 +121,12 @@ class JSourcePanel extends AbstractPanel {
         codeArea.setEditable(false);
         RTextScrollPane scrollPane = new RTextScrollPane(codeArea);
         scrollPane.setFoldIndicatorEnabled(true);
-        return scrollPane;
-    }
-
-    private void initTreeView() {
-        createTree();
-        createTreeSlideoutPane();
-        configureTreeToggleAction();
-        constructTreePane();
-    }
-
-    private void createTree() {
-        tree = new SourceTree(javaSourceFile);
-        /* Save a click by showing the contents of the class on load. */
-        tree.expandRow(0);
-        tree.addTreeSelectionListener(new SourceTreeSelectionListener(tree, this));
-        treeScrollPane = new JScrollPane(tree);
-        treeScrollPane.setPreferredSize(new Dimension(300, 200));
-    }
-
-    private void createTreeSlideoutPane() {
-        collapsiblePane = new JXCollapsiblePane();
-        searchPanel = new JPanel(new BorderLayout());
-        searchField = new AutoCompleteTextField();
-        searchField.addWordsToTrie(javaSourceFile.getAllDeclarations());
-        btnSearch = new JButton("Search");
-        btnSearch.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                handleTreeSearch();
-            }
-        });
-        searchField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                handleTreeSearch();
-            }
-        });
-    }
-
-    private void configureTreeToggleAction() {
-        String keyStrokeAndKey = "control T";
-        KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
-        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(keyStroke, keyStrokeAndKey);
-        getActionMap().put(keyStrokeAndKey, new ToggleSourceTreeAction(collapsiblePane, tree));
-        topPanel.setSourceButton(TopPanel.TREE_BUTTON, new ToggleSourceTreeAction(collapsiblePane, tree));
-    }
-
-    private void constructTreePane() {
-        searchPanel.add(searchField, BorderLayout.CENTER);
-        searchPanel.add(btnSearch, BorderLayout.EAST);
-        JPanel treePanel = new JPanel(new BorderLayout());
-        treePanel.add(treeScrollPane, BorderLayout.CENTER);
-        treePanel.add(searchPanel, BorderLayout.NORTH);
-        collapsiblePane.setLayout(new BorderLayout());
-        collapsiblePane.setDirection(JXCollapsiblePane.Direction.RIGHT);
-        collapsiblePane.add("Center", treePanel);
-        collapsiblePane.setCollapsed(true);
-
-        setLayout(new BorderLayout());
-        add("West", collapsiblePane);
-        add("Center", codeScrollPane);
-    }
-
-    private void handleTreeSearch() {
-        String text = searchField.getText();
-        if (text.isEmpty()) {
-            return;
-        }
-
-        DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
-        for (Enumeration e = root.depthFirstEnumeration(); e.hasMoreElements(); ) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.nextElement();
-            if (node.toString().equals(text)) {
-                scrollToNode(node);
-                highlightDeclaration((AbstractJavaObject) node.getUserObject());
-                return;
-            }
-        }
-    }
-
-    private void scrollToNode(DefaultMutableTreeNode node) {
-        TreePath treePath = new TreePath(node.getPath());
-        tree.setSelectionPath(treePath);
-        tree.scrollPathToVisible(treePath);
+        codeScrollPane = scrollPane;
     }
 
     public void highlightDeclaration(AbstractJavaObject object) {
         highlightDeclaration(object.getBeginLine(), object.getEndLine(), object.getBeginColumn());
     }
-
 
     private void highlightDeclaration(int beginLine, int endLine, int beginCol) {
         String selectText = extractDeclaration(beginLine, endLine, beginCol);
@@ -354,5 +254,9 @@ class JSourcePanel extends AbstractPanel {
 
     public JavaSourceFile getJavaSourceFile() {
         return javaSourceFile;
+    }
+
+    public TopPanel getTopPanel() {//TODO Refactor this so you don't need to pass the panel in here
+        return topPanel;
     }
 }

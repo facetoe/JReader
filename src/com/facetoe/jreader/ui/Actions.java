@@ -36,10 +36,10 @@ import java.awt.event.KeyEvent;
  */
 class ToggleSourceTreeAction extends AbstractAction {
 
-    private final JXCollapsiblePane treePane;
+    private final SlideOutSourceTree treePane;
     private final SourceTree tree;
 
-    public ToggleSourceTreeAction(JXCollapsiblePane treePane, SourceTree tree) {
+    public ToggleSourceTreeAction(SlideOutSourceTree treePane, SourceTree tree) {
         super("Toggle Tree");
         putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_T));
         this.treePane = treePane;
