@@ -95,12 +95,12 @@ public class TableSearchable extends AbstractSearchable {
     /**
      * Searches forward through columns of the given row. Starts at
      * lastFoundColumn or first column if lastFoundColumn < 0. returns an
-     * appropriate SearchResult if a matching cell is found in this row or null
+     * appropriate SearchResultRenderer if a matching cell is found in this row or null
      * if no match is found. A row index out off range results in a no-match.
      * 
      * @param pattern <code>Pattern</code> that we will try to locate
      * @param row the row to search
-     * @return an appropriate <code>SearchResult</code> if a matching cell is
+     * @return an appropriate <code>SearchResultRenderer</code> if a matching cell is
      *         found in this row or null if no match is found
      */
     private SearchResult findMatchForwardInRow(Pattern pattern, int row) {
@@ -119,12 +119,12 @@ public class TableSearchable extends AbstractSearchable {
     /**
      * Searches forward through columns of the given row. Starts at
      * lastFoundColumn or first column if lastFoundColumn < 0. returns an
-     * appropriate SearchResult if a matching cell is found in this row or null
+     * appropriate SearchResultRenderer if a matching cell is found in this row or null
      * if no match is found. A row index out off range results in a no-match.
      * 
      * @param pattern <code>Pattern</code> that we will try to locate
      * @param row the row to search
-     * @return an appropriate <code>SearchResult</code> if a matching cell is
+     * @return an appropriate <code>SearchResultRenderer</code> if a matching cell is
      *         found in this row or null if no match is found
      */
     private SearchResult findMatchBackwardsInRow(Pattern pattern, int row) {
@@ -142,12 +142,12 @@ public class TableSearchable extends AbstractSearchable {
 
     /**
      * Matches the cell content at row/col against the given Pattern. Returns an
-     * appropriate SearchResult if matching or null if no matching
+     * appropriate SearchResultRenderer if matching or null if no matching
      * 
      * @param pattern <code>Pattern</code> that we will try to locate
      * @param row a valid row index in view coordinates
      * @param column a valid column index in view coordinates
-     * @return an appropriate <code>SearchResult</code> if matching or null
+     * @return an appropriate <code>SearchResultRenderer</code> if matching or null
      */
     protected SearchResult findMatchAt(Pattern pattern, int row, int column) {
         String text = table.getStringAt(row, column);

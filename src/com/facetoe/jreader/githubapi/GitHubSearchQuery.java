@@ -1,44 +1,42 @@
 package com.facetoe.jreader.githubapi;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 /**
  * Created by facetoe on 19/01/14.
  */
 
-enum SearchSortType {
-    LAST_INDEXED,
-    NONE
-}
-
-enum SearchSortOrder {
-    ASCENDING,
-    DESCENDING,
-    NONE
-}
-
-class GithubSearchQuery {
-    private final String searchURL = "/search/code?";
-    private String language = "java";
+class GithubSearchQuery extends AbstractGithubQuery {
+    private final String BASE_URL = "https://api.github.com";
+    private final String SEARCH_PATH = "/search/code?";
+    private final String LANGUAGE = "java";
+    private final String DEFAULT_USER = "apache";
+    private final String USER;
 
     private String searchQuery;
-    private SearchSortType sortType = SearchSortType.NONE;
-    private SearchSortOrder sortOrder = SearchSortOrder.NONE;
 
     public GithubSearchQuery(String searchQuery) {
+        USER = DEFAULT_USER;
         this.searchQuery = searchQuery;
     }
 
-    public void setSortType(SearchSortType sortType) {
-        this.sortType = sortType;
+    public GithubSearchQuery(String searchQuery, String user) {
+        this.searchQuery = searchQuery;
+        this.USER = user;
     }
 
-    public void setSortOrder(SearchSortOrder sortOrder) {
-        this.sortOrder = sortOrder;
-    }
-
-    @Override
-    public String toString() {
-        return searchURL + "q=" + searchQuery + "+in:file+language:" + language + "+repo:facetoe/jreader";
-
+    public String getEncodedQuery() {
+        try {
+            return BASE_URL +
+                    SEARCH_PATH +
+                    "q=" + URLEncoder.encode(searchQuery, "UTF-8")
+                    + "+in:file+language:" +
+                    LANGUAGE + "+extension:java" + "+user:" + USER;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }
 

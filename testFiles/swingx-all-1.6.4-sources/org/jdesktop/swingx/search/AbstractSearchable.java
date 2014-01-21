@@ -326,12 +326,12 @@ public abstract class AbstractSearchable implements Searchable {
     protected abstract SearchResult findExtendedMatch(Pattern pattern, int row);
  
     /**
-     * Factory method to create a SearchResult from the given parameters.
+     * Factory method to create a SearchResultRenderer from the given parameters.
      * 
      * @param matcher the matcher after a successful find. Must not be null.
      * @param row the found index
      * @param column the found column
-     * @return newly created <code>SearchResult</code>
+     * @return newly created <code>SearchResultRenderer</code>
      */
     protected SearchResult createSearchResult(Matcher matcher, int row, int column) {
         return new SearchResult(matcher.pattern(), 
@@ -358,7 +358,7 @@ public abstract class AbstractSearchable implements Searchable {
     /**
      * Updates inner searchable state based on provided search result
      *
-     * @param searchResult <code>SearchResult</code> that represents the new state 
+     * @param searchResult <code>SearchResultRenderer</code> that represents the new state
      *  of this <code>AbstractSearchable</code>
      */
     protected void updateState(SearchResult searchResult) {
@@ -457,7 +457,7 @@ public abstract class AbstractSearchable implements Searchable {
     /**
      * Returns a boolean indicating whether the current search result is a match.
      * <p>
-     * PENDING JW: move to SearchResult?
+     * PENDING JW: move to SearchResultRenderer?
      * @return a boolean indicating whether the current search result is a match.
      */
     protected boolean hasMatch() {
@@ -561,14 +561,14 @@ public abstract class AbstractSearchable implements Searchable {
         Pattern pattern;
 
         /**
-         * Instantiates an empty SearchResult.
+         * Instantiates an empty SearchResultRenderer.
          */
         public SearchResult() {
             reset();
         }
         
         /**
-         * Instantiates a SearchResult with the given state.
+         * Instantiates a SearchResultRenderer with the given state.
          * 
          * @param ex the Pattern used for matching
          * @param result the current MatchResult
@@ -583,10 +583,10 @@ public abstract class AbstractSearchable implements Searchable {
         }
         
         /**
-         * Sets internal state to the same as the given SearchResult. Resets internals
+         * Sets internal state to the same as the given SearchResultRenderer. Resets internals
          * if the param is null.
          * 
-         * @param searchResult the SearchResult to copy internal state from.
+         * @param searchResult the SearchResultRenderer to copy internal state from.
          */
         public void updateFrom(SearchResult searchResult) {
             if (searchResult == null) {

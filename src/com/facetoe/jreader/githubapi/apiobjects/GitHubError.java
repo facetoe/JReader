@@ -1,4 +1,4 @@
-package com.facetoe.jreader.githubapi;
+package com.facetoe.jreader.githubapi.apiobjects;
 
 /**
  * Created by facetoe on 19/01/14.

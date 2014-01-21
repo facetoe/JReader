@@ -57,12 +57,12 @@ public class ListSearchable extends AbstractSearchable {
         }
         /**
          * Matches the cell content at row/col against the given Pattern.
-         * Returns an appropriate SearchResult if matching or null if no
+         * Returns an appropriate SearchResultRenderer if matching or null if no
          * matching
          * 
          * @param pattern 
          * @param row a valid row index in view coordinates
-         * @return <code>SearchResult</code> if matched otherwise null
+         * @return <code>SearchResultRenderer</code> if matched otherwise null
          */
         protected SearchResult findMatchAt(Pattern pattern, int row) {
             String text = list.getStringAt(row);

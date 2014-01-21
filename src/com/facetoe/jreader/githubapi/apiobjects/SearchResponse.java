@@ -1,9 +1,9 @@
 
-package com.facetoe.jreader.githubapi;
+package com.facetoe.jreader.githubapi.apiobjects;
 
 import java.util.List;
 
-public class GitHubResponse {
+public class SearchResponse extends GithubResponse {
     private List<Item> items;
     private Number total_count;
 

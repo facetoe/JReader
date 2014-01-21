@@ -18,6 +18,7 @@
 package com.facetoe.jreader.helpers;
 
 import org.apache.log4j.Logger;
+import org.fife.ui.rsyntaxtextarea.Theme;
 import org.jsoup.Jsoup;
 
 import javax.imageio.ImageIO;
@@ -37,6 +38,8 @@ import java.util.Scanner;
 
 public class Utilities {
     private static final Logger log = Logger.getLogger(Utilities.class);
+    private final static String DEFAULT_THEME = "/com/facetoe/jreader/resources/themes/ideaTheme.xml";
+
 
     /**
      * Reads a file and returns a String.
@@ -168,6 +171,8 @@ public class Utilities {
 
         if (title.contains("#")) {
             nameEnd = title.indexOf("#");
+        } else if(title.contains("?")) {
+            nameEnd = title.lastIndexOf("?");
         } else {
             nameEnd = title.length();
         }
@@ -401,5 +406,20 @@ public class Utilities {
     public static void showErrorDialog(Component parent, String message, String title) {
         JOptionPane.showMessageDialog(parent, message, title, JOptionPane.ERROR_MESSAGE);
     }
+
+    public static Theme loadTheme() {
+        return loadTheme(DEFAULT_THEME);
+    }
+
+    public static Theme loadTheme(String reference) {
+        try {
+            InputStream in = Utilities.class.getResourceAsStream(reference);
+            return Theme.load(in);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }
 

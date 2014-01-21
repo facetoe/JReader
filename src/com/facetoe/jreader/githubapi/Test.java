@@ -1,31 +1,48 @@
 package com.facetoe.jreader.githubapi;
 
-import java.io.IOException;
+import com.facetoe.jreader.githubapi.apiobjects.Item;
+import com.facetoe.jreader.githubapi.apiobjects.Match;
+import com.facetoe.jreader.githubapi.apiobjects.SearchResponse;
+import com.facetoe.jreader.githubapi.apiobjects.TextMatch;
+
+import java.util.Arrays;
 
 public class Test {
 
-    public static void main(String[] args) {
-        GithubSearchQuery query = new GithubSearchQuery("StringBuffer");
-        query.setSortOrder(SearchSortOrder.ASCENDING);
-        System.out.println(query);
-        GitHubHttpsConnection connection = new GitHubHttpsConnection();
-        try {
-            connection.executeQuery(query);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (connection.hasError()) {
-            GitHubErrorResponse gitError = connection.getError();
-            System.out.println(gitError.toString());
-            for (GitHubError gitHubError : gitError.getGitHubErrors()) {
-                System.out.println(gitHubError);
+//    public static void main(String[] args) {
+//        GithubSearchQuery query = new GithubSearchQuery("StringBuffer sb = new StringBuffer();");
+//        GitHubAPI connection = new GitHubAPI();
+//        try {
+//            SearchResponse response = (connection.sendRequest(query);
+//            for (Item item : response.getItems()) {
+//                printItem(item);
+//            }
+//
+//            query = new GithubSearchQuery("class Activity");
+//            response = connection.sendRequest(query);
+//            for (Item item : response.getItems()) {
+//                printItem(item);
+//            }
+//
+//
+//        } catch (GitHubAPIException e) {
+//            System.out.println(e.getMessage());
+//            System.out.print(e.getCause().getMessage());
+//        }
+//    }
+
+    private static void printItem(Item item) {
+        System.out.println("Item name: " + item.getName());
+        for (TextMatch textMatch : item.getText_matches()) {
+            System.out.println("Object type: " + textMatch.getObject_type());
+            System.out.println("Object url: " + textMatch.getObject_url());
+            System.out.println("Object property: " + textMatch.getProperty());
+            System.out.println("Fragment: \n" + textMatch.getFragment());
+            Match[] matches = textMatch.getMatches();
+            for (Match match : matches) {
+                System.out.println(Arrays.toString(match.getIndices()));
             }
-        } else {
-            GitHubResponse response = connection.getResponse();
-            System.out.println(response);
-            for (Item item : response.getItems()) {
-                System.out.println(item);
-            }
+            System.out.println();
         }
     }
 }

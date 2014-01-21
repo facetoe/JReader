@@ -1,5 +1,5 @@
 
-package com.facetoe.jreader.githubapi;
+package com.facetoe.jreader.githubapi.apiobjects;
 
 import com.google.gson.annotations.SerializedName;
 

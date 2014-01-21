@@ -1,5 +1,5 @@
 
-package com.facetoe.jreader.githubapi;
+package com.facetoe.jreader.githubapi.apiobjects;
 
 public class Owner {
     private String avatar_url;
