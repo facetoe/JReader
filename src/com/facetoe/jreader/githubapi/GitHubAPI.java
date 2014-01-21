@@ -1,10 +1,8 @@
 package com.facetoe.jreader.githubapi;
 
-import com.facetoe.jreader.githubapi.apiobjects.GitHubErrorItem;
-import com.facetoe.jreader.githubapi.apiobjects.GitHubErrorResponse;
-import com.facetoe.jreader.githubapi.apiobjects.GithubResponse;
-import com.facetoe.jreader.githubapi.apiobjects.SearchResponse;
+import com.facetoe.jreader.githubapi.apiobjects.*;
 import com.google.gson.Gson;
+import com.sun.corba.se.spi.activation._InitialNameServiceStub;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
@@ -24,31 +22,25 @@ class GitHubAPIException extends Exception {
 class GitHubAPI {
     private String USER_AGENT = "Mozilla/5.0";
     private HttpsURLConnection connection;
-    private GithubResponse response;
-    private boolean succeeded = true;
     private Gson gson = new Gson();
+    private AbstractGithubQuery query;
 
     public GithubResponse sendRequest(AbstractGithubQuery query) throws GitHubAPIException {
-        reset();
         try {
             URL url = generateURL(query);
             return sendRequest(url);
         } catch (Exception e) {
-            throw new GitHubAPIException("Error executing query", e);
+            throw new GitHubAPIException("Error executing query: " + e.getMessage(), e);
         }
     }
 
     private URL generateURL(AbstractGithubQuery query) throws URISyntaxException, MalformedURLException {
+        this.query = query;
         return new URL(query.getEncodedQuery());
     }
 
-    private void reset() {
-        succeeded = true;
-        response = null;
-    }
-
     private GithubResponse sendRequest(URL url) throws Exception {
-        System.out.print(url.toString());
+        System.out.println(url.toString());
         connection = (HttpsURLConnection) url.openConnection();
         initConnection();
         return getResult();
@@ -75,7 +67,13 @@ class GitHubAPI {
 
     private GithubResponse readResponse() throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        return gson.fromJson(read(in), SearchResponse.class);
+        if(query instanceof SearchQuery) {
+            return gson.fromJson(read(in), SearchResponse.class);
+        } else if (query instanceof ObjectQuery) {
+            return gson.fromJson(read(in), ObjectResponse.class);
+        } else {
+            throw new UnsupportedOperationException("What have you done!");
+        }
     }
 
     private GitHubErrorResponse readError() throws IOException {
@@ -97,7 +95,7 @@ class GitHubAPI {
 
     private String read(BufferedReader in) throws IOException {
         String inputLine;
-        StringBuffer response = new StringBuffer();
+        StringBuilder response = new StringBuilder();
         try {
             while ((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
@@ -106,13 +104,5 @@ class GitHubAPI {
             in.close();
         }
         return response.toString();
-    }
-
-    public boolean succeeded() {
-        return succeeded;
-    }
-
-    public GithubResponse getResponse() {
-        return response;
     }
 }

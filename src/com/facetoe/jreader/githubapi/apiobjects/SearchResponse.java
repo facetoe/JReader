@@ -1,6 +1,7 @@
 
 package com.facetoe.jreader.githubapi.apiobjects;
 
+import java.util.Collections;
 import java.util.List;
 
 public class SearchResponse extends GithubResponse {
@@ -8,7 +9,11 @@ public class SearchResponse extends GithubResponse {
     private Number total_count;
 
     public List<Item> getItems() {
-        return this.items;
+        if (items != null) {
+            return this.items;
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     public void setItems(List<Item> items) {

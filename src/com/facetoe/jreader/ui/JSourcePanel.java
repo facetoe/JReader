@@ -57,18 +57,16 @@ class JSourcePanel extends AbstractPanel {
     private final static String DEFAULT_THEME = "/com/facetoe/jreader/resources/themes/ideaTheme.xml";
 
     private RSyntaxTextArea codeArea;
-    private final RTextScrollPane codeScrollPane;
+    private RTextScrollPane codeScrollPane;
     private JavaSourceFile javaSourceFile;
-    private final String sourceFilePath;
-    private final ProfileManager profileManager;
+    private final File sourceFile;
+    private ProfileManager profileManager;
 
     /**
      * Listeners that will be notified of parsing progress and search errors.
      */
     private final ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
-
-
-    private final String sourceFileName;
+    private String sourceFileName;
     private SourceTree tree;
     private JScrollPane treeScrollPane;
     private JXCollapsiblePane collapsiblePane;
@@ -76,18 +74,22 @@ class JSourcePanel extends AbstractPanel {
     private AutoCompleteTextField searchField;
     private JButton btnSearch;
 
-    private final TopPanel topPanel;
+    private TopPanel topPanel;
 
     /**
      * Creates a new instance of JSourcePanel and displays the contents of filePath.
      *
-     * @param filePath of the file containing the code to be displayed.
+     * @param sourceFile of the file containing the code to be displayed.
      */
-    public JSourcePanel(final String filePath, TopPanel topPanel) {
+    public JSourcePanel(File sourceFile, TopPanel topPanel) {
+        this.sourceFile = sourceFile;
+        sourceFileName = sourceFile.getName();
+        initPanel(topPanel);
+    }
+
+    private void initPanel(TopPanel topPanel) {
         profileManager = ProfileManager.getInstance();
-        this.sourceFilePath = filePath;
         this.topPanel = topPanel;
-        sourceFileName = new File(sourceFilePath).getName();
         setLayout(new BorderLayout());
 
         /* Set up our text area. */
@@ -107,7 +109,7 @@ class JSourcePanel extends AbstractPanel {
     private void setCodeAreaText() {
         try {
             fireEvent(new ActionEvent(this, 0, "Loading: " + sourceFileName));
-            String code = Utilities.readFile(Paths.get(sourceFilePath).toString(), StandardCharsets.UTF_8);
+            String code = Utilities.readFile(sourceFile.getAbsolutePath(), StandardCharsets.UTF_8);
             codeArea.setText(code);
         } catch (IOException e) {
             Utilities.showErrorDialog(this, e.getMessage(), "Error Loading File");
@@ -225,17 +227,17 @@ class JSourcePanel extends AbstractPanel {
         highlightDeclaration(object.getBeginLine(), object.getEndLine(), object.getBeginColumn());
     }
 
-    /**
-     * Highlights and scrolls to a method, constructor, field or enum declaration.
-     * This method is necessary because long method or function declarations are
-     * split across multiple lines in the source but not in the declaration returned
-     * by the JavaSourceFileParser.
-     */
+
     private void highlightDeclaration(int beginLine, int endLine, int beginCol) {
         String selectText = extractDeclaration(beginLine, endLine, beginCol);
         findString(selectText, new SearchContext(selectText));
     }
 
+    /**
+     * This method is necessary because long method or function declarations are
+     * split across multiple lines in the source but not in the declaration returned
+     * by the JavaSourceFileParser.
+     */
     private String extractDeclaration(int beginLine, int endLine, int beginCol) {
         int start = 0;
         int end = 0;
@@ -296,7 +298,7 @@ class JSourcePanel extends AbstractPanel {
         long startTime = System.nanoTime();
         fireEvent(new ActionEvent(this, 0, "Parsing: " + sourceFileName));
         try {
-            javaSourceFile = JavaSourceFileParser.parse(new FileInputStream(sourceFilePath));
+            javaSourceFile = JavaSourceFileParser.parse(new FileInputStream(sourceFile));
         } catch (ParseException e) {
             log.error(e);
         } catch (IOException e) {

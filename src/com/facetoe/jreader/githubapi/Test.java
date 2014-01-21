@@ -10,7 +10,7 @@ import java.util.Arrays;
 public class Test {
 
 //    public static void main(String[] args) {
-//        GithubSearchQuery query = new GithubSearchQuery("StringBuffer sb = new StringBuffer();");
+//        SearchQuery query = new SearchQuery("StringBuffer sb = new StringBuffer();");
 //        GitHubAPI connection = new GitHubAPI();
 //        try {
 //            SearchResponse response = (connection.sendRequest(query);
@@ -18,7 +18,7 @@ public class Test {
 //                printItem(item);
 //            }
 //
-//            query = new GithubSearchQuery("class Activity");
+//            query = new SearchQuery("class Activity");
 //            response = connection.sendRequest(query);
 //            for (Item item : response.getItems()) {
 //                printItem(item);

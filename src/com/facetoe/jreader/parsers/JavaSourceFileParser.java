@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * This class parses a Java source file and extracts all the classes, interfaces, methods, constructors and fields.
@@ -41,7 +42,7 @@ public class JavaSourceFileParser {
      * @throws ParseException
      * @throws IOException
      */
-    public static JavaSourceFile parse(FileInputStream inputStream) throws ParseException, IOException {
+    public static JavaSourceFile parse(InputStream inputStream) throws ParseException, IOException {
         CompilationUnit cu = null;
         try {
             cu = JavaParser.parse(inputStream);

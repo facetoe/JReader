@@ -2,7 +2,7 @@
 package com.facetoe.jreader.githubapi.apiobjects;
 
 
-public class ObjectResponse {
+public class ObjectResponse extends GithubResponse {
     private Links links;
     private String content;
     private String encoding;
@@ -101,5 +101,22 @@ public class ObjectResponse {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    @Override
+    public String toString() {
+        return "ObjectResponse{" +
+                "links=" + links +
+                ", content='" + content + '\'' +
+                ", encoding='" + encoding + '\'' +
+                ", git_url='" + git_url + '\'' +
+                ", html_url='" + html_url + '\'' +
+                ", name='" + name + '\'' +
+                ", path='" + path + '\'' +
+                ", sha='" + sha + '\'' +
+                ", size=" + size +
+                ", type='" + type + '\'' +
+                ", url='" + url + '\'' +
+                '}';
     }
 }

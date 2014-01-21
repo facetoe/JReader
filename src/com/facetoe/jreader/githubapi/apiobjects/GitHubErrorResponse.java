@@ -21,7 +21,7 @@ public class GitHubErrorResponse extends GithubResponse {
         if (gitHubErrorItems != null)
             return this.gitHubErrorItems;
         else
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
     }
 
     public void setGitHubErrorItems(List<GitHubErrorItem> gitHubErrorItems) {
