@@ -8,12 +8,9 @@ import java.net.URLEncoder;
  */
 
 class SearchQuery extends AbstractGithubQuery {
-    private final String BASE_URL = "https://api.github.com";
-    private final String SEARCH_PATH = "/search/code?";
     private final String LANGUAGE = "java";
     private final String DEFAULT_USER = "apache";
     private final String USER;
-
     private String searchQuery;
 
     public SearchQuery(String searchQuery) {
@@ -28,11 +25,10 @@ class SearchQuery extends AbstractGithubQuery {
 
     public String getEncodedQuery() {
         try {
-            return BASE_URL +
-                    SEARCH_PATH +
-                    "q=" + URLEncoder.encode(searchQuery, "UTF-8")
-                    + "+in:file+language:" +
-                    LANGUAGE + "+extension:java" + "+user:" + USER;
+            return "https://api.github.com/search/code?q=" +
+                    URLEncoder.encode(searchQuery, "UTF-8") +
+                    "+in:file+language:" + LANGUAGE + "+extension:java" +
+                    "+user:" + USER;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

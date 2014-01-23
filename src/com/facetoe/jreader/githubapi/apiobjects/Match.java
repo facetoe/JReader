@@ -16,7 +16,12 @@ public class Match {
     }
 
     public int[] getIndices() {
-        return indices;
+
+        if(indices != null) {
+            return indices;
+        } else {
+            return new int[0];
+        }
     }
 
     public void setIndices(int[] indices) {

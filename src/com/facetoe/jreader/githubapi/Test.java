@@ -2,7 +2,6 @@ package com.facetoe.jreader.githubapi;
 
 import com.facetoe.jreader.githubapi.apiobjects.Item;
 import com.facetoe.jreader.githubapi.apiobjects.Match;
-import com.facetoe.jreader.githubapi.apiobjects.SearchResponse;
 import com.facetoe.jreader.githubapi.apiobjects.TextMatch;
 
 import java.util.Arrays;

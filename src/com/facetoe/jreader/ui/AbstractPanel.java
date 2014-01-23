@@ -27,29 +27,29 @@ package com.facetoe.jreader.ui;
 import javax.swing.*;
 import java.util.ArrayList;
 
-/**
- * This is the class that both JReaderPanel and JSourcePanel inherit from.
- * Although there is not much here it makes life a lot easier in JReader
- * as it negates the need for endless if (instance of) checks. For example,
- * it allows the currentTab to be a AbstractPanel which is known to have these
- * methods as opposed to having it as a JPanel and constantly checking.
- */
-public abstract class AbstractPanel extends JPanel {
 
+
+interface AutoCompleteable {
     /**
      * This is implemented in the subclasses to define the action to take on auto complete.
-     * Basically, JReaderPanel will navigate to the class page and JSourcePanel will do a search.
-     *
      * @param key
      */
-    public abstract void handleAutoComplete(String key);
+    void handleAutoComplete(String key);
 
     /**
-     * Returns the autocomplete words for this panel. This makes it possible to easily add
-     * and remove words from the AutoCompleteTextField as the user navigates through the panels
-     * so that only that panel's words are present.
-     *
+     * Returns the autocomplete words for this panel.
      * @return ArrayList of autocomplete words.
      */
-    public abstract ArrayList<String> getAutoCompleteWords();
+    ArrayList<String> getAutoCompleteWords();
+}
+
+interface Navigatable {
+    void next();
+    void back();
+    void home();
+}
+
+public abstract class AbstractPanel extends JPanel {
+
+
 }

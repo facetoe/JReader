@@ -17,8 +17,10 @@
 */
 package com.facetoe.jreader.ui;
 
+import com.facetoe.jreader.githubapi.GithubSearchPanel;
 import com.facetoe.jreader.helpers.ProfileManager;
 import com.facetoe.jreader.helpers.Utilities;
+import com.facetoe.jreader.listeners.TextMatchItemClickedListener;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import org.apache.log4j.Logger;
@@ -32,6 +34,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 
 
@@ -51,7 +54,7 @@ public class JReader {
     private AbstractPanel currentTab;
 
     public JReader() {
-        if (JReaderSetup.needsSetup()) {
+        if (JReaderSetup.needsInstallation()) {
             new InstallationWindow();
         }
         profileManager = ProfileManager.getInstance();
@@ -216,20 +219,21 @@ public class JReader {
         frame.setVisible(true);
     }
 
+
     /**
      * Creates a new source tab and sets it as the currently selected tab.
      */
     public void createAndShowNewSourceTab() {
         JReaderPanel panel = (JReaderPanel) currentTab;
         final String filePath = Utilities.docPathToSourcePath(panel.getCurrentPath());
-        final String title = Utilities.extractFileName(filePath);
+        final String title = Utilities.extractFileName(panel.getCurrentPath());
 
         if (!Utilities.isGoodSourcePath(filePath)) {
             Utilities.showErrorDialog(frame, filePath + " does not exist.", "File Not Found");
             log.error("No such file: " + filePath);
             return;
         }
-        final JSourcePanel newTab = createNewSourceTab(filePath, title);
+        final JSourcePanel newTab = createNewSourcePanel(filePath, title);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -239,11 +243,19 @@ public class JReader {
         }).start();
     }
 
-    private JSourcePanel createNewSourceTab(String filePath, String title) {
+    private JSourcePanel createNewSourcePanel(String filePath, String title) {
         JSourcePanel newTab = new JSourcePanel(new File(filePath), topPanel);
         newTab.addActionListener(bottomPanel);
         addCloseButtonToTab(newTab, title);
         return newTab;
+    }
+
+    public JSourcePanel createAndShowNewSourcePanel(URL url, String title) {
+        JSourcePanel sourcePanel = new JSourcePanel(url);
+        addCloseButtonToTab(sourcePanel, title);
+        sourcePanel.createDisplay();
+        setCurrentTab(sourcePanel);
+        return sourcePanel;
     }
 
     private void showNewSourceTab(JSourcePanel newTab) {
@@ -257,39 +269,53 @@ public class JReader {
         resetSearchBar();
     }
 
+    public void createAndShowNewGithubSearchPanel(final String searchTerm) {
+        GithubSearchPanel gitPanel = new GithubSearchPanel();
+        gitPanel.setOnTextMatchItemClicked(new TextMatchItemClickedListener(this, searchTerm));
+        addCloseButtonToTab(gitPanel, "Github Search: " + searchTerm);
+        gitPanel.searchGithub(searchTerm);
+        setCurrentTab(gitPanel);
+    }
+
     // Handle changing tabs. Remove and add autocomplete words, enable/disable buttons.
     private void handleTabChange() {
         if (currentTab == null)
             return;
 
-        /* We want to remove the previous panels words so they don't pollute the new panels auto complete. */
-        ArrayList<String> prevWords = currentTab.getAutoCompleteWords();
-        currentTab = getCurrentTab();
+        AutoCompleteable autoCompleteableTab;
+        if (currentTab instanceof AutoCompleteable) {
+            autoCompleteableTab = (AutoCompleteable) currentTab;
 
-        if (currentTab instanceof JReaderPanel) {
-            handleReaderTabChange(prevWords);
-        } else {
-            handleSourceTabChange(prevWords);
+            /* We want to remove the previous panels words so they don't pollute the new panels auto complete. */
+            ArrayList<String> prevWords = autoCompleteableTab.getAutoCompleteWords();
+            topPanel.removeAutoCompleteWords(prevWords);
         }
 
-        /* Remove whatever text is there becuase it's annoying always having to delete it. */
-        topPanel.clearSearchBar();
+        currentTab = getCurrentTab();
+        if (currentTab instanceof AutoCompleteable) {
+            AutoCompleteable tab = (AutoCompleteable) currentTab;
+            if (tab instanceof JReaderPanel) {
+                handleReaderTabChange(tab);
+            } else {
+                handleSourceTabChange(tab);
+            }
+            /* Remove whatever text is there becuase it's annoying always having to delete it. */
+            topPanel.clearSearchBar();
+        }
     }
 
     public AbstractPanel getCurrentTab() {
         return (AbstractPanel) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
     }
 
-    private void handleSourceTabChange(ArrayList<String> prevWords) {
+    private void handleSourceTabChange(AutoCompleteable tab) {
         disableBrowserButtons();
-        topPanel.removeAutoCompleteWords(prevWords);
-        topPanel.addAutoCompleteWords(currentTab.getAutoCompleteWords());
+        topPanel.addAutoCompleteWords(tab.getAutoCompleteWords());
     }
 
-    private void handleReaderTabChange(ArrayList<String> prevWords) {
+    private void handleReaderTabChange(AutoCompleteable tab) {
         topPanel.setSourceButton(TopPanel.SOURCE_BUTTON, new NewSourceTabAction(this));
-        topPanel.removeAutoCompleteWords(prevWords);
-        topPanel.addAutoCompleteWords(currentTab.getAutoCompleteWords());
+        topPanel.addAutoCompleteWords(tab.getAutoCompleteWords());
         String currentPath = ((JReaderPanel) currentTab).getCurrentPath();
         maybeEnableSourceOption(currentPath);
         enableBrowserButtons();
@@ -329,7 +355,10 @@ public class JReader {
     }
 
     private void handleSearch() {
-        currentTab.handleAutoComplete(topPanel.getSearchBarText());
+        if (currentTab instanceof AutoCompleteable) {
+            AutoCompleteable tab = (AutoCompleteable) currentTab;
+            tab.handleAutoComplete(topPanel.getSearchBarText());
+        }
     }
 
     public void addJavaDocClassNames() {

@@ -24,7 +24,6 @@ import japa.parser.ast.body.*;
 import japa.parser.ast.visitor.GenericVisitorAdapter;
 import org.apache.log4j.Logger;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 

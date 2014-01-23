@@ -121,5 +121,13 @@ public class JavaSourceFile {
     public ArrayList<AbstractJavaObject> getFileContents() {
         return fileContents;
     }
+
+    @Override
+    public String toString() {
+        return "JavaSourceFile{" +
+                "fileContents=" + fileContents +
+                ", allObjects=" + allObjects +
+                '}';
+    }
 }
 

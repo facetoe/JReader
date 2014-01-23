@@ -1,5 +1,7 @@
 package com.facetoe.jreader.githubapi.apiobjects;
 
+import java.util.Collections;
+
 /**
  * Created by facetoe on 21/01/14.
  */
@@ -43,7 +45,12 @@ public class TextMatch {
     }
 
     public Match[] getMatches() {
-        return matches;
+
+        if (matches != null) {
+            return matches;
+        } else {
+            return new Match[0];
+        }
     }
 
     public void setMatches(Match[] matches) {

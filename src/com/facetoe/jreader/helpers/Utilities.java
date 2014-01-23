@@ -22,11 +22,13 @@ import org.fife.ui.rsyntaxtextarea.Theme;
 import org.jsoup.Jsoup;
 
 import javax.imageio.ImageIO;
+import javax.net.ssl.HttpsURLConnection;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -52,6 +54,29 @@ public class Utilities {
     public static String readFile(String path, Charset encoding) throws IOException {
         byte[] encoded = Files.readAllBytes(Paths.get(path));
         return encoding.decode(ByteBuffer.wrap(encoded)).toString();
+    }
+
+    /**
+     * Read from a url and return a String of the contents.
+     *
+     * @param url
+     * @return
+     * @throws IOException
+     */
+    public static String readURL(URL url) throws IOException {
+        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+        String line;
+        StringBuilder sb = new StringBuilder();
+        try {
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            while ((line = in.readLine()) != null) {
+                sb.append(line);
+                sb.append("\n");
+            }
+        } finally {
+            connection.getInputStream().close();
+        }
+        return sb.toString();
     }
 
 
@@ -171,7 +196,7 @@ public class Utilities {
 
         if (title.contains("#")) {
             nameEnd = title.indexOf("#");
-        } else if(title.contains("?")) {
+        } else if (title.contains("?")) {
             nameEnd = title.lastIndexOf("?");
         } else {
             nameEnd = title.length();

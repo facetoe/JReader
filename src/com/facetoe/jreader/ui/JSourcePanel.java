@@ -30,33 +30,29 @@ import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
-import org.jdesktop.swingx.JXCollapsiblePane;
 
-import javax.swing.*;
+import javax.net.ssl.HttpsURLConnection;
 import javax.swing.text.BadLocationException;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.regex.PatternSyntaxException;
 
 /**
  * Displays source code with syntax highlighting and cold folding.
  */
-class JSourcePanel extends AbstractPanel {
+public class JSourcePanel extends AbstractPanel implements AutoCompleteable {
     private final Logger log = Logger.getLogger(this.getClass());
 
     private RSyntaxTextArea codeArea;
     private RTextScrollPane codeScrollPane;
     private JavaSourceFile javaSourceFile;
-    private final File sourceFile;
+    private File sourceFile;
+    private URL fileURL;
     private ProfileManager profileManager;
 
     /**
@@ -79,6 +75,12 @@ class JSourcePanel extends AbstractPanel {
         initPanel(topPanel);
     }
 
+    public JSourcePanel(URL url) {
+        this.fileURL = url;
+        System.out.println("Called");
+        initPanel(null);
+    }
+
     private void initPanel(TopPanel topPanel) {
         profileManager = ProfileManager.getInstance();
         this.topPanel = topPanel;
@@ -99,9 +101,15 @@ class JSourcePanel extends AbstractPanel {
 
     private void setCodeAreaText() {
         try {
-            fireEvent(new ActionEvent(this, 0, "Loading: " + sourceFileName));
-            String code = Utilities.readFile(sourceFile.getAbsolutePath(), StandardCharsets.UTF_8);
-            codeArea.setText(code);
+            String code;
+            if (sourceFile != null) {
+                code = Utilities.readFile(sourceFile.getAbsolutePath(), StandardCharsets.UTF_8);
+                codeArea.setText(code);
+            } else {
+                code = Utilities.readURL(fileURL);
+                System.out.println(code);
+                codeArea.setText(code);
+            }
         } catch (IOException e) {
             Utilities.showErrorDialog(this, e.getMessage(), "Error Loading File");
             log.error(e.getMessage(), e);
@@ -198,7 +206,12 @@ class JSourcePanel extends AbstractPanel {
         long startTime = System.nanoTime();
         fireEvent(new ActionEvent(this, 0, "Parsing: " + sourceFileName));
         try {
-            javaSourceFile = JavaSourceFileParser.parse(new FileInputStream(sourceFile));
+            if (sourceFile != null) {
+                javaSourceFile = JavaSourceFileParser.parse(new FileInputStream(sourceFile));
+            } else {
+                HttpsURLConnection connection = (HttpsURLConnection) fileURL.openConnection();
+                javaSourceFile = JavaSourceFileParser.parse(connection.getInputStream());
+            }
         } catch (ParseException e) {
             log.error(e);
         } catch (IOException e) {

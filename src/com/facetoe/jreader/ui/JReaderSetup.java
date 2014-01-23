@@ -37,7 +37,7 @@ class JReaderSetup {
     /**
      * @return Whether or not setup has been completed.
      */
-    public static boolean needsSetup() {
+    public static boolean needsInstallation() {
         return !new File(Config.configFilePath).exists()
                 && !Config.getBool(Config.HAS_DEFAULT_PROFILE);
     }

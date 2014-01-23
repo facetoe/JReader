@@ -12,7 +12,8 @@ import java.awt.event.ActionListener;
 import java.util.Enumeration;
 
 /**
- * Created by facetoe on 22/01/14.
+ * JReader
+ * Created by  facetoe on 22/01/14.
  */
 class SlideOutSourceTree extends JXCollapsiblePane {
     private SourceTree tree;
@@ -20,12 +21,13 @@ class SlideOutSourceTree extends JXCollapsiblePane {
     private JPanel searchPanel;
     private AutoCompleteTextField searchField;
     private JButton btnSearch;
-    private JSourcePanel sourcePanel;
+    private final JSourcePanel sourcePanel;
 
     public SlideOutSourceTree(JSourcePanel sourcePanel) {
         this.sourcePanel = sourcePanel;
         initTreeView();
     }
+
     private void initTreeView() {
         createTree();
         createTreeSlideoutPane();
@@ -40,6 +42,15 @@ class SlideOutSourceTree extends JXCollapsiblePane {
         tree.addTreeSelectionListener(new SourceTreeSelectionListener(tree, sourcePanel));
         treeScrollPane = new JScrollPane(tree);
         treeScrollPane.setPreferredSize(new Dimension(300, 200));
+    }
+
+    private void configureTreeToggleAction() {
+        String keyStrokeAndKey = "control T";
+        KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(keyStroke, keyStrokeAndKey);
+        getActionMap().put(keyStrokeAndKey, new ToggleSourceTreeAction(this, tree));
+        if(sourcePanel.getTopPanel() != null)
+            sourcePanel.getTopPanel().setSourceButton(TopPanel.TREE_BUTTON, new ToggleSourceTreeAction(this, tree));
     }
 
     private void createTreeSlideoutPane() {
@@ -59,14 +70,6 @@ class SlideOutSourceTree extends JXCollapsiblePane {
                 handleTreeSearch();
             }
         });
-    }
-
-    private void configureTreeToggleAction() {
-        String keyStrokeAndKey = "control T";
-        KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
-        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(keyStroke, keyStrokeAndKey);
-        getActionMap().put(keyStrokeAndKey, new ToggleSourceTreeAction(this, tree));
-        sourcePanel.getTopPanel().setSourceButton(TopPanel.TREE_BUTTON, new ToggleSourceTreeAction(this, tree));
     }
 
     private void constructTreePane() {

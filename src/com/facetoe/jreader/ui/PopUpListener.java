@@ -17,6 +17,9 @@
 */
 package com.facetoe.jreader.ui;
 
+import com.facetoe.jreader.helpers.Utilities;
+
+import javax.rmi.CORBA.Util;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -70,15 +73,45 @@ class PopUpListener implements MouseListener {
 
     private void doPop(MouseEvent e) {
         JPopupMenu menu = new JPopupMenu();
-        JMenuItem newTab = new JMenuItem("New Tab");
-        newTab.addActionListener(new ActionListener() {
+
+        JMenuItem newReaderTab = buildNewReaderItem();
+        menu.add(newReaderTab);
+
+        JMenuItem newGitItem = buildNewGithubItem();
+        menu.add(newGitItem);
+
+
+        menu.show(e.getComponent(), e.getX(), e.getY());
+    }
+
+    private JMenuItem buildNewGithubItem() {
+        JMenuItem newGitItem = new JMenuItem();
+        JReaderPanel panel = (JReaderPanel)reader.getCurrentTab();
+        String systemPath = Utilities.docPathToSourcePath(panel.getCurrentPath());
+
+        // If it's a good source path then its a Java class, so we can search for it.
+        if(Utilities.isGoodSourcePath(systemPath)) {
+            String title = Utilities.extractTitle(panel.getCurrentPath());
+            final String objectName = title.substring(0, title.indexOf(" "));
+            newGitItem.setText("Search Github for " + objectName);
+            newGitItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    reader.createAndShowNewGithubSearchPanel(objectName);
+                }
+            });
+        }
+        return newGitItem;
+    }
+
+    private JMenuItem buildNewReaderItem() {
+        JMenuItem newReaderTab = new JMenuItem("New Tab");
+        newReaderTab.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 reader.createAndShowNewReaderTab();
             }
         });
-
-        menu.add(newTab);
-        menu.show(e.getComponent(), e.getX(), e.getY());
+        return newReaderTab;
     }
 }
