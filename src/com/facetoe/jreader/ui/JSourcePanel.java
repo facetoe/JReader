@@ -32,6 +32,7 @@ import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -45,7 +46,7 @@ import java.util.regex.PatternSyntaxException;
 /**
  * Displays source code with syntax highlighting and cold folding.
  */
-public class JSourcePanel extends AbstractPanel implements AutoCompleteable {
+public class JSourcePanel extends JPanel implements AutoCompletable {
     private final Logger log = Logger.getLogger(this.getClass());
 
     private RSyntaxTextArea codeArea;

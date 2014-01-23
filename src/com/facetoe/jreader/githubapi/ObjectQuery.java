@@ -1,4 +1,4 @@
-package com.facetoe.jreader.githubapi.apiobjects;
+package com.facetoe.jreader.githubapi;
 
 import com.facetoe.jreader.githubapi.AbstractGithubQuery;
 

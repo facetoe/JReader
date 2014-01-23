@@ -13,9 +13,9 @@ import java.net.*;
  * Created by facetoe on 19/01/14.
  */
 public class GitHubAPI {
-    private static String USER_AGENT = "Mozilla/5.0";
+    private static final String USER_AGENT = "Mozilla/5.0";
     private static HttpsURLConnection connection;
-    private static Gson gson = new Gson();
+    private static final Gson gson = new Gson();
     private static AbstractGithubQuery query;
 
     public static GithubResponse sendRequest(AbstractGithubQuery query) throws GitHubAPIException {
@@ -27,7 +27,7 @@ public class GitHubAPI {
         }
     }
 
-    private static URL generateURL(AbstractGithubQuery githubQuery) throws URISyntaxException, MalformedURLException {
+    private static URL generateURL(AbstractGithubQuery githubQuery) throws MalformedURLException {
         query = githubQuery;
         return new URL(query.getEncodedQuery());
     }
@@ -36,7 +36,7 @@ public class GitHubAPI {
         System.out.println(url.toString());
         connection = (HttpsURLConnection) url.openConnection();
         initConnection();
-        return getResult();
+        return getResponse();
     }
 
     private static void initConnection() throws ProtocolException {
@@ -46,7 +46,7 @@ public class GitHubAPI {
         connection.setInstanceFollowRedirects(true);
     }
 
-    private static GithubResponse getResult() throws Exception {
+    private static GithubResponse getResponse() throws Exception {
         if (responseOK()) {
             return readResponse();
         } else {
@@ -69,11 +69,6 @@ public class GitHubAPI {
         }
     }
 
-    private static GitHubErrorResponse readError() throws IOException {
-        BufferedReader err = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
-        return gson.fromJson(read(err), GitHubErrorResponse.class);
-    }
-
     private static String buildErrorMessage() throws IOException {
         GitHubErrorResponse errorResponse = readError();
         String errorMessage = errorResponse.getMessage() + "\n";
@@ -84,6 +79,11 @@ public class GitHubAPI {
             errorMessage += "Resource:" + errorItem.getResource() + "\n";
         }
         return errorMessage;
+    }
+
+    private static GitHubErrorResponse readError() throws IOException {
+        BufferedReader err = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+        return gson.fromJson(read(err), GitHubErrorResponse.class);
     }
 
     private static String read(BufferedReader in) throws IOException {

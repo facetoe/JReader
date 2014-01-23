@@ -15,10 +15,8 @@
 *    with this program; if not, write to the Free Software Foundation, Inc.,
 *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-package com.facetoe.jreader.ui;
+package com.facetoe.jreader.helpers;
 
-import com.facetoe.jreader.helpers.Config;
-import com.facetoe.jreader.helpers.Utilities;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -31,11 +29,11 @@ import java.io.IOException;
  * Time: 5:59 PM
  */
 
-class JReaderSetup {
+public class JReaderSetup {
     private static final Logger log = Logger.getLogger(JReaderSetup.class);
 
     /**
-     * @return Whether or not setup has been completed.
+     * @return Whether or not we need to install JReader.
      */
     public static boolean needsInstallation() {
         return !new File(Config.configFilePath).exists()

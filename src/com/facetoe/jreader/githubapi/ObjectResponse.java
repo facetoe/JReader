@@ -1,6 +1,9 @@
 
-package com.facetoe.jreader.githubapi.apiobjects;
+package com.facetoe.jreader.githubapi;
 
+
+import com.facetoe.jreader.githubapi.GithubResponse;
+import com.facetoe.jreader.githubapi.apiobjects.Links;
 
 public class ObjectResponse extends GithubResponse {
     private Links links;

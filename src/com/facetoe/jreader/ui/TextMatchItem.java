@@ -1,4 +1,4 @@
-package com.facetoe.jreader.githubapi;
+package com.facetoe.jreader.ui;
 
 import com.facetoe.jreader.githubapi.apiobjects.Match;
 import com.facetoe.jreader.githubapi.apiobjects.TextMatch;

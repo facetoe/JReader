@@ -29,27 +29,3 @@ import java.util.ArrayList;
 
 
 
-interface AutoCompleteable {
-    /**
-     * This is implemented in the subclasses to define the action to take on auto complete.
-     * @param key
-     */
-    void handleAutoComplete(String key);
-
-    /**
-     * Returns the autocomplete words for this panel.
-     * @return ArrayList of autocomplete words.
-     */
-    ArrayList<String> getAutoCompleteWords();
-}
-
-interface Navigatable {
-    void next();
-    void back();
-    void home();
-}
-
-public abstract class AbstractPanel extends JPanel {
-
-
-}

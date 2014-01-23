@@ -1,5 +1,8 @@
 
-package com.facetoe.jreader.githubapi.apiobjects;
+package com.facetoe.jreader.githubapi;
+
+import com.facetoe.jreader.githubapi.GithubResponse;
+import com.facetoe.jreader.githubapi.apiobjects.Item;
 
 import java.util.Collections;
 import java.util.List;

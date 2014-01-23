@@ -1,18 +1,17 @@
 
-package com.facetoe.jreader.githubapi;
+package com.facetoe.jreader.ui;
 
+import com.facetoe.jreader.githubapi.GitHubAPI;
+import com.facetoe.jreader.githubapi.GitHubAPIException;
+import com.facetoe.jreader.githubapi.SearchQuery;
 import com.facetoe.jreader.githubapi.apiobjects.Item;
-import com.facetoe.jreader.githubapi.apiobjects.SearchResponse;
+import com.facetoe.jreader.githubapi.SearchResponse;
 import com.facetoe.jreader.githubapi.apiobjects.TextMatch;
-import com.facetoe.jreader.ui.AbstractPanel;
-import com.facetoe.jreader.ui.OnTextMatchItemClickedListener;
-import com.facetoe.jreader.ui.VerticalLayout;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
-public class GithubSearchPanel extends AbstractPanel {
+public class GithubSearchPanel extends JPanel {
     private JScrollPane scrollPane;
     private JPanel panel = new JPanel();
     private JLabel loadingLabel = new JLabel("Loading matches, please wait...");
@@ -74,16 +73,6 @@ public class GithubSearchPanel extends AbstractPanel {
             item.setOnTextMatchItemClickedListener(listener);
         panel.add(item);
         panel.revalidate();
-    }
-
-    public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                GithubSearchPanel githubSearchPanel = new GithubSearchPanel();
-                githubSearchPanel.searchGithub("StringBuffer");
-            }
-        });
     }
 
     public void setOnTextMatchItemClicked(OnTextMatchItemClickedListener listener) {

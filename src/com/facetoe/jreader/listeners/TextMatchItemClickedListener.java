@@ -2,8 +2,8 @@ package com.facetoe.jreader.listeners;
 
 import com.facetoe.jreader.githubapi.GitHubAPI;
 import com.facetoe.jreader.githubapi.GitHubAPIException;
-import com.facetoe.jreader.githubapi.apiobjects.ObjectQuery;
-import com.facetoe.jreader.githubapi.apiobjects.ObjectResponse;
+import com.facetoe.jreader.githubapi.ObjectQuery;
+import com.facetoe.jreader.githubapi.ObjectResponse;
 import com.facetoe.jreader.helpers.Utilities;
 import com.facetoe.jreader.ui.JReader;
 import com.facetoe.jreader.ui.OnTextMatchItemClickedListener;

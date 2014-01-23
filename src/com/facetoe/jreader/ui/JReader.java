@@ -17,7 +17,7 @@
 */
 package com.facetoe.jreader.ui;
 
-import com.facetoe.jreader.githubapi.GithubSearchPanel;
+import com.facetoe.jreader.helpers.JReaderSetup;
 import com.facetoe.jreader.helpers.ProfileManager;
 import com.facetoe.jreader.helpers.Utilities;
 import com.facetoe.jreader.listeners.TextMatchItemClickedListener;
@@ -51,7 +51,7 @@ public class JReader {
     private BottomPanel bottomPanel;
     private final ProfileManager profileManager;
     private JTabbedPane tabbedPane;
-    private AbstractPanel currentTab;
+    private JPanel currentTab;
 
     public JReader() {
         if (JReaderSetup.needsInstallation()) {
@@ -264,7 +264,7 @@ public class JReader {
         setCurrentTab(newTab);
     }
 
-    private void setCurrentTab(AbstractPanel newTab) {
+    private void setCurrentTab(JPanel newTab) {
         tabbedPane.setSelectedComponent(newTab);
         resetSearchBar();
     }
@@ -282,9 +282,9 @@ public class JReader {
         if (currentTab == null)
             return;
 
-        AutoCompleteable autoCompleteableTab;
-        if (currentTab instanceof AutoCompleteable) {
-            autoCompleteableTab = (AutoCompleteable) currentTab;
+        AutoCompletable autoCompleteableTab;
+        if (currentTab instanceof AutoCompletable) {
+            autoCompleteableTab = (AutoCompletable) currentTab;
 
             /* We want to remove the previous panels words so they don't pollute the new panels auto complete. */
             ArrayList<String> prevWords = autoCompleteableTab.getAutoCompleteWords();
@@ -292,8 +292,8 @@ public class JReader {
         }
 
         currentTab = getCurrentTab();
-        if (currentTab instanceof AutoCompleteable) {
-            AutoCompleteable tab = (AutoCompleteable) currentTab;
+        if (currentTab instanceof AutoCompletable) {
+            AutoCompletable tab = (AutoCompletable) currentTab;
             if (tab instanceof JReaderPanel) {
                 handleReaderTabChange(tab);
             } else {
@@ -304,16 +304,16 @@ public class JReader {
         }
     }
 
-    public AbstractPanel getCurrentTab() {
-        return (AbstractPanel) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
+    public JPanel getCurrentTab() {
+        return (JPanel) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
     }
 
-    private void handleSourceTabChange(AutoCompleteable tab) {
+    private void handleSourceTabChange(AutoCompletable tab) {
         disableBrowserButtons();
         topPanel.addAutoCompleteWords(tab.getAutoCompleteWords());
     }
 
-    private void handleReaderTabChange(AutoCompleteable tab) {
+    private void handleReaderTabChange(AutoCompletable tab) {
         topPanel.setSourceButton(TopPanel.SOURCE_BUTTON, new NewSourceTabAction(this));
         topPanel.addAutoCompleteWords(tab.getAutoCompleteWords());
         String currentPath = ((JReaderPanel) currentTab).getCurrentPath();
@@ -355,8 +355,8 @@ public class JReader {
     }
 
     private void handleSearch() {
-        if (currentTab instanceof AutoCompleteable) {
-            AutoCompleteable tab = (AutoCompleteable) currentTab;
+        if (currentTab instanceof AutoCompletable) {
+            AutoCompletable tab = (AutoCompletable) currentTab;
             tab.handleAutoComplete(topPanel.getSearchBarText());
         }
     }

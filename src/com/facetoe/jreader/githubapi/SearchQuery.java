@@ -7,11 +7,11 @@ import java.net.URLEncoder;
  * Created by facetoe on 19/01/14.
  */
 
-class SearchQuery extends AbstractGithubQuery {
+public class SearchQuery extends AbstractGithubQuery {
     private final String LANGUAGE = "java";
     private final String DEFAULT_USER = "apache";
     private final String USER;
-    private String searchQuery;
+    private final String searchQuery;
 
     public SearchQuery(String searchQuery) {
         USER = DEFAULT_USER;

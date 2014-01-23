@@ -1,7 +1,5 @@
 package com.facetoe.jreader.githubapi.apiobjects;
 
-import java.util.Collections;
-
 /**
  * Created by facetoe on 21/01/14.
  */

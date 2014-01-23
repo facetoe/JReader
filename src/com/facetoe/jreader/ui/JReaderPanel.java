@@ -41,7 +41,7 @@ import static javafx.concurrent.Worker.State.FAILED;
 /**
  * Displays the Java documentation.
  */
-class JReaderPanel extends AbstractPanel implements AutoCompleteable, Navigatable {
+class JReaderPanel extends JPanel implements AutoCompletable, Navigatable {
     private final Logger log = Logger.getLogger(this.getClass());
 
     private WebEngine engine;
