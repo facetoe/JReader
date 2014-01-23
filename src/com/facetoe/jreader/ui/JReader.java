@@ -42,7 +42,7 @@ import java.util.ArrayList;
  * This is the main class of the application. It is responsible for building the UI and
  * responding to user input.
  */
-public class JReader {
+public class JReader implements StatusUpdateListener {
     private final Logger log = Logger.getLogger(this.getClass());
 
     private JFrame frame;
@@ -94,7 +94,7 @@ public class JReader {
         addAction(new QuitAction(this), "control Q");
     }
 
-    void addAction(Action action, String keystroke) {
+    private void addAction(Action action, String keystroke) {
         KeyStroke keyStroke = KeyStroke.getKeyStroke(keystroke);
         frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, keyStroke);
         frame.getRootPane().getActionMap().put(keyStroke, action);
@@ -108,7 +108,8 @@ public class JReader {
                 updateReaderUI(newURL);
             }
         });
-        readerPanel.addPopupListener(new PopUpListener(this));
+        readerPanel.addStatusUpdateListener(this);
+        readerPanel.addPopupListener(new JReaderPanelPopUpListener(this));
         showNewReaderTab(readerPanel);
     }
 
@@ -152,7 +153,7 @@ public class JReader {
 
     private void updateReaderLabel(String newURL) {
         String systemPath = Utilities.browserPathToSystemPath(newURL);
-        bottomPanel.getLblStatus().setText(systemPath);
+        updateStatus(systemPath);
     }
 
     private void showNewReaderTab(JReaderPanel readerPanel) {
@@ -244,10 +245,10 @@ public class JReader {
     }
 
     private JSourcePanel createNewSourcePanel(String filePath, String title) {
-        JSourcePanel newTab = new JSourcePanel(new File(filePath), topPanel);
-        newTab.addActionListener(bottomPanel);
-        addCloseButtonToTab(newTab, title);
-        return newTab;
+        JSourcePanel newSourcePanel = new JSourcePanel(new File(filePath));
+        newSourcePanel.addStatusUpdateListener(this);
+        addCloseButtonToTab(newSourcePanel, title);
+        return newSourcePanel;
     }
 
     public JSourcePanel createAndShowNewSourcePanel(URL url, String title) {
@@ -272,6 +273,7 @@ public class JReader {
     public void createAndShowNewGithubSearchPanel(final String searchTerm) {
         GithubSearchPanel gitPanel = new GithubSearchPanel();
         gitPanel.setOnTextMatchItemClicked(new TextMatchItemClickedListener(this, searchTerm));
+        gitPanel.addStatusUpdateListener(this);
         addCloseButtonToTab(gitPanel, "Github Search: " + searchTerm);
         gitPanel.searchGithub(searchTerm);
         setCurrentTab(gitPanel);
@@ -384,6 +386,16 @@ public class JReader {
             Utilities.showErrorDialog(frame, e.getMessage(), "Error Saving Profiles");
             log.error(e.getMessage(), e);
         }
+    }
+
+    @Override
+    public void updateStatus(String message) {
+        bottomPanel.getLblStatus().setText(message);
+    }
+
+    @Override
+    public void updateProgress(int progress) {
+        bottomPanel.getProgressBar().setValue(progress);
     }
 
     public static void main(String[] args) {

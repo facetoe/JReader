@@ -35,13 +35,19 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.regex.PatternSyntaxException;
+
+interface StatusUpdateListener {
+    void updateStatus(String message);
+    void updateProgress(int progress);
+}
 
 /**
  * Displays source code with syntax highlighting and cold folding.
@@ -59,67 +65,34 @@ public class JSourcePanel extends JPanel implements AutoCompletable {
     /**
      * Listeners that will be notified of parsing progress and search errors.
      */
-    private final ArrayList<ActionListener> listeners = new ArrayList<ActionListener>();
+    private final ArrayList<StatusUpdateListener> listeners = new ArrayList<StatusUpdateListener>();
     private String sourceFileName;
-
-    private TopPanel topPanel; // TODO figure out how to set the button without passing this in here.
 
     /**
      * Creates a new instance of JSourcePanel and displays the contents of filePath.
      *
      * @param sourceFile of the file containing the code to be displayed.
      */
-    public JSourcePanel(File sourceFile, TopPanel topPanel) {
+    public JSourcePanel(File sourceFile) {
         this.sourceFile = sourceFile;
-        this.topPanel = topPanel;
         sourceFileName = sourceFile.getName();
-        initPanel(topPanel);
+        init();
     }
 
+    /**
+     * Creates a new instance of JSourcePanel and displays the file pointed to by url.
+     *
+     * @param url
+     */
     public JSourcePanel(URL url) {
         this.fileURL = url;
-        System.out.println("Called");
-        initPanel(null);
+        init();
     }
 
-    private void initPanel(TopPanel topPanel) {
+    private void init() {
         profileManager = ProfileManager.getInstance();
-        this.topPanel = topPanel;
         setLayout(new BorderLayout());
-
-        /* Set up our text area. */
         createCodeArea();
-    }
-
-    public void createDisplay() {
-        loadTheme();
-        setCodeAreaText();
-        parseSourceFile();
-        add("West", new SlideOutSourceTree(this));
-        add("Center", codeScrollPane);
-        highlightDeclaration(javaSourceFile.getEnclosingObject());
-    }
-
-    private void setCodeAreaText() {
-        try {
-            String code;
-            if (sourceFile != null) {
-                code = Utilities.readFile(sourceFile.getAbsolutePath(), StandardCharsets.UTF_8);
-                codeArea.setText(code);
-            } else {
-                code = Utilities.readURL(fileURL);
-                System.out.println(code);
-                codeArea.setText(code);
-            }
-        } catch (IOException e) {
-            Utilities.showErrorDialog(this, e.getMessage(), "Error Loading File");
-            log.error(e.getMessage(), e);
-        }
-    }
-
-    private void loadTheme() {
-        Theme theme = Utilities.loadTheme();
-        theme.apply(codeArea);
     }
 
     private void createCodeArea() {
@@ -131,6 +104,105 @@ public class JSourcePanel extends JPanel implements AutoCompletable {
         RTextScrollPane scrollPane = new RTextScrollPane(codeArea);
         scrollPane.setFoldIndicatorEnabled(true);
         codeScrollPane = scrollPane;
+    }
+
+    public void createDisplay() {
+        loadTheme();
+        setCodeAreaText();
+        parseSourceFile();
+        add("West", new SlideOutSourceTree(this));
+        add("Center", codeScrollPane);
+        highlightDeclaration(javaSourceFile.getEnclosingObject());
+    }
+
+    private void loadTheme() {
+        Theme theme = Utilities.loadTheme();
+        theme.apply(codeArea);
+    }
+
+    private void setCodeAreaText() {
+        try {
+            String code;
+            if (sourceFile != null) {
+                code = Utilities.readFile(sourceFile.getAbsolutePath(), StandardCharsets.UTF_8);
+                codeArea.setText(code);
+            } else {
+                code = Utilities.readURL(fileURL);
+                codeArea.setText(code);
+            }
+        } catch (IOException e) {
+            Utilities.showErrorDialog(this, e.getMessage(), "Error Loading File");
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Parse the source file and provide feedback to any listeners.
+     */
+    private void parseSourceFile() {
+        long startTime = System.nanoTime();
+        updateStatus("Parsing: " + sourceFileName);
+        try {
+            if (sourceFile != null) {
+                javaSourceFile = parseSourceFile(sourceFile);
+            } else {
+                javaSourceFile = parseSourceFile(fileURL);
+            }
+            updateStatus(buildParseTimeMessage(System.nanoTime() - startTime));
+        } catch (ParseException e) {
+            log.error(e);
+        } catch (IOException e) {
+            log.error(e);
+        }
+    }
+
+    private JavaSourceFile parseSourceFile(URL url) throws IOException, ParseException {
+        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+        InputStream in = null;
+        try {
+            in = connection.getInputStream();
+            return JavaSourceFileParser.parse(in);
+        } catch (IOException e) {
+            log.error(e);
+        } finally {
+            if (in != null) {
+                in.close();
+            }
+        }
+        return null;
+    }
+
+    private JavaSourceFile parseSourceFile(File file) throws ParseException, IOException {
+        return JavaSourceFileParser.parse(new FileInputStream(file));
+    }
+
+    private String buildParseTimeMessage(double elapsedTime) {
+        return String.format(
+                "Parsed %s in %.2f %s",
+                sourceFileName,
+                Utilities.percent(elapsedTime, 100000000000L),
+                "seconds");
+    }
+
+    @Override
+    public ArrayList<String> getAutoCompleteWords() {
+        return javaSourceFile.getAllDeclarations();
+    }
+
+    /**
+     * This method first attempts to highlight the declaration. If nothing is found for the key,
+     * it then attmepts to search for it.
+     *
+     * @param key The declaration that we want to highlight.
+     */
+    @Override
+    public void handleAutoComplete(String key) {
+        AbstractJavaObject obj = javaSourceFile.getObject(key);
+        if (obj != null) {
+            highlightDeclaration(obj);
+        } else {
+            findString(key, profileManager.getSearchContext());
+        }
     }
 
     public void highlightDeclaration(AbstractJavaObject object) {
@@ -155,6 +227,7 @@ public class JSourcePanel extends JPanel implements AutoCompletable {
             end = codeArea.getLineEndOffset(endLine - 1);
         } catch (BadLocationException ex) {
             // Shouldn't happen...
+            ex.printStackTrace();
         }
         String body = codeArea.getText();
         //  If you don't do -1 it chops off the first character.
@@ -190,87 +263,37 @@ public class JSourcePanel extends JPanel implements AutoCompletable {
                 if (!found) {
                     // If we didn't find anything, reset the caret position to its origional position
                     codeArea.setCaretPosition(caretPos);
-                    fireEvent(new ActionEvent(this, 0, "Nothing found for: " + "\"" + text + "\""));
+                    updateStatus("Nothing found for: " + "\"" + text + "\"");
                 }
             }
         } catch (PatternSyntaxException ex) {
-            fireEvent(new ActionEvent(this, 0, "Regex Error: " + ex.getMessage()));
+            updateStatus("Regex Error: " + ex.getMessage());
         } catch (Exception e) { //Sometimes RSyntaxArea barfs randomly
             log.error(e);
         }
     }
 
     /**
-     * Parse the source file and provide feedback to any listeners.
-     */
-    private void parseSourceFile() {
-        long startTime = System.nanoTime();
-        fireEvent(new ActionEvent(this, 0, "Parsing: " + sourceFileName));
-        try {
-            if (sourceFile != null) {
-                javaSourceFile = JavaSourceFileParser.parse(new FileInputStream(sourceFile));
-            } else {
-                HttpsURLConnection connection = (HttpsURLConnection) fileURL.openConnection();
-                javaSourceFile = JavaSourceFileParser.parse(connection.getInputStream());
-            }
-        } catch (ParseException e) {
-            log.error(e);
-        } catch (IOException e) {
-            log.error(e);
-        } finally {
-            long elapsedTime = System.nanoTime() - startTime;
-            fireEvent(new ActionEvent(this, 0, String.format(
-                    "Parsed %s in %.2f %s", sourceFileName, (double) elapsedTime / 1000000000, "seconds")));
-        }
-    }
-
-    @Override
-    public ArrayList<String> getAutoCompleteWords() {
-        return javaSourceFile.getAllDeclarations();
-    }
-
-    /**
-     * This method first attempts to highlight the declaration. If nothing is found for the key,
-     * it then attmepts to search for it.
-     *
-     * @param key The declaration that we want to highlight.
-     */
-    @Override
-    public void handleAutoComplete(String key) {
-        AbstractJavaObject obj = javaSourceFile.getObject(key);
-        if (obj != null) {
-            highlightDeclaration(obj);
-        } else {
-            findString(key, profileManager.getSearchContext());
-        }
-    }
-
-    /**
      * Add an action listener.
      *
-     * @param listener The listener to add.
+     * @param statusUpdateListener The listener to add.
      */
-    void addActionListener(ActionListener listener) {
-        listeners.add(listener);
+    void addStatusUpdateListener(StatusUpdateListener statusUpdateListener) {
+        listeners.add(statusUpdateListener);
     }
 
     /**
-     * Notify listeners of progress.
+     * Update panel with message.
      *
-     * @param event The progress information.
+     * @param message
      */
-    private void fireEvent(final ActionEvent event) {
-        for (ActionListener listener : listeners) {
-            log.debug("Fireing Event: " + event.getActionCommand());
-            listener.actionPerformed(event);
+    private void updateStatus(String message) {
+        for (StatusUpdateListener statusUpdateListener : listeners) {
+            statusUpdateListener.updateStatus(message);
         }
     }
 
     public JavaSourceFile getJavaSourceFile() {
         return javaSourceFile;
-    }
-
-    public TopPanel getTopPanel() {//TODO Refactor this so you don't need to pass the panel in here
-        return topPanel;
     }
 }

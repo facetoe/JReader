@@ -18,6 +18,7 @@
 package com.facetoe.jreader.ui;
 
 import com.facetoe.jreader.helpers.Utilities;
+import org.omg.PortableInterceptor.ACTIVE;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -71,17 +72,19 @@ class NewSourceTabAction extends AbstractAction {
         this.jReader = jReader;
     }
 
+    NewSourceTabAction(JReader jReader, String title) {
+        super(title);
+        putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_S));
+        this.jReader = jReader;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (jReader.getCurrentTab() instanceof JReaderPanel) {
             JReaderPanel readerTab = (JReaderPanel) jReader.getCurrentTab();
-            String path = Utilities.browserPathToSystemPath(readerTab.getCurrentPath());
-            String systemPath = Utilities.docPathToSourcePath(path);
+            String systemPath = Utilities.docPathToSourcePath(readerTab.getCurrentPath());
             if (Utilities.isGoodSourcePath(systemPath)) {
-                System.out.println("Is good source path: " + path);
                 jReader.createAndShowNewSourceTab();
-            } else {
-                System.out.println(readerTab.getCurrentPath());
             }
         }
     }

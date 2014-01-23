@@ -204,6 +204,15 @@ public class Utilities {
         return title.substring(0, nameEnd);
     }
 
+    public static String getClassNameFromPath(String path) {
+        String title = Utilities.extractTitle(path);
+        title = title.substring(0, title.indexOf(" "));
+        if (title.contains(".html")) {
+            title = title.replace(".html", "");
+        }
+        return title;
+    }
+
     public static boolean isGoodSourcePath(String path) {
         if (path == null || isWebAddress(path) || !path.endsWith(".java")) {
             return false;
@@ -444,6 +453,16 @@ public class Utilities {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static float percent(int part, int whole) {
+        if(whole == 0) return -1;
+        return (part * 100.0f) / whole;
+    }
+
+    public static float percent(double part, long whole) {
+        if(whole == 0) return -1;
+        return ((float)part * 100.0f) / whole;
     }
 
 }

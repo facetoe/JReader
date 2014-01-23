@@ -46,9 +46,9 @@ class JReaderPanel extends JPanel implements AutoCompletable, Navigatable {
 
     private WebEngine engine;
     private JFXPanel jfxPanel;
-    private JProgressBar progressBar;
 
     private final ProfileManager profileManager = ProfileManager.getInstance();
+    private final ArrayList<StatusUpdateListener> listeners = new ArrayList<StatusUpdateListener>();
     private String currentPath;
 
     /**
@@ -59,7 +59,6 @@ class JReaderPanel extends JPanel implements AutoCompletable, Navigatable {
     }
 
     private void init() {
-        progressBar = new JProgressBar(); //TODO !
         jfxPanel = new JFXPanel();
         setLayout(new BorderLayout());
         currentPath = profileManager.getHome();
@@ -73,7 +72,7 @@ class JReaderPanel extends JPanel implements AutoCompletable, Navigatable {
 
     private void createScene() {
         WebView view = new WebView();
-        view.setContextMenuEnabled(false); // Need for popup
+        view.setContextMenuEnabled(false); // Need for popup, otherwise it displays the default one
         engine = view.getEngine();
         addProgressChangeListener();
         addPathChangeListener();
@@ -83,17 +82,19 @@ class JReaderPanel extends JPanel implements AutoCompletable, Navigatable {
     }
 
     private void addProgressChangeListener() {
-        engine.getLoadWorker().workDoneProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, final Number newValue) {
-                SwingUtilities.invokeLater(new Runnable() {
+        engine.getLoadWorker()
+                .workDoneProperty()
+                .addListener(new ChangeListener<Number>() {
                     @Override
-                    public void run() {
-                        progressBar.setValue(newValue.intValue());
+                    public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, final Number newValue) {
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateProgress(newValue.intValue());
+                            }
+                        });
                     }
                 });
-            }
-        });
     }
 
     private void addPathChangeListener() {
@@ -218,13 +219,29 @@ class JReaderPanel extends JPanel implements AutoCompletable, Navigatable {
         });
     }
 
-    public void addPopupListener(final PopUpListener listener) {
+    public void addPopupListener(final JReaderPanelPopUpListener listener) {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 getJFXPanel().addMouseListener(listener);
             }
         });
+    }
+
+    public void addStatusUpdateListener(StatusUpdateListener listener) {
+        listeners.add(listener);
+    }
+
+    private void updateStatus(String message) {
+        for (StatusUpdateListener listener : listeners) {
+            listener.updateStatus(message);
+        }
+    }
+
+    private void updateProgress(int progress) {
+        for (StatusUpdateListener listener : listeners) {
+            listener.updateProgress(progress);
+        }
     }
 }
 

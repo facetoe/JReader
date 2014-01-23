@@ -10,29 +10,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0f725b18-1f9a-4ce0-8608-872f2385b0ad" name="Default" comment="Reorganized code into packages.&#10;">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/AutoCompletable.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/GithubSearchPanel.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/Navigatable.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/TextMatchItem.java" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/GithubSearchPanel.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/Test.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/TextMatchItem.java" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/apiobjects/GitHubErrorResponse.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/GitHubErrorResponse.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/apiobjects/GithubResponse.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/GithubResponse.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/apiobjects/ObjectQuery.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/ObjectQuery.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/apiobjects/ObjectResponse.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/ObjectResponse.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/apiobjects/SearchResponse.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/SearchResponse.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReaderSetup.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/helpers/JReaderSetup.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/Trie.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/helpers/Trie.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/AbstractPanel.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/AbstractPanel.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/AutoCompleteTextField.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/AutoCompleteTextField.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/GitHubAPI.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/GitHubAPI.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/PopUpListener.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReaderPanelPopUpListener.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/Actions.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/Actions.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/GithubSearchPanel.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/GithubSearchPanel.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReader.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReader.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReaderPanel.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReaderPanel.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JSourcePanel.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JSourcePanel.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/SearchQuery.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/SearchQuery.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/apiobjects/TextMatch.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/apiobjects/TextMatch.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/SlideOutSourceTree.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/SlideOutSourceTree.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/listeners/TextMatchItemClickedListener.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/listeners/TextMatchItemClickedListener.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/helpers/Utilities.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/helpers/Utilities.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="JReader.iws" />
@@ -106,14 +92,19 @@
       <file leaf-file-name="JSourcePanel.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ui/JSourcePanel.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="48" column="40" selection-start="1914" selection-end="1914" vertical-scroll-proportion="0.0" vertical-offset="7" max-vertical-offset="4356">
+            <state line="55" column="20" selection-start="2076" selection-end="2142" vertical-scroll-proportion="-9.333333" vertical-offset="0" max-vertical-offset="4716">
               <folding>
-                <element signature="e#2397#2413#0" expanded="true" />
-                <element signature="e#9651#9652#0" expanded="true" />
-                <element signature="e#9688#9689#0" expanded="true" />
-                <element signature="e#9725#9726#0" expanded="true" />
-                <element signature="e#9820#9821#0" expanded="true" />
+                <element signature="e#2535#2557#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SlideOutSourceTree.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ui/SlideOutSourceTree.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="51" column="24" selection-start="1744" selection-end="1744" vertical-scroll-proportion="0.0" vertical-offset="649" max-vertical-offset="1728">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -121,10 +112,41 @@
       <file leaf-file-name="JReader.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReader.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="283" column="0" selection-start="10142" selection-end="10142" vertical-scroll-proportion="0.0" vertical-offset="4236" max-vertical-offset="7128">
+            <state line="391" column="16" selection-start="13934" selection-end="13934" vertical-scroll-proportion="-3.851852" vertical-offset="5674" max-vertical-offset="6732">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TextMatchItemClickedListener.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/listeners/TextMatchItemClickedListener.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="52" column="0" selection-start="1916" selection-end="1916" vertical-scroll-proportion="0.044247787" vertical-offset="921" max-vertical-offset="1260">
               <folding>
-                <element signature="e#0#14812#0" expanded="true" />
                 <element signature="imports" expanded="true" />
+                <element signature="e#2055#2196#0" expanded="true" />
+                <element signature="e#2185#2186#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="JReaderPanelPopUpListener.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReaderPanelPopUpListener.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="74" column="38" selection-start="2044" selection-end="2044" vertical-scroll-proportion="0.0" vertical-offset="1353" max-vertical-offset="1854">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Utilities.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/helpers/Utilities.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="65" column="17" selection-start="2172" selection-end="2172" vertical-scroll-proportion="0.0" vertical-offset="720" max-vertical-offset="8136">
+              <folding>
+                <element signature="e#0#16371#0" expanded="true" />
+                <element signature="e#13875#13921#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -133,36 +155,40 @@
       <file leaf-file-name="JReaderPanel.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReaderPanel.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="43" column="33" selection-start="1535" selection-end="1535" vertical-scroll-proportion="0.0" vertical-offset="126" max-vertical-offset="2754">
-              <folding />
+            <state line="61" column="0" selection-start="2118" selection-end="2118" vertical-scroll-proportion="0.0" vertical-offset="309" max-vertical-offset="3168">
+              <folding>
+                <element signature="e#1862#1884#0" expanded="true" />
+                <element signature="e#2922#3436#0" expanded="true" />
+                <element signature="e#3167#3394#0" expanded="true" />
+                <element signature="e#3367#3368#0" expanded="true" />
+                <element signature="e#3417#3418#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GitHubAPI.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/GitHubAPI.java">
+      <file leaf-file-name="Actions.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ui/Actions.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="73" column="64" selection-start="2710" selection-end="2710" vertical-scroll-proportion="0.0" vertical-offset="108" max-vertical-offset="1782">
+            <state line="82" column="20" selection-start="2409" selection-end="2409" vertical-scroll-proportion="0.0" vertical-offset="967" max-vertical-offset="2394">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AbstractPanel.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ui/AbstractPanel.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="31" column="0" selection-start="980" selection-end="980" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="360">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="GithubSearchPanel.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="GithubSearchPanel.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ui/GithubSearchPanel.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="32" column="8" selection-start="1167" selection-end="1167" vertical-scroll-proportion="1.5955678" vertical-offset="0" max-vertical-offset="1458">
+            <state line="56" column="27" selection-start="2252" selection-end="2252" vertical-scroll-proportion="0.0" vertical-offset="795" max-vertical-offset="2214">
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#895#917#0" expanded="true" />
+                <element signature="e#3496#3497#0" expanded="true" />
+                <element signature="e#3547#3548#0" expanded="true" />
+                <element signature="e#3763#4029#0" expanded="true" />
+                <element signature="e#4018#4019#0" expanded="true" />
+                <element signature="e#4127#4396#0" expanded="true" />
+                <element signature="e#4385#4386#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -186,8 +212,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/GithubSearchUI.java" />
-        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/SwingListExample.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/VerticalLayout.java" />
         <option value="/HTML Fragment (ScrollGrid.java:987).html" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/Links.java" />
@@ -213,30 +237,32 @@
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/apiobjects/Match.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/parsers/JavaSourceFileParser.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/parsers/JavaSourceFile.java" />
-        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/ui/SlideOutSourceTree.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/ui/OnTextMatchItemClickedListener.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/TextMatchItem.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/GithubApiException.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/GitHubAPIException.java" />
-        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/helpers/Utilities.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReaderSetup.java" />
-        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/ui/Actions.java" />
-        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/ui/PopUpListener.java" />
-        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/listeners/TextMatchItemClickedListener.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/GithubSearchPanel.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/helpers/JReaderSetup.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/SearchQuery.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/apiobjects/TextMatch.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/ObjectQuery.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/GitHubAPI.java" />
-        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/ui/GithubSearchPanel.java" />
-        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JSourcePanel.java" />
-        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReaderPanel.java" />
-        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReader.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/ui/Navigatable.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/ui/AbstractPanel.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/ui/Navigateable.java" />
         <option value="$PROJECT_DIR$/src/com/facetoe/jreader/ui/AutoCompletable.java" />
+        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/ui/PopUpListener.java" />
+        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReaderPanelPopUpListener.java" />
+        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/ui/MenuBar.java" />
+        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/ui/Actions.java" />
+        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/ui/SlideOutSourceTree.java" />
+        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReaderPanel.java" />
+        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReader.java" />
+        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/helpers/Utilities.java" />
+        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JSourcePanel.java" />
+        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/ui/GithubSearchPanel.java" />
+        <option value="$PROJECT_DIR$/src/com/facetoe/jreader/listeners/TextMatchItemClickedListener.java" />
       </list>
     </option>
   </component>
@@ -244,8 +270,8 @@
     <treeState />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="2" />
-    <option name="y" value="21" />
+    <option name="x" value="1" />
+    <option name="y" value="20" />
     <option name="width" value="1364" />
     <option name="height" value="747" />
   </component>
@@ -430,6 +456,28 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="JReader" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="JReader" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="jreader" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="helpers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
       <pane id="Scope" />
@@ -450,7 +498,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../AndroidRemote" />
     <property name="restartRequiresConfirmation" value="true" />
     <property name="extract.method.default.visibility" value="private" />
-    <property name="SearchEverywhereHistory" value="Uti&#10;JReaderPan&#10;jreader&#10;Utilit&#10;Abstract&#10;SearchQ&#10;Sear&#10;TextMatch&#10;[]&#10;Ut&#10;writeC&#10;uti&#10;Jr" />
+    <property name="SearchEverywhereHistory" value="JReader&#10;Uti&#10;JReaderPan&#10;jreader&#10;Utilit&#10;Abstract&#10;SearchQ&#10;Sear&#10;TextMatch&#10;[]&#10;Ut&#10;writeC&#10;uti&#10;Jr" />
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="JUnit4" />
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.includeInheritedMembers" value="false" />
     <property name="options.lastSelected" value="preferences.sourceCode.Java" />
@@ -1377,7 +1425,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="2" y="21" width="1364" height="747" extended-state="0" />
+    <frame x="1" y="20" width="1364" height="747" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -1398,16 +1446,16 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21785174" sideWeight="0.82974136" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.42539683" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.384127" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Documentation" active="false" anchor="right" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32980332" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" x="0" y="0" width="1366" height="768" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22768533" sideWeight="0.73650795" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Documentation" active="false" anchor="right" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32980332" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" x="0" y="0" width="1366" height="768" />
       <window_info id="Statistic" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32608697" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32885906" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.42539683" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -1460,16 +1508,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ui/NewProfileWindow.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="171" column="10" selection-start="6149" selection-end="6149" vertical-scroll-proportion="0.0" vertical-offset="2502" max-vertical-offset="4842" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ui/MenuBar.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="194" column="21" selection-start="6643" selection-end="6643" vertical-scroll-proportion="36.074074" vertical-offset="3818" max-vertical-offset="5274" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/helpers/ZipProgressListener.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="5" column="0" selection-start="81" selection-end="162" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="252" />
@@ -1504,23 +1542,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/apiobjects/Item.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="13" selection-start="66" selection-end="66" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1026">
-          <folding />
-        </state>
+        <state line="4" column="13" selection-start="66" selection-end="66" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1026" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/apiobjects/Owner.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="13" selection-start="65" selection-end="65" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1728">
-          <folding />
-        </state>
+        <state line="3" column="13" selection-start="65" selection-end="65" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1728" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/apiobjects/Links.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="13" selection-start="65" selection-end="65" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="378">
-          <folding />
-        </state>
+        <state line="3" column="13" selection-start="65" selection-end="65" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="378" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/parsers/AbstractJavaObject.java">
@@ -1532,23 +1564,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/parsers/JavaConstructor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="13" selection-start="1073" selection-end="1073" vertical-scroll-proportion="0.0" vertical-offset="132" max-vertical-offset="1170">
-          <folding />
-        </state>
+        <state line="32" column="13" selection-start="1073" selection-end="1073" vertical-scroll-proportion="0.0" vertical-offset="132" max-vertical-offset="1170" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/GitHubErrorResponse.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="12" selection-start="214" selection-end="214" vertical-scroll-proportion="0.21654929" vertical-offset="3" max-vertical-offset="756">
-          <folding />
-        </state>
+        <state line="8" column="12" selection-start="214" selection-end="214" vertical-scroll-proportion="0.21654929" vertical-offset="3" max-vertical-offset="756" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/GithubResponse.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="1" selection-start="135" selection-end="135" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="234">
-          <folding />
-        </state>
+        <state line="7" column="1" selection-start="135" selection-end="135" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="234" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/SearchResponse.java">
@@ -1567,9 +1593,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/parsers/JavaDocParser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="115" column="19" selection-start="4231" selection-end="4231" vertical-scroll-proportion="0.274359" vertical-offset="1441" max-vertical-offset="1854">
-          <folding />
-        </state>
+        <state line="115" column="19" selection-start="4231" selection-end="4231" vertical-scroll-proportion="0.274359" vertical-offset="1441" max-vertical-offset="1854" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ui/TopPanel.java">
@@ -1588,9 +1612,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/apiobjects/Match.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="30" selection-start="444" selection-end="444" vertical-scroll-proportion="0.72727275" vertical-offset="36" max-vertical-offset="522">
-          <folding />
-        </state>
+        <state line="22" column="30" selection-start="444" selection-end="444" vertical-scroll-proportion="0.72727275" vertical-offset="36" max-vertical-offset="522" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/parsers/JavaSourceFileParser.java">
@@ -1607,61 +1629,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ui/SlideOutSourceTree.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="52" column="12" selection-start="1778" selection-end="1778" vertical-scroll-proportion="0.0" vertical-offset="627" max-vertical-offset="1710">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/GitHubAPIException.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="7" selection-start="101" selection-end="101" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="288">
-          <folding />
-        </state>
+        <state line="6" column="7" selection-start="101" selection-end="101" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="288" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ui/ButtonTabComponent.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="90" column="0" selection-start="3627" selection-end="3627" vertical-scroll-proportion="0.0" vertical-offset="951" max-vertical-offset="3150">
           <folding>
-            <element signature="e#3348#3624#0" expanded="true" />
-            <element signature="e#3613#3614#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ui/Actions.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="76" column="0" selection-start="2232" selection-end="2232" vertical-scroll-proportion="0.0" vertical-offset="882" max-vertical-offset="2358">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/helpers/Utilities.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="149" column="25" selection-start="5488" selection-end="5488" vertical-scroll-proportion="0.0" vertical-offset="1927" max-vertical-offset="7506">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ui/PopUpListener.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="94" column="18" selection-start="2698" selection-end="2698" vertical-scroll-proportion="0.0" vertical-offset="1131" max-vertical-offset="1782">
-          <folding>
-            <element signature="e#2866#3081#0" expanded="true" />
-            <element signature="e#3066#3067#0" expanded="true" />
-            <element signature="e#3271#3448#0" expanded="true" />
-            <element signature="e#3437#3438#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/listeners/TextMatchItemClickedListener.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="35" column="32" selection-start="1414" selection-end="1414" vertical-scroll-proportion="0.0" vertical-offset="452" max-vertical-offset="828">
-          <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#3348#3624#0" expanded="false" />
+            <element signature="e#3613#3614#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1689,23 +1667,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/apiobjects/TextMatch.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="0" selection-start="50" selection-end="50" vertical-scroll-proportion="0.030981068" vertical-offset="0" max-vertical-offset="792">
-          <folding />
-        </state>
+        <state line="1" column="0" selection-start="50" selection-end="50" vertical-scroll-proportion="0.030981068" vertical-offset="0" max-vertical-offset="792" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/parsers/JavaField.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="6" selection-start="1015" selection-end="1015" vertical-scroll-proportion="-0.14454277" vertical-offset="319" max-vertical-offset="990">
-          <folding />
-        </state>
+        <state line="31" column="6" selection-start="1015" selection-end="1015" vertical-scroll-proportion="-0.14454277" vertical-offset="319" max-vertical-offset="990" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/parsers/JavaEnum.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="34" column="13" selection-start="1101" selection-end="1101" vertical-scroll-proportion="-1.8967552" vertical-offset="913" max-vertical-offset="1656">
-          <folding />
-        </state>
+        <state line="34" column="13" selection-start="1101" selection-end="1101" vertical-scroll-proportion="-1.8967552" vertical-offset="913" max-vertical-offset="1656" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/helpers/Trie.java">
@@ -1717,30 +1689,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/ObjectQuery.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="0" selection-start="232" selection-end="232" vertical-scroll-proportion="0.4778761" vertical-offset="0" max-vertical-offset="414">
-          <folding />
-        </state>
+        <state line="9" column="0" selection-start="232" selection-end="232" vertical-scroll-proportion="0.4778761" vertical-offset="0" max-vertical-offset="414" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/apiobjects/Repository.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="13" selection-start="117" selection-end="117" vertical-scroll-proportion="0.24930748" vertical-offset="0" max-vertical-offset="4212">
-          <folding />
-        </state>
+        <state line="5" column="13" selection-start="117" selection-end="117" vertical-scroll-proportion="0.24930748" vertical-offset="0" max-vertical-offset="4212" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/apiobjects/GitHubErrorItem.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="13" selection-start="65" selection-end="65" vertical-scroll-proportion="0.14958449" vertical-offset="0" max-vertical-offset="738">
-          <folding />
-        </state>
+        <state line="3" column="13" selection-start="65" selection-end="65" vertical-scroll-proportion="0.14958449" vertical-offset="0" max-vertical-offset="738" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/apiobjects/GitHubError.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="6" selection-start="100" selection-end="100" vertical-scroll-proportion="0.24930748" vertical-offset="0" max-vertical-offset="648">
-          <folding />
-        </state>
+        <state line="5" column="6" selection-start="100" selection-end="100" vertical-scroll-proportion="0.24930748" vertical-offset="0" max-vertical-offset="648" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/SearchQuery.java">
@@ -1752,45 +1716,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/AbstractGithubQuery.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="0" selection-start="40" selection-end="40" vertical-scroll-proportion="0.09972299" vertical-offset="0" max-vertical-offset="361">
-          <folding />
-        </state>
+        <state line="2" column="0" selection-start="40" selection-end="40" vertical-scroll-proportion="0.09972299" vertical-offset="0" max-vertical-offset="361" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/GitHubAPI.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="73" column="64" selection-start="2710" selection-end="2710" vertical-scroll-proportion="0.0" vertical-offset="108" max-vertical-offset="1782">
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ui/JSourcePanel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="48" column="40" selection-start="1914" selection-end="1914" vertical-scroll-proportion="0.0" vertical-offset="7" max-vertical-offset="4356">
-          <folding>
-            <element signature="e#2397#2413#0" expanded="true" />
-            <element signature="e#9651#9652#0" expanded="true" />
-            <element signature="e#9688#9689#0" expanded="true" />
-            <element signature="e#9725#9726#0" expanded="true" />
-            <element signature="e#9820#9821#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReaderPanel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="43" column="33" selection-start="1535" selection-end="1535" vertical-scroll-proportion="0.0" vertical-offset="126" max-vertical-offset="2754">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="283" column="0" selection-start="10142" selection-end="10142" vertical-scroll-proportion="0.0" vertical-offset="4236" max-vertical-offset="7128">
-          <folding>
-            <element signature="e#0#14812#0" expanded="true" />
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1815,11 +1747,103 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ui/MenuBar.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="202" column="47" selection-start="6801" selection-end="6801" vertical-scroll-proportion="0.0" vertical-offset="3636" max-vertical-offset="6102">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ui/SlideOutSourceTree.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="51" column="24" selection-start="1744" selection-end="1744" vertical-scroll-proportion="0.0" vertical-offset="649" max-vertical-offset="1728">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReaderPanel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="61" column="0" selection-start="2118" selection-end="2118" vertical-scroll-proportion="0.0" vertical-offset="309" max-vertical-offset="3168">
+          <folding>
+            <element signature="e#1862#1884#0" expanded="true" />
+            <element signature="e#2922#3436#0" expanded="true" />
+            <element signature="e#3167#3394#0" expanded="true" />
+            <element signature="e#3367#3368#0" expanded="true" />
+            <element signature="e#3417#3418#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReaderPanelPopUpListener.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="74" column="38" selection-start="2044" selection-end="2044" vertical-scroll-proportion="0.0" vertical-offset="309" max-vertical-offset="1944">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ui/Actions.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="82" column="20" selection-start="2409" selection-end="2409" vertical-scroll-proportion="0.0" vertical-offset="967" max-vertical-offset="2394">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/helpers/Utilities.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="65" column="17" selection-start="2172" selection-end="2172" vertical-scroll-proportion="0.0" vertical-offset="720" max-vertical-offset="8136">
+          <folding>
+            <element signature="e#0#16371#0" expanded="true" />
+            <element signature="e#13875#13921#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ui/GithubSearchPanel.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="8" selection-start="1167" selection-end="1167" vertical-scroll-proportion="1.5955678" vertical-offset="0" max-vertical-offset="1458">
+        <state line="56" column="27" selection-start="2252" selection-end="2252" vertical-scroll-proportion="0.0" vertical-offset="795" max-vertical-offset="2214">
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#895#917#0" expanded="true" />
+            <element signature="e#3496#3497#0" expanded="true" />
+            <element signature="e#3547#3548#0" expanded="true" />
+            <element signature="e#3763#4029#0" expanded="true" />
+            <element signature="e#4018#4019#0" expanded="true" />
+            <element signature="e#4127#4396#0" expanded="true" />
+            <element signature="e#4385#4386#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="391" column="16" selection-start="13934" selection-end="13934" vertical-scroll-proportion="-3.851852" vertical-offset="5674" max-vertical-offset="6732">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/ui/JSourcePanel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="55" column="20" selection-start="2076" selection-end="2142" vertical-scroll-proportion="-9.333333" vertical-offset="0" max-vertical-offset="4716">
+          <folding>
+            <element signature="e#2535#2557#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar:///usr/lib/jvm/java-7-oracle/src.zip!/javax/swing/SwingWorker.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="452" column="19" selection-start="13828" selection-end="13828" vertical-scroll-proportion="0.33333334" vertical-offset="7303" max-vertical-offset="14706">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/facetoe/jreader/listeners/TextMatchItemClickedListener.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="52" column="0" selection-start="1916" selection-end="1916" vertical-scroll-proportion="0.044247787" vertical-offset="921" max-vertical-offset="1260">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2055#2196#0" expanded="true" />
+            <element signature="e#2185#2186#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -49,8 +49,9 @@ class SlideOutSourceTree extends JXCollapsiblePane {
         KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
         getInputMap(WHEN_IN_FOCUSED_WINDOW).put(keyStroke, keyStrokeAndKey);
         getActionMap().put(keyStrokeAndKey, new ToggleSourceTreeAction(this, tree));
-        if(sourcePanel.getTopPanel() != null)
-            sourcePanel.getTopPanel().setSourceButton(TopPanel.TREE_BUTTON, new ToggleSourceTreeAction(this, tree));
+        //TODO Fix this!
+//        if(sourcePanel.getTopPanel() != null)
+//            sourcePanel.getTopPanel().setSourceButton(TopPanel.TREE_BUTTON, new ToggleSourceTreeAction(this, tree));
     }
 
     private void createTreeSlideoutPane() {
