@@ -37,12 +37,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
-
 /**
  * This is the main class of the application. It is responsible for building the UI and
  * responding to user input.
  */
-public class JReader implements StatusUpdateListener {
+public class JReader implements StatusUpdateListener, ChangeListener<String> {
     private final Logger log = Logger.getLogger(this.getClass());
 
     private JFrame frame;
@@ -102,14 +101,9 @@ public class JReader implements StatusUpdateListener {
 
     public void createAndShowNewReaderTab() {
         final JReaderPanel readerPanel = createReaderPanel();
-        readerPanel.addChangeListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observableValue, final String oldURL, final String newURL) {
-                updateReaderUI(newURL);
-            }
-        });
         readerPanel.addStatusUpdateListener(this);
         readerPanel.addPopupListener(new JReaderPanelPopUpListener(this));
+        readerPanel.addChangeListener(this);
         showNewReaderTab(readerPanel);
     }
 
@@ -131,19 +125,6 @@ public class JReader implements StatusUpdateListener {
         int index = tabbedPane.indexOfComponent(tab);
         ButtonTabComponent tabButton = new ButtonTabComponent(tabbedPane);
         tabbedPane.setTabComponentAt(index, tabButton);
-    }
-
-    // Updates the bottom panel with the new path, sets the title
-    // and determines whether or not to show the Show Source button.
-    private void updateReaderUI(final String newURL) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                updateReaderLabel(newURL);
-                updateReaderTitle(newURL);
-                maybeEnableSourceOption(newURL);
-            }
-        });
     }
 
     private void updateReaderTitle(String newURL) {
@@ -235,13 +216,18 @@ public class JReader implements StatusUpdateListener {
             return;
         }
         final JSourcePanel newTab = createNewSourcePanel(filePath, title);
-        new Thread(new Runnable() {
+        new SwingWorker() {
             @Override
-            public void run() {
+            protected Object doInBackground() throws Exception {
                 newTab.createDisplay();
+                return null;
+            }
+
+            @Override
+            protected void done() {
                 showNewSourceTab(newTab);
             }
-        }).start();
+        }.execute();
     }
 
     private JSourcePanel createNewSourcePanel(String filePath, String title) {
@@ -396,6 +382,11 @@ public class JReader implements StatusUpdateListener {
     @Override
     public void updateProgress(int progress) {
         bottomPanel.getProgressBar().setValue(progress);
+    }
+
+    @Override
+    public void changed(ObservableValue<? extends String> observableValue, String oldPath, String newPath) {
+        maybeEnableSourceOption(newPath);
     }
 
     public static void main(String[] args) {

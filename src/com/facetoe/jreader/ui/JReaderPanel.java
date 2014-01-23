@@ -102,9 +102,9 @@ class JReaderPanel extends JPanel implements AutoCompletable, Navigatable {
             @Override
             public void changed(ObservableValue<? extends String> ov, String oldValue, final String newValue) {
                 log.debug("New Path: " + newValue);
-                if (!newValue.endsWith(".java")) {
-                    currentPath = newValue;
-                }
+                currentPath = newValue;
+                updateStatus(newValue);
+
             }
         });
     }

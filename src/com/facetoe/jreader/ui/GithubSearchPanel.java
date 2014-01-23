@@ -59,6 +59,7 @@ public class GithubSearchPanel extends JPanel {
         try {
             SearchResponse response = (SearchResponse) GitHubAPI.sendRequest(new SearchQuery(searchTerm));
             panel.remove(loadingLabel);
+            updateStatus("");
             populatePanel(response);
             if (panel.getComponents().length == 0) {
                 panel.add(nothingFoundLabel);

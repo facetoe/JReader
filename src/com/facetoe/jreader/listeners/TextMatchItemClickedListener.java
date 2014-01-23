@@ -41,6 +41,7 @@ public class TextMatchItemClickedListener implements OnTextMatchItemClickedListe
                     url = new URL(response.getHtml_url()
                             .replace("https://github.com", "https://raw.github.com")
                             .replace("/blob", ""));
+                    System.out.println("URL: " + url);
                     title = Utilities.extractFileName(url.getFile());
                     return null;
                 }

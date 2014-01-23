@@ -186,7 +186,10 @@ public class JSourcePanel extends JPanel implements AutoCompletable {
 
     @Override
     public ArrayList<String> getAutoCompleteWords() {
-        return javaSourceFile.getAllDeclarations();
+        if(javaSourceFile == null)
+            return new ArrayList<String>();
+        else
+            return javaSourceFile.getAllDeclarations();
     }
 
     /**
