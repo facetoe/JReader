@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="jfxrt">
     <CLASSES>
-      <root url="jar:///usr/lib/jvm/java-7-oracle/jre/lib/jfxrt.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jfxrt.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

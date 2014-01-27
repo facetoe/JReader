@@ -10,9 +10,9 @@
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/swingx-all-1.6.4.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/zip4j_1.3.1.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/rsyntaxtextarea.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="/usr/lib/jvm/java-7-oracle/jre/lib/jfxrt.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$APPLICATION_HOME_DIR$/lib/junit-4.10.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/log4j-1.2.14.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/jfxrt.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

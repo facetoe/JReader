@@ -17,7 +17,6 @@
     <orderEntry type="library" name="forms_rt" level="project" />
     <orderEntry type="library" name="jgoodies-forms" level="project" />
     <orderEntry type="library" name="swingx-all-1.6.4" level="project" />
-    <orderEntry type="library" name="jfxrt" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -28,6 +27,7 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="gson-2.2.4" level="project" />
+    <orderEntry type="library" name="jfxrt" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">
