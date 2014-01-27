@@ -2,8 +2,7 @@ package com.facetoe.jreader.ui;
 
 import com.facetoe.jreader.githubapi.apiobjects.Match;
 import com.facetoe.jreader.githubapi.apiobjects.TextMatch;
-import com.facetoe.jreader.helpers.Utilities;
-import com.facetoe.jreader.ui.OnTextMatchItemClickedListener;
+import com.facetoe.jreader.helpers.Util;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.Theme;
@@ -44,7 +43,7 @@ class TextMatchItem extends JPanel {
 
     private RSyntaxTextArea createCodeArea() {
         RSyntaxTextArea codeArea = new RSyntaxTextArea();
-        Theme theme = Utilities.loadTheme();
+        Theme theme = Util.loadTheme();
         theme.apply(codeArea);
 
         codeArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
@@ -74,7 +73,7 @@ class TextMatchItem extends JPanel {
 
     private JButton createHtmlButton() {
         String url = textMatch.getObject_url();
-        String fileName = Utilities.extractFileName(url);
+        String fileName = Util.extractFileName(url);
         String html = "<HTML><a href=\"\">" + fileName + "</a></HTML>";
         JButton button = new JButton(html);
 
@@ -87,7 +86,7 @@ class TextMatchItem extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (listener != null) {
-                    listener.textMatchItemClicked(textMatch.getObject_url());
+                    listener.textMatchItemClicked(textMatch);
                 }
             }
         });

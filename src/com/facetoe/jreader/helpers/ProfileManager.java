@@ -36,7 +36,7 @@ import java.util.HashMap;
 /**
  * This class is responsible for creating, deleting and querying profiles.
  */
-public class ProfileManager implements Serializable {
+public final class ProfileManager implements Serializable {
 
     private static final Logger log = Logger.getLogger(ProfileManager.class);
     private static final long serialVersionUID = 1L;
@@ -80,7 +80,7 @@ public class ProfileManager implements Serializable {
      * @param srcDir  Where the source code is located.
      */
     public void newProfile(String name, File docRoot, File srcDir) throws IOException {
-        File docDir = Utilities.findDocDir(docRoot);
+        File docDir = Util.findDocDir(docRoot);
         Profile profile = new Profile(name, docDir, srcDir);
         profiles.put(profile.name, profile);
         HashMap<String, String> classData = parseJavaDocs(profile.docDir);
@@ -89,12 +89,12 @@ public class ProfileManager implements Serializable {
     }
 
     private void createFilesAndSaveProfile(Profile profile, HashMap<String, String> classData) throws IOException {
-        Utilities.checkAndCreateDirectoryIfNotPresent(
-                Utilities.getFileFromPathElements(
+        Util.checkAndCreateDirectoryIfNotPresent(
+                Util.getFileFromPathElements(
                         Config.getString(Config.PROFILE_DIR),
                         profile.profileDirName));
 
-        File classDataFile = Utilities.getFileFromPathElements(
+        File classDataFile = Util.getFileFromPathElements(
                 Config.getString(Config.PROFILE_DIR),
                 profile.profileDirName,
                 Config.CLASS_DATA_FILE_NAME);
@@ -107,7 +107,7 @@ public class ProfileManager implements Serializable {
         for (ActionListener listener : listeners) {
             parser.addActionListener(listener);
         }
-        return parser.parse(Utilities.getFileFromPathElements(docPath, Config.ALL_CLASSSES_DOC_FILE));
+        return parser.parse(Util.getFileFromPathElements(docPath, Config.ALL_CLASSSES_DOC_FILE));
     }
 
     /**
@@ -175,22 +175,22 @@ public class ProfileManager implements Serializable {
      * @throws IOException
      */
     private void writeProfile(Profile profile) throws IOException {
-        File outFile = Utilities.getFileFromPathElements(
+        File outFile = Util.getFileFromPathElements(
                 Config.getString(Config.PROFILE_DIR),
                 profile.profileDirName,
                 profile.profileFileName);
-        Utilities.checkAndCreateFileIfNotPresent(outFile);
+        Util.checkAndCreateFileIfNotPresent(outFile);
         writeProfile(outFile, profile);
     }
 
     private void writeProfile(File outFile, Profile profile) throws IOException {
-        Utilities.checkAndCreateFileIfNotPresent(outFile);
-        Utilities.writeObject(outFile, profile);
+        Util.checkAndCreateFileIfNotPresent(outFile);
+        Util.writeObject(outFile, profile);
     }
 
     private void writeClassData(File classDataFile, HashMap<String, String> classData) throws IOException {
-        Utilities.checkAndCreateFileIfNotPresent(classDataFile);
-        Utilities.writeObject(classDataFile, classData);
+        Util.checkAndCreateFileIfNotPresent(classDataFile);
+        Util.writeObject(classDataFile, classData);
     }
 
     /**
@@ -201,7 +201,7 @@ public class ProfileManager implements Serializable {
      * @throws IOException
      */
     private Profile readProfile(File profileFile) throws IOException {
-        return (Profile) Utilities.readObject(profileFile);
+        return (Profile) Util.readObject(profileFile);
     }
 
     /**
@@ -229,11 +229,11 @@ public class ProfileManager implements Serializable {
     public void deleteProfile(String profileName) {
         if (profiles.containsKey(profileName)) {
             Profile profile = profiles.get(profileName);
-            File profileDir = Utilities.getFileFromPathElements(
+            File profileDir = Util.getFileFromPathElements(
                     Config.getString(Config.PROFILE_DIR),
                     profile.profileDirName);
 
-            Utilities.deleteDirectoryAndContents(profileDir);
+            Util.deleteDirectoryAndContents(profileDir);
             profiles.remove(profileName);
             setCurrentProfile(Config.DEFAULT_PROFILE_NAME);
             log.debug("Deleted: " + profile.name);
@@ -270,7 +270,7 @@ public class ProfileManager implements Serializable {
      * @return The path.
      */
     public String getPath() {
-        return Utilities.constructPath(
+        return Util.constructPath(
                 Config.getString(Config.PROFILE_DIR),
                 currentProfile.profileDirName);
     }
@@ -318,7 +318,7 @@ public class ProfileManager implements Serializable {
      * @return The homepage path.
      */
     public String getHome() {
-        return Utilities.constructPath(getDocDir(), currentProfile.home);
+        return Util.constructPath(getDocDir(), currentProfile.home);
     }
 
     /**
@@ -407,7 +407,7 @@ public class ProfileManager implements Serializable {
             this.regexpIsEnabled = false;
             this.wholeWordIsEnabled = false;
             this.matchCaseIsEnabled = false;
-            this.home = Utilities.getHomePage(docDir.getAbsolutePath());
+            this.home = Util.getHomePage(docDir.getAbsolutePath());
 
             // Don't want funny characters and spaces in the profile directory or file
             this.profileFileName = name.replaceAll("[^A-Za-z0-9]", "_") + ".ser";
@@ -422,16 +422,16 @@ public class ProfileManager implements Serializable {
         HashMap<String, String> getClassData() {
             if (classData == null) {
                 log.debug("Loading classData for: " + name);
-                File classDataFile = Utilities.getFileFromPathElements(
+                File classDataFile = Util.getFileFromPathElements(
                         Config.getString(Config.PROFILE_DIR),
                         profileDirName,
                         Config.CLASS_DATA_FILE_NAME);
                 try {
                     //noinspection unchecked
-                    classData = (HashMap<String, String>) Utilities.readObject(classDataFile);
+                    classData = (HashMap<String, String>) Util.readObject(classDataFile);
                 } catch (IOException e) {
                     log.error(e);
-                    Utilities.showErrorDialog("Failed to load auto-complete data for this profile.\n" +
+                    Util.showErrorDialog("Failed to load auto-complete data for this profile.\n" +
                             " Try deleting the it and adding it again. Sorry! ", "Error");
                     classData = new HashMap<String, String>(); // Return an empty hashmap so we don't get a NPE
                 }

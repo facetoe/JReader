@@ -17,7 +17,7 @@
 */
 package com.facetoe.jreader.ui;
 
-import com.facetoe.jreader.helpers.Utilities;
+import com.facetoe.jreader.helpers.Util;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -89,9 +89,9 @@ class JReaderPanelPopUpListener implements MouseListener {
 
     private JMenuItem buildViewSourceItem() {
         JMenuItem viewSourceItem = new JMenuItem();
-        String systemPath = Utilities.docPathToSourcePath(readerPanel.getCurrentPath());
-        if (Utilities.isGoodSourcePath(systemPath)) {
-            String className = Utilities.getClassNameFromPath(readerPanel.getCurrentPath());
+        String systemPath = Util.docPathToSourcePath(readerPanel.getCurrentPath());
+        if (Util.isGoodSourcePath(systemPath)) {
+            String className = Util.getClassNameFromPath(readerPanel.getCurrentPath());
             viewSourceItem.setAction(new NewSourceTabAction(reader, "Show source for " + className));
         }
         return viewSourceItem;
@@ -99,11 +99,11 @@ class JReaderPanelPopUpListener implements MouseListener {
 
     private JMenuItem buildNewGithubItem() {
         JMenuItem newGitItem = new JMenuItem();
-        String systemPath = Utilities.docPathToSourcePath(readerPanel.getCurrentPath());
+        String systemPath = Util.docPathToSourcePath(readerPanel.getCurrentPath());
 
         // If it's a good source path then its a Java class so we can search for it.
-        if (Utilities.isGoodSourcePath(systemPath)) {
-            final String className = Utilities.getClassNameFromPath(readerPanel.getCurrentPath());
+        if (Util.isGoodSourcePath(systemPath)) {
+            final String className = Util.getClassNameFromPath(readerPanel.getCurrentPath());
             newGitItem.setText("Search Github for " + className);
             newGitItem.addActionListener(new ActionListener() {
                 @Override

@@ -87,9 +87,9 @@ class MenuBar extends JMenuBar {
     }
 
     private void handleNewProfileOption() {
-        jReader.removeJavaDocClassNames();
+        jReader.removeAutoCompleteWords();
         new NewProfileWindow().display(); // This is a blocking dialog
-        jReader.addJavaDocClassNames();
+        jReader.addAutoCompleteWords();
         navigateHome();
     }
 
@@ -136,9 +136,9 @@ class MenuBar extends JMenuBar {
     }
 
     private void handleNewProfileOptionSelected(String profileName) {
-        jReader.removeJavaDocClassNames();
+        jReader.removeAutoCompleteWords();
         profileManager.setCurrentProfile(profileName);
-        jReader.addJavaDocClassNames();
+        jReader.addAutoCompleteWords();
         navigateHome();
     }
 

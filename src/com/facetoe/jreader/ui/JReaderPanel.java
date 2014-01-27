@@ -18,7 +18,7 @@
 package com.facetoe.jreader.ui;
 
 import com.facetoe.jreader.helpers.ProfileManager;
-import com.facetoe.jreader.helpers.Utilities;
+import com.facetoe.jreader.helpers.Util;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -151,7 +151,7 @@ class JReaderPanel extends JPanel implements AutoCompletable, Navigatable {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                getEngine().executeScript("history.forward()");
+                engine.executeScript("history.forward()");
             }
         });
     }
@@ -160,7 +160,7 @@ class JReaderPanel extends JPanel implements AutoCompletable, Navigatable {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                getEngine().executeScript("history.back()");
+                engine.executeScript("history.back()");
             }
         });
     }
@@ -171,7 +171,7 @@ class JReaderPanel extends JPanel implements AutoCompletable, Navigatable {
             loadURL(homeFile.getAbsolutePath());
         } else {
             log.error("Couldn't locate home file.");
-            Utilities.showErrorDialog("Couldn't locate home file", "File Not Found");
+            Util.showErrorDialog("Couldn't locate home file", "File Not Found");
         }
     }
 
@@ -197,14 +197,6 @@ class JReaderPanel extends JPanel implements AutoCompletable, Navigatable {
         });
     }
 
-    WebEngine getEngine() {
-        return engine;
-    }
-
-    JFXPanel getJFXPanel() {
-        return jfxPanel;
-    }
-
     public String getCurrentPath() {
         return currentPath;
     }
@@ -223,7 +215,7 @@ class JReaderPanel extends JPanel implements AutoCompletable, Navigatable {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                getJFXPanel().addMouseListener(listener);
+                jfxPanel.addMouseListener(listener);
             }
         });
     }

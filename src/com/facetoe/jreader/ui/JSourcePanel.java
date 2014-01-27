@@ -18,7 +18,7 @@
 package com.facetoe.jreader.ui;
 
 import com.facetoe.jreader.helpers.ProfileManager;
-import com.facetoe.jreader.helpers.Utilities;
+import com.facetoe.jreader.helpers.Util;
 import com.facetoe.jreader.parsers.AbstractJavaObject;
 import com.facetoe.jreader.parsers.JavaSourceFile;
 import com.facetoe.jreader.parsers.JavaSourceFileParser;
@@ -35,6 +35,8 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -46,6 +48,7 @@ import java.util.regex.PatternSyntaxException;
 
 interface StatusUpdateListener {
     void updateStatus(String message);
+
     void updateProgress(int progress);
 }
 
@@ -61,21 +64,24 @@ public class JSourcePanel extends JPanel implements AutoCompletable {
     private File sourceFile;
     private URL fileURL;
     private ProfileManager profileManager;
+    private SlideOutSourceTree sourceTree;
 
     /**
      * Listeners that will be notified of parsing progress and search errors.
      */
     private final ArrayList<StatusUpdateListener> listeners = new ArrayList<StatusUpdateListener>();
     private String sourceFileName;
+    private JReader reader;
 
     /**
      * Creates a new instance of JSourcePanel and displays the contents of filePath.
      *
      * @param sourceFile of the file containing the code to be displayed.
      */
-    public JSourcePanel(File sourceFile) {
+    public JSourcePanel(File sourceFile, JReader reader) {
         this.sourceFile = sourceFile;
         sourceFileName = sourceFile.getName();
+        this.reader = reader;
         init();
     }
 
@@ -97,26 +103,41 @@ public class JSourcePanel extends JPanel implements AutoCompletable {
 
     private void createCodeArea() {
         codeArea = new RSyntaxTextArea();
+        //TODO codeArea.getPopupMenu().add(new JMenuItem("I am YOU an ME"));
         codeArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
         codeArea.setCodeFoldingEnabled(true);
         codeArea.setAntiAliasingEnabled(true);
         codeArea.setEditable(false);
+        codeArea.getPopupMenu().add(createPopupItem());
+
         RTextScrollPane scrollPane = new RTextScrollPane(codeArea);
         scrollPane.setFoldIndicatorEnabled(true);
         codeScrollPane = scrollPane;
+    }
+
+    private JMenuItem createPopupItem() {
+        JMenuItem item = new JMenuItem("Search Github for selection");
+        item.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                reader.createAndShowNewGithubSearchPanel(codeArea.getSelectedText());
+            }
+        });
+        return item;
     }
 
     public void createDisplay() {
         loadTheme();
         setCodeAreaText();
         parseSourceFile();
-        add("West", new SlideOutSourceTree(this));
+        sourceTree = new SlideOutSourceTree(this);
+        add("West", sourceTree);
         add("Center", codeScrollPane);
         highlightDeclaration(javaSourceFile.getEnclosingObject());
     }
 
     private void loadTheme() {
-        Theme theme = Utilities.loadTheme();
+        Theme theme = Util.loadTheme();
         theme.apply(codeArea);
     }
 
@@ -124,14 +145,14 @@ public class JSourcePanel extends JPanel implements AutoCompletable {
         try {
             String code;
             if (sourceFile != null) {
-                code = Utilities.readFile(sourceFile.getAbsolutePath(), StandardCharsets.UTF_8);
+                code = Util.readFile(sourceFile.getAbsolutePath(), StandardCharsets.UTF_8);
                 codeArea.setText(code);
             } else {
-                code = Utilities.readURL(fileURL);
+                code = Util.readURL(fileURL);
                 codeArea.setText(code);
             }
         } catch (IOException e) {
-            Utilities.showErrorDialog(this, e.getMessage(), "Error Loading File");
+            Util.showErrorDialog(this, e.getMessage(), "Error Loading File");
             log.error(e.getMessage(), e);
         }
     }
@@ -179,17 +200,16 @@ public class JSourcePanel extends JPanel implements AutoCompletable {
     private String buildParseTimeMessage(double elapsedTime) {
         return String.format(
                 "Parsed %s in %.2f %s",
-                sourceFileName,
-                Utilities.percent(elapsedTime, 100000000000L),
+                (sourceFileName != null ?
+                        sourceFile :
+                        Util.extractFileName(fileURL.getPath())),
+                Util.percent(elapsedTime, 100000000000L),
                 "seconds");
     }
 
     @Override
     public ArrayList<String> getAutoCompleteWords() {
-        if(javaSourceFile == null)
-            return new ArrayList<String>();
-        else
-            return javaSourceFile.getAllDeclarations();
+        return javaSourceFile.getAllDeclarations();
     }
 
     /**
@@ -206,6 +226,10 @@ public class JSourcePanel extends JPanel implements AutoCompletable {
         } else {
             findString(key, profileManager.getSearchContext());
         }
+    }
+
+    public void scrollToEnclosingObject() {
+        highlightDeclaration(javaSourceFile.getEnclosingObject());
     }
 
     public void highlightDeclaration(AbstractJavaObject object) {
@@ -244,6 +268,10 @@ public class JSourcePanel extends JPanel implements AutoCompletable {
             declaration += body.charAt(i);
         }
         return declaration;
+    }
+
+    public void find(String text) {
+        findString(text, profileManager.getSearchContext());
     }
 
     /**
@@ -299,4 +327,9 @@ public class JSourcePanel extends JPanel implements AutoCompletable {
     public JavaSourceFile getJavaSourceFile() {
         return javaSourceFile;
     }
+
+    public SlideOutSourceTree getTreePane() {
+        return sourceTree;
+    }
 }
+

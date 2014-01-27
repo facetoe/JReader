@@ -19,7 +19,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by facetoe on 16/01/14.
  */
-public class UtilitiesTest extends JReaderTest {
+public class UtilTest extends JReaderTest {
 
     private static HashMap<String, String> links;
     private final static String TEST_DOC_DIR = BASE_PATH + "testFiles/swingx-all-1.6.4-javadoc/";
@@ -50,7 +50,7 @@ public class UtilitiesTest extends JReaderTest {
 
     @Test
     public void testReadFile() throws Exception {
-        String fileText = Utilities.readFile(TEST_TEXT_FILE_PATH, Charset.forName("UTF-8"));
+        String fileText = Util.readFile(TEST_TEXT_FILE_PATH, Charset.forName("UTF-8"));
         assertEquals("This is a text file.", fileText);
     }
 
@@ -58,7 +58,7 @@ public class UtilitiesTest extends JReaderTest {
     public void testDocPathToSourcePath() throws Exception {
         File testFile;
         for (String className : links.keySet()) {
-            String sourcePath = Utilities.docPathToSourcePath(TEST_DOC_DIR + File.separator + links.get(className));
+            String sourcePath = Util.docPathToSourcePath(TEST_DOC_DIR + File.separator + links.get(className));
             testFile = new File(sourcePath);
             assertEquals(true, testFile.exists());
         }
@@ -68,7 +68,7 @@ public class UtilitiesTest extends JReaderTest {
     public void testBrowserPathToSystemPath() throws Exception {
         File testFile;
         for (String className : links.keySet()) {
-            String systemPath = Utilities.browserPathToSystemPath("file://" + TEST_DOC_DIR + links.get(className));
+            String systemPath = Util.browserPathToSystemPath("file://" + TEST_DOC_DIR + links.get(className));
             testFile = new File(systemPath);
             assertEquals(true, testFile.exists());
         }
@@ -77,8 +77,8 @@ public class UtilitiesTest extends JReaderTest {
     @Test
     public void testExtractTitle() throws Exception {
         for (String className : links.keySet()) {
-            String htmlPath = Utilities.browserPathToSystemPath("file://" + TEST_DOC_DIR + links.get(className));
-            String title = Utilities.extractTitle(htmlPath);
+            String htmlPath = Util.browserPathToSystemPath("file://" + TEST_DOC_DIR + links.get(className));
+            String title = Util.extractTitle(htmlPath);
             assertEquals(true, title.contains(className));
         }
     }
@@ -86,7 +86,7 @@ public class UtilitiesTest extends JReaderTest {
     @Test
     public void testExtractFileName() throws Exception {
         for (String className : links.keySet()) {
-            assertEquals(true, className.equals(Utilities.extractFileName(className)));
+            assertEquals(true, className.equals(Util.extractFileName(className)));
         }
     }
 
@@ -95,7 +95,7 @@ public class UtilitiesTest extends JReaderTest {
         File testSourceDir = new File(TEST_PROFILE_SOURCE_DIR);
         ArrayList<File> javaFiles = getFilesForSuffix(testSourceDir, ".java");
         for (File javaFile : javaFiles) {
-            assertEquals(true, Utilities.isGoodSourcePath(javaFile.getAbsolutePath()));
+            assertEquals(true, Util.isGoodSourcePath(javaFile.getAbsolutePath()));
         }
     }
 
@@ -104,7 +104,7 @@ public class UtilitiesTest extends JReaderTest {
         File testDocDir = new File(TEST_PROFILE_DOC_DIR);
         ArrayList<File> htmlFiles = getFilesForSuffix(testDocDir, ".html");
         for (File htmlFile : htmlFiles) {
-            assertEquals(false, Utilities.isGoodSourcePath(htmlFile.getAbsolutePath()));
+            assertEquals(false, Util.isGoodSourcePath(htmlFile.getAbsolutePath()));
         }
     }
 
@@ -123,43 +123,43 @@ public class UtilitiesTest extends JReaderTest {
     @Test
     public void testCheckAndCreateFileIfNotPresent() throws Exception {
         File testFile = new File(TEST_CREATE_FILE_PATH);
-        Utilities.checkAndCreateDirectoryIfNotPresent(testFile);
+        Util.checkAndCreateDirectoryIfNotPresent(testFile);
         assertEquals(true, testFile.exists());
     }
 
     @Test
     public void testCheckAndCreateDirectoryIfNotPresent() throws Exception {
         File testDir = new File(TEST_CREATE_DIR_PATH);
-        Utilities.checkAndCreateDirectoryIfNotPresent(testDir);
+        Util.checkAndCreateDirectoryIfNotPresent(testDir);
         assertEquals(true, testDir.exists());
     }
 
     @Test
     public void testGetFile() throws Exception {
-        File testTextFile = Utilities.getFileFromPathElements(BASE_PATH, "testFiles", "testTextFile.txt");
+        File testTextFile = Util.getFileFromPathElements(BASE_PATH, "testFiles", "testTextFile.txt");
         assertEquals(true, testTextFile.exists());
     }
 
     @Test
     public void testConstructPath() throws Exception {
         String[] pathElements = ALL_CLASSES_DOCFILE.split(File.pathSeparator);
-        String path = Utilities.constructPath(pathElements);
+        String path = Util.constructPath(pathElements);
         assertEquals(true, new File(path).exists());
     }
 
     @Test
     public void testIsJavaDocsDir() throws Exception {
-        assertEquals(true, Utilities.isJavaDocsDir(new File(TEST_PROFILE_DOC_DIR)));
+        assertEquals(true, Util.isJavaDocsDir(new File(TEST_PROFILE_DOC_DIR)));
     }
 
     @Test
     public void testNotJavaDocsDir() throws Exception {
-        assertEquals(false, Utilities.isJavaDocsDir(new File(BASE_PATH)));
+        assertEquals(false, Util.isJavaDocsDir(new File(BASE_PATH)));
     }
 
     @Test
     public void testGetHomePage() throws Exception {
-        String homePage = Utilities.getHomePage(TEST_PROFILE_DOC_DIR);
+        String homePage = Util.getHomePage(TEST_PROFILE_DOC_DIR);
         assertEquals(true, homePage.equals("overview-summary.html"));
     }
 
@@ -167,7 +167,7 @@ public class UtilitiesTest extends JReaderTest {
     public void testDeleteDirectoryAndContents() throws Exception {
         File toDeleteDir = new File(TEST_DELETE_DIR_PATH);
         generateNestedDirectory(toDeleteDir, 0, 20);
-        Utilities.deleteDirectoryAndContents(toDeleteDir);
+        Util.deleteDirectoryAndContents(toDeleteDir);
         assertEquals(false, toDeleteDir.exists());
     }
 

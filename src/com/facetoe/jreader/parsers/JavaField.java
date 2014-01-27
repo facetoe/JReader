@@ -56,7 +56,7 @@ class JavaField extends AbstractJavaObject<FieldDeclaration> {
     }
 
     @Override
-    void extractDeclaration() {
+    public void extractDeclaration() {
     }
 
     @Override

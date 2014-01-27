@@ -1,17 +1,15 @@
 package com.facetoe.jreader.listeners;
 
 import com.facetoe.jreader.githubapi.GitHubAPI;
-import com.facetoe.jreader.githubapi.GitHubAPIException;
 import com.facetoe.jreader.githubapi.ObjectQuery;
 import com.facetoe.jreader.githubapi.ObjectResponse;
-import com.facetoe.jreader.helpers.Utilities;
+import com.facetoe.jreader.githubapi.apiobjects.TextMatch;
+import com.facetoe.jreader.helpers.Util;
 import com.facetoe.jreader.ui.JReader;
 import com.facetoe.jreader.ui.OnTextMatchItemClickedListener;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -23,13 +21,12 @@ public class TextMatchItemClickedListener implements OnTextMatchItemClickedListe
 
     JReader jreader;
     String searchTerm;
-    public TextMatchItemClickedListener(JReader jreader, String searchTerm) {
+    public TextMatchItemClickedListener(JReader jreader) {
         this.jreader = jreader;
-        this.searchTerm = searchTerm;
     }
 
     @Override
-    public void textMatchItemClicked(final String objectUrl) {
+    public void textMatchItemClicked(final TextMatch match) {
             updateStatus("Requesting object...");
             new SwingWorker() {
                 URL url;
@@ -37,19 +34,19 @@ public class TextMatchItemClickedListener implements OnTextMatchItemClickedListe
 
                 @Override
                 protected Object doInBackground() throws Exception {
-                    ObjectResponse response = (ObjectResponse) GitHubAPI.sendRequest(new ObjectQuery(objectUrl));
+                    ObjectResponse response = (ObjectResponse) GitHubAPI.sendRequest(new ObjectQuery(match.getObject_url()));
                     url = new URL(response.getHtml_url()
                             .replace("https://github.com", "https://raw.github.com")
                             .replace("/blob", ""));
                     System.out.println("URL: " + url);
-                    title = Utilities.extractFileName(url.getFile());
+                    title = Util.extractFileName(url.getFile());
                     return null;
                 }
 
                 @Override
                 protected void done() {
                     updateStatus("Downloading " + title);
-                    jreader.createAndShowNewSourcePanel(url, title);
+                    jreader.createAndShowNewSourceTab(url, title, match.getFragment());
                     updateStatus("");
                 }
             }.execute();

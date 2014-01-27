@@ -132,7 +132,7 @@ public class JavaClassOrInterface extends AbstractJavaObject<ClassOrInterfaceDec
      * Extract the short declaration.
      */
     @Override
-    void extractDeclaration() {
+    protected void extractDeclaration() {
         declaration = typeDeclaration.getName();
     }
 

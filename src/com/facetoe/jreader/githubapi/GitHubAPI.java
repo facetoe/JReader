@@ -12,18 +12,20 @@ import java.net.*;
 /**
  * Created by facetoe on 19/01/14.
  */
-public class GitHubAPI {
+public final class GitHubAPI {
     private static final String USER_AGENT = "Mozilla/5.0";
     private static HttpsURLConnection connection;
     private static final Gson gson = new Gson();
     private static AbstractGithubQuery query;
 
-    public static GithubResponse sendRequest(AbstractGithubQuery query) throws GitHubAPIException {
+    private GitHubAPI() {}
+
+    public static GithubResponse sendRequest(AbstractGithubQuery query) throws GithubAPIException {
         try {
             URL url = generateURL(query);
             return sendRequest(url);
         } catch (Exception e) {
-            throw new GitHubAPIException("Error executing query: " + e.getMessage(), e);
+            throw new GithubAPIException("Error executing query: " + e.getMessage(), e);
         }
     }
 
@@ -50,7 +52,7 @@ public class GitHubAPI {
         if (responseOK()) {
             return readResponse();
         } else {
-            throw new GitHubAPIException(buildErrorMessage(), null);
+            throw new GithubAPIException(buildErrorMessage(), null);
         }
     }
 
@@ -69,6 +71,11 @@ public class GitHubAPI {
         }
     }
 
+    private static GitHubErrorResponse readError() throws IOException {
+        BufferedReader err = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+        return gson.fromJson(read(err), GitHubErrorResponse.class);
+    }
+
     private static String buildErrorMessage() throws IOException {
         GitHubErrorResponse errorResponse = readError();
         String errorMessage = errorResponse.getMessage() + "\n";
@@ -79,11 +86,6 @@ public class GitHubAPI {
             errorMessage += "Resource:" + errorItem.getResource() + "\n";
         }
         return errorMessage;
-    }
-
-    private static GitHubErrorResponse readError() throws IOException {
-        BufferedReader err = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
-        return gson.fromJson(read(err), GitHubErrorResponse.class);
     }
 
     private static String read(BufferedReader in) throws IOException {

@@ -19,7 +19,7 @@ package com.facetoe.jreader.ui;
 
 import com.facetoe.jreader.helpers.JReaderSetup;
 import com.facetoe.jreader.helpers.ProfileManager;
-import com.facetoe.jreader.helpers.Utilities;
+import com.facetoe.jreader.helpers.Util;
 import com.facetoe.jreader.listeners.TextMatchItemClickedListener;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -67,6 +67,7 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
         createAndShowNewReaderTab();
         initAutoCompleteWords();
         displayUI();
+        currentTab = getCurrentTab();
     }
 
     private void constructInterface() {
@@ -127,16 +128,6 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
         tabbedPane.setTabComponentAt(index, tabButton);
     }
 
-    private void updateReaderTitle(String newURL) {
-        String tabTitle = Utilities.extractTitle(newURL);
-        tabbedPane.setTitleAt(tabbedPane.getSelectedIndex(), tabTitle);
-    }
-
-    private void updateReaderLabel(String newURL) {
-        String systemPath = Utilities.browserPathToSystemPath(newURL);
-        updateStatus(systemPath);
-    }
-
     private void showNewReaderTab(JReaderPanel readerPanel) {
         tabbedPane.setSelectedComponent(readerPanel);
         disableNewSourceOption();
@@ -145,7 +136,6 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
 
     private void initAutoCompleteWords() {
         topPanel.addAutoCompleteWords(profileManager.getClassNames());
-        currentTab = getCurrentTab();
     }
 
     private void initListeners() {
@@ -201,17 +191,16 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
         frame.setVisible(true);
     }
 
-
     /**
      * Creates a new source tab and sets it as the currently selected tab.
      */
     public void createAndShowNewSourceTab() {
         JReaderPanel panel = (JReaderPanel) currentTab;
-        final String filePath = Utilities.docPathToSourcePath(panel.getCurrentPath());
-        final String title = Utilities.extractFileName(panel.getCurrentPath());
+        final String filePath = Util.docPathToSourcePath(panel.getCurrentPath());
+        final String title = Util.extractFileName(panel.getCurrentPath());
 
-        if (!Utilities.isGoodSourcePath(filePath)) {
-            Utilities.showErrorDialog(frame, filePath + " does not exist.", "File Not Found");
+        if (!Util.isGoodSourcePath(filePath)) {
+            Util.showErrorDialog(frame, filePath + " does not exist.", "File Not Found");
             log.error("No such file: " + filePath);
             return;
         }
@@ -226,23 +215,35 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
             @Override
             protected void done() {
                 showNewSourceTab(newTab);
+                newTab.scrollToEnclosingObject();
+            }
+        }.execute();
+    }
+
+    public void createAndShowNewSourceTab(URL url, String title, final String fragment) {
+        final JSourcePanel newSourcePanel = new JSourcePanel(url);
+        newSourcePanel.addStatusUpdateListener(this);
+        addCloseButtonToTab(newSourcePanel, title);
+        new SwingWorker() {
+            @Override
+            protected Object doInBackground() throws Exception {
+                newSourcePanel.createDisplay();
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                setCurrentTab(newSourcePanel);
+                newSourcePanel.find(fragment);
             }
         }.execute();
     }
 
     private JSourcePanel createNewSourcePanel(String filePath, String title) {
-        JSourcePanel newSourcePanel = new JSourcePanel(new File(filePath));
+        JSourcePanel newSourcePanel = new JSourcePanel(new File(filePath), this);
         newSourcePanel.addStatusUpdateListener(this);
         addCloseButtonToTab(newSourcePanel, title);
         return newSourcePanel;
-    }
-
-    public JSourcePanel createAndShowNewSourcePanel(URL url, String title) {
-        JSourcePanel sourcePanel = new JSourcePanel(url);
-        addCloseButtonToTab(sourcePanel, title);
-        sourcePanel.createDisplay();
-        setCurrentTab(sourcePanel);
-        return sourcePanel;
     }
 
     private void showNewSourceTab(JSourcePanel newTab) {
@@ -258,7 +259,7 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
 
     public void createAndShowNewGithubSearchPanel(final String searchTerm) {
         GithubSearchPanel gitPanel = new GithubSearchPanel();
-        gitPanel.setOnTextMatchItemClicked(new TextMatchItemClickedListener(this, searchTerm));
+        gitPanel.setOnTextMatchItemClickedListener(new TextMatchItemClickedListener(this));
         gitPanel.addStatusUpdateListener(this);
         addCloseButtonToTab(gitPanel, "Github Search: " + searchTerm);
         gitPanel.searchGithub(searchTerm);
@@ -270,22 +271,15 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
         if (currentTab == null)
             return;
 
-        AutoCompletable autoCompleteableTab;
-        if (currentTab instanceof AutoCompletable) {
-            autoCompleteableTab = (AutoCompletable) currentTab;
-
-            /* We want to remove the previous panels words so they don't pollute the new panels auto complete. */
-            ArrayList<String> prevWords = autoCompleteableTab.getAutoCompleteWords();
-            topPanel.removeAutoCompleteWords(prevWords);
-        }
+        removeAutoCompleteWords();
 
         currentTab = getCurrentTab();
         if (currentTab instanceof AutoCompletable) {
-            AutoCompletable tab = (AutoCompletable) currentTab;
-            if (tab instanceof JReaderPanel) {
-                handleReaderTabChange(tab);
+            AutoCompletable newTab = (AutoCompletable) currentTab;
+            if (newTab instanceof JReaderPanel) {
+                handleReaderTabChange(newTab);
             } else {
-                handleSourceTabChange(tab);
+                handleSourceTabChange(newTab);
             }
             /* Remove whatever text is there becuase it's annoying always having to delete it. */
             topPanel.clearSearchBar();
@@ -298,11 +292,12 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
 
     private void handleSourceTabChange(AutoCompletable tab) {
         disableBrowserButtons();
+        setToggleTreeButton((JSourcePanel) tab);
         topPanel.addAutoCompleteWords(tab.getAutoCompleteWords());
     }
 
     private void handleReaderTabChange(AutoCompletable tab) {
-        topPanel.setSourceButton(TopPanel.SOURCE_BUTTON, new NewSourceTabAction(this));
+        topPanel.setSourceButton(new NewSourceTabAction(this));
         topPanel.addAutoCompleteWords(tab.getAutoCompleteWords());
         String currentPath = ((JReaderPanel) currentTab).getCurrentPath();
         maybeEnableSourceOption(currentPath);
@@ -312,12 +307,17 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
     // Decide whether or not to show the New Source option.
     private void maybeEnableSourceOption(String newPath) {
         assert newPath != null;
-        String srcPath = Utilities.docPathToSourcePath(newPath);
-        if (Utilities.isGoodSourcePath(srcPath)) {
+        String srcPath = Util.docPathToSourcePath(newPath);
+        if (Util.isGoodSourcePath(srcPath)) {
             enableNewSourceOption();
         } else {
             disableNewSourceOption();
         }
+    }
+
+    // Set the toggle tree action.
+    private void setToggleTreeButton(JSourcePanel newTab) {
+        topPanel.setToggleTreeButton(new ToggleSourceTreeAction(newTab.getTreePane()));
     }
 
     private void enableBrowserButtons() {
@@ -349,12 +349,17 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
         }
     }
 
-    public void addJavaDocClassNames() {
+    public void addAutoCompleteWords() {
         topPanel.addAutoCompleteWords(profileManager.getClassNames());
     }
 
-    public void removeJavaDocClassNames() {
-        topPanel.removeAutoCompleteWords(profileManager.getClassNames());
+    public void removeAutoCompleteWords() {
+        AutoCompletable autoCompleteableTab;
+        if (currentTab instanceof AutoCompletable) {
+            autoCompleteableTab = (AutoCompletable) currentTab;
+            ArrayList<String> prevWords = autoCompleteableTab.getAutoCompleteWords();
+            topPanel.removeAutoCompleteWords(prevWords);
+        }
     }
 
     public void resetSearchBar() {
@@ -369,7 +374,7 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
             log.debug("Success!");
             System.exit(0);
         } catch (IOException e) {
-            Utilities.showErrorDialog(frame, e.getMessage(), "Error Saving Profiles");
+            Util.showErrorDialog(frame, e.getMessage(), "Error Saving Profiles");
             log.error(e.getMessage(), e);
         }
     }
@@ -387,6 +392,18 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
     @Override
     public void changed(ObservableValue<? extends String> observableValue, String oldPath, String newPath) {
         maybeEnableSourceOption(newPath);
+        updateReaderLabel(newPath);
+        updateReaderTitle(newPath);
+    }
+
+    private void updateReaderTitle(String newURL) {
+        String tabTitle = Util.extractTitle(newURL);
+        tabbedPane.setTitleAt(tabbedPane.getSelectedIndex(), tabTitle);
+    }
+
+    private void updateReaderLabel(String newURL) {
+        String systemPath = Util.browserPathToSystemPath(newURL);
+        updateStatus(systemPath);
     }
 
     public static void main(String[] args) {

@@ -17,7 +17,7 @@
 */
 package com.facetoe.jreader.ui;
 
-import com.facetoe.jreader.helpers.Utilities;
+import com.facetoe.jreader.helpers.Util;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,6 +39,8 @@ class TopPanel extends JPanel {
     private JButton btnHome;
     private JButton btnSearch;
     private JButton btnSource;
+    private ImageIcon sourceIcon;
+    private ImageIcon treeIcon;
     private final AutoCompleteTextField searchBar = new AutoCompleteTextField();
 
     private final JReader jReader;
@@ -54,20 +56,26 @@ class TopPanel extends JPanel {
      * Create the buttons and add icons.
      */
     private void initButtons() {
-        btnBack = new JButton(Utilities.readIcon(this.getClass().getResourceAsStream
+        btnBack = new JButton(Util.readIcon(this.getClass().getResourceAsStream
                 ("/com/facetoe/jreader/resources/icons/arrow-left.png"), 20, 20));
 
-        btnNext = new JButton(Utilities.readIcon(this.getClass().getResourceAsStream
+        btnNext = new JButton(Util.readIcon(this.getClass().getResourceAsStream
                 ("/com/facetoe/jreader/resources/icons/arrow-right.png"), 20, 20));
 
-        btnHome = new JButton(Utilities.readIcon(this.getClass().getResourceAsStream
+        btnHome = new JButton(Util.readIcon(this.getClass().getResourceAsStream
                 ("/com/facetoe/jreader/resources/icons/home.png"), 20, 20));
 
-        btnSearch = new JButton(Utilities.readIcon(this.getClass().getResourceAsStream
+        btnSearch = new JButton(Util.readIcon(this.getClass().getResourceAsStream
                 ("/com/facetoe/jreader/resources/icons/search.png"), 20, 20));
 
+        sourceIcon = Util.readIcon(this.getClass().getResourceAsStream
+                ("/com/facetoe/jreader/resources/icons/javaSource.png"), 20, 20);
+
+        treeIcon = Util.readIcon(this.getClass().getResourceAsStream(
+                "/com/facetoe/jreader/resources/icons/tree_diagramm.png"), 20, 20);
+
         btnSource = new JButton();
-        setSourceButton(SOURCE_BUTTON, new NewSourceTabAction(this.jReader));
+        setSourceButton(new NewSourceTabAction(this.jReader));
     }
 
     /**
@@ -101,18 +109,14 @@ class TopPanel extends JPanel {
         return rightBar;
     }
 
-    public void setSourceButton(int type, Action action) {
-        if (type == SOURCE_BUTTON) {
+    public void setSourceButton(Action action) {
             btnSource.setAction(action);
-            btnSource.setIcon(Utilities.readIcon(this.getClass().getResourceAsStream
-                    ("/com/facetoe/jreader/resources/icons/javaSource.png"), 20, 20));
-        } else if (type == TREE_BUTTON) {
-            btnSource.setAction(action);
-            btnSource.setIcon(Utilities.readIcon(this.getClass().getResourceAsStream
-                    ("/com/facetoe/jreader/resources/icons/tree_diagramm.png"), 20, 20));
-        } else {
-            throw new IllegalArgumentException("No such type: " + type);
-        }
+            btnSource.setIcon(sourceIcon);
+    }
+
+    public void setToggleTreeButton(Action action) {
+        btnSource.setAction(action);
+        btnSource.setIcon(treeIcon);
     }
 
     public JButton getBtnBack() {

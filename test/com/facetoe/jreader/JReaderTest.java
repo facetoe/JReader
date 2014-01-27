@@ -2,7 +2,7 @@ package com.facetoe.jreader;
 
 import com.facetoe.jreader.helpers.Config;
 import com.facetoe.jreader.helpers.ProfileManager;
-import com.facetoe.jreader.helpers.Utilities;
+import com.facetoe.jreader.helpers.Util;
 
 import java.io.File;
 
@@ -19,6 +19,6 @@ public class JReaderTest {
     public static final String TEST_PROFILE_NAME = "test";
     public static final String TEST_PROFILE_DOC_DIR = BASE_PATH + "testFiles/swingx-all-1.6.4-javadoc" + File.separator;
     public static final String TEST_PROFILE_SOURCE_DIR = BASE_PATH + "testFiles/swingx-all-1.6.4-sources" + File.separator;
-    public static final String TEST_PROFILE_DIR = Utilities.constructPath(Config.getString(Config.PROFILE_DIR), TEST_PROFILE_NAME);
+    public static final String TEST_PROFILE_DIR = Util.constructPath(Config.getString(Config.PROFILE_DIR), TEST_PROFILE_NAME);
     public static final String TEST_TEXT_FILE_PATH = BASE_PATH + "testFiles/testTextFile.txt";
 }

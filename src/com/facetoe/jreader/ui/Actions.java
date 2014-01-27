@@ -17,8 +17,7 @@
 */
 package com.facetoe.jreader.ui;
 
-import com.facetoe.jreader.helpers.Utilities;
-import org.omg.PortableInterceptor.ACTIVE;
+import com.facetoe.jreader.helpers.Util;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -32,20 +31,17 @@ import java.awt.event.KeyEvent;
  */
 
 
-
 /**
  * Action to expand and collapse the SourceTree.
  */
 class ToggleSourceTreeAction extends AbstractAction {
 
     private final SlideOutSourceTree treePane;
-    private final SourceTree tree;
 
-    public ToggleSourceTreeAction(SlideOutSourceTree treePane, SourceTree tree) {
+    public ToggleSourceTreeAction(SlideOutSourceTree treePane) {
         super("Toggle Tree");
         putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_T));
         this.treePane = treePane;
-        this.tree = tree;
     }
 
     @Override
@@ -55,8 +51,7 @@ class ToggleSourceTreeAction extends AbstractAction {
         } else {
             treePane.setCollapsed(true);
         }
-        tree.setSelectionRow(0);
-        tree.requestFocus();
+        treePane.selectFirstEntry();
     }
 }
 
@@ -82,8 +77,8 @@ class NewSourceTabAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {
         if (jReader.getCurrentTab() instanceof JReaderPanel) {
             JReaderPanel readerTab = (JReaderPanel) jReader.getCurrentTab();
-            String systemPath = Utilities.docPathToSourcePath(readerTab.getCurrentPath());
-            if (Utilities.isGoodSourcePath(systemPath)) {
+            String systemPath = Util.docPathToSourcePath(readerTab.getCurrentPath());
+            if (Util.isGoodSourcePath(systemPath)) {
                 jReader.createAndShowNewSourceTab();
             }
         }

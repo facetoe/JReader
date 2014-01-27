@@ -105,7 +105,7 @@ public abstract class AbstractJavaObject<T> {
     abstract void extractDeclaration();
 
 
-    abstract public int getModifiers();
+    public abstract int getModifiers();
 
     /**
      * Get the short declaration.

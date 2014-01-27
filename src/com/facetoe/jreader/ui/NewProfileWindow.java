@@ -18,7 +18,7 @@
 package com.facetoe.jreader.ui;
 
 import com.facetoe.jreader.helpers.ProfileManager;
-import com.facetoe.jreader.helpers.Utilities;
+import com.facetoe.jreader.helpers.Util;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -83,8 +83,8 @@ public class NewProfileWindow extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 File chosenDir = showFileDialog();
                 if (chosenDir != null) {
-                    if (!Utilities.isJavaDocsDir(chosenDir)) {
-                        Utilities.showErrorDialog(parentPanel, "Invalid documentation directory", "Error");
+                    if (!Util.isJavaDocsDir(chosenDir)) {
+                        Util.showErrorDialog(parentPanel, "Invalid documentation directory", "Error");
                     } else {
                         txtDocs.setText(chosenDir.getAbsolutePath());
                     }

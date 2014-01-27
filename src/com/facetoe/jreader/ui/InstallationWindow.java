@@ -70,6 +70,7 @@ public class InstallationWindow implements ZipProgressListener {
             installWorker.cancel(true);
 
         dialog.dispose();
+        System.exit(0);
     }
 
     private void install() {
@@ -102,18 +103,18 @@ public class InstallationWindow implements ZipProgressListener {
 
         } catch (Exception e) {
             log.error(e);
-            Utilities.showErrorDialog(dialog, e.getMessage(), "Error Installing JReader");
+            Util.showErrorDialog(dialog, e.getMessage(), "Error Installing JReader");
             dialog.dispose();
         }
     }
 
     private void createDefaultProfile() throws IOException {
         ProfileManager profileManager = ProfileManager.getInstance();
-        File docDir = Utilities.getFileFromPathElements(
+        File docDir = Util.getFileFromPathElements(
                 Config.getString(Config.DATA_DIR),
                 Config.JAVA_DOCS_ZIP_FILE_NAME,
                 "docs");
-        File srcDir = Utilities.getFileFromPathElements(
+        File srcDir = Util.getFileFromPathElements(
                 Config.getString(Config.DATA_DIR),
                 Config.JAVA_LANG_ZIP_FILE_NAME);
 
@@ -123,14 +124,14 @@ public class InstallationWindow implements ZipProgressListener {
     }
 
     private void unzipSource() throws Exception {
-        File zipFile = Utilities.getResourceAsFile(getClass(), SOURCE_REFERENCE);
-        String destinationPath = Utilities.constructPath(Config.getString(Config.DATA_DIR), Config.JAVA_LANG_ZIP_FILE_NAME);
+        File zipFile = Util.getResourceAsFile(getClass(), SOURCE_REFERENCE);
+        String destinationPath = Util.constructPath(Config.getString(Config.DATA_DIR), Config.JAVA_LANG_ZIP_FILE_NAME);
         unZipper.unzip(zipFile, destinationPath);
     }
 
     private void unzipDocs() throws Exception {
-        File zipFile = Utilities.getResourceAsFile(getClass(), DOCS_REFERENCE);
-        String destinationPath = Utilities.constructPath(Config.getString(Config.DATA_DIR), Config.JAVA_DOCS_ZIP_FILE_NAME);
+        File zipFile = Util.getResourceAsFile(getClass(), DOCS_REFERENCE);
+        String destinationPath = Util.constructPath(Config.getString(Config.DATA_DIR), Config.JAVA_DOCS_ZIP_FILE_NAME);
         unZipper.unzip(zipFile, destinationPath);
     }
 
@@ -156,12 +157,12 @@ public class InstallationWindow implements ZipProgressListener {
      */
     private void $$$setupUI$$$() {
         panel = new JPanel();
-        panel.setLayout(new GridLayoutManager(3, 1, new Insets(10, 10, 10, 10), -1, -1));
+        panel.setLayout(new GridLayoutManager(4, 1, new Insets(10, 10, 10, 10), -1, -1));
         panel.setPreferredSize(new Dimension(500, 105));
         panel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), null));
         pnlStatus = new JPanel();
         pnlStatus.setLayout(new FormLayout("fill:d:noGrow,left:4dlu:noGrow,fill:416px:noGrow", "center:d:grow"));
-        panel.add(pnlStatus, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel.add(pnlStatus, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label1 = new JLabel();
         label1.setText("Status: ");
         CellConstraints cc = new CellConstraints();
@@ -171,18 +172,25 @@ public class InstallationWindow implements ZipProgressListener {
         pnlStatus.add(lblStatus, cc.xy(3, 1));
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new FormLayout("fill:d:grow", "center:d:grow"));
-        panel.add(panel1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel.add(panel1, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         progressBar = new JProgressBar();
         panel1.add(progressBar, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new FormLayout("fill:d:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow", "center:d:grow"));
-        panel.add(panel2, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel.add(panel2, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         btnInstall = new JButton();
         btnInstall.setText("Install");
         panel2.add(btnInstall, cc.xy(1, 1));
         btnCancel = new JButton();
         btnCancel.setText("Cancel");
         panel2.add(btnCancel, cc.xy(3, 1));
+        final JPanel panel3 = new JPanel();
+        panel3.setLayout(new FormLayout("fill:d:grow", "center:d:grow"));
+        panel.add(panel3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JLabel label2 = new JLabel();
+        label2.setFont(new Font(label2.getFont().getName(), Font.BOLD, 16));
+        label2.setText("JReader Installation");
+        panel3.add(label2, cc.xy(1, 1, CellConstraints.CENTER, CellConstraints.DEFAULT));
     }
 
     /**

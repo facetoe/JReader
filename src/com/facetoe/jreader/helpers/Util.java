@@ -38,9 +38,9 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Scanner;
 
-public class Utilities {
-    private static final Logger log = Logger.getLogger(Utilities.class);
-    private final static String DEFAULT_THEME = "/com/facetoe/jreader/resources/themes/ideaTheme.xml";
+public class Util {
+    private static final Logger log = Logger.getLogger(Util.class);
+    private static final String DEFAULT_THEME = "/com/facetoe/jreader/resources/themes/ideaTheme.xml";
 
 
     /**
@@ -205,7 +205,7 @@ public class Utilities {
     }
 
     public static String getClassNameFromPath(String path) {
-        String title = Utilities.extractTitle(path);
+        String title = Util.extractTitle(path);
         title = title.substring(0, title.indexOf(" "));
         if (title.contains(".html")) {
             title = title.replace(".html", "");
@@ -447,7 +447,7 @@ public class Utilities {
 
     public static Theme loadTheme(String reference) {
         try {
-            InputStream in = Utilities.class.getResourceAsStream(reference);
+            InputStream in = Util.class.getResourceAsStream(reference);
             return Theme.load(in);
         } catch (IOException e) {
             e.printStackTrace();

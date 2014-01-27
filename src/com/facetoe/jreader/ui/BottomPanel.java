@@ -34,7 +34,7 @@ import java.awt.event.ActionListener;
  */
 
 
-class BottomPanel extends JPanel implements ActionListener {
+class BottomPanel extends JPanel {
 
     private final JProgressBar progressBar = new JProgressBar();
     private final JLabel lblStatus = new JLabel();
@@ -60,10 +60,5 @@ class BottomPanel extends JPanel implements ActionListener {
 
     public JLabel getLblStatus() {
         return lblStatus;
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        lblStatus.setText(e.getActionCommand());
     }
 }

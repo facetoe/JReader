@@ -110,21 +110,26 @@ public class Config {
     }
 
     private static void setEntry(String key, String value) {
+        FileInputStream in = null;
         try {
-            properties.load(new FileInputStream(configFilePath));
+            in = new FileInputStream(configFilePath);
+            properties.load(in);
             properties.setProperty(key, value);
             properties.store(new FileOutputStream(configFilePath), null);
         } catch (IOException ex) {
             log.error(ex);
-        }
+        } 
     }
+
 
     private static String getEntry(String key) {
         try {
-            properties.load(new FileInputStream(configFilePath));
+            FileInputStream in = null;
+            in = new FileInputStream(configFilePath);
+            properties.load(in);
         } catch (IOException ex) {
             log.error(ex);
-        }
+        } 
         return properties.getProperty(key);
     }
 }

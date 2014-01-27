@@ -2,12 +2,12 @@
 package com.facetoe.jreader.ui;
 
 import com.facetoe.jreader.githubapi.GitHubAPI;
-import com.facetoe.jreader.githubapi.GitHubAPIException;
+import com.facetoe.jreader.githubapi.GithubAPIException;
 import com.facetoe.jreader.githubapi.SearchQuery;
 import com.facetoe.jreader.githubapi.SearchResponse;
 import com.facetoe.jreader.githubapi.apiobjects.Item;
 import com.facetoe.jreader.githubapi.apiobjects.TextMatch;
-import com.facetoe.jreader.helpers.Utilities;
+import com.facetoe.jreader.helpers.Util;
 
 import javax.swing.*;
 import java.awt.*;
@@ -66,7 +66,7 @@ public class GithubSearchPanel extends JPanel {
                 panel.revalidate();
                 panel.repaint();
             }
-        } catch (GitHubAPIException e) {
+        } catch (GithubAPIException e) {
             e.printStackTrace();
         }
     }
@@ -76,7 +76,7 @@ public class GithubSearchPanel extends JPanel {
         int cnt = 0;
         for (Item item : response.getItems()) {
             for (TextMatch textMatch : item.getText_matches()) {
-                updateProgress((int)Utilities.percent(++cnt, len));
+                updateProgress((int) Util.percent(++cnt, len));
                 addTextMatchItem(textMatch);
             }
         }
@@ -90,7 +90,7 @@ public class GithubSearchPanel extends JPanel {
         panel.revalidate();
     }
 
-    public void setOnTextMatchItemClicked(OnTextMatchItemClickedListener listener) {
+    public void setOnTextMatchItemClickedListener(OnTextMatchItemClickedListener listener) {
         this.itemClickedListener = listener;
     }
 

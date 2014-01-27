@@ -36,8 +36,8 @@ public class JReaderSetup {
      * @return Whether or not we need to install JReader.
      */
     public static boolean needsInstallation() {
-        return !new File(Config.configFilePath).exists()
-                && !Config.getBool(Config.HAS_DEFAULT_PROFILE);
+        return !(new File(Config.configFilePath).exists()
+                && Config.getBool(Config.HAS_DEFAULT_PROFILE));
     }
 
     /**
@@ -46,7 +46,7 @@ public class JReaderSetup {
      * @throws IOException
      */
     public static void createDirectoriesAndConfig() throws IOException {
-        File dataDir = Utilities.getFileFromPathElements(
+        File dataDir = Util.getFileFromPathElements(
                 System.getProperty("user.home"),
                 Config.DATA_DIR_NAME,
                 File.separator);
@@ -57,7 +57,7 @@ public class JReaderSetup {
 
     private static void maybeCreateProfileDir(File dataDir) throws IOException {
         boolean wasSuccess;
-        File profileDir = Utilities.getFileFromPathElements(dataDir.getAbsolutePath(), Config.PROFILE_DIR_NAME);
+        File profileDir = Util.getFileFromPathElements(dataDir.getAbsolutePath(), Config.PROFILE_DIR_NAME);
         if (!profileDir.exists()) {
             wasSuccess = profileDir.mkdirs();
             if (wasSuccess) {

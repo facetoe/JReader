@@ -98,13 +98,7 @@ class SourceTree extends JTree {
 
     private SourceItemNode parseClass(JavaClassOrInterface aClass) {
         String nodeTitle = aClass.getDeclaration();
-        SourceItemNode classNode;
-
-        if (aClass.getType() == JavaClassOrInterface.CLASS) {
-            classNode = new SourceItemNode(nodeTitle, aClass);
-        } else {
-            classNode = new SourceItemNode(nodeTitle, aClass);
-        }
+        SourceItemNode classNode = new SourceItemNode(nodeTitle, aClass);
 
         if (aClass.hasConstructors()) {
             classNode.add(extractConstructors(aClass));

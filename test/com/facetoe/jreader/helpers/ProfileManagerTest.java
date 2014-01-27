@@ -38,9 +38,9 @@ public class ProfileManagerTest extends JReaderTest {
     @Test
     public void testNewProfile() throws Exception {
         pm.newProfile(TEST_PROFILE_NAME, new File(TEST_PROFILE_DOC_DIR), new File(TEST_PROFILE_SOURCE_DIR));
-        assertEquals(true, (Utilities.getFileFromPathElements(TEST_PROFILE_DIR, TEST_PROFILE_NAME + ".ser")).exists());
-        assertEquals(true, (Utilities.getFileFromPathElements(TEST_PROFILE_DIR)).exists());
-        assertEquals(true, (Utilities.getFileFromPathElements(TEST_PROFILE_DIR, Config.CLASS_DATA_FILE_NAME)).exists());
+        assertEquals(true, (Util.getFileFromPathElements(TEST_PROFILE_DIR, TEST_PROFILE_NAME + ".ser")).exists());
+        assertEquals(true, (Util.getFileFromPathElements(TEST_PROFILE_DIR)).exists());
+        assertEquals(true, (Util.getFileFromPathElements(TEST_PROFILE_DIR, Config.CLASS_DATA_FILE_NAME)).exists());
     }
 
     @Test
@@ -114,8 +114,8 @@ public class ProfileManagerTest extends JReaderTest {
     @Test
     public void testDeleteProfile() throws Exception {
         pm.deleteProfile(TEST_PROFILE_NAME);
-        assertEquals(false, (Utilities.getFileFromPathElements(TEST_PROFILE_DIR, TEST_PROFILE_NAME + ".ser")).exists());
-        assertEquals(false, (Utilities.getFileFromPathElements(TEST_PROFILE_DIR, Config.CLASS_DATA_FILE_NAME)).exists());
-        assertEquals(false, (Utilities.getFileFromPathElements(TEST_PROFILE_DIR)).exists());
+        assertEquals(false, (Util.getFileFromPathElements(TEST_PROFILE_DIR, TEST_PROFILE_NAME + ".ser")).exists());
+        assertEquals(false, (Util.getFileFromPathElements(TEST_PROFILE_DIR, Config.CLASS_DATA_FILE_NAME)).exists());
+        assertEquals(false, (Util.getFileFromPathElements(TEST_PROFILE_DIR)).exists());
     }
 }
