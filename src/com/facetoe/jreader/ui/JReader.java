@@ -76,14 +76,14 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
         //frame.setExtendedState(Frame.MAXIMIZED_BOTH);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        frame.setJMenuBar(new MenuBar(this));
-        menuBar = new MenuBar(this);
         topPanel = new TopPanel(this);
         frame.add(topPanel, BorderLayout.NORTH);
         bottomPanel = new BottomPanel();
         frame.add(bottomPanel, BorderLayout.SOUTH);
         tabbedPane = new JTabbedPane();
         frame.add(tabbedPane, BorderLayout.CENTER);
+        frame.setJMenuBar(new MenuBar(this));
+        menuBar = new MenuBar(this);
         frame.pack();
     }
 
@@ -221,7 +221,7 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
     }
 
     public void createAndShowNewSourceTab(URL url, String title, final String fragment) {
-        final JSourcePanel newSourcePanel = new JSourcePanel(url);
+        final JSourcePanel newSourcePanel = new JSourcePanel(url, this);
         newSourcePanel.addStatusUpdateListener(this);
         addCloseButtonToTab(newSourcePanel, title);
         new SwingWorker() {
@@ -287,7 +287,8 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
     }
 
     public JPanel getCurrentTab() {
-        return (JPanel) tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
+        int index = tabbedPane.getSelectedIndex();
+        return index != -1 ? (JPanel) tabbedPane.getComponentAt(index): null;
     }
 
     private void handleSourceTabChange(AutoCompletable tab) {
@@ -385,7 +386,7 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
     }
 
     @Override
-    public void updateProgress(int progress) {
+    public void updateProgressBar(int progress) {
         bottomPanel.getProgressBar().setValue(progress);
     }
 

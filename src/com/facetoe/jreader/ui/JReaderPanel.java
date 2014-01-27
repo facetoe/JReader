@@ -232,7 +232,7 @@ class JReaderPanel extends JPanel implements AutoCompletable, Navigatable {
 
     private void updateProgress(int progress) {
         for (StatusUpdateListener listener : listeners) {
-            listener.updateProgress(progress);
+            listener.updateProgressBar(progress);
         }
     }
 }

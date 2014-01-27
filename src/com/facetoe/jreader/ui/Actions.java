@@ -67,12 +67,6 @@ class NewSourceTabAction extends AbstractAction {
         this.jReader = jReader;
     }
 
-    NewSourceTabAction(JReader jReader, String title) {
-        super(title);
-        putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_S));
-        this.jReader = jReader;
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         if (jReader.getCurrentTab() instanceof JReaderPanel) {

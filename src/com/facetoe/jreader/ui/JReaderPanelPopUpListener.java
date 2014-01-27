@@ -90,9 +90,10 @@ class JReaderPanelPopUpListener implements MouseListener {
     private JMenuItem buildViewSourceItem() {
         JMenuItem viewSourceItem = new JMenuItem();
         String systemPath = Util.docPathToSourcePath(readerPanel.getCurrentPath());
-        if (Util.isGoodSourcePath(systemPath)) {
-            String className = Util.getClassNameFromPath(readerPanel.getCurrentPath());
-            viewSourceItem.setAction(new NewSourceTabAction(reader, "Show source for " + className));
+        viewSourceItem.setAction(new NewSourceTabAction(reader));
+
+        if (!Util.isGoodSourcePath(systemPath)) {
+            viewSourceItem.setEnabled(false);
         }
         return viewSourceItem;
     }

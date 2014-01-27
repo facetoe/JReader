@@ -114,7 +114,7 @@ public class GithubSearchPanel extends JPanel {
             @Override
             public void run() {
                 for (StatusUpdateListener statusUpdateListener : statusUpdateListeners) {
-                    statusUpdateListener.updateProgress(progress);
+                    statusUpdateListener.updateProgressBar(progress);
                 }
             }
         });

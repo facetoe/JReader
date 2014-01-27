@@ -19,6 +19,7 @@ package com.facetoe.jreader.ui;
 
 import com.facetoe.jreader.helpers.Config;
 import com.facetoe.jreader.helpers.ProfileManager;
+import com.facetoe.jreader.helpers.Util;
 
 import javax.swing.*;
 import javax.swing.event.MenuEvent;
@@ -199,11 +200,30 @@ class MenuBar extends JMenuBar {
         return item;
     }
 
+    private JMenuItem buildQuitItem() {
+        return new JMenuItem(new QuitAction(jReader));
+    }
+
     private void createWindowMenu() {
         JMenu windowMenu = new JMenu("Window");
         mnuNewSourceTab = buildSimpleMenuItem(new NewSourceTabAction(jReader));
         windowMenu.add(mnuNewSourceTab);
+        windowMenu.addMenuListener(new MenuListener() {
+            @Override
+            public void menuSelected(MenuEvent e) {
+                handleWindowMenuSelected();
+            }
 
+            @Override
+            public void menuDeselected(MenuEvent e) {
+
+            }
+
+            @Override
+            public void menuCanceled(MenuEvent e) {
+
+            }
+        });
         JMenuItem mnuNewReaderTab = buildSimpleMenuItem(new NewReaderTabAction(jReader));
         windowMenu.add(mnuNewReaderTab);
         add(windowMenu);
@@ -215,8 +235,24 @@ class MenuBar extends JMenuBar {
         return menuItem;
     }
 
-    private JMenuItem buildQuitItem() {
-        return new JMenuItem(new QuitAction(jReader));
+    private void handleWindowMenuSelected() {
+        JPanel currentTab = jReader.getCurrentTab();
+        if(currentTab == null) {
+            mnuNewSourceTab.setEnabled(false);
+        } else if(currentTab instanceof JReaderPanel) {
+            maybeEnableSourceItem((JReaderPanel) currentTab);
+        }
+    }
+
+    private void maybeEnableSourceItem(JReaderPanel currentTab) {
+        String sourcePath = Util.docPathToSourcePath(currentTab.getCurrentPath());
+        if(Util.isGoodSourcePath(sourcePath)) {
+            System.out.println("Good Path: " + sourcePath);
+            mnuNewSourceTab.setEnabled(true);
+        } else {
+            System.out.println("Bad Path: " + sourcePath);
+            mnuNewSourceTab.setEnabled(false);
+        }
     }
 
     // TODO should all the reader panels be updated here?

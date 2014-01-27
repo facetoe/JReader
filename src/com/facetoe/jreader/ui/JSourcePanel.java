@@ -46,12 +46,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.regex.PatternSyntaxException;
 
-interface StatusUpdateListener {
-    void updateStatus(String message);
-
-    void updateProgress(int progress);
-}
-
 /**
  * Displays source code with syntax highlighting and cold folding.
  */
@@ -90,8 +84,9 @@ public class JSourcePanel extends JPanel implements AutoCompletable {
      *
      * @param url
      */
-    public JSourcePanel(URL url) {
+    public JSourcePanel(URL url, JReader reader) {
         this.fileURL = url;
+        this.reader = reader;
         init();
     }
 
@@ -120,7 +115,8 @@ public class JSourcePanel extends JPanel implements AutoCompletable {
         item.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                reader.createAndShowNewGithubSearchPanel(codeArea.getSelectedText());
+                String selectedText = codeArea.getSelectedText();
+                reader.createAndShowNewGithubSearchPanel(selectedText);
             }
         });
         return item;
