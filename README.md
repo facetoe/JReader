@@ -19,6 +19,37 @@ To make life easier, there are some handy keyboard shortcuts as well:
 * ctrl-w: Close tab
 * ctrl-q: Quit
 
+##Screenshots
+
+![Default Profile Home](http://imgur.com/dep2f3K)
+
+![Class Documentation](http://imgur.com/CePY1IT)
+
+![Source Code View](http://imgur.com/rVbmkEC)
+
+![Source Code View With TreeView](http://imgur.com/HsR3KYq)
+
+![Source Code View With Expanded TreeView](http://imgur.com/SvFApeQ)
+
+![Search Options](http://imgur.com/ROW38eh)
+
+![Regexp Search](http://imgur.com/l2uVomg)
+
+![Github Search](http://imgur.com/8sZXRsT)
+
+![Github Search Results](http://imgur.com/5fwV0gM)
+
+![Github Search Result File View](http://imgur.com/RZPDTYf)
+
+![Create New Profile](http://imgur.com/Wgy8fMk)
+
+![SwingX Profile](http://imgur.com/lVWZ4q8)
+
+![CollapsiblePane Docs](http://imgur.com/NbVoIVl)
+
+![CollapsiblePane Source](http://imgur.com/angGDe2)
+
+
 
 ##How do I install JReader?
 Just start it up. On first launch JReader will ask for the location of the Java7 documentation on your computer. If you don't already have it, you can get it [here](http://www.oracle.com/technetwork/java/javase/documentation/java-se-7-doc-download-435117.html). Next, JReader will download the complete Java 7 source code, extract it and you're good to go. 
