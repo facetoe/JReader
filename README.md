@@ -21,33 +21,33 @@ To make life easier, there are some handy keyboard shortcuts as well:
 
 ##Screenshots
 
-![Default Profile Home](http://imgur.com/dep2f3K)
+![Default Profile Home](http://imgur.com/dep2f3K.png)
 
-![Class Documentation](http://imgur.com/CePY1IT)
+![Class Documentation](http://imgur.com/CePY1IT.png)
 
-![Source Code View](http://imgur.com/rVbmkEC)
+![Source Code View](http://imgur.com/rVbmkEC.png)
 
-![Source Code View With TreeView](http://imgur.com/HsR3KYq)
+![Source Code View With TreeView](http://imgur.com/HsR3KYq.png)
 
-![Source Code View With Expanded TreeView](http://imgur.com/SvFApeQ)
+![Source Code View With Expanded TreeView](http://imgur.com/SvFApeQ.png)
 
-![Search Options](http://imgur.com/ROW38eh)
+![Search Options](http://imgur.com/ROW38eh.png)
 
-![Regexp Search](http://imgur.com/l2uVomg)
+![Regexp Search](http://imgur.com/l2uVomg.png)
 
-![Github Search](http://imgur.com/8sZXRsT)
+![Github Search](http://imgur.com/8sZXRsT.png)
 
-![Github Search Results](http://imgur.com/5fwV0gM)
+![Github Search Results](http://imgur.com/5fwV0gM.png)
 
-![Github Search Result File View](http://imgur.com/RZPDTYf)
+![Github Search Result File View](http://imgur.com/RZPDTYf.png)
 
-![Create New Profile](http://imgur.com/Wgy8fMk)
+![Create New Profile](http://imgur.com/Wgy8fMk.png)
 
-![SwingX Profile](http://imgur.com/lVWZ4q8)
+![SwingX Profile](http://imgur.com/lVWZ4q8.png)
 
-![CollapsiblePane Docs](http://imgur.com/NbVoIVl)
+![CollapsiblePane Docs](http://imgur.com/NbVoIVl.png)
 
-![CollapsiblePane Source](http://imgur.com/angGDe2)
+![CollapsiblePane Source](http://imgur.com/angGDe2.png)
 
 
 
