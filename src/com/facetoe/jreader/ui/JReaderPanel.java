@@ -68,6 +68,7 @@ class JReaderPanel extends JPanel implements AutoCompletable, Navigatable {
                 createScene();
             }
         });
+        add(jfxPanel);
     }
 
     private void createScene() {
@@ -78,7 +79,6 @@ class JReaderPanel extends JPanel implements AutoCompletable, Navigatable {
         addPathChangeListener();
         addErrorListener();
         jfxPanel.setScene(new Scene(view));
-        add(jfxPanel);
     }
 
     private void addProgressChangeListener() {

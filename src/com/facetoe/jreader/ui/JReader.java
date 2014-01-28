@@ -101,7 +101,7 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
     }
 
     public void createAndShowNewReaderTab() {
-        final JReaderPanel readerPanel = createReaderPanel();
+        JReaderPanel readerPanel = createReaderPanel();
         readerPanel.addStatusUpdateListener(this);
         readerPanel.addPopupListener(new JReaderPanelPopUpListener(this));
         readerPanel.addChangeListener(this);
@@ -114,7 +114,7 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
 
         // If it's the first tab don't add a close button.
         if (tabbedPane.getTabCount() == 0) {
-            tabbedPane.add(title, readerPanel);
+            tabbedPane.addTab(title, readerPanel);
         } else {
             addCloseButtonToTab(readerPanel, title);
         }
@@ -122,7 +122,7 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
     }
 
     private void addCloseButtonToTab(JPanel tab, String title) {
-        tabbedPane.add(title, tab);
+        tabbedPane.addTab(title, tab);
         int index = tabbedPane.indexOfComponent(tab);
         ButtonTabComponent tabButton = new ButtonTabComponent(tabbedPane);
         tabbedPane.setTabComponentAt(index, tabButton);
