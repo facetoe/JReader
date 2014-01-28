@@ -10,34 +10,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0f725b18-1f9a-4ce0-8608-872f2385b0ad" name="Default" comment="Reorganized code into packages.&#10;">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/BottomPanel.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/BottomPanel.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/helpers/Config.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/helpers/Config.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/GitHubAPI.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/GitHubAPI.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/GitHubErrorResponse.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/GitHubErrorResponse.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/GithubSearchPanel.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/GithubSearchPanel.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/InstallationWindow.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/InstallationWindow.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReader.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReader.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReaderPanel.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JReaderPanel.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/helpers/JReaderSetup.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/helpers/JReaderSetup.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JSourcePanel.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/JSourcePanel.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/parsers/JavaDocParser.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/parsers/JavaDocParser.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/parsers/JavaSourceFileParser.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/parsers/JavaSourceFileParser.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/MenuBar.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/MenuBar.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/Navigatable.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/Navigatable.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/NewProfileWindow.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/NewProfileWindow.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/ObjectQuery.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/ObjectQuery.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/OnTextMatchItemClickedListener.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/OnTextMatchItemClickedListener.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/SearchQuery.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/SearchQuery.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/SearchResponse.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/githubapi/SearchResponse.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/SlideOutSourceTree.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/SlideOutSourceTree.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/SourceItemNode.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/SourceItemNode.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/SourceTree.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/SourceTree.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/SourceTreeSelectionListener.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/SourceTreeSelectionListener.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/TextMatchItem.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/TextMatchItem.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/listeners/TextMatchItemClickedListener.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/listeners/TextMatchItemClickedListener.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/TopPanel.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/ui/TopPanel.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/facetoe/jreader/helpers/Util.java" afterPath="$PROJECT_DIR$/src/com/facetoe/jreader/helpers/Util.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/artifacts/JReader_jar.xml" afterPath="$PROJECT_DIR$/.idea/artifacts/JReader_jar.xml" />
     </list>
     <ignored path="JReader.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -344,20 +317,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="jreader" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="JReader" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="JReader" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="lib" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
