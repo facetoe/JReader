@@ -142,7 +142,7 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                saveProfiles();
+                saveAndQuit();
                 System.exit(0);
             }
         });
@@ -363,7 +363,7 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
         topPanel.resetSearchBar();
     }
 
-    public void saveProfiles() {
+    public void saveAndQuit() {
         try {
             log.debug("Saving profiles..");
             profileManager.saveProfiles();

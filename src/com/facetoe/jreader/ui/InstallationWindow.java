@@ -11,8 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Created by facetoe on 18/01/14.
@@ -34,6 +33,7 @@ public class InstallationWindow implements ZipProgressListener {
     private JLabel lblStatus;
     private static final String SOURCE_REFERENCE = "/com/facetoe/jreader/resources/zipfiles/src-jdk.zip";
     private static final String DOCS_REFERENCE = "/com/facetoe/jreader/resources/zipfiles/jdk-7u51-apidocs.zip";
+    private static String TEMP_FILE_NAME;
     private SwingWorker installWorker;
     private UnZipper unZipper;
 
@@ -87,6 +87,7 @@ public class InstallationWindow implements ZipProgressListener {
                 protected Object doInBackground() throws Exception {
                     lblStatus.setText("Initializing...");
                     JReaderSetup.createDirectoriesAndConfig();
+                    TEMP_FILE_NAME = Config.getString(Config.DATA_DIR)  + File.separator + "tmpfile";
                     if (isCancelled())
                         return null;
                     unzipSource();
@@ -108,6 +109,7 @@ public class InstallationWindow implements ZipProgressListener {
             installWorker.execute();
 
         } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
             log.error(e);
             Util.showErrorDialog(dialog, e.getMessage(), "Error Installing JReader");
             dialog.dispose();
@@ -129,16 +131,62 @@ public class InstallationWindow implements ZipProgressListener {
         Config.setBool(Config.HAS_DEFAULT_PROFILE, true);
     }
 
-    private void unzipSource() throws Exception {
-        File zipFile = Util.getResourceAsFile(getClass(), SOURCE_REFERENCE);
-        String destinationPath = Util.constructPath(Config.getString(Config.DATA_DIR), Config.JAVA_LANG_ZIP_FILE_NAME);
-        unZipper.unzip(zipFile, destinationPath);
+    private void unzipSource() {
+        try {
+            InputStream in = getClass().getResourceAsStream(SOURCE_REFERENCE);
+            File zipFile = inputStreamToFile(in);
+            String destinationPath = Util.constructPath(Config.getString(Config.DATA_DIR), Config.JAVA_LANG_ZIP_FILE_NAME);
+            unZipper.unzip(zipFile, destinationPath);
+            new File(TEMP_FILE_NAME).delete();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    private File inputStreamToFile(InputStream in) {
+        System.out.println(in);
+        FileOutputStream outputStream = null;
+        File outFile = new File(TEMP_FILE_NAME);
+        try {
+            outFile.createNewFile();
+            outputStream = new FileOutputStream(outFile);
+            int read = 0;
+            byte[] bytes = new byte[1024];
+
+            while ((read = in.read(bytes)) != -1) {
+                outputStream.write(bytes, 0, read);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (outputStream != null) {
+                try {
+                    outputStream.flush();
+                    outputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+        return new File(outFile.getAbsolutePath());
     }
 
     private void unzipDocs() throws Exception {
-        File zipFile = Util.getResourceAsFile(getClass(), DOCS_REFERENCE);
+        InputStream in = getClass().getResourceAsStream(DOCS_REFERENCE);
+        File zipFile = inputStreamToFile(in);
         String destinationPath = Util.constructPath(Config.getString(Config.DATA_DIR), Config.JAVA_DOCS_ZIP_FILE_NAME);
         unZipper.unzip(zipFile, destinationPath);
+        new File(TEMP_FILE_NAME).delete();
     }
 
 

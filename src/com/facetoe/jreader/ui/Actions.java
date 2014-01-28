@@ -133,6 +133,6 @@ class QuitAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        jReader.saveProfiles();
+        jReader.saveAndQuit();
     }
 }

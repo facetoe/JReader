@@ -92,12 +92,16 @@
     <pathelement location="${basedir}/lib/forms_rt.jar"/>
   </path>
   
+  <path id="library.gson-2.2.4.classpath">
+    <pathelement location="${basedir}/lib/gson-2.2.4.jar"/>
+  </path>
+  
   <path id="library.javaparser-1.0.11-snapshot.classpath">
     <pathelement location="${basedir}/lib/javaparser-1.0.11-SNAPSHOT.jar"/>
   </path>
   
   <path id="library.jfxrt.classpath">
-    <pathelement location="${basedir}/../../../../usr/lib/jvm/java-7-oracle/jre/lib/jfxrt.jar"/>
+    <pathelement location="${basedir}/lib/jfxrt.jar"/>
   </path>
   
   <path id="library.jgoodies-forms.classpath">
@@ -151,10 +155,11 @@
   <property name="module.jdk.bin.jreader" value="${project.jdk.bin}"/>
   <property name="module.jdk.classpath.jreader" value="${project.jdk.classpath}"/>
   
-  <property name="compiler.args.jreader" value="${compiler.args}"/>
+  <property name="compiler.args.jreader" value="-encoding UTF-8 -source 1.6 ${compiler.args}"/>
   
   <property name="jreader.output.dir" value="${module.jreader.basedir}/out/production/JReader"/>
-
+  <property name="jreader.testoutput.dir" value="${module.jreader.basedir}/out/test/JReader"/>
+  
   <path id="jreader.module.bootclasspath">
     <!-- Paths to be included in compilation bootclasspath -->
   </path>
@@ -169,8 +174,9 @@
     <path refid="library.forms_rt.classpath"/>
     <path refid="library.jgoodies-forms.classpath"/>
     <path refid="library.swingx-all-1.6.4.classpath"/>
-    <path refid="library.jfxrt.classpath"/>
     <pathelement location="${idea.home}/lib/junit-4.10.jar"/>
+    <path refid="library.gson-2.2.4.classpath"/>
+    <path refid="library.jfxrt.classpath"/>
   </path>
   
   <path id="jreader.runtime.production.module.classpath">
@@ -183,8 +189,9 @@
     <path refid="library.forms_rt.classpath"/>
     <path refid="library.jgoodies-forms.classpath"/>
     <path refid="library.swingx-all-1.6.4.classpath"/>
-    <path refid="library.jfxrt.classpath"/>
     <pathelement location="${idea.home}/lib/junit-4.10.jar"/>
+    <path refid="library.gson-2.2.4.classpath"/>
+    <path refid="library.jfxrt.classpath"/>
   </path>
   
   <path id="jreader.module.classpath">
@@ -198,11 +205,13 @@
     <path refid="library.forms_rt.classpath"/>
     <path refid="library.jgoodies-forms.classpath"/>
     <path refid="library.swingx-all-1.6.4.classpath"/>
-    <path refid="library.jfxrt.classpath"/>
     <pathelement location="${idea.home}/lib/junit-4.10.jar"/>
+    <path refid="library.gson-2.2.4.classpath"/>
+    <path refid="library.jfxrt.classpath"/>
   </path>
   
   <path id="jreader.runtime.module.classpath">
+    <pathelement location="${jreader.testoutput.dir}"/>
     <pathelement location="${jreader.output.dir}"/>
     <path refid="library.jsoup-1.7.2.classpath"/>
     <path refid="library.rsyntaxtextarea.classpath"/>
@@ -212,8 +221,9 @@
     <path refid="library.forms_rt.classpath"/>
     <path refid="library.jgoodies-forms.classpath"/>
     <path refid="library.swingx-all-1.6.4.classpath"/>
-    <path refid="library.jfxrt.classpath"/>
     <pathelement location="${idea.home}/lib/junit-4.10.jar"/>
+    <path refid="library.gson-2.2.4.classpath"/>
+    <path refid="library.jfxrt.classpath"/>
   </path>
   
   
@@ -234,11 +244,12 @@
   <path id="jreader.module.test.sourcepath">
     <dirset dir="${module.jreader.basedir}">
       <include name="test"/>
-      <include name="testFiles"/>
     </dirset>
   </path>
   
-
+  
+  <target name="compile.module.jreader" depends="compile.module.jreader.production,compile.module.jreader.tests" description="Compile module JReader"/>
+  
   <target name="compile.module.jreader.production" depends="register.custom.compilers" description="Compile module JReader; production classes">
     <mkdir dir="${jreader.output.dir}"/>
     <javac2 destdir="${jreader.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.jreader}/javac">
@@ -256,10 +267,28 @@
       </fileset>
     </copy>
   </target>
-
+  
+  <target name="compile.module.jreader.tests" depends="register.custom.compilers,compile.module.jreader.production" description="compile module JReader; test classes" unless="skip.tests">
+    <mkdir dir="${jreader.testoutput.dir}"/>
+    <javac2 destdir="${jreader.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.jreader}/javac">
+      <compilerarg line="${compiler.args.jreader}"/>
+      <bootclasspath refid="jreader.module.bootclasspath"/>
+      <classpath refid="jreader.module.classpath"/>
+      <src refid="jreader.module.test.sourcepath"/>
+      <patternset refid="excluded.from.compilation.jreader"/>
+    </javac2>
+    
+    <copy todir="${jreader.testoutput.dir}">
+      <fileset dir="${module.jreader.basedir}/test">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
   
   <target name="clean.module.jreader" description="cleanup module">
     <delete dir="${jreader.output.dir}"/>
+    <delete dir="${jreader.testoutput.dir}"/>
   </target>
   
   <target name="init" description="Build initialization">
@@ -282,15 +311,16 @@
     <mkdir dir="${artifact.temp.output.jreader:jar}"/>
     <jar destfile="${temp.jar.path.JReader.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
       <zipfileset dir="${jreader.output.dir}"/>
-      <zipfileset src="${basedir}/lib/jsoup-1.7.2.jar"/>
       <zipfileset src="${basedir}/lib/forms_rt.jar"/>
-      <zipfileset src="${basedir}/lib/rsyntaxtextarea.jar"/>
+      <zipfileset src="${basedir}/lib/gson-2.2.4.jar"/>
+      <zipfileset src="${basedir}/lib/javaparser-1.0.11-SNAPSHOT.jar"/>
+      <zipfileset src="${basedir}/lib/jfxrt.jar"/>
       <zipfileset src="${basedir}/lib/jgoodies-forms.jar"/>
+      <zipfileset src="${basedir}/lib/jsoup-1.7.2.jar"/>
+      <zipfileset src="${basedir}/lib/log4j-1.2.14.jar"/>
+      <zipfileset src="${basedir}/lib/rsyntaxtextarea.jar"/>
       <zipfileset src="${basedir}/lib/swingx-all-1.6.4.jar"/>
       <zipfileset src="${basedir}/lib/zip4j_1.3.1.jar"/>
-      <zipfileset src="${basedir}/lib/log4j-1.2.14.jar"/>
-      <zipfileset src="${basedir}/lib/javaparser-1.0.11-SNAPSHOT.jar"/>
-      <zipfileset src="${basedir}/../../../../usr/lib/jvm/java-7-oracle/jre/lib/jfxrt.jar"/>
     </jar>
     <copy file="${temp.jar.path.JReader.jar}" tofile="${artifact.temp.output.jreader:jar}/JReader.jar"/>
   </target>
