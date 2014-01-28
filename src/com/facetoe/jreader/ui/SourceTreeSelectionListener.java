@@ -30,6 +30,12 @@ import javax.swing.tree.TreePath;
  * Date: 3/11/13
  * Time: 10:04 AM
  */
+
+
+/**
+ * Listener for the SourceTree. When a node is selected, scroll to it and highlight the
+ * items declaration in the JSourcePanel.
+ */
 class SourceTreeSelectionListener implements TreeSelectionListener {
     private final SourceTree sourceTreeView;
     private final JSourcePanel sourcePanel;

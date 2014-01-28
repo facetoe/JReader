@@ -19,8 +19,6 @@ package com.facetoe.jreader.ui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * Created with IntelliJ IDEA.
@@ -30,10 +28,9 @@ import java.awt.event.ActionListener;
  */
 
 /**
- * The bottom panel for the JReader window.
+ * This class creates the bottom panel for the JReader window. It provides methods for setting the
+ * setting the status label and updating the progress bar.
  */
-
-
 class BottomPanel extends JPanel {
 
     private final JProgressBar progressBar = new JProgressBar();
@@ -54,11 +51,11 @@ class BottomPanel extends JPanel {
         add(progressBar, BorderLayout.EAST);
     }
 
-    public JProgressBar getProgressBar() {
-        return progressBar;
+    public void setProgressBarProgress( int progress) {
+        progressBar.setValue(progress);
     }
 
-    public JLabel getLblStatus() {
-        return lblStatus;
+    public void setStatusText(String text) {
+        lblStatus.setText(text);
     }
 }

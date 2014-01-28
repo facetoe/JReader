@@ -30,11 +30,12 @@ import java.util.ArrayList;
  * Date: 28/10/13
  * Time: 11:36 AM
  */
+
+/**
+ * This class creates the panel along the top of the JReader window. It provides methods for manipulating the
+ * buttons and search bar.
+ */
 class TopPanel extends JPanel {
-
-    public static final int SOURCE_BUTTON = 0;
-    public static final int TREE_BUTTON = 1;
-
     private JButton btnBack;
     private JButton btnNext;
     private JButton btnHome;
@@ -165,7 +166,6 @@ class TopPanel extends JPanel {
     public void disableNewSourceButton() {
         btnSource.setEnabled(false);
     }
-
 
     public void addAutoCompleteWords(ArrayList<String> words) {
         searchBar.addWordsToTrie(words);

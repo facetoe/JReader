@@ -16,8 +16,12 @@ import java.net.URL;
  * JReader
  * Created by facetoe on 23/01/14.
  */
+
+/**
+ * Listener for TextMatchItems. When fired, opens a new JSourcePanel tab with the file the
+ * match is from.
+ */
 public class TextMatchItemClickedListener implements OnTextMatchItemClickedListener {
-    private final Logger log = Logger.getLogger(this.getClass());
 
     JReader jreader;
     String searchTerm;

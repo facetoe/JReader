@@ -215,7 +215,7 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
             @Override
             protected void done() {
                 showNewSourceTab(newTab);
-                newTab.scrollToEnclosingObject();
+                newTab.scrollToClassDeclaration();
             }
         }.execute();
     }
@@ -377,12 +377,12 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
 
     @Override
     public void updateStatus(String message) {
-        bottomPanel.getLblStatus().setText(message);
+        bottomPanel.setStatusText(message);
     }
 
     @Override
     public void updateProgressBar(int progress) {
-        bottomPanel.getProgressBar().setValue(progress);
+        bottomPanel.setProgressBarProgress(progress);
     }
 
     @Override

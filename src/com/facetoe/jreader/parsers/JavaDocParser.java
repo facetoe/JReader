@@ -17,6 +17,7 @@
 */
 package com.facetoe.jreader.parsers;
 
+import com.facetoe.jreader.helpers.Util;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -33,7 +34,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Parses the Java documentation and packages it in a HashMap with the class name as key and the relative path as the value.
+ * Parses the Java documentation and packages it in a HashMap with the class name as key
+ * and the relative path as the value.
  */
 public class JavaDocParser {
     private static final Logger log = Logger.getLogger(JavaDocParser.class);
@@ -103,14 +105,10 @@ public class JavaDocParser {
         int cnt = 0;
         HashMap<String, String> classNames = new HashMap<String, String>();
         for (Element link : links) {
-            fireEvent(ActionEvent.ACTION_PERFORMED, link.text(), percent(numLinks, ++cnt));
+            fireEvent(ActionEvent.ACTION_PERFORMED, link.text(), (int)Util.percent(numLinks, ++cnt));
             classNames.put(link.text(), link.attr("href"));
         }
         return classNames;
-    }
-
-    private long percent(int whole, int part) {
-        return (long) ((part * 100.0f) / whole);
     }
 
     void fireEvent(int eventType, String message, long progress) {

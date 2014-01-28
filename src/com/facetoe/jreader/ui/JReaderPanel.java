@@ -40,20 +40,19 @@ import static javafx.concurrent.Worker.State.FAILED;
 
 /**
  * Displays the Java documentation.
+ * Note: Uses JavaFX components to display the html files. Any operations on the JavaFX components
+ * need to be done on a JavaFX thread or bad things happen. This is achieved by using the Platform.runLater
+ * method.
  */
 class JReaderPanel extends JPanel implements AutoCompletable, Navigatable {
     private final Logger log = Logger.getLogger(this.getClass());
 
     private WebEngine engine;
     private JFXPanel jfxPanel;
-
     private final ProfileManager profileManager = ProfileManager.getInstance();
     private final ArrayList<StatusUpdateListener> listeners = new ArrayList<StatusUpdateListener>();
     private String currentPath;
 
-    /**
-     * Create a new JReaderPanel instance. Sets the initial URL to the index of the Java documentation.
-     */
     public JReaderPanel() {
         init();
     }
@@ -62,23 +61,23 @@ class JReaderPanel extends JPanel implements AutoCompletable, Navigatable {
         jfxPanel = new JFXPanel();
         setLayout(new BorderLayout());
         currentPath = profileManager.getHome();
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                createScene();
-            }
-        });
+        createScene();
         add(jfxPanel);
     }
 
     private void createScene() {
-        WebView view = new WebView();
-        view.setContextMenuEnabled(false); // Need for popup, otherwise it displays the default one
-        engine = view.getEngine();
-        addProgressChangeListener();
-        addPathChangeListener();
-        addErrorListener();
-        jfxPanel.setScene(new Scene(view));
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                WebView view = new WebView();
+                view.setContextMenuEnabled(false); // Need for popup, otherwise it displays the default one
+                engine = view.getEngine();
+                addProgressChangeListener();
+                addPathChangeListener();
+                addErrorListener();
+                jfxPanel.setScene(new Scene(view));
+            }
+        });
     }
 
     private void addProgressChangeListener() {
@@ -131,7 +130,6 @@ class JReaderPanel extends JPanel implements AutoCompletable, Navigatable {
                     }
                 });
     }
-
 
     @Override
     public ArrayList<String> getAutoCompleteWords() {

@@ -1,7 +1,6 @@
 
 package com.facetoe.jreader.githubapi;
 
-import com.facetoe.jreader.githubapi.GithubResponse;
 import com.facetoe.jreader.githubapi.apiobjects.GitHubErrorItem;
 
 import java.util.Collections;

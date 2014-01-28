@@ -1,9 +1,8 @@
 package com.facetoe.jreader.githubapi;
 
-import com.facetoe.jreader.githubapi.AbstractGithubQuery;
 
 /**
- * Created by facetoe on 21/01/14.
+ * Sends a request for a github "object" - basically a source file.
  */
 public class ObjectQuery extends AbstractGithubQuery {
     public final String objectURL;

@@ -47,7 +47,7 @@ import java.util.ArrayList;
 import java.util.regex.PatternSyntaxException;
 
 /**
- * Displays source code with syntax highlighting and cold folding.
+ * Displays source code with syntax highlighting, code folding and a SlideOutSourceTree.
  */
 public class JSourcePanel extends JPanel implements AutoCompletable {
     private final Logger log = Logger.getLogger(this.getClass());
@@ -68,9 +68,9 @@ public class JSourcePanel extends JPanel implements AutoCompletable {
     private JReader reader;
 
     /**
-     * Creates a new instance of JSourcePanel and displays the contents of filePath.
+     * Creates a new instance of JSourcePanel and displays the contents of sourceFile.
      *
-     * @param sourceFile of the file containing the code to be displayed.
+     * @param sourceFile The file to display.
      */
     public JSourcePanel(File sourceFile, JReader reader) {
         this.sourceFile = sourceFile;
@@ -98,19 +98,18 @@ public class JSourcePanel extends JPanel implements AutoCompletable {
 
     private void createCodeArea() {
         codeArea = new RSyntaxTextArea();
-        //TODO codeArea.getPopupMenu().add(new JMenuItem("I am YOU an ME"));
         codeArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
         codeArea.setCodeFoldingEnabled(true);
         codeArea.setAntiAliasingEnabled(true);
         codeArea.setEditable(false);
-        codeArea.getPopupMenu().add(createPopupItem());
+        codeArea.getPopupMenu().add(createGithubPopupItem());
 
         RTextScrollPane scrollPane = new RTextScrollPane(codeArea);
         scrollPane.setFoldIndicatorEnabled(true);
         codeScrollPane = scrollPane;
     }
 
-    private JMenuItem createPopupItem() {
+    private JMenuItem createGithubPopupItem() {
         JMenuItem item = new JMenuItem("Search Github for selection");
         item.addActionListener(new ActionListener() {
             @Override
@@ -123,16 +122,16 @@ public class JSourcePanel extends JPanel implements AutoCompletable {
     }
 
     public void createDisplay() {
-        loadTheme();
+        applyTheme();
         setCodeAreaText();
         parseSourceFile();
         sourceTree = new SlideOutSourceTree(this);
-        add("West", sourceTree);
-        add("Center", codeScrollPane);
-        highlightDeclaration(javaSourceFile.getEnclosingObject());
+        add(sourceTree, BorderLayout.WEST);
+        add(codeScrollPane, BorderLayout.CENTER);
+        scrollToClassDeclaration(); // Scrolls to the top level class or interface
     }
 
-    private void loadTheme() {
+    private void applyTheme() {
         Theme theme = Util.loadTheme();
         theme.apply(codeArea);
     }
@@ -142,14 +141,13 @@ public class JSourcePanel extends JPanel implements AutoCompletable {
             String code;
             if (sourceFile != null) {
                 code = Util.readFile(sourceFile.getAbsolutePath(), StandardCharsets.UTF_8);
-                codeArea.setText(code);
             } else {
-                code = Util.readURL(fileURL);
-                codeArea.setText(code);
+                code = Util.readURL(fileURL, StandardCharsets.UTF_8);
             }
+
+            codeArea.setText(code);
         } catch (IOException e) {
-            Util.showErrorDialog(this, e.getMessage(), "Error Loading File");
-            log.error(e.getMessage(), e);
+            showError("Error Loading File", e);
         }
     }
 
@@ -159,34 +157,39 @@ public class JSourcePanel extends JPanel implements AutoCompletable {
     private void parseSourceFile() {
         long startTime = System.nanoTime();
         updateStatus("Parsing: " + sourceFileName);
+        parseSource();
+        updateStatus(buildParseTimeMessage(System.nanoTime() - startTime));
+    }
+
+    private void parseSource() {
         try {
             if (sourceFile != null) {
                 javaSourceFile = parseSourceFile(sourceFile);
             } else {
-                javaSourceFile = parseSourceFile(fileURL);
+                javaSourceFile = parseSourceURL(fileURL);
             }
-            updateStatus(buildParseTimeMessage(System.nanoTime() - startTime));
         } catch (ParseException e) {
-            log.error(e);
+            showError("Error Parsing File", e);
         } catch (IOException e) {
-            log.error(e);
+            showError("Error Loading File", e);
         }
     }
 
-    private JavaSourceFile parseSourceFile(URL url) throws IOException, ParseException {
+    private JavaSourceFile parseSourceURL(URL url) throws IOException, ParseException {
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         InputStream in = null;
         try {
             in = connection.getInputStream();
             return JavaSourceFileParser.parse(in);
-        } catch (IOException e) {
-            log.error(e);
         } finally {
-            if (in != null) {
-                in.close();
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException e) {
+                log.error("Failed to close input stream", e);
             }
         }
-        return null;
     }
 
     private JavaSourceFile parseSourceFile(File file) throws ParseException, IOException {
@@ -208,12 +211,6 @@ public class JSourcePanel extends JPanel implements AutoCompletable {
         return javaSourceFile.getAllDeclarations();
     }
 
-    /**
-     * This method first attempts to highlight the declaration. If nothing is found for the key,
-     * it then attmepts to search for it.
-     *
-     * @param key The declaration that we want to highlight.
-     */
     @Override
     public void handleAutoComplete(String key) {
         AbstractJavaObject obj = javaSourceFile.getObject(key);
@@ -224,7 +221,7 @@ public class JSourcePanel extends JPanel implements AutoCompletable {
         }
     }
 
-    public void scrollToEnclosingObject() {
+    public void scrollToClassDeclaration() {
         highlightDeclaration(javaSourceFile.getEnclosingObject());
     }
 
@@ -295,13 +292,14 @@ public class JSourcePanel extends JPanel implements AutoCompletable {
             }
         } catch (PatternSyntaxException ex) {
             updateStatus("Regex Error: " + ex.getMessage());
-        } catch (Exception e) { //Sometimes RSyntaxArea barfs randomly
+        } catch (Exception e) {
+            //Sometimes RSyntaxArea barfs randomly
             log.error(e);
         }
     }
 
     /**
-     * Add an action listener.
+     * Add a StatusUpdateListener listener.
      *
      * @param statusUpdateListener The listener to add.
      */
@@ -326,6 +324,11 @@ public class JSourcePanel extends JPanel implements AutoCompletable {
 
     public SlideOutSourceTree getTreePane() {
         return sourceTree;
+    }
+
+    private void showError(String title, Exception e) {
+        Util.showErrorDialog(this, e.getMessage(), title);
+        log.error(e.getMessage(), e);
     }
 }
 

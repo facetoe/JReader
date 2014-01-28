@@ -118,18 +118,32 @@ public class Config {
             properties.store(new FileOutputStream(configFilePath), null);
         } catch (IOException ex) {
             log.error(ex);
-        } 
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException e) {}
+        }
     }
 
 
     private static String getEntry(String key) {
+        FileInputStream in = null;
         try {
-            FileInputStream in = null;
             in = new FileInputStream(configFilePath);
             properties.load(in);
         } catch (IOException ex) {
             log.error(ex);
-        } 
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         return properties.getProperty(key);
     }
 }

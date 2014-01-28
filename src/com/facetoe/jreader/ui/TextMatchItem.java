@@ -3,6 +3,7 @@ package com.facetoe.jreader.ui;
 import com.facetoe.jreader.githubapi.apiobjects.Match;
 import com.facetoe.jreader.githubapi.apiobjects.TextMatch;
 import com.facetoe.jreader.helpers.Util;
+import org.apache.log4j.Logger;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.Theme;
@@ -21,7 +22,14 @@ import java.awt.event.ActionListener;
  * JReader
  * Created by facetoe on 22/01/14.
  */
+
+
+/**
+ * Creates a code fragment view for TextMatchItem results from a github search.
+ */
 class TextMatchItem extends JPanel {
+    private final Logger log = Logger.getLogger(this.getClass());
+
     private TextMatch textMatch;
     private OnTextMatchItemClickedListener listener;
 
@@ -33,11 +41,11 @@ class TextMatchItem extends JPanel {
     private void createLayout() {
         setLayout(new BorderLayout());
         setBorder(new CompoundBorder(new EmptyBorder(0, 0, 5, 5), BorderFactory.createLineBorder(Color.BLACK, 1)));
-        JPanel topPanel = new JPanel(new BorderLayout());
+        JPanel buttonPanel = new JPanel(new BorderLayout());
 
         JButton button = createHtmlButton();
-        topPanel.add(button, BorderLayout.WEST);
-        add(topPanel, BorderLayout.NORTH);
+        buttonPanel.add(button, BorderLayout.WEST);
+        add(buttonPanel, BorderLayout.NORTH);
         add(createCodeArea(), BorderLayout.CENTER);
     }
 
@@ -66,11 +74,12 @@ class TextMatchItem extends JPanel {
             try {
                 highlighter.addHighlight(indices[0], indices[1], DefaultHighlighter.DefaultPainter);
             } catch (BadLocationException e) {
-                e.printStackTrace();
+                log.error(e);
             }
         }
     }
 
+    // Adds a button that looks like a link.
     private JButton createHtmlButton() {
         String url = textMatch.getObject_url();
         String fileName = Util.extractFileName(url);

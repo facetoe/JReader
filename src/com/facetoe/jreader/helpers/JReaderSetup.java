@@ -29,6 +29,9 @@ import java.io.IOException;
  * Time: 5:59 PM
  */
 
+/**
+ * Utility methods for setting up JReader.
+ */
 public class JReaderSetup {
     private static final Logger log = Logger.getLogger(JReaderSetup.class);
 

@@ -36,7 +36,7 @@ import java.util.ArrayList;
  */
 
 /**
- * This class creates the menu bar along the top of JReader
+ * This class creates the menu bar along the top of JReader.
  */
 class MenuBar extends JMenuBar {
 
@@ -247,10 +247,8 @@ class MenuBar extends JMenuBar {
     private void maybeEnableSourceItem(JReaderPanel currentTab) {
         String sourcePath = Util.docPathToSourcePath(currentTab.getCurrentPath());
         if(Util.isGoodSourcePath(sourcePath)) {
-            System.out.println("Good Path: " + sourcePath);
             mnuNewSourceTab.setEnabled(true);
         } else {
-            System.out.println("Bad Path: " + sourcePath);
             mnuNewSourceTab.setEnabled(false);
         }
     }

@@ -4,9 +4,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 /**
- * Created by facetoe on 19/01/14.
+ * A github search request.
  */
-
 public class SearchQuery extends AbstractGithubQuery {
     private final String LANGUAGE = "java";
     private final String DEFAULT_USER = "apache";

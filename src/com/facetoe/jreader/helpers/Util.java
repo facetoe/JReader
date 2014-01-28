@@ -38,6 +38,11 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Scanner;
 
+/**
+ * Utility methods.
+ */
+
+//TODO Refactor into a few more specific classes, especially the path stuff.
 public class Util {
     private static final Logger log = Logger.getLogger(Util.class);
     private static final String DEFAULT_THEME = "/com/facetoe/jreader/resources/themes/ideaTheme.xml";
@@ -57,18 +62,18 @@ public class Util {
     }
 
     /**
-     * Read from a url and return a String of the contents.
+     * Read from a url and returns a String of the contents.
      *
      * @param url
      * @return
      * @throws IOException
      */
-    public static String readURL(URL url) throws IOException {
+    public static String readURL(URL url, Charset encoding) throws IOException {
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         String line;
         StringBuilder sb = new StringBuilder();
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), encoding));
             while ((line = in.readLine()) != null) {
                 sb.append(line);
                 sb.append("\n");

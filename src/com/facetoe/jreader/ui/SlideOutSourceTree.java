@@ -15,6 +15,10 @@ import java.util.Enumeration;
  * JReader
  * Created by  facetoe on 22/01/14.
  */
+
+/**
+ * Creates a slideout panel that displays a tree view of a source file's contents.
+ */
 class SlideOutSourceTree extends JXCollapsiblePane {
     private SourceTree tree;
     private JScrollPane treeScrollPane;
@@ -37,8 +41,7 @@ class SlideOutSourceTree extends JXCollapsiblePane {
 
     private void createTree() {
         tree = new SourceTree(sourcePanel.getJavaSourceFile());
-        /* Save a click by showing the contents of the class on load. */
-        tree.expandRow(0);
+        tree.expandRow(0); // Save a click by showing the contents of the class on load.
         tree.addTreeSelectionListener(new SourceTreeSelectionListener(tree, sourcePanel));
         treeScrollPane = new JScrollPane(tree);
         treeScrollPane.setPreferredSize(new Dimension(300, 200));
@@ -49,9 +52,6 @@ class SlideOutSourceTree extends JXCollapsiblePane {
         KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
         getInputMap(WHEN_IN_FOCUSED_WINDOW).put(keyStroke, keyStrokeAndKey);
         getActionMap().put(keyStrokeAndKey, new ToggleSourceTreeAction(this));
-        //TODO Fix this!
-//        if(sourcePanel.getTopPanel() != null)
-//            sourcePanel.getTopPanel().setSourceButton(TopPanel.TREE_BUTTON, new ToggleSourceTreeAction(this, tree));
     }
 
     private void createTreeSlideoutPane() {
@@ -81,8 +81,8 @@ class SlideOutSourceTree extends JXCollapsiblePane {
         treePanel.add(searchPanel, BorderLayout.NORTH);
         setLayout(new BorderLayout());
         setDirection(JXCollapsiblePane.Direction.RIGHT);
-        add("Center", treePanel);
-        setCollapsed(true);
+        add(treePanel, BorderLayout.CENTER);
+        setCollapsed(true); // Don't show it until requested
     }
 
     private void handleTreeSearch() {

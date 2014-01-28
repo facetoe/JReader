@@ -29,7 +29,8 @@ import com.facetoe.jreader.parsers.AbstractJavaObject;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
- * Class to hold item data.
+ * SourceItemNode to be displayed in the SourceTreeView. Contains information used to render the icon and
+ * scroll to definitions in the source when selected.
  */
 class SourceItemNode extends DefaultMutableTreeNode {
     private AbstractJavaObject javaObject;

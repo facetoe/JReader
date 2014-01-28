@@ -37,7 +37,7 @@ import java.io.File;
  */
 
 /**
- * Provides a window where users can enter the details of a new profile.
+ * Provides a window where users can enter the details of a new profile and then creates it.
  */
 public class NewProfileWindow extends JDialog {
     private JPanel parentPanel;

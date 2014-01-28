@@ -17,6 +17,12 @@ import java.io.IOException;
 /**
  * Created by facetoe on 18/01/14.
  */
+
+
+/**
+ * Handles the installation of JReader. Extracts the Java7 source and docs to users home directory and
+ * creates  default profile. This is a blocking dialog.
+ */
 public class InstallationWindow implements ZipProgressListener {
     private final Logger log = Logger.getLogger(this.getClass());
     private final JDialog dialog;

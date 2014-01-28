@@ -114,8 +114,7 @@ class SourceTree extends JTree {
         }
 
         if (aClass.hasNestedClasses()) {
-            // Sort them now so they appear sorted in the tree.
-            ArrayList<SourceItemNode> nestedClasses = sortNestedClasses(aClass);
+            ArrayList<SourceItemNode> nestedClasses = parseAndSortNestedClasses(aClass);
 
             SourceItemNode nestedClassNode = new SourceItemNode("Nested Classes", AbstractJavaObject.CLASS);
             for (SourceItemNode node : nestedClasses) {
@@ -147,7 +146,7 @@ class SourceTree extends JTree {
         return enumsNode;
     }
 
-    private ArrayList<SourceItemNode> sortNestedClasses(JavaClassOrInterface aClass) {
+    private ArrayList<SourceItemNode> parseAndSortNestedClasses(JavaClassOrInterface aClass) {
         ArrayList<SourceItemNode> nestedClasses = new ArrayList<SourceItemNode>();
         for (JavaClassOrInterface nestedClass : aClass.getNestedClassesAsArrayList()) {
             nestedClasses.add(parseClass(nestedClass));
@@ -183,8 +182,8 @@ class SourceTree extends JTree {
      * Class to render icons in the tree view.
      */
     private class SourceViewIconRenderer extends DefaultTreeCellRenderer {
-
-        // These were generated using a Ruby script, they may not be 100% correct.
+        // These are the magic numbers used by the javaparser.jar to represent different modifiers
+        // I generated them using a Ruby script, they may not be 100% correct.
         private static final int DEFAULT = 0;
         private static final int ABSTRACT = 1024;
         private static final int ABSTRACT_STATIC_CLASS = 1032;

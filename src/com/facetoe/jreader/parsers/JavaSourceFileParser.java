@@ -22,16 +22,15 @@ import japa.parser.ParseException;
 import japa.parser.ast.CompilationUnit;
 import japa.parser.ast.body.*;
 import japa.parser.ast.visitor.GenericVisitorAdapter;
-import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * This class parses a Java source file and extracts all the classes, interfaces, methods, constructors and fields.
+ * This class parses a Java source file and extracts all the classes, interfaces, methods, constructors and fields,
+ * encapsulating them in a JavaSourceFile object.
  */
 public class JavaSourceFileParser {
-    private static final Logger log = Logger.getLogger(JavaSourceFileParser.class);
 
     /**
      * Parses a Java source file and extracts constructor, method, field and enum declarations.
