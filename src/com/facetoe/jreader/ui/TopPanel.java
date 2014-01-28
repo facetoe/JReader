@@ -21,6 +21,7 @@ import com.facetoe.jreader.helpers.Util;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 /**
@@ -41,13 +42,15 @@ class TopPanel extends JPanel {
     private JButton btnSource;
     private ImageIcon sourceIcon;
     private ImageIcon treeIcon;
+    private static final int ICON_HEIGHT = 20;
+    private static final int ICON_WIDTH = 20;
     private final AutoCompleteTextField searchBar = new AutoCompleteTextField();
 
     private final JReader jReader;
 
     public TopPanel(JReader jReader) {
         this.jReader = jReader;
-        initButtons();
+        init();
         createTopPanel();
     }
 
@@ -55,27 +58,26 @@ class TopPanel extends JPanel {
     /**
      * Create the buttons and add icons.
      */
-    private void initButtons() {
-        btnBack = new JButton(Util.readIcon(this.getClass().getResourceAsStream
-                ("/com/facetoe/jreader/resources/icons/arrow-left.png"), 20, 20));
+    private void init() {
+        btnBack = buildButton("/com/facetoe/jreader/resources/icons/arrow-left.png");
+        btnNext = buildButton("/com/facetoe/jreader/resources/icons/arrow-right.png");
+        btnHome = buildButton("/com/facetoe/jreader/resources/icons/home.png");
+        btnSearch = buildButton("/com/facetoe/jreader/resources/icons/search.png");
+        btnSource = new JButton();
+        loadIcons();
+        setSourceButton(new NewSourceTabAction(this.jReader));
+    }
 
-        btnNext = new JButton(Util.readIcon(this.getClass().getResourceAsStream
-                ("/com/facetoe/jreader/resources/icons/arrow-right.png"), 20, 20));
+    private JButton buildButton(String reference) {
+        return new JButton(Util.readIcon(this.getClass().getResourceAsStream(reference), ICON_WIDTH, ICON_HEIGHT));
+    }
 
-        btnHome = new JButton(Util.readIcon(this.getClass().getResourceAsStream
-                ("/com/facetoe/jreader/resources/icons/home.png"), 20, 20));
-
-        btnSearch = new JButton(Util.readIcon(this.getClass().getResourceAsStream
-                ("/com/facetoe/jreader/resources/icons/search.png"), 20, 20));
-
+    private void loadIcons() {
         sourceIcon = Util.readIcon(this.getClass().getResourceAsStream
-                ("/com/facetoe/jreader/resources/icons/javaSource.png"), 20, 20);
+                ("/com/facetoe/jreader/resources/icons/javaSource.png"), ICON_WIDTH, ICON_HEIGHT);
 
         treeIcon = Util.readIcon(this.getClass().getResourceAsStream(
-                "/com/facetoe/jreader/resources/icons/tree_diagramm.png"), 20, 20);
-
-        btnSource = new JButton();
-        setSourceButton(new NewSourceTabAction(this.jReader));
+                "/com/facetoe/jreader/resources/icons/tree_diagramm.png"), ICON_WIDTH, ICON_HEIGHT);
     }
 
     /**
@@ -119,29 +121,51 @@ class TopPanel extends JPanel {
         btnSource.setIcon(treeIcon);
     }
 
-    public JButton getBtnBack() {
-        return btnBack;
+    public void enableBrowserButtons() {
+        btnNext.setEnabled(true);
+        btnBack.setEnabled(true);
+        btnHome.setEnabled(true);
     }
 
-    public JButton getBtnNext() {
-        return btnNext;
+    public void disableBrowserButtons() {
+        btnNext.setEnabled(false);
+        btnBack.setEnabled(false);
+        btnHome.setEnabled(false);
     }
 
-    public JButton getBtnHome() {
-        return btnHome;
+    public void addBtnBackActionListener(ActionListener listener) {
+        btnBack.addActionListener(listener);
     }
 
-    public JButton getBtnSearch() {
-        return btnSearch;
+    public void addBtnNextActionListener(ActionListener listener) {
+        btnNext.addActionListener(listener);
     }
 
-    public JButton getBtnSource() {
-        return btnSource;
+    public void addBtnHomeActionListener(ActionListener listener) {
+        btnHome.addActionListener(listener);
     }
 
-    public AutoCompleteTextField getSearchBar() {
-        return searchBar;
+    public void addBtnSearchActionListener(ActionListener listener) {
+        btnSearch.addActionListener(listener);
     }
+
+    public void addSearchBarListener(ActionListener listener) {
+        searchBar.addActionListener(listener);
+    }
+
+    public void resetSearchBar() {
+        searchBar.setText("");
+        searchBar.requestFocus();
+    }
+
+    public void enableNewSourceButton() {
+        btnSource.setEnabled(true);
+    }
+
+    public void disableNewSourceButton() {
+        btnSource.setEnabled(false);
+    }
+
 
     public void addAutoCompleteWords(ArrayList<String> words) {
         searchBar.addWordsToTrie(words);

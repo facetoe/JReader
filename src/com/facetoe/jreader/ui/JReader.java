@@ -146,34 +146,34 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
                 System.exit(0);
             }
         });
-        topPanel.getBtnBack().addActionListener(new ActionListener() {
+        topPanel.addBtnBackActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JReaderPanel jReaderPanel = (JReaderPanel) currentTab;
                 jReaderPanel.back();
             }
         });
-        topPanel.getBtnNext().addActionListener(new ActionListener() {
+        topPanel.addBtnNextActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JReaderPanel jReaderPanel = (JReaderPanel) currentTab;
                 jReaderPanel.next();
             }
         });
-        topPanel.getBtnHome().addActionListener(new ActionListener() {
+        topPanel.addBtnHomeActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JReaderPanel jReaderPanel = (JReaderPanel) currentTab;
                 jReaderPanel.home();
             }
         });
-        topPanel.getBtnSearch().addActionListener(new ActionListener() {
+        topPanel.addBtnSearchActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 handleSearch();
             }
         });
-        topPanel.getSearchBar().addActionListener(new ActionListener() {
+        topPanel.addSearchBarListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 handleSearch();
@@ -322,24 +322,20 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
     }
 
     private void enableBrowserButtons() {
-        topPanel.getBtnBack().setEnabled(true);
-        topPanel.getBtnNext().setEnabled(true);
-        topPanel.getBtnHome().setEnabled(true);
+       topPanel.enableBrowserButtons();
     }
 
     private void disableBrowserButtons() {
-        topPanel.getBtnBack().setEnabled(false);
-        topPanel.getBtnNext().setEnabled(false);
-        topPanel.getBtnHome().setEnabled(false);
+       topPanel.disableBrowserButtons();
     }
 
     private void enableNewSourceOption() {
-        topPanel.getBtnSource().setEnabled(true);
+        topPanel.enableNewSourceButton();
         menuBar.enableNewSourceOption();
     }
 
     private void disableNewSourceOption() {
-        topPanel.getBtnSource().setEnabled(false);
+        topPanel.disableNewSourceButton();
         menuBar.disableNewSourceOption();
     }
 
@@ -364,8 +360,7 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
     }
 
     public void resetSearchBar() {
-        topPanel.clearSearchBar();
-        topPanel.getSearchBar().requestFocus();
+        topPanel.resetSearchBar();
     }
 
     public void saveProfiles() {
