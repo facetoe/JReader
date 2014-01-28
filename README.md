@@ -21,38 +21,67 @@ To make life easier, there are some handy keyboard shortcuts as well:
 
 ##Screenshots
 
+
+The default profile home page. Users can browse with the links or search for a particular class.
+
 ![Default Profile Home](http://imgur.com/dep2f3K.png)
+
+Here we have the documentation for StringBuffer. Note that JReader auto-completed the class name. All text boxes in JReader support auto-completion.
 
 ![Class Documentation](http://imgur.com/CePY1IT.png)
 
+After clicking "View Source" or pressing ctrl-c a source view opens in a new tab and highlights the class declaration.
+
 ![Source Code View](http://imgur.com/rVbmkEC.png)
 
+When "Toggle Tree" or ctrl-t is clicked, a source tree panel expands from the left displaying the structure of the source file as a tree. 
+ 
 ![Source Code View With TreeView](http://imgur.com/HsR3KYq.png)
+
+Clicking an item in the source tree scrolls to and highlights that items definition in the source file.
 
 ![Source Code View With Expanded TreeView](http://imgur.com/SvFApeQ.png)
 
+JReader supports several search options - including regular expressions.
+
 ![Search Options](http://imgur.com/ROW38eh.png)
+
+Here we see the result of a regexp search.
 
 ![Regexp Search](http://imgur.com/l2uVomg.png)
 
+JReader supports searching Github for examples of code use.
+
 ![Github Search](http://imgur.com/8sZXRsT.png)
+
+Here we see a Github search result.
 
 ![Github Search Results](http://imgur.com/5fwV0gM.png)
 
+Clicking an item will download the file from Github, display it in a source view and highlight the fragment. All of the usual source view features are available - such as tree view and search.
+
 ![Github Search Result File View](http://imgur.com/RZPDTYf.png)
+
+Jreader is not restricted to the official docs. Here we make a new profile for SwingX.
 
 ![Create New Profile](http://imgur.com/Wgy8fMk.png)
 
+Once the profile is completed JReader navigates to the profiles home.
+
 ![SwingX Profile](http://imgur.com/lVWZ4q8.png)
 
+Here we see the documentation for CollapsiblePane, used to expand the tree view in JReader.
+
 ![CollapsiblePane Docs](http://imgur.com/NbVoIVl.png)
+
+All the normal source view options are available for non-official documentations as well.
 
 ![CollapsiblePane Source](http://imgur.com/angGDe2.png)
 
 
 
 ##How do I install JReader?
-Just start it up. On first launch JReader will ask for the location of the Java7 documentation on your computer. If you don't already have it, you can get it [here](http://www.oracle.com/technetwork/java/javase/documentation/java-se-7-doc-download-435117.html). Next, JReader will download the complete Java 7 source code, extract it and you're good to go. 
+Simply execute the JReader.jar file. JReader will extract some files into a hidden folder in the users home, create the default profile and then launch.
 
 ##How do I build JReader?
 First `git clone` the repo, then `cd` to the root directory and type `ant`. This should build JReader and create JReader.jar in `artifacts/JReader`.
