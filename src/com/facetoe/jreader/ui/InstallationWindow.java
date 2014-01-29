@@ -134,6 +134,7 @@ public class InstallationWindow implements ZipProgressListener {
     private void unzipSource() {
         try {
             InputStream in = getClass().getResourceAsStream(SOURCE_REFERENCE);
+            updateProgress("Creating tempfile...");
             File zipFile = inputStreamToFile(in);
             String destinationPath = Util.constructPath(Config.getString(Config.DATA_DIR), Config.JAVA_LANG_ZIP_FILE_NAME);
             unZipper.unzip(zipFile, destinationPath);
@@ -143,8 +144,16 @@ public class InstallationWindow implements ZipProgressListener {
         }
     }
 
+    private void unzipDocs() throws Exception {
+        InputStream in = getClass().getResourceAsStream(DOCS_REFERENCE);
+        updateProgress("Creating tempfile...");
+        File zipFile = inputStreamToFile(in);
+        String destinationPath = Util.constructPath(Config.getString(Config.DATA_DIR), Config.JAVA_DOCS_ZIP_FILE_NAME);
+        unZipper.unzip(zipFile, destinationPath);
+        new File(TEMP_FILE_NAME).delete();
+    }
+
     private File inputStreamToFile(InputStream in) {
-        System.out.println(in);
         FileOutputStream outputStream = null;
         File outFile = new File(TEMP_FILE_NAME);
         try {
@@ -157,42 +166,38 @@ public class InstallationWindow implements ZipProgressListener {
                 outputStream.write(bytes, 0, read);
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            log.error(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
         } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (outputStream != null) {
-                try {
-                    outputStream.flush();
-                    outputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
+            closeStreams(in, outputStream);
         }
         return new File(outFile.getAbsolutePath());
     }
 
-    private void unzipDocs() throws Exception {
-        InputStream in = getClass().getResourceAsStream(DOCS_REFERENCE);
-        File zipFile = inputStreamToFile(in);
-        String destinationPath = Util.constructPath(Config.getString(Config.DATA_DIR), Config.JAVA_DOCS_ZIP_FILE_NAME);
-        unZipper.unzip(zipFile, destinationPath);
-        new File(TEMP_FILE_NAME).delete();
+    private void closeStreams(InputStream inputStream, FileOutputStream outputStream) {
+        if (inputStream != null) {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (outputStream != null) {
+            try {
+                outputStream.flush();
+                outputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 
 
     @Override
     public void updateProgress(String message) {
-        lblStatus.setText("Extracting: " + message);
+        lblStatus.setText(message);
     }
 
     {

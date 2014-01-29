@@ -41,7 +41,6 @@ public class UnZipper {
                 return;
 
             if (pm.getCurrentOperation() == ProgressMonitor.OPERATION_EXTRACT) {
-                System.out.println(pm.getFileName());
                 publishProgress(pm.getFileName());
             }
         }
@@ -57,7 +56,7 @@ public class UnZipper {
 
     private void publishProgress(String message) {
         for (ZipProgressListener listener : listeners) {
-            listener.updateProgress(message);
+            listener.updateProgress("Extracting " + message);
         }
     }
 
