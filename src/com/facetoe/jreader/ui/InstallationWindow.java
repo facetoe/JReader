@@ -81,6 +81,7 @@ public class InstallationWindow implements ZipProgressListener {
 
     private void install() {
         progressBar.setIndeterminate(true);
+        btnInstall.setEnabled(false);
         try {
             installWorker = new SwingWorker() {
                 @Override
