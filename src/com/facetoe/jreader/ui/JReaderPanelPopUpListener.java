@@ -38,11 +38,9 @@ import java.awt.event.MouseListener;
 class JReaderPanelPopUpListener implements MouseListener {
 
     private final JReader reader;
-    private final JReaderPanel readerPanel;
 
     public JReaderPanelPopUpListener(JReader reader) {
         this.reader = reader;
-        this.readerPanel = (JReaderPanel) reader.getCurrentTab();
     }
 
     @Override
@@ -87,9 +85,13 @@ class JReaderPanelPopUpListener implements MouseListener {
         menu.show(e.getComponent(), e.getX(), e.getY());
     }
 
+    private String getCurrentPath() {
+        return ((JReaderPanel) reader.getCurrentTab()).getCurrentPath();
+    }
+    
     private JMenuItem buildViewSourceItem() {
         JMenuItem viewSourceItem = new JMenuItem();
-        String systemPath = Util.docPathToSourcePath(readerPanel.getCurrentPath());
+        String systemPath = Util.docPathToSourcePath(getCurrentPath());
         viewSourceItem.setAction(new NewSourceTabAction(reader));
 
         if (!Util.isGoodSourcePath(systemPath)) {
@@ -100,11 +102,13 @@ class JReaderPanelPopUpListener implements MouseListener {
 
     private JMenuItem buildNewGithubItem() {
         JMenuItem newGitItem = new JMenuItem();
-        String systemPath = Util.docPathToSourcePath(readerPanel.getCurrentPath());
 
+        String currentPath = getCurrentPath();
+        String systemPath = Util.docPathToSourcePath(currentPath);
+        
         // If it's a good source path then its a Java class so we can search for it.
         if (Util.isGoodSourcePath(systemPath)) {
-            final String className = Util.getClassNameFromPath(readerPanel.getCurrentPath());
+            final String className = Util.getClassNameFromPath(currentPath);
             newGitItem.setText("Search Github for " + className);
             newGitItem.addActionListener(new ActionListener() {
                 @Override
