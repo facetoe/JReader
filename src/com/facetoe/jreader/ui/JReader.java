@@ -92,6 +92,9 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
         addAction(new NewReaderTabAction(this), "control N");
         addAction(new NewSourceTabAction(this), "control S");
         addAction(new QuitAction(this), "control Q");
+        addAction(new HistoryBackAction(this), "alt LEFT");
+        addAction(new HistoryNextAction(this), "alt RIGHT");
+        addAction(new HomeAction(this), "alt HOME");
     }
 
     private void addAction(Action action, String keystroke) {
@@ -110,7 +113,7 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
 
     private JReaderPanel createReaderPanel() {
         final String title = "Jreader";
-        final JReaderPanel readerPanel = new JReaderPanel();
+        final JReaderPanel readerPanel = new JReaderPanel(topPanel);
 
         // If it's the first tab don't add a close button.
         if (tabbedPane.getTabCount() == 0) {
@@ -300,9 +303,13 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
     private void handleReaderTabChange(AutoCompletable tab) {
         topPanel.setSourceButton(new NewSourceTabAction(this));
         topPanel.addAutoCompleteWords(tab.getAutoCompleteWords());
-        String currentPath = ((JReaderPanel) currentTab).getCurrentPath();
+
+        JReaderPanel panel = (JReaderPanel) currentTab;
+
+        String currentPath = panel.getCurrentPath();
         maybeEnableSourceOption(currentPath);
-        enableBrowserButtons();
+
+        panel.updateButtonState();
     }
 
     // Decide whether or not to show the New Source option.
@@ -319,10 +326,6 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
     // Set the toggle tree action.
     private void setToggleTreeButton(JSourcePanel newTab) {
         topPanel.setToggleTreeButton(new ToggleSourceTreeAction(newTab.getTreePane()));
-    }
-
-    private void enableBrowserButtons() {
-       topPanel.enableBrowserButtons();
     }
 
     private void disableBrowserButtons() {

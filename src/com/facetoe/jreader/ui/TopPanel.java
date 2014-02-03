@@ -18,6 +18,7 @@
 package com.facetoe.jreader.ui;
 
 import com.facetoe.jreader.helpers.Util;
+import javafx.scene.web.WebHistory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -132,6 +133,11 @@ class TopPanel extends JPanel {
         btnNext.setEnabled(false);
         btnBack.setEnabled(false);
         btnHome.setEnabled(false);
+    }
+
+    public void updateButtonState(WebHistory history) {
+        btnBack.setEnabled(history.getCurrentIndex() > 0);
+        btnNext.setEnabled(history.getCurrentIndex() < history.getEntries().size() - 1);
     }
 
     public void addBtnBackActionListener(ActionListener listener) {

@@ -25,6 +25,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebHistory;
 import javafx.scene.web.WebView;
 import org.apache.log4j.Logger;
 
@@ -47,14 +48,16 @@ import static javafx.concurrent.Worker.State.FAILED;
 class JReaderPanel extends JPanel implements AutoCompletable, Navigatable {
     private final Logger log = Logger.getLogger(this.getClass());
 
+    private TopPanel topPanel;
     private WebEngine engine;
     private JFXPanel jfxPanel;
     private final ProfileManager profileManager = ProfileManager.getInstance();
     private final ArrayList<StatusUpdateListener> listeners = new ArrayList<StatusUpdateListener>();
     private String currentPath;
 
-    public JReaderPanel() {
+    public JReaderPanel(TopPanel topPanel) {
         init();
+        this.topPanel = topPanel;
     }
 
     private void init() {
@@ -74,8 +77,10 @@ class JReaderPanel extends JPanel implements AutoCompletable, Navigatable {
                 engine = view.getEngine();
                 addProgressChangeListener();
                 addPathChangeListener();
+                addHistoryListener();
                 addErrorListener();
                 jfxPanel.setScene(new Scene(view));
+                updateButtonState();
             }
         });
     }
@@ -103,9 +108,21 @@ class JReaderPanel extends JPanel implements AutoCompletable, Navigatable {
                 log.debug("New Path: " + newValue);
                 currentPath = newValue;
                 updateStatus(newValue);
-
             }
         });
+    }
+
+    private void addHistoryListener() {
+        engine.getHistory().currentIndexProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number oldValue, Number newValue) {
+                updateButtonState();
+            }
+        });
+    }
+
+    public void updateButtonState() {
+        topPanel.updateButtonState(engine.getHistory());
     }
 
     private void addErrorListener() {
@@ -149,7 +166,7 @@ class JReaderPanel extends JPanel implements AutoCompletable, Navigatable {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                engine.executeScript("history.forward()");
+                engine.getHistory().go(1);
             }
         });
     }
@@ -158,7 +175,7 @@ class JReaderPanel extends JPanel implements AutoCompletable, Navigatable {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                engine.executeScript("history.back()");
+                engine.getHistory().go(-1);
             }
         });
     }
