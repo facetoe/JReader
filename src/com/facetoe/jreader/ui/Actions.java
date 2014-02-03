@@ -103,6 +103,45 @@ class CloseTabAction extends AbstractAction {
     }
 }
 
+class HistoryBackAction extends AbstractAction {
+    private final JReader jReader;
+
+    public HistoryBackAction(JReader jReader) {
+        this.jReader = jReader;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        ((JReaderPanel) jReader.getCurrentTab()).back();
+    }
+}
+
+class HistoryNextAction extends AbstractAction {
+    private final JReader jReader;
+
+    public HistoryNextAction(JReader jReader) {
+        this.jReader = jReader;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        ((JReaderPanel) jReader.getCurrentTab()).next();
+    }
+}
+
+class HomeAction extends AbstractAction {
+    private final JReader jReader;
+
+    public HomeAction(JReader jReader) {
+        this.jReader = jReader;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        ((JReaderPanel) jReader.getCurrentTab()).home();
+    }
+}
+
 /**
  * Action to create a new JReaderPanel tab.
  */
