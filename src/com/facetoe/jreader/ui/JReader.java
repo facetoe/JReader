@@ -80,7 +80,7 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
         frame.add(topPanel, BorderLayout.NORTH);
         bottomPanel = new BottomPanel();
         frame.add(bottomPanel, BorderLayout.SOUTH);
-        tabbedPane = new JTabbedPane();
+        tabbedPane = new NewTabTabbedPane();
         frame.add(tabbedPane, BorderLayout.CENTER);
         frame.setJMenuBar(new MenuBar(this));
         menuBar = new MenuBar(this);
@@ -113,7 +113,8 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
         final JReaderPanel readerPanel = new JReaderPanel();
 
         // If it's the first tab don't add a close button.
-        if (tabbedPane.getTabCount() == 0) {
+        // The first tab will be index 1 because of the "new tab" button.
+        if (tabbedPane.getTabCount() == 1) {
             tabbedPane.addTab(title, readerPanel);
         } else {
             addCloseButtonToTab(readerPanel, title);
@@ -437,11 +438,40 @@ public class JReader implements StatusUpdateListener, ChangeListener<String> {
             }
         }
     }
+
+    /**
+     * A special type of tabbed pane that includes a "new tab" button.
+     */
+    class NewTabTabbedPane extends JTabbedPane {
+
+        public NewTabTabbedPane() {
+            super();
+            super.insertTab("+", null, null, "New tab", 0);
+            setTabComponentAt(0, new JLabel(
+                Util.readIcon(
+                this.getClass().getResourceAsStream("/com/facetoe/jreader/resources/icons/newTab.png"), 16, 16)));
+        }
+
+        @Override
+        public void insertTab(String title, Icon icon, Component component, String tip, int index) {
+            super.insertTab(title, icon, component, tip, index - 1);
+        }
+
+        @Override
+        public void remove(int index) {
+            super.remove(index);
+            if (getSelectedIndex() == getTabCount() - 1) {
+                setSelectedIndex(getTabCount() - 2);
+            }
+        }
+
+        @Override
+        public void setSelectedIndex(int index) {
+            if (index < getTabCount() - 1) {
+                super.setSelectedIndex(index);
+            } else if (getTabCount() > 1) {
+                createAndShowNewReaderTab();
+            }
+        }
+    }
 }
-
-
-
-
-
-
-
