@@ -166,7 +166,8 @@ public class NewProfileWindow extends JDialog {
                         setVisible(false);
                         dispose();
                     }
-                });
+                }
+        );
     }
 
     public void display() {

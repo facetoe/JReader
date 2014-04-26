@@ -1,0 +1,4 @@
+path.variable.maven_repository=/home/facetoe/.m2/repository
+jdk.home.1.7=/usr/lib/jvm/java-7-oracle
+idea.home=/home/facetoe/programs/idea-IC-133.193
+javac2.instrumentation.includeJavaRuntime=false
