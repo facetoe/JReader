@@ -131,7 +131,7 @@
   
   <!-- Global Libraries -->
   <!-- Register Custom Compiler Taskdefs -->
-  <property name="javac2.home" value="${idea.home}/lib"/>
+  <property name="javac2.home" value="${basedir}/lib"/>
   <path id="javac2.classpath">
     <pathelement location="${javac2.home}/javac2.jar"/>
     <pathelement location="${javac2.home}/jdom.jar"/>
@@ -174,7 +174,7 @@
     <path refid="library.forms_rt.classpath"/>
     <path refid="library.jgoodies-forms.classpath"/>
     <path refid="library.swingx-all-1.6.4.classpath"/>
-    <pathelement location="${idea.home}/lib/junit-4.10.jar"/>
+    <pathelement location="${basedir}/lib/junit-4.11.jar"/>
     <path refid="library.gson-2.2.4.classpath"/>
     <path refid="library.jfxrt.classpath"/>
   </path>
@@ -189,7 +189,7 @@
     <path refid="library.forms_rt.classpath"/>
     <path refid="library.jgoodies-forms.classpath"/>
     <path refid="library.swingx-all-1.6.4.classpath"/>
-    <pathelement location="${idea.home}/lib/junit-4.10.jar"/>
+    <pathelement location="${basedir}/lib/junit-4.11.jar"/>
     <path refid="library.gson-2.2.4.classpath"/>
     <path refid="library.jfxrt.classpath"/>
   </path>
@@ -205,7 +205,7 @@
     <path refid="library.forms_rt.classpath"/>
     <path refid="library.jgoodies-forms.classpath"/>
     <path refid="library.swingx-all-1.6.4.classpath"/>
-    <pathelement location="${idea.home}/lib/junit-4.10.jar"/>
+    <pathelement location="${basedir}/lib/junit-4.11.jar"/>
     <path refid="library.gson-2.2.4.classpath"/>
     <path refid="library.jfxrt.classpath"/>
   </path>
@@ -221,7 +221,7 @@
     <path refid="library.forms_rt.classpath"/>
     <path refid="library.jgoodies-forms.classpath"/>
     <path refid="library.swingx-all-1.6.4.classpath"/>
-    <pathelement location="${idea.home}/lib/junit-4.10.jar"/>
+    <pathelement location="${basedir}/lib/junit-4.10.jar"/>
     <path refid="library.gson-2.2.4.classpath"/>
     <path refid="library.jfxrt.classpath"/>
   </path>
