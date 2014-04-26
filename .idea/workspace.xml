@@ -10,8 +10,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0f725b18-1f9a-4ce0-8608-872f2385b0ad" name="Default" comment="Reorganized code into packages.&#10;">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/artifacts/JReader_jar.xml" afterPath="$PROJECT_DIR$/.idea/artifacts/JReader_jar.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.properties" afterPath="$PROJECT_DIR$/build.properties" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.xml" afterPath="$PROJECT_DIR$/build.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="JReader.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -94,7 +95,7 @@
       <file leaf-file-name="ProfileManagerTest.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test/com/facetoe/jreader/helpers/ProfileManagerTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.50111854" vertical-offset="136" max-vertical-offset="2070">
+            <state vertical-scroll-proportion="0.5221445" vertical-offset="136" max-vertical-offset="2070">
               <caret line="20" column="13" selection-start-line="20" selection-start-column="13" selection-end-line="20" selection-end-column="13" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -179,9 +180,9 @@
     <treeState />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="y" value="37" />
+    <option name="y" value="55" />
     <option name="width" value="1366" />
-    <option name="height" value="731" />
+    <option name="height" value="713" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -373,7 +374,7 @@
     <property name="MemberChooser.showClasses" value="true" />
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="recentsLimit" value="5" />
-    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="dynamic.classpath" value="false" />
@@ -388,11 +389,11 @@
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
     <property name="GenerateAntBuildDialog.generateSingleFile" value="true" />
-    <property name="GenerateAntBuildDialog.enableUiFormCompile" value="true" />
-    <property name="GenerateAntBuildDialog.forceTargetJdk" value="true" />
+    <property name="GenerateAntBuildDialog.enableUiFormCompile" value="false" />
+    <property name="GenerateAntBuildDialog.forceTargetJdk" value="false" />
     <property name="GenerateAntBuildDialog.backupFiles" value="false" />
-    <property name="GenerateAntBuildDialog.inclineRuntiemClasspath" value="true" />
-    <property name="GenerateAntBuildDialog.generateIdeaHomeProperty" value="true" />
+    <property name="GenerateAntBuildDialog.inclineRuntiemClasspath" value="false" />
+    <property name="GenerateAntBuildDialog.generateIdeaHomeProperty" value="false" />
     <property name="GenerateAntBuildDialog.outputFileNameProperty" value="build" />
     <property name="LayoutCode.rearrangeEntries" value="false" />
     <property name="OverrideImplement.combined" value="true" />
@@ -1313,7 +1314,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="37" width="1366" height="731" extended-state="0" />
+    <frame x="0" y="55" width="1366" height="713" extended-state="0" />
     <editor active="false" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -1333,7 +1334,7 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21742424" sideWeight="0.82974136" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2254902" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23232323" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22768533" sideWeight="0.73650795" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32980332" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" x="0" y="0" width="1366" height="768" />
       <window_info id="Statistic" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32608697" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -1758,7 +1759,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test/com/facetoe/jreader/helpers/ProfileManagerTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.50111854" vertical-offset="136" max-vertical-offset="2070">
+        <state vertical-scroll-proportion="0.5221445" vertical-offset="136" max-vertical-offset="2070">
           <caret line="20" column="13" selection-start-line="20" selection-start-column="13" selection-end-line="20" selection-end-column="13" />
           <folding>
             <element signature="imports" expanded="true" />
